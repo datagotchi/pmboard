@@ -19,18 +19,25 @@
 				margin-left: 50px;
 				margin-right: 50px;
 			}
-			.editable-buttons {
+			/*.editable-buttons {
 				display: none;
-			}
+			}*/
 			.evidence {
 				cursor: help;
 			}
 		</style>
 		<script type="text/javascript">
 			$.fn.editable.defaults.mode = 'inline';
+			
+			function userResearchInfo() {
+				var x = '<button type="button" class="btn btn-large btn-danger" data-toggle="modal" data-target="#requestResearch">Request User Research</button>';
+				return x;
+			}
+			
 			$(document).ready(function() {
 				$('.new-value').editable({
 					value: '',
+					showbuttons: false,
 					onblur: 'submit',
 					/*url: 'db.php?a=put',
 					ajaxOptions: {
@@ -42,6 +49,7 @@
 					}
 				});
 				$('.editable-value').editable({
+					showbuttons: false,
 					onblur: 'submit',
 					/*url: 'db.php?a=post',
 					ajaxOptions: {
@@ -52,7 +60,16 @@
 						console.log("Saved: ", newValue);
 					}
 				});
-				$('[data-toggle="popover"]').popover();
+				$('[data-toggle="popover"]').popover({
+					html: true,
+					content: userResearchInfo
+				});
+				$('#requestEvaluation').on('hidden.bs.modal', function() {
+					$("#evaluationResults").show();
+				});
+				$('input:file').change(function() {
+					$('[data-target="#requestEvaluation"]').prop('disabled', false);
+				});
 			});
 		</script>
 	</head>
@@ -113,7 +130,7 @@
 		
 		<div class="progress">
 		  <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
-		    60%
+		    60% - please upload screenshots
 		  </div>
 		</div>
 		
@@ -127,13 +144,13 @@
 				<ul class="list-group">
 			    	<li class="list-group-item input-group">
 					    <button class="btn btn-default glyphicon glyphicon-remove" type="button"></button>
-			    		<a href="#" class="editable-value" id="user1" data-type="text" data-pk="1" data-title="Enter username">Product Managers</a> 
+			    		<a href="#" class="editable-value" id="user1" data-type="text" data-pk="1">Product Managers</a> 
 			    		<button type="button" class="evidence btn btn-default label-success label" data-toggle="popover" data-placement="top" data-trigger="focus" title="Number of pieces of evidence" data-content="lorem ipsum">3</button>
 			    	</li>
 			    	<li class="list-group-item">
 			    		<button class="btn btn-default glyphicon glyphicon-remove" type="button"></button>
-			    		<a href="#" class="editable-value" id="user2" data-type="text" data-pk="1" data-title="Enter username">Entrepreneurs</a> 
-			    		<button type="button" class="evidence btn btn-default label-danger label" data-toggle="popover" data-placement="top" data-trigger="focus" title="Number of pieces of evidence" data-content="lorem ipsum">0</button>
+			    		<a href="#" class="editable-value" id="user2" data-type="text" data-pk="1">Entrepreneurs</a> 
+			    		<button type="button" class="evidence btn btn-default label-danger label" data-toggle="popover" data-trigger="focus" data-placement="top" title="Number of pieces of evidence">0</button>
 			    	</li>
 			    	<li class="list-group-item">
 			    		<a href="#" class="editable-value new-value" data-type="text" data-pk="2" data-placeholder="Enter a user type"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add another user type</a>
@@ -149,7 +166,10 @@
 			  <div class="panel-body">
 				<ul class="list-group">
 			    	<li class="list-group-item">
-			    		<a href="#" class="editable-value" id="prod1" data-type="text" data-pk="1" data-title="Enter username">Validate assumptions about target market segments</a>
+			    		<a href="#" class="editable-value" id="prod1" data-type="text" data-pk="1">Validate assumptions about target market segments</a>
+			    	</li>
+			    	<li class="list-group-item">
+			    		<a href="#" class="editable-value" id="prod1" data-type="text" data-pk="1">Understand your potential and actual users better</a>
 			    	</li>
 				</ul>
 				<h4>Upload screenshots</h4>
@@ -162,7 +182,8 @@
 			    <h3 class="panel-title">How well does your product work?</h3>
 			  </div>
 			  <div class="panel-body">
-				<ul class="list-group">
+				<button type="button" class="btn btn-large btn-danger" data-toggle="modal" data-target="#requestEvaluation" disabled="disabled">Request a UX Evaluation</button>
+				<ul class="list-group" id="evaluationResults" style="display:none">
 					<li class="list-group-item">
 			    		<span class="label-success label">Looks super useful!</span>
 			    	</li>
@@ -177,5 +198,38 @@
 			</div>
 		
 		</div>
+		<div class="modal fade" id="requestEvaluation">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title">Request Usability Evaluation</h4>
+		      </div>
+		      <div class="modal-body">
+		        <p>blah blah</p>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-primary" data-dismiss="modal">Buy Now!</button>
+		      </div>
+		    </div><!-- /.modal-content -->
+		  </div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+		
+		<div class="modal fade" id="requestResearch">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title">Request User Research</h4>
+		      </div>
+		      <div class="modal-body">
+		        <p>blah blah</p>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-primary">Buy Now!</button>
+		      </div>
+		    </div><!-- /.modal-content -->
+		  </div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
 	</body>
 </html>
