@@ -1,0 +1,18 @@
+{
+  "name": "EcoBoard",
+  "version": "0.1.0",
+  "description": "",
+  "main": "db.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://bobstark@bitbucket.org/socialergonomics/ecoboard.git"
+  },
+  "author": "",
+  "license": "proprietary",
+  "dependencies": {
+    "express": "^4.12.3"
+  }
+}
