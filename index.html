@@ -25,6 +25,11 @@
 			.evidence {
 				cursor: help;
 			}
+			
+			#productName {
+				font-weight: bold;
+				font-size: larger;
+			}
 		</style>
 		<script type="text/javascript">
 			$.fn.editable.defaults.mode = 'inline';
@@ -71,6 +76,15 @@
 					$('[data-target="#requestEvaluation"]').prop('disabled', false);
 				});
 			});
+			
+			$(window).load(function() {
+				$.ajax({
+					success: function(val) {
+						$("#productName").text(val);
+					}
+				});
+				
+			});
 		</script>
 	</head>
 	
@@ -100,7 +114,7 @@
 		        <li><a href="#">Sharing...</a></li>
 		      </ul>
 		      
-		      <p class="navbar-text">Making sure your product fits people</p>
+		      <p class="navbar-text">Making sure <span id="productName"></span> fits people</p>
 		      
 		      <ul class="nav navbar-nav navbar-right">
 		        <li class="dropdown">
@@ -126,12 +140,12 @@
 				<ul class="list-group">
 			    	<li class="list-group-item input-group">
 					    <button class="btn btn-default glyphicon glyphicon-remove" type="button"></button>
-			    		<a href="#" class="editable-value" id="user1" data-type="text" data-pk="1">Product Managers</a> 
+			    		<a href="#" class="editable-value" id="user1" data-type="text" data-pk="1">Product Owners</a> 
 			    		<button type="button" class="evidence btn btn-default label-success label" data-toggle="popover" data-placement="top" data-trigger="focus" title="Number of pieces of evidence" data-content="lorem ipsum">3</button>
 			    	</li>
 			    	<li class="list-group-item">
 			    		<button class="btn btn-default glyphicon glyphicon-remove" type="button"></button>
-			    		<a href="#" class="editable-value" id="user2" data-type="text" data-pk="1">Entrepreneurs</a> 
+			    		<a href="#" class="editable-value" id="user2" data-type="text" data-pk="1">Delegates</a> 
 			    		<button type="button" class="evidence btn btn-default label-danger label" data-toggle="popover" data-trigger="focus" data-placement="top" title="Number of pieces of evidence">0</button>
 			    	</li>
 			    	<li class="list-group-item">
@@ -150,13 +164,15 @@
 				<ul class="list-group">
 			    	<li class="list-group-item">
 			    		<a href="#" class="editable-value" id="prod1" data-type="text" data-pk="1">Validate assumptions about target market segments</a>
+			    		<h4>Upload screenshots</h4>
+						<input type="file" class="file" />
 			    	</li>
 			    	<li class="list-group-item">
 			    		<a href="#" class="editable-value" id="prod1" data-type="text" data-pk="1">Understand your potential and actual users better</a>
+						<h4>Upload screenshots</h4>
+						<input type="file" class="file" />
 			    	</li>
 				</ul>
-				<h4>Upload screenshots</h4>
-				<input type="file" class="file" />
 			  </div>
 			</div>
 			
