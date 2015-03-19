@@ -8,7 +8,6 @@ var cors = require('cors');
 
 var routes = require('./routes/index');
 var products = require('./routes/products');
-var users = require('./routes/users');
 
 var app = express();
 app.set('view engine', '');
@@ -29,7 +28,6 @@ app.use('/', routes);
 // TODO: add an account route
 // but also just a header/cookie parser to limit requests to the current logged-in user
 app.use('/products', products);
-//app.use('/products/:product_id/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
