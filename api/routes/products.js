@@ -1,8 +1,9 @@
-var users = require('./routes/users');
+var express = require('express');
+var router = express.Router();
 
 // get products
-router.get('/products', function(req, res, next) {
-  res.send('');
+router.get('/', function(req, res, next) {
+	res.send('"hi there"');
 });
 
 // add product
@@ -10,18 +11,27 @@ router.get('/products', function(req, res, next) {
 // change product details
 
 router.param('product_id', function(req, res, next, product_id) {
-  // typically we might sanity check that user_id is of the right format
-  UserDatabase.find(product_id, function(err, product) {
-    if (err) return next(err);
-    if (!product) return next(...create a 404 error...);
- 
-    req.product = product;
-    next()
+  // TODO: assert product_id is an integer
+  
+  var pgclient = req.app.get('pgclient');
+  
+  var query = pgclient.query({
+	  text: 'select name from products where id=$1',
+	  values: product_id
+  });
+  query.on('row', function(row) {
+	  req.product = row;
+	  next();
+  });
+  query.on('error', function(error) {
+	  next(error);
   });
 });
 
-router.post('/products/:product_id', function(req, res, next) {
-  res.send('');
+// get product
+router.get('/:product_id', function(req, res, next) {
+	var prod = req.product;
+	res.json(prod);
 });
 
-router.use('/products/:product_id/users', users);
+module.exports = router;

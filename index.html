@@ -78,10 +78,8 @@
 			});
 			
 			$(window).load(function() {
-				$.ajax({
-					success: function(val) {
-						$("#productName").text(val);
-					}
+				$.get("http://localhost:3000/products/1", function (data) {
+					$("#productName").text(data.name);
 				});
 				
 			});

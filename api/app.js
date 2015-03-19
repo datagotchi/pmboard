@@ -7,20 +7,29 @@ var bodyParser = require('body-parser');*/
 var cors = require('cors');
 
 var routes = require('./routes/index');
+var products = require('./routes/products');
+var users = require('./routes/users');
 
 var app = express();
-
-// uncomment after placing your favicon in /public
-//app.use(favicon(__dirname + '/public/favicon.ico'));
-/*app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));*/
-
+app.set('view engine', '');
 app.use(cors());
 
+// set up postgres
+var pg = require('pg');
+var conString = "postgres://postgres:@localhost/testdb";
+var pgclient = new pg.Client(conString);
+pgclient.connect(function(err) {
+  if(err) {
+    return console.error('could not connect to postgres', err);
+  }
+});
+app.set('pgclient', pgclient); 
+
 app.use('/', routes);
+// TODO: add an account route
+// but also just a header/cookie parser to limit requests to the current logged-in user
+app.use('/products', products);
+//app.use('/products/:product_id/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -36,7 +45,7 @@ app.use(function(req, res, next) {
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
-    res.render('error', {
+    res.json({
       message: err.message,
       error: err
     });
@@ -47,7 +56,7 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
-  res.render('error', {
+  res.json({
     message: err.message,
     error: {}
   });
