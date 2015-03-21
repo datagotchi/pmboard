@@ -51,33 +51,14 @@ router.get('/:product_id', function(req, res, next) {
 
 // get user personas
 router.get('/:product_id/personas', function(req, res, next) {
-  //var Product = req.app.get('Product');
   var prod = req.product;
   res.json(prod.personas);
 });
 
 // add user persona
 router.put('/:product_id/personas', function(req, res, next) {
-  var Product = req.app.get('Product');
-  console.log("Product = ", Product);
   var prod = req.product;
-  console.log("prod = ", prod);
   var newpersona = req.body.value;
-  console.log("adding new persona: ", newpersona);
-  //prod.update({_id: ObjectId("550cb3c96c2de13ab1cdd5fa")}, {$push: {personas: {name: newpersona}}});
-  
-  /*Product.findbyId(prod._id, function(err, product) {
-    console.log("got product: ", product);
-    product.personas.push(req.body.value);
-    return product.save(function (err) {
-      if (!err) {
-        console.log("updated");
-      } else {
-        console.log(err);
-      }
-      return res.send(product);
-    });
-  });*/
   
   prod.personas.push({name: newpersona});
   
@@ -90,17 +71,53 @@ router.put('/:product_id/personas', function(req, res, next) {
     } else {
       return res.json({
         success: true,
-        product: prod
+        personas: prod.personas
       });
     }
   });
 });
 
 // change user persona
-router.post('/:product_id/personas/:persona_name', function(req, res, next) {
-  var old_name = req.params.persona_name;
-  // TODO: get new persona name & update db
-  res.send('');
+router.post('/:product_id/personas', function(req, res, next) {
+  var prod = req.product;
+  var ix = req.body.pk;
+  prod.personas.splice(ix, 1, {name: req.body.value});
+  //prod.personas[ix].name = req.body.value;
+    
+  return prod.save(function(err) {
+    if (err) {
+      return res.json({
+        success: false,
+        error: err
+      });
+    } else {
+      return res.json({
+        success: true,
+        personas: prod.personas
+      });
+    }
+  });
+});
+
+// delete user persona
+router.delete('/:product_id/personas', function(req, res, next) {
+  var prod = req.product;
+  var ix = req.body.pk;
+  prod.personas.splice(ix, 1);
+    
+  return prod.save(function(err) {
+    if (err) {
+      return res.json({
+        success: false,
+        error: err
+      });
+    } else {
+      return res.json({
+        success: true,
+        personas: prod.personas
+      });
+    }
+  });
 });
 
 /* // user data stuff
