@@ -1,33 +1,43 @@
 var express = require('express');
 var router = express.Router();
+var mongoose = require('mongoose');
+var ObjectId = mongoose.Types.ObjectId;
 
 // get products
 router.get('/', function(req, res, next) {
-	var pgclient = req.app.get('pgclient');
-	var query = pgclient.query("select * from products", function(err, result) {
-  	res.json(result.rows);
-	});
+	var Product = req.app.get('Product');
+	Product.find(function(err, products) {
+  	if (!err) {
+      res.json(products);
+    } else {
+      next(err);
+    }
+  });
 });
 
 // add product
+router.put('/', function(req, res, next) {
+  var Product = req.app.get('Product');
+  /*var newprod = new Product({
+    name: 
+  });
+  newprod.save();
+  */
+});
 
 // change product details
 
 router.param('product_id', function(req, res, next, product_id) {
   // TODO: assert product_id is an integer
   
-  var pgclient = req.app.get('pgclient');
-  
-  var query = pgclient.query({
-	  text: 'select * from products where id=$1',
-	  values: [product_id]
-  });
-  query.on('row', function(row) {
-	  req.product = row;
-	  next();
-  });
-  query.on('error', function(error) {
-	  next(error);
+  var Product = req.app.get('Product');
+  Product.findById(product_id, function(err, product) {
+    if (!err) {
+      req.product = product;
+      next();
+    } else {
+      next(err);
+    }
   });
 });
 
@@ -41,26 +51,55 @@ router.get('/:product_id', function(req, res, next) {
 
 // get user personas
 router.get('/:product_id/personas', function(req, res, next) {
-  var pgclient = req.app.get('pgclient');
+  //var Product = req.app.get('Product');
   var prod = req.product;
-  var query = pgclient.query({
-	  text: 'select * from personas where product_id=$1',
-	  values: [req.product.id]
-  }, function(err, result) {
-	  if (err) next(err);
-	  res.json(result.rows);
-  });
+  res.json(prod.personas);
 });
 
 // add user persona
 router.put('/:product_id/personas', function(req, res, next) {
-  var pgclient = req.app.get('pgclient');
-  res.send('');
+  var Product = req.app.get('Product');
+  console.log("Product = ", Product);
+  var prod = req.product;
+  console.log("prod = ", prod);
+  var newpersona = req.body.value;
+  console.log("adding new persona: ", newpersona);
+  //prod.update({_id: ObjectId("550cb3c96c2de13ab1cdd5fa")}, {$push: {personas: {name: newpersona}}});
+  
+  /*Product.findbyId(prod._id, function(err, product) {
+    console.log("got product: ", product);
+    product.personas.push(req.body.value);
+    return product.save(function (err) {
+      if (!err) {
+        console.log("updated");
+      } else {
+        console.log(err);
+      }
+      return res.send(product);
+    });
+  });*/
+  
+  prod.personas.push({name: newpersona});
+  
+  return prod.save(function(err) {
+    if (err) {
+      return res.json({
+        success: false,
+        error: err
+      });
+    } else {
+      return res.json({
+        success: true,
+        product: prod
+      });
+    }
+  });
 });
 
 // change user persona
 router.post('/:product_id/personas/:persona_name', function(req, res, next) {
-  var type_name = req.params.type_name;
+  var old_name = req.params.persona_name;
+  // TODO: get new persona name & update db
   res.send('');
 });
 

@@ -1,33 +1,31 @@
 var express = require('express');
-/*var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');*/
+var bodyParser = require('body-parser');
 var cors = require('cors');
-
+var mongoose = require('mongoose');
 var routes = require('./routes/index');
 var products = require('./routes/products');
 
 var app = express();
-app.set('view engine', '');
 app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
-// set up postgres
-var pg = require('pg');
-var conString = "postgres://postgres:@localhost/testdb";
-var pgclient = new pg.Client(conString);
-pgclient.connect(function(err) {
-  if(err) {
-    return console.error('could not connect to postgres', err);
-  }
+mongoose.connect("mongodb://localhost/products");
+//var db = mongoose.connection;
+//app.set('db', db); 
+var productSchema = new mongoose.Schema({
+  name: String,
+  personas: Array
 });
-app.set('pgclient', pgclient); 
+var Product = mongoose.model('Product', productSchema);
+app.set('Product', Product);
 
-app.use('/', routes);
+//app.use('/', routes);
 // TODO: add an account route
 // but also just a header/cookie parser to limit requests to the current logged-in user
 app.use('/products', products);
+
+// error handlers
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -35,8 +33,6 @@ app.use(function(req, res, next) {
   err.status = 404;
   next(err);
 });
-
-// error handlers
 
 // development error handler
 // will print stacktrace
