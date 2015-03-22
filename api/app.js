@@ -2,7 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var cors = require('cors');
 var mongoose = require('mongoose');
-var routes = require('./routes/index');
+//var routes = require('./routes/index');
 var products = require('./routes/products');
 
 var app = express();
@@ -10,14 +10,55 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-mongoose.connect("mongodb://localhost/products");
-//var db = mongoose.connection;
-//app.set('db', db); 
+app.post('/user/login',  function(req, res, next) {
+  // TODO: convert to mongojs - not really using the document model for anything
+  // OR: create a larger User model and express route (get user, add user, list users [by search], etc)
+  var db = mongoose.createConnection("mongodb://localhost/users");
+  var userSchema = new mongoose.Schema({
+    "oauth": {
+      "oauth_token": String,
+      "oauth_token_secret": String,
+      "provider": String
+    },
+    "products": Array
+  });
+  var User = db.model('User', userSchema);
+  var oauth_token = req.body.oauth_token;
+  var oauth_token_secret = req.body.oauth_token_secret;
+  var provider = req.body.provider;
+  var search = {
+    oauth: {
+      oauth_token: oauth_token,
+      oauth_token_secret: oauth_token_secret,
+      provider: provider
+    }
+  };
+  console.log("search: ", search);
+  User.findOne(search, function(err, user) {
+    console.log("user: ", user);
+    if (err) {
+      next(err);
+    }
+  	if (user) {
+      res.json({
+        success: true,
+        user: user
+      });
+    } else {
+      res.json({
+        success: false,
+        msg: "No such user"
+      });
+    }
+  });
+});
+
+var proddb = mongoose.createConnection("mongodb://localhost/products");
 var productSchema = new mongoose.Schema({
   name: String,
   personas: Array
 });
-var Product = mongoose.model('Product', productSchema);
+var Product = proddb.model('Product', productSchema);
 app.set('Product', Product);
 
 //app.use('/', routes);
