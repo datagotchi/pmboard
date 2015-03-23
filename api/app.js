@@ -11,17 +11,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.post('/user/login',  function(req, res, next) {
-  // TODO: convert to mongojs - not really using the document model for anything
-  // OR: create a larger User model and express route (get user, add user, list users [by search], etc)
   var db = mongoose.createConnection("mongodb://localhost/users");
-  var userSchema = new mongoose.Schema({
-    "oauth": {
-      "oauth_token": String,
-      "oauth_token_secret": String,
-      "provider": String
-    },
-    "products": Array
-  });
+  var userSchema = require('./schema/User');
   var User = db.model('User', userSchema);
   var oauth_token = req.body.oauth_token;
   var oauth_token_secret = req.body.oauth_token_secret;
@@ -33,9 +24,7 @@ app.post('/user/login',  function(req, res, next) {
       provider: provider
     }
   };
-  console.log("search: ", search);
   User.findOne(search, function(err, user) {
-    console.log("user: ", user);
     if (err) {
       next(err);
     }
@@ -54,10 +43,7 @@ app.post('/user/login',  function(req, res, next) {
 });
 
 var proddb = mongoose.createConnection("mongodb://localhost/products");
-var productSchema = new mongoose.Schema({
-  name: String,
-  personas: Array
-});
+var productSchema = require('./schema/Product.js');
 var Product = proddb.model('Product', productSchema);
 app.set('Product', Product);
 

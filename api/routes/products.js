@@ -82,7 +82,6 @@ router.post('/:product_id/personas', function(req, res, next) {
   var prod = req.product;
   var ix = req.body.pk;
   prod.personas.splice(ix, 1, {name: req.body.value});
-  //prod.personas[ix].name = req.body.value;
     
   return prod.save(function(err) {
     if (err) {
