@@ -7,6 +7,7 @@ var userSchema = new mongoose.Schema({
       "provider": String
     },
     "products": Array
+    // TODO: add their current set of widgets/perspective (or make it per-product?)
   }
 );
 

@@ -53,6 +53,20 @@ function userResearchInfo() {
 
 //$(document).ready(function() {
 function init() {
+  
+  $(window).load(function() {
+      $('#widgets').boardwidget({
+        title: 'Test Header',
+        columns: ['Col1'],
+        rows: ['testval'],
+        addmoreText: "Add another Test",
+        addmoreAtts: {
+          id: 'addtest'
+        }
+      });
+    });
+  /*
+  
   product_url = "http://localhost:3000/products/" + prod_id;
   personas_url = product_url + "/personas";
   for (var p = 0; p < products.length; p++) {
@@ -155,4 +169,5 @@ function init() {
 	$.get(personas_url, updatePersonas);
 	
 //});
+*/
 }

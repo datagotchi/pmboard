@@ -1,15 +1,23 @@
 <html>
 	<head>
 		<title>PMBoard by Social Ergonomics</title>
+		
+		<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 		<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+		<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+		
 		<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet" />
 		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+		
 		<link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+		
 		<script src="js/lib/oauth.js"></script>
+		
 		<script src="js/lib/jquery.cookie.js"></script>
 		<style>
 			#widgets {
+  			border: 1px red solid;
 			}
 			#widgets > div {
 				vertical-align: top;
@@ -29,6 +37,7 @@
 				font-size: larger;
 			}
 		</style>
+		<script src="js/widget.js"></script>
 		<script src="js/main.js"></script>
 	</head>
 	
@@ -75,15 +84,16 @@
 		
 		<div id="widgets">
 		
-			<div class="panel panel-default widget" id="personas">
+			<!--<div class="panel panel-default widget" id="personas">
 			  <div class="panel-heading">
 			    <h3 class="panel-title">Who are your users?</h3>
 			  </div>
 			  <div class="panel-body">
   				<ul class="list-group">
   				</ul>
+			  </div>
+			  <div class="panel-footer">
   				<a href="#" class="editable-value new-value" id="newpersona" data-type="text" data-pk="new" data-placeholder="Enter a user type" ><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add another user type</a>
-  				<button type="button" class="btn btn-large btn-danger" data-toggle="modal" data-target="#requestResearch">Request User Research</button>
 			  </div>
 			</div>
 			
@@ -104,6 +114,8 @@
   						<input type="file" class="file" />
 			    	</li>
 				</ul>
+			  </div>
+			  <div class="panel-footer">
 				<a href="#" class="editable-value new-value" id="newpersona" data-type="text" data-pk="new" data-placeholder="Enter a user type" ><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add another feature</a>
 			  </div>
 			</div>
@@ -118,7 +130,7 @@
 				    60% - upload screenshots
 				  </div>
 				</div>
-				<button type="button" class="btn btn-large btn-danger" data-toggle="modal" data-target="#requestEvaluation" disabled="disabled">Request a UX Evaluation</button>
+				<div style="text-align: center"><button type="button" class="btn btn-large btn-danger" data-toggle="modal" data-target="#requestEvaluation" disabled="disabled">Request a UX Evaluation</button></div>
 				<ul class="list-group" id="evaluationResults" style="display:none">
 					<li class="list-group-item">
 			    		<span class="label-success label">Looks super useful!</span>
@@ -132,7 +144,7 @@
 				</ul>
 			  </div>
 			</div>
-		
+		-->
 		</div>
 		<div class="modal fade" id="requestEvaluation">
 		  <div class="modal-dialog">
@@ -145,7 +157,7 @@
 		        <p>blah blah</p>
 		      </div>
 		      <div class="modal-footer">
-		        <button type="button" class="btn btn-primary" data-dismiss="modal">Buy Now!</button>
+		        <div style="text-align: center"><button type="button" class="btn btn-primary" data-dismiss="modal">Buy Now!</button></div>
 		      </div>
 		    </div><!-- /.modal-content -->
 		  </div><!-- /.modal-dialog -->
