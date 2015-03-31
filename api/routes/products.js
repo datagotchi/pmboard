@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var oauth = require('oauthio');
 var mongoose = require('mongoose');
 var ObjectId = mongoose.Types.ObjectId;
 
@@ -31,28 +32,32 @@ router.param('product_id', function(req, res, next, product_id) {
   // TODO: assert product_id is an integer
   
   var Product = req.app.get('Product');
-  Product.findById(product_id, function(err, product) {
-    if (!err) {
-      req.product = product;
-      next();
-    } else {
-      next(err);
-    }
-  });
+  oauth.auth('google', req.session)
+  .then(function (request_object) {
+      // TODO: validate w/ req.session.email that they have access to the product
+      Product.findById(product_id, function(err, product) {
+        if (!err) {
+          req.product = product;
+          next();
+        } else {
+          next(err);
+        }
+      });
+  })
 });
 
 // get product
 router.get('/:product_id', function(req, res, next) {
-	var prod = req.product;
-	res.json(prod);
+  //var prod = req.product;
+  res.json(req.product);
 });
 
 // ***** user personas *****
 
 // get user personas
 router.get('/:product_id/personas', function(req, res, next) {
-  var prod = req.product;
-  res.json(prod.personas);
+  //var prod = req.product;
+  res.json(req.product.personas);
 });
 
 // add user persona

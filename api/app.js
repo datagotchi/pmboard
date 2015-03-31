@@ -1,58 +1,51 @@
 var express = require('express');
+var session = require('express-session');
 var bodyParser = require('body-parser');
-var cors = require('cors');
+var cookieParser = require('cookie-parser');
+var csrf = require('csurf');
+//var cors = require('cors');
 var mongoose = require('mongoose');
 //var routes = require('./routes/index');
 var products = require('./routes/products');
+var oauth_route = require('./routes/oauth');
+var oauth = require('oauthio');
 
 var app = express();
-app.use(cors());
+
+app.use(express.static('..'));
+//app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-
-app.post('/user/login',  function(req, res, next) {
-  var db = mongoose.createConnection("mongodb://localhost/users");
-  var userSchema = require('./schema/User');
-  var User = db.model('User', userSchema);
-  var oauth_token = req.body.oauth_token;
-  var oauth_token_secret = req.body.oauth_token_secret;
-  var provider = req.body.provider;
-  var search = {
-    oauth: {
-      oauth_token: oauth_token,
-      oauth_token_secret: oauth_token_secret,
-      provider: provider
-    }
-  };
-  User.findOne(search, function(err, user) {
-    if (err) {
-      next(err);
-    }
-  	if (user) {
-      res.json({
-        success: true,
-        user: user
-      });
-    } else {
-      res.json({
-        success: false,
-        msg: "No such user"
-      });
-    }
-  });
+app.use(cookieParser());
+app.use(session({
+  secret: 'keyboard cat',
+  resave: true,
+  saveUninitialized: false
+}));
+app.use(csrf());
+app.use(function(req, res, next) {
+  res.cookie('XSRF-TOKEN', req.csrfToken());
+  res.locals.csrftoken = req.csrfToken();
+  next();
 });
 
+/* Initialize and route oauth if necessary */
+try {
+  var config = require('./config');
+  oauth.initialize(config.key, config.secret);
+} catch (e) {
+  console.log(e);
+}
+app.use('/oauth', oauth_route);
+
+/* Initialize MongoDB & Express route for product requests */
 var proddb = mongoose.createConnection("mongodb://localhost/products");
 var productSchema = require('./schema/Product.js');
 var Product = proddb.model('Product', productSchema);
 app.set('Product', Product);
-
-//app.use('/', routes);
-// TODO: add an account route
-// but also just a header/cookie parser to limit requests to the current logged-in user
 app.use('/products', products);
 
-// error handlers
+/* Error Handlers */
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
