@@ -8,50 +8,21 @@ OAuth.initialize('K2P2q3_J6a76xcMJCcRRYTrbJ2c'); // TODO: hide this key somewher
 $.cookie.json = true;
 
 $(window).load(function() {
-	/*var cookie = $.cookie('oauth');
-  if (!cookie || !cookie.provider || !cookie.oauth_token || !cookie.oauth_token_secret) {
-    OAuth.popup('google')
-        .done(function(result) {
-          //login(result.toJson());
-          console.log("result: ", result);
-          result.me().done(function(user) {
-            console.log("user: ", user);
-          })
-        })
-        .fail(function (err) {
-          console.error(err);
-        }
-    );
-  } else {
-    login(cookie);
-  }*/
-  
-//  if (!getCookie('XSRF-TOKEN')) {
-    // calls your function to retrieve a token from your endpoint
+  if (!getCookie('XSRF-TOKEN')) {
     retrieve_token(function(err, token) {
-      // calls your function to launch a popup with the state token
-      // and call the authentication endpoint with the resulting code
       if (err) {
         console.error(err);
       } else {
         authenticate(token, function(err, data) {
-          /*if (err) {
-            console.error(err);
-          } else {
-            // calls your function to call your request endpoint
-            retrieve_user_info(function(data) {*/
-              // fills elements in the page with the user info
-              if (data.success) {
-                products = data.user.products;
-                prod_id = products[0].id; // TODO: fetch the product they were last using
-                init();
-              }
-            //});
-          //}
+          if (data.success) {
+            products = data.user.products;
+            prod_id = products[0].id; // TODO: fetch the product they were last using
+            init();
+          }
         });
       }
     });
-//  }
+  }
 });
 
 function retrieve_token(callback) {
@@ -121,7 +92,6 @@ function userResearchInfo() {
 	return x;
 }
 
-//$(document).ready(function() {
 function init() {
   
   //product_url = "http://localhost:3000/products/" + prod_id;
@@ -147,12 +117,13 @@ function init() {
 	});
 	
 	personas_url = product_url + "/personas";
+	// TODO: move into a separate file/database so lots of wigets can exist in PMBoard
 	$('#widgets').boardwidget({
     title: 'Who are your users?',
-    columns: ['Evidence', 'Name'],
+    columns: ['Name', 'Evidence'],
     wrappers: [
-      '<button type="button" class="evidence btn btn-default label-danger label" data-toggle="popover" data-placement="top" data-trigger="focus" title="Number of pieces of evidence" data-content="lorem ipsum">',
-      '<a href="#" class="editable-value editable-click" data-name="persona{i}" data-type="text" data-pk="{i}">'
+      '<a href="#" class="editable-value editable-click" data-name="persona{i}" data-type="text" data-pk="{i}">',
+      '<button type="button" class="evidence btn btn-default label-danger label" data-toggle="popover" data-placement="top" data-trigger="focus" title="Number of pieces of evidence" data-content="lorem ipsum">'
     ],
     api: personas_url,
     addmoreText: "Add another user type",
@@ -179,19 +150,4 @@ function init() {
 		var prod_name = data.name;
 		$("#productName").text(prod_name);
 	});
-		
-	//$.get(personas_url, updatePersonas);
-	
-//});
 }
-	/*$("#personas .list-group").empty();
-	for (var i = 0; i < personas.length; i++) {
-		var persona = personas[i];
-		$("#personas .list-group").append(
-			'<li class="list-group-item input-group">'
-	    + '<button class="btn btn-default glyphicon glyphicon-remove remove-persona" type="button"></button>'
-  		+ '<a href="#" class="editable-value editable-click" data-name="persona' + i + '" data-type="text" data-pk="' + i +'">' + persona.name + '</a>&nbsp;&nbsp;' 
-  		+ '<button type="button" class="evidence btn btn-default label-danger label" data-toggle="popover" data-placement="top" data-trigger="focus" title="Number of pieces of evidence" data-content="lorem ipsum">0</button>'
-      + '</li>'
-		);
-	}*/

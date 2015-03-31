@@ -25,11 +25,8 @@ $.widget("pmboard.boardwidget", {
   
   _create: function() {
     var This = this;
-    // get widget.html template & add to the DOM
     $.get(this.options.template, function(data) {
       var el = $(data);
-        // fill in values in the widget's html
-        
         el.find('.panel-title').text(This.options.title);
         
         var tHead = $('<thead>');
@@ -42,19 +39,6 @@ $.widget("pmboard.boardwidget", {
           tHead.append('<th>Delete</th>');
           $(document).on('click', '.remove-item', function(e) {
         		var Elem = this;
-        		/*$.ajax({
-        			method: 'delete',
-        			url: This.options.api,
-        			dataType: 'json',
-        			contentType: 'application/json; charset=utf-8',
-        			data: JSON.stringify({
-          			pk: $(Elem).next().attr("data-pk")
-        			}),
-        			//'{"pk": "' + $(This).next().attr("data-pk") + '"}',
-        			success: function() {
-        				$(Elem).parent().remove();
-        			}
-        		});*/
         		This.options.deleteItem(Elem);
         	});
         }

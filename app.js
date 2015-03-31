@@ -12,7 +12,7 @@ var oauth = require('oauthio');
 
 var app = express();
 
-app.use(express.static('..'));
+app.use(express.static('public'));
 //app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
