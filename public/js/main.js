@@ -4,17 +4,30 @@ var prod_id;
 var product_url;
 var personas_url;
 
-OAuth.initialize('K2P2q3_J6a76xcMJCcRRYTrbJ2c'); // TODO: hide this key somewhere in an ajax call? 
+OAuth.initialize('K2P2q3_J6a76xcMJCcRRYTrbJ2c'); // TODO: hide this key somewhere via an ajax call? 
 $.cookie.json = true;
 
 $(window).load(function() {
-  if (!getCookie('XSRF-TOKEN')) {
+  // TODO: get this working without forcing another auth - saved identity token???
+  if ($.cookie('email') && getCookie('XSRF-TOKEN')) {
+    $.ajaxSetup({
+  		beforeSend: function(xhr, settings) {
+  			xhr.setRequestHeader("x-csrf-token", getCookie('XSRF-TOKEN')); // FIXME $.cookie is broken here???
+  		}
+		});
+		$.get('/user', function(data) {
+  		products = data.user.products;
+      prod_id = products[0].id; // TODO: fetch the product they were last using
+      init();
+		});
+  } else {
     retrieve_token(function(err, token) {
       if (err) {
         console.error(err);
       } else {
         authenticate(token, function(err, data) {
           if (data.success) {
+            //$.cookie('email', data.user.email);
             products = data.user.products;
             prod_id = products[0].id; // TODO: fetch the product they were last using
             init();
@@ -43,13 +56,13 @@ function authenticate(token, callback) {
 		// Google requires the following field 
 		// to get a refresh token
 		//authorize: {
-		  //approval_prompt: 'force'
+		//  approval_prompt: 'force'
 		//}
 	})
 		.done(function(r) {
   		$.ajaxSetup({
     		beforeSend: function(xhr, settings) {
-    			xhr.setRequestHeader("x-csrf-token", getCookie('XSRF-TOKEN'));
+    			xhr.setRequestHeader("x-csrf-token", getCookie('XSRF-TOKEN')); // FIXME $.cookie is broken here???
     		}
   		});
 			$.ajax({
@@ -94,7 +107,6 @@ function userResearchInfo() {
 
 function init() {
   
-  //product_url = "http://localhost:3000/products/" + prod_id;
   product_url = "/products/" + prod_id;
   
   for (var p = 0; p < products.length; p++) {
@@ -105,16 +117,16 @@ function init() {
     }
   }
   
-	$('[data-toggle="popover"]').popover({
-		html: true,
-		content: userResearchInfo
-	});
-	$('#requestEvaluation').on('hidden.bs.modal', function() {
-		$("#evaluationResults").show();
-	});
-	$('input:file').change(function() {
-		$('[data-target="#requestEvaluation"]').prop('disabled', false);
-	});
+	//$('[data-toggle="popover"]').popover({
+	//	html: true,
+	//	content: userResearchInfo
+	//});
+	//$('#requestEvaluation').on('hidden.bs.modal', function() {
+	//	$("#evaluationResults").show();
+	//});
+	//$('input:file').change(function() {
+	//	$('[data-target="#requestEvaluation"]').prop('disabled', false);
+	//});
 	
 	personas_url = product_url + "/personas";
 	// TODO: move into a separate file/database so lots of wigets can exist in PMBoard
@@ -122,7 +134,8 @@ function init() {
     title: 'Who are your users?',
     columns: ['Name', 'Evidence'],
     wrappers: [
-      '<a href="#" class="editable-value editable-click" data-name="persona{i}" data-type="text" data-pk="{i}">',
+      '<a href="#" data-toggle="modal" data-target="#widgetApp">',
+      //'<a href="#" class="editable-value editable-click" data-name="persona{i}" data-type="text" data-pk="{i}">',
       '<button type="button" class="evidence btn btn-default label-danger label" data-toggle="popover" data-placement="top" data-trigger="focus" title="Number of pieces of evidence" data-content="lorem ipsum">'
     ],
     api: personas_url,
@@ -130,21 +143,27 @@ function init() {
     addmoreAtts: {
       id: 'newpersona'
     },
-    deleteItem: function(Elem) {
+    deleteItem: function(elem) {
   		$.ajax({
   			method: 'delete',
   			url: personas_url, // this.options.api
   			dataType: 'json',
   			contentType: 'application/json; charset=utf-8',
   			data: JSON.stringify({
-    			pk: $(Elem).parent().find('a.editable-value').attr("data-pk")
+    			pk: $(elem).parent().find('a.editable-value').attr("data-pk")
   			}),
   			success: function() {
-  				$(Elem).parent().remove();
+  				$(elem).parent().remove();
   			}
   		});
+    },
+    viewModal: function(dlg) {
+      $(dlg).find('h4.modal-title').text('User Diagnostics');
+      $(dlg).
     }
   });
+  
+  $("#loading").hide();
 	
 	$.get(product_url, function (data) {
 		var prod_name = data.name;

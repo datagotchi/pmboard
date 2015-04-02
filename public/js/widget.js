@@ -7,6 +7,7 @@ $.widget("pmboard.boardwidget", {
     {name: "Type1", evidence: 5}, // test data
     {name: "Type2", evidence: 0}
   ],
+  modal: null,
   
   // properties to specialize the widget (mostly specified on constructor, but can also be changed via _setOptions)
   options: {
@@ -20,13 +21,17 @@ $.widget("pmboard.boardwidget", {
     // intended result: <a href="#" class="editable-value new-value" id="newpersona" data-type="text" data-pk="new"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add another feature</a>
     
     // TODO: add callbacks from user actions
-    deleteItem: null
+    deleteItem: null,
+    modalValues: null,
+    modalId: ''
   },
   
   _create: function() {
     var This = this;
-    $.get(this.options.template, function(data) {
-      var el = $(data);
+    $.get(this.options.template, function(widget) {
+      
+      // set up widget element
+      var el = $(widget);
         el.find('.panel-title').text(This.options.title);
         
         var tHead = $('<thead>');
@@ -77,6 +82,12 @@ $.widget("pmboard.boardwidget", {
       el.appendTo(This.element);
       
       This._refresh();
+      
+      // set up modal dialog
+      if (this.options.modalValues && this.options.modalId) {
+        this.modal = new widgetModal(this.options.modalValues, this.options.modalId);
+        // ...
+      }
     });
   },
   
@@ -112,6 +123,12 @@ $.widget("pmboard.boardwidget", {
         var td = $('<td>')
           .append(val)
           .appendTo(tr);
+        // TODO: set up modal for this data item
+        var modalLink = td.find('[data-toggle="modal"]');
+        if (modalLink) {
+          var id = modalLink.attr('data-target');
+          
+        }
       }
       if (delCol) $(delCol).appendTo(tr);
       tr.appendTo(tbl); 
@@ -137,3 +154,36 @@ $.widget("pmboard.boardwidget", {
   	});
   }
 });
+
+// values: title, body, footer
+function widgetModal(values, id) {
+  
+  // opts:
+  // - label: text to put on the tab
+  // - ...
+  this.addTab = function(opts) {
+    
+  };
+  
+  // **** constructor ****
+  
+  this.template = "modal.html";
+  
+  // load modal template
+  $.get(this.template, function(data) {
+    var modal = $(data);
+    
+    // set id
+    modal.attr('id', id);
+    
+    // set .modal-* content
+    for (var key in values) {
+      modal.find('.modal-' + key).text(values[key]);
+    }
+    
+    // add to document body
+    $('body').append(modal);
+  });
+  
+  
+}
