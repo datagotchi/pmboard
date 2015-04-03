@@ -12,6 +12,7 @@ $.widget("pmboard.boardwidget", {
   // properties to specialize the widget (mostly specified on constructor, but can also be changed via _setOptions)
   options: {
     template: "widget.html",
+    id: "",
     title: "",
     columns: [],
     wrappers: [], // e.g., <a>, <span>, etc.
@@ -21,9 +22,7 @@ $.widget("pmboard.boardwidget", {
     // intended result: <a href="#" class="editable-value new-value" id="newpersona" data-type="text" data-pk="new"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add another feature</a>
     
     // TODO: add callbacks from user actions
-    deleteItem: null,
-    modalValues: null,
-    modalId: ''
+    deleteItem: null
   },
   
   _create: function() {
@@ -33,6 +32,7 @@ $.widget("pmboard.boardwidget", {
       // set up widget element
       var el = $(widget);
         el.find('.panel-title').text(This.options.title);
+        el.attr('id', This.options.id);
         
         var tHead = $('<thead>');
         for (var i = 0; i < This.options.columns.length; i++) {
@@ -82,11 +82,11 @@ $.widget("pmboard.boardwidget", {
       
       This._refresh();
       
-      // set up modal dialog
-      if (this.options.modalValues && this.options.modalId) {
-        this.modal = new widgetModal(this.options.modalValues, this.options.modalId);
-        // ...
-      }
+      var modalId = This.options.id + 'modal';
+      this.modal = new widgetModal(this.options.modalId);
+      $('<div class="modal fade" id="' + modalId + '"></div>')
+        .append(this.modal)
+        .appendTo($('body'));
     });
   },
   
@@ -124,11 +124,11 @@ $.widget("pmboard.boardwidget", {
           .append(val)
           .appendTo(tr);
         // TODO: set up modal for this data item
-        var modalLink = td.find('[data-toggle="modal"]');
+        /*var modalLink = td.find('[data-toggle="modal"]');
         if (modalLink) {
-          var id = modalLink.attr('data-target');
-          
-        }
+          var modalId = '#' + this.options.id + 'modal';
+          modalLink.attr('data-target', modalId);
+        }*/
       }
       if (delCol) $(delCol).appendTo(tr);
       tr.appendTo(tbl); 
@@ -152,11 +152,15 @@ $.widget("pmboard.boardwidget", {
   			console.err(a, b);
   		}
   	});
+  },
+  
+  showModal: function(values) {
+    if (this.modal) this.modal.show(values);
   }
 });
 
 // values: title, body, footer
-function widgetModal(values, id) {
+function widgetModal(containerId) {
   
   // opts:
   // - label: text to put on the tab
@@ -164,6 +168,15 @@ function widgetModal(values, id) {
   this.addTab = function(opts) {
     
   };
+  
+  this.show = function(values) {
+    // set .modal-* content
+    for (var key in values) {
+      modal.find('.modal-' + key).text(values[key]);
+    }
+    
+    $(containerId).append(modal);
+  }
   
   // **** constructor ****
   
@@ -174,15 +187,7 @@ function widgetModal(values, id) {
     var modal = $(data);
     
     // set id
-    modal.attr('id', id);
-    
-    // set .modal-* content
-    for (var key in values) {
-      modal.find('.modal-' + key).text(values[key]);
-    }
-    
-    // add to document body
-    $('body').append(modal);
+    //modal.attr('id', id);
   });
   
   

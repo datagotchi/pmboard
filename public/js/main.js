@@ -133,9 +133,10 @@ function init() {
 	// TODO: move into a separate file/database so lots of wigets can exist in PMBoard
 	$('#widgets').boardwidget({
     title: 'Who are your users?',
+    id: "users",
     columns: ['Name', 'Evidence'],
     wrappers: [
-      '<a href="#" data-toggle="modal" data-target="#widgetApp">',
+      '<a href="#" data-toggle="modal">',
       //'<a href="#" class="editable-value editable-click" data-name="persona{i}" data-type="text" data-pk="{i}">',
       '<button type="button" class="evidence btn btn-default label-danger label" data-toggle="popover" data-placement="top" data-trigger="focus" title="Number of pieces of evidence" data-content="lorem ipsum">'
     ],
