@@ -43,8 +43,7 @@ $.widget("pmboard.boardwidget", {
         if (This.options.deleteItem) { 
           tHead.append('<th>Delete</th>');
           $(document).on('click', '.remove-item', function(e) {
-        		var Elem = this;
-        		This.options.deleteItem(Elem);
+        		This.options.deleteItem(this);
         	});
         }
         tHead.appendTo(el.find('.panel-body .table'));
@@ -108,7 +107,7 @@ $.widget("pmboard.boardwidget", {
     
     var delCol = '';
     if (this.options.deleteItem) {
-      delCol = '<button class="btn btn-default glyphicon glyphicon-remove remove-item" type="button"></button>';
+      delCol = '<td><button class="btn btn-default glyphicon glyphicon-remove remove-item" type="button"></button></td>';
     }
     
     // refresh rows
@@ -117,6 +116,7 @@ $.widget("pmboard.boardwidget", {
     for (var i = 0; i < this.rows.length; i++) {
       var row = this.rows[i];
       var tr = $('<tr>');
+      tr.attr('data-ix', i);
       for (var j = 0; j < this.options.columns.length; j++) {
         var col = this.options.columns[j].toLowerCase();
         var val = row[col] ? $(this.options.wrappers[j].replace(/{i}/g, i)).append(row[col]) : $(this.options.wrappers[j]).append(0);

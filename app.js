@@ -38,6 +38,18 @@ try {
 }
 app.use('/oauth', oauth_route);
 
+// TODO: fix cookie-based auth at some point, but use this (VERY INSECURE ROUTE) for now
+app.use('/user/:user_email', function(req, res, next) {
+  var db = mongoose.createConnection("mongodb://localhost/users");
+  var schema = require('./schema/User.js');
+  var User = db.model('User', schema);
+  var email = req.params.user_email
+  
+  User.findOne({email: email}, function(err, user) {
+    res.json(user);
+  });
+});
+
 /* Initialize MongoDB & Express route for product requests */
 var proddb = mongoose.createConnection("mongodb://localhost/products");
 var productSchema = require('./schema/Product.js');

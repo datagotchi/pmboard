@@ -1,10 +1,10 @@
 var mongoose = require('mongoose');
 
 var userSchema = new mongoose.Schema({
-    "oauth_login": Object,
-    "other_oauths": Array,
+    "email": String,
+    "oauths": Array,
     "products": Array
-    // TODO: add their current set of widgets/perspective (or make it per-product?)
+    // TODO: add their current set of widgets/perspective (or make it per-product)?
   }
 );
 

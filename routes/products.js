@@ -32,8 +32,8 @@ router.param('product_id', function(req, res, next, product_id) {
   // TODO: assert product_id is an integer
   
   var Product = req.app.get('Product');
-  oauth.auth('google', req.session)
-  .then(function (request_object) {
+  //oauth.auth('google', req.session)
+  //.then(function (request_object) {
       // TODO: validate w/ req.session.email that they have access to the product
       Product.findById(product_id, function(err, product) {
         if (!err) {
@@ -43,7 +43,7 @@ router.param('product_id', function(req, res, next, product_id) {
           next(err);
         }
       });
-  })
+  //});
 });
 
 // get product
@@ -106,22 +106,27 @@ router.post('/:product_id/personas', function(req, res, next) {
 // delete user persona
 router.delete('/:product_id/personas', function(req, res, next) {
   var prod = req.product;
-  var ix = req.body.pk;
-  prod.personas.splice(ix, 1);
-    
-  return prod.save(function(err) {
-    if (err) {
-      return res.json({
-        success: false,
-        error: err
-      });
-    } else {
-      return res.json({
-        success: true,
-        personas: prod.personas
-      });
-    }
-  });
+  if (req.body.ix) {
+    var ix = req.body.ix;
+    prod.personas.splice(ix, 1);
+      
+    return prod.save(function(err) {
+      if (err || !prod) {
+        return res.json({
+          success: false,
+          error: err
+        });
+      } else {
+        return res.json({
+          success: true,
+          personas: prod.personas
+        });
+      }
+    });
+  }
+ 
+  res.status(400);
+  next('Invalid request; index not specified');
 });
 
 /* // user data stuff

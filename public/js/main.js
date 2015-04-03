@@ -8,15 +8,16 @@ OAuth.initialize('K2P2q3_J6a76xcMJCcRRYTrbJ2c'); // TODO: hide this key somewher
 $.cookie.json = true;
 
 $(window).load(function() {
-  // TODO: get this working without forcing another auth - saved identity token???
+  // TODO: get this working without forcing another auth - saved identity token on server???
   if ($.cookie('email') && getCookie('XSRF-TOKEN')) {
     $.ajaxSetup({
   		beforeSend: function(xhr, settings) {
   			xhr.setRequestHeader("x-csrf-token", getCookie('XSRF-TOKEN')); // FIXME $.cookie is broken here???
   		}
 		});
-		$.get('/user', function(data) {
-  		products = data.user.products;
+		var email = $.cookie('email');
+		$.get('/user/' + email, function(user) {
+  		products = user.products;
       prod_id = products[0].id; // TODO: fetch the product they were last using
       init();
 		});
@@ -27,7 +28,7 @@ $(window).load(function() {
       } else {
         authenticate(token, function(err, data) {
           if (data.success) {
-            //$.cookie('email', data.user.email);
+            $.cookie('email', data.user.email);
             products = data.user.products;
             prod_id = products[0].id; // TODO: fetch the product they were last using
             init();
@@ -150,16 +151,17 @@ function init() {
   			dataType: 'json',
   			contentType: 'application/json; charset=utf-8',
   			data: JSON.stringify({
-    			pk: $(elem).parent().find('a.editable-value').attr("data-pk")
+    			ix: $(elem).parent().parent().attr("data-ix")
   			}),
   			success: function() {
-  				$(elem).parent().remove();
+  				$(elem).parent().parent().remove();
+  				// or could call $.boardwidget('refresh') or something like that I think
   			}
   		});
     },
     viewModal: function(dlg) {
       $(dlg).find('h4.modal-title').text('User Diagnostics');
-      $(dlg).
+      //$(dlg).
     }
   });
   
