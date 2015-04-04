@@ -131,7 +131,7 @@ function init() {
 	
 	personas_url = product_url + "/personas";
 	// TODO: move into a separate file/database so lots of wigets can exist in PMBoard
-	$('#widgets').boardwidget({
+	var users = new boardWidget({
     title: 'Who are your users?',
     id: "users",
     columns: ['Name', 'Evidence'],
@@ -144,30 +144,20 @@ function init() {
     addmoreText: "Add another user type",
     addmoreAtts: {
       id: 'newpersona'
-    },
-    deleteItem: function(elem) {
-  		$.ajax({
-  			method: 'delete',
-  			url: personas_url, // this.options.api
-  			dataType: 'json',
-  			contentType: 'application/json; charset=utf-8',
-  			data: JSON.stringify({
-    			ix: $(elem).parent().parent().attr("data-ix")
-  			}),
-  			success: function() {
-  				$(elem).parent().parent().remove();
-  				// or could call $.boardwidget('refresh') or something like that I think
-  			}
-  		});
-    },
-    viewModal: function(dlg) {
-      $(dlg).find('h4.modal-title').text('User Diagnostics');
-      //$(dlg).
-    }
+    }, 
+    container: '#widgets',
+    tabs: [
+      {}
+    ]
+  });
+  users.addModalTab({
+    label: 'Details',
+    content: '<a href="#" class="editable-value editable-click" data-name="persona{i}" data-type="text" data-pk="{i}">{name}</a>'
   });
   
   $("#loading").hide();
 	
+	// TODO: turn productName into x-editable (along with a tagline)
 	$.get(product_url, function (data) {
 		var prod_name = data.name;
 		$("#productName").text(prod_name);
