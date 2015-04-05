@@ -31,12 +31,6 @@ function boardWidget(opts) {
           .text(This.options.columns[i])
           .appendTo(tHead);
       }
-      if (This.options.deleteItem) { 
-        tHead.append('<th>Delete</th>');
-        $(document).on('click', '.remove-item', function(e) {
-      		This.options.deleteItem(this);
-      	});
-      }
       tHead.appendTo(el.find('.panel-body .table'));
       
       var addmore = $('<a href="#" class="editable-value new-value" data-type="text" data-pk="new"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> ' + This.options.addmoreText + '</a>');
@@ -94,11 +88,6 @@ boardWidget.prototype._refresh = function() {
   
 boardWidget.prototype._refreshHelper = function() {
     
-  var delCol = '';
-  if (this.options.deleteItem) {
-    delCol = '<td><button class="btn btn-default glyphicon glyphicon-remove remove-item" type="button"></button></td>';
-  }
-  
   // refresh rows
   var tbl = this.element.find('.table'); // FIXME: this will find .table in #widgets i think, not this single widget
   tbl.find('tr').remove();
@@ -116,43 +105,22 @@ boardWidget.prototype._refreshHelper = function() {
         .append(val)
         .appendTo(tr);
     }
-    if (delCol) $(delCol).appendTo(tr);
     tr.appendTo(tbl); 
   }
-  $('.editable-value').editable({
-		showbuttons: false,
-		params: function(params) { return JSON.stringify(params); },
-		onblur: 'submit',
-		url: personas_url,
-		ajaxOptions: {
-			type: 'post',
-			dataType: 'json',
-			contentType: 'application/json; charset=utf-8'
-		},
-		success: function(response, newValue) {
-			if (typeof response == "object" && !response.success) {
-				return response.error;
-			}
-		},
-		error: function(a, b) {
-			console.err(a, b);
-		}
-	});
 }
 
-boardWidget.prototype.deleteItem = function(button) {
+boardWidget.prototype.deleteItem = function(ix, callback) {
   if (this.options.api) {
-    var tr = $(button).parent().parent();
 		$.ajax({
 			method: 'delete',
 			url: this.options.api,
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
 			data: JSON.stringify({
-  			ix: tr.data('ix')
+  			ix: ix
 			}),
 			success: function() {
-				tr.remove();
+				if (callback) callback();
 			}
 		});
   }
@@ -180,7 +148,9 @@ function widgetModal(title, id, widget) {
   // load modal template
   $.get(this.template, function(html) {
     This.elem = $(html);
-    This.elem.attr('id', id)
+    This.elem
+      .attr('id', id)
+      .prop('widget', This.widget)
       .appendTo($('body'));
     This.elem.find('.modal-title').text(This.title);
     This.elem.on('show.bs.modal', function(event) {
@@ -192,30 +162,40 @@ function widgetModal(title, id, widget) {
 widgetModal.prototype.show = function(event) {
   var tr = $(event.relatedTarget).parent().parent(); // a -> td -> tr
   var data = tr.data();
-  //this.elem.find('.modal-title').text(this.title);
-  
+  var rownum = data.ix;
   this.elem.find('.nav').empty();
   this.elem.find('.tab-content').empty();
   for (var i in this.tabs) {
-    this.renderTab(i);
+    this.renderTab(i, rownum);
   }
+  var Modal = this;
+  this.elem.find('.remove-item').click(function(event) {
+    Modal.widget.deleteItem(rownum, function() {
+      Modal.elem.modal('hide');
+    });
+  });
 };
 
-widgetModal.prototype.renderTab = function(ix) {
-  var tab = this.tabs[ix];
+widgetModal.prototype.renderTab = function(tabix, rowix) {
+  var tab = this.tabs[tabix];
   var label = tab.label;
   var labelLower = label.toLowerCase();
   var html = '<li role="presentation"><a href="#{label}" aria-controls="{label}" role="tab" data-toggle="tab">{Label}</a></li>'.replace(/{label}/g, labelLower).replace(/{Label}/g, label);
   var li = $(html);
   this.elem.find('.nav').append(li);
+  var str = tab.content.replace(/{i}/g, rowix).replace(/{name}/g, this.widget.rows[rowix]);
+  var datareps = str.match(/{data\.[a-z0-9]*}/g);
+  for (var i in datareps) {
+    var rep = datareps[i];
+    var key = rep.split('.')[1];
+    key = key.slice(0, key.length - 1);
+    str = str.replace(rep, this.widget.rows[rowix][key]);
+  }
   var content = $('<div role="tabpanel" class="tab-pane">')
     .attr('id', labelLower)
-    .append(
-      $(tab.content.replace(/{i}/g, ix).replace(/{name}/g, this.widget.rows[ix]))
-    );
+    .append(str);
   this.elem.find('.tab-content').append(content);
-  if (this.tabs.length === 1) {
-    // it was the first li
+  if (tabix == 0) {
     li.addClass('active');
     content.addClass('active');
   }

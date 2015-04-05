@@ -130,8 +130,39 @@ function init() {
 	//});
 	
 	personas_url = product_url + "/personas";
+	
+	$(document).on('shown.bs.modal', '.modal', function(event) {
+    $('.modal .editable-value').editable({
+      showbuttons: false,
+  		params: function(params) { return JSON.stringify(params); },
+  		onblur: 'submit',
+  		url: personas_url,
+  		ajaxOptions: {
+  			type: 'post',
+  			dataType: 'json',
+  			contentType: 'application/json; charset=utf-8'
+  		},
+  		success: function(response, newValue) {
+  			if (typeof response == "object" && !response.success) {
+  				return response.error;
+  			}
+  		},
+  		error: function(a, b) {
+  			console.err(a, b);
+  		}
+    });
+  });
+  
+  $(document).on('hidden.bs.modal', '.modal', function(event) {
+    // refresh relevant widget
+    var widget = event.currentTarget.widget;
+    if (widget)
+      widget._refresh();
+  });
+	
+	
 	// TODO: move into a separate file/database so lots of wigets can exist in PMBoard
-	var users = new boardWidget({
+	var userwidget = new boardWidget({
     title: 'Who are your users?',
     id: "users",
     columns: ['Name', 'Evidence'],
@@ -145,14 +176,15 @@ function init() {
     addmoreAtts: {
       id: 'newpersona'
     }, 
-    container: '#widgets',
-    tabs: [
-      {}
-    ]
+    container: '#widgets'
   });
-  users.addModalTab({
+  userwidget.addModalTab({
     label: 'Details',
-    content: '<a href="#" class="editable-value editable-click" data-name="persona{i}" data-type="text" data-pk="{i}">{name}</a>'
+    content: '<strong>Name: </strong> <a href="#" class="editable-value editable-click" data-name="persona{i}" data-type="text" data-pk="{i}" data-url="' + personas_url + '">{data.name}</a>'
+  });
+  userwidget.addModalTab({
+    label: 'Evidence',
+    content: ''
   });
   
   $("#loading").hide();
