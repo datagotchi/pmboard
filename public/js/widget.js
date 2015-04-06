@@ -107,6 +107,15 @@ boardWidget.prototype._refreshHelper = function() {
     }
     tr.appendTo(tbl); 
   }
+  var This = this;
+  $(document).on('shown.bs.modal', '#' + this.modalId, function(event) {
+    if (This.options.modalShown) {
+      This.options.modalShown();
+    }
+  });
+  if (this.options.success) {
+    this.options.success();
+  }
 }
 
 boardWidget.prototype.deleteItem = function(ix, callback) {
@@ -127,7 +136,7 @@ boardWidget.prototype.deleteItem = function(ix, callback) {
 };
 
 boardWidget.prototype.addModalTab = function(opts) {
-  this.modal.tabs.push(opts);
+  this.modal.addTab(opts);
 }
 
 // ******* widgetModal *******
@@ -156,6 +165,8 @@ function widgetModal(title, id, widget) {
     This.elem.on('show.bs.modal', function(event) {
       This.show(event);
     });
+    //this.elem.find('.nav').empty();
+    //this.elem.find('.tab-content').empty();
   });
 }
   
@@ -163,17 +174,18 @@ widgetModal.prototype.show = function(event) {
   var tr = $(event.relatedTarget).parent().parent(); // a -> td -> tr
   var data = tr.data();
   var rownum = data.ix;
-  this.elem.find('.nav').empty();
-  this.elem.find('.tab-content').empty();
-  for (var i in this.tabs) {
-    this.renderTab(i, rownum);
-  }
+  
   var Modal = this;
   this.elem.find('.remove-item').click(function(event) {
     Modal.widget.deleteItem(rownum, function() {
       Modal.elem.modal('hide');
     });
   });
+};
+
+widgetModal.prototype.addTab = function(opts) {
+  //this.renderTab(this.tabs.length, rownum);
+  this.tabs.push(opts);
 };
 
 widgetModal.prototype.renderTab = function(tabix, rowix) {

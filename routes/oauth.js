@@ -19,11 +19,6 @@ router.post('/signin', function(req, res) {
 		code: code
 	})
 	.then(function (request_object) {
-		// Here the user is authenticated, and the access token 
-		// for the requested provider is stored in the session.
-		// Continue the tutorial or checkout the step-4 to get
-		// the code for the request
-		//res.send(200, 'The user is authenticated');
 		auth = request_object;
 		return request_object.me();
 	})
@@ -40,7 +35,8 @@ router.post('/signin', function(req, res) {
       // TODO: write auth to database
       res.json({
         success: true,
-        user: user
+        user: user,
+        oauth: JSON.stringify(auth)
       });
   	});
 	})

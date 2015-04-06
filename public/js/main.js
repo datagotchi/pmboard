@@ -22,22 +22,27 @@ $(window).load(function() {
       init();
 		});
   } else {
-    retrieve_token(function(err, token) {
-      if (err) {
-        console.error(err);
-      } else {
-        authenticate(token, function(err, data) {
-          if (data.success) {
-            $.cookie('email', data.user.email);
-            products = data.user.products;
-            prod_id = products[0].id; // TODO: fetch the product they were last using
-            init();
-          }
-        });
-      }
-    });
+    doAuthentication();
   }
 });
+
+function doAuthentication() {
+  retrieve_token(function(err, token) {
+    if (err) {
+      console.error(err);
+    } else {
+      authenticate(token, function(err, data) {
+        if (data.success) {
+          $.cookie('email', data.user.email);
+          $.cookie('oauth', data.oauth);
+          products = data.user.products;
+          prod_id = products[0].id; // TODO: fetch the product they were last using
+          init();
+        }
+      });
+    }
+  });
+}
 
 function retrieve_token(callback) {
 	$.ajax({
@@ -117,6 +122,7 @@ function init() {
       $("#products").append('<li><a href="#">' + products[p].name + '</a></li>');
     }
   }
+  $("#products").append('<li class="divider"></li><li><a href="#"><span class="glyphicon glyphicon-plus"></span>New Product</a></li>');
   
 	//$('[data-toggle="popover"]').popover({
 	//	html: true,
@@ -161,37 +167,98 @@ function init() {
   });
 	
 	
-	// TODO: move into a separate file/database so lots of wigets can exist in PMBoard
+	// TODO: move into a separate file/database so lots of widgets can exist in PMBoard
 	var userwidget = new boardWidget({
     title: 'Who are your users?',
     id: "users",
-    columns: ['Name', 'Evidence'],
+    columns: ['Name'],
     wrappers: [
       '<a href="#" data-toggle="modal">',
       //'<a href="#" class="editable-value editable-click" data-name="persona{i}" data-type="text" data-pk="{i}">',
-      '<button type="button" class="evidence btn btn-default label-danger label" data-toggle="popover" data-placement="top" data-trigger="focus" title="Number of pieces of evidence" data-content="lorem ipsum">'
+      //'<button type="button" class="evidence btn btn-default label-danger label" data-toggle="popover" data-placement="top" data-trigger="focus" title="Number of pieces of evidence" data-content="lorem ipsum">'
     ],
     api: personas_url,
     addmoreText: "Add another user type",
     addmoreAtts: {
       id: 'newpersona'
     }, 
-    container: '#widgets'
+    container: '#widgets',
+    success: function() {
+      
+      userwidget.addModalTab({
+        label: 'Details',
+        content: '<strong>Name: </strong> <a href="#" class="editable-value editable-click" data-name="persona{i}" data-type="text" data-pk="{i}" data-url="' + personas_url + '">{data.name}</a>'
+      });
+      
+      $.get("listFiles.html", function(html) {
+        userwidget.addModalTab({
+          label: 'Evidence',
+          content: html
+        });
+      });
+      
+      $("#loading").hide();
+    },
+    modalShown: function() {
+      // set up the evidence tab
+      var oauth = JSON.parse($.cookie('oauth'));
+      var accessToken = oauth.access_token;
+    
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "https://www.googleapis.com/drive/v2/files", true);
+      xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+      xhr.onload = function (evt) {
+        if (xhr.status != 200) {
+          if (xhr.status == 401) { // google 'invalid credentials'
+            return doAuthentication();
+          }
+        }
+        var response = JSON.parse(xhr.responseText);
+        var table = userwidget.modal.elem.find("table#files tbody");
+        for (var i = 0; i < response.items.length; i++) {
+            var item = response.items[i];
+            var tr = $("<tr>");
+            var td1 = $("<td>")
+            td1.html("<input type='checkbox'>");
+            tr.append(td1);
+            var td2 = $("<td>");
+            td2.html("<a href='" + item.alternateLink + "' target='_blank'>" +
+                           "<img src='" + item.iconLink + "'>" + 
+                           item.title + "</a>");
+            tr.append(td2);
+            table.append(tr);
+        }
+      };
+      xhr.send();
+      $(document).on('click', ':checkbox', function(event) {
+        var $this = $(this);
+        var $tr = $this.parent().parent();
+        if ($this.prop('checked')) {
+          $tr.addClass('success');
+          addEvidence($tr);
+        } else {
+          $tr.removeClass('success');
+        }
+      });
+    }
   });
-  userwidget.addModalTab({
-    label: 'Details',
-    content: '<strong>Name: </strong> <a href="#" class="editable-value editable-click" data-name="persona{i}" data-type="text" data-pk="{i}" data-url="' + personas_url + '">{data.name}</a>'
-  });
-  userwidget.addModalTab({
-    label: 'Evidence',
-    content: ''
-  });
-  
-  $("#loading").hide();
 	
 	// TODO: turn productName into x-editable (along with a tagline)
 	$.get(product_url, function (data) {
 		var prod_name = data.name;
 		$("#productName").text(prod_name);
 	});
+}
+
+function addEvidence($tr) {
+  $.ajax({
+    method: 'PUT',
+    url: null,
+    success: function(data) {
+      
+    },
+    error: function(data) {
+      
+    }
+  });
 }
