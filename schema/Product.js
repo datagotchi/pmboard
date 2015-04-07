@@ -5,7 +5,14 @@ var productSchema = new mongoose.Schema({
   personas: [
     {
       name: String, 
-      evidence: Array
+      evidence: [
+        {
+          name: String,
+          url: String,
+          icon: String,
+          trends: Array
+        }
+      ]
     }
   ]
 });

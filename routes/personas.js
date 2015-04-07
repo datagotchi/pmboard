@@ -169,7 +169,7 @@ router.put('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
   if (!('trends' in prod.personas[personaIx].evidence[evIx])) {
     prod.personas[personaIx].evidence[evIx].trends = [];
   }
-  prod.personas[personaIx].evidence[evIx].trends.push(ev);
+  prod.personas[personaIx].evidence[evIx].trends.push(trend);
   
   return prod.save(function(err) {
     if (err) { // TODO: convert to next(err)?
@@ -187,7 +187,26 @@ router.put('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
 
 // delete persona trend
 router.delete('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
-  res.send('');
+  var prod = req.product;
+  var personaIx = req.personaIx;
+  var evIx = req.evIx;
+  if (req.body.ix) {
+    var trendIx = req.body.ix;
+    prod.personas[personaIx].evidence[evIx].trends.splice(trendIx, 1);
+      
+    return prod.save(function(err) {
+      if (err || !prod) {
+        return res.json({
+          success: false,
+          error: err
+        });
+      } else {
+        return res.json({
+          success: true
+        });
+      }
+    });
+  }
 });
 
 module.exports = router;

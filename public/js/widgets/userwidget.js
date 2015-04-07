@@ -50,8 +50,8 @@ function createUserWidget(apiUrl) {
               // refresh token
               return doAuthentication(function(data) {
                 $.cookie('oauth', data.oauth);
-                //this.modalShown(widget, event);
-                xhr.onload(evt);
+                this.modalShown(widget, event);
+                //xhr.onload(evt);
               });
             }
           }
@@ -87,7 +87,7 @@ function createUserWidget(apiUrl) {
                 .append(td1)
                 .append(td2)
                 .appendTo($currentTable);
-              initTagsInput($select);
+              initTagsInput(evidenceUrl, $select);
               $tr.remove();
             });
           } else {
@@ -144,18 +144,35 @@ function addEvidence(url, $tr, callback) {
   });
 }
 
-function initTagsInput($items) {
+function initTagsInput(evidenceUrl, $items) {
   $items.tagsinput({
     trimValue: true
   });
-  /*
-  #items.on('itemAdded', function(event) {
+  
+  $items.on('itemAdded', function(event) {
+    var trIx = $(this).parent().parent().index(); // select -> td -> tr
+    var trendsUrl = evidenceUrl + '/' + trIx + '/trends';
     // TODO: PUT event.item
+    $.ajax({
+      method: 'PUT',
+      url: trendsUrl,
+      data: {
+        name: event.item
+      }
+    });
   });
-  $items.on('itemRemoved', function(event) {
+  $items.on('beforeItemRemove', function(event) {
+    var trIx = $(this).parent().parent().index();
+    var trendsUrl = evidenceUrl + '/' + trIx + '/trends';
     // TODO: DELETE event.item
+    $.ajax({
+      method: 'DELETE',
+      url: trendsUrl,
+      data: {
+        ix: $(this).tagsinput('items').indexOf(event.item)
+      }
+    });
   });
-  */
 }
 
 // FIXME: callback from $.get is being called twice, but no idea why
@@ -165,12 +182,18 @@ function refreshEvidence(evidenceUrl, $currentTable, callback) {
     for (var row in evidence) {
       var file = evidence[row];
       evidence[file.url] = file.name; // create a hash lookup table for below
+      var $select = $('<select multiple data-role="tagsinput"></select>');
+      for (var i in file.trends) {
+        var trend = file.trends[i].name;
+        $select.append($('<option selected value="' + trend + '">' + trend + '</option>'));
+      }
+      var td = $('<td>').append($select);
       $('<tr>')
-        .html('<td><a href="' + file.url + '" target="_blank"><img src="' + file.icon + '" />' + file.name + '</a></td>' +
-          '<td><select multiple data-role="tagsinput"></select></td>')
+        .append('<td><a href="' + file.url + '" target="_blank"><img src="' + file.icon + '" />' + file.name + '</a></td>')
+        .append(td)
         .appendTo($currentTable);
     }
-    initTagsInput($('[data-role=tagsinput]'));
+    initTagsInput(evidenceUrl, $('[data-role=tagsinput]'));
     callback(evidence);
   });;
 }
