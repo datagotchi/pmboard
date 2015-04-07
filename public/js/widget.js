@@ -110,7 +110,8 @@ boardWidget.prototype._refreshHelper = function() {
       This.options.modalShown(This, event);
     }
   });
-  if (this.options.success) {
+  if (this.options.success && !this.loaded) {
+    this.loaded = true;
     this.options.success(this);
   }
 }

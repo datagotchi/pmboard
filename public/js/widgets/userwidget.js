@@ -32,95 +32,90 @@ function createUserWidget(apiUrl) {
     },
     modalShown: function(widget, event) {
       var evidenceUrl = apiUrl + '/' + widget.modal.currentIx + '/evidence';
-      var curEvidence = {};
+      //var evidence = {};
       // set up the 'evidence' tab...
       
       // list current evidence files
       var $currentTable = $('#evidence table#current tbody');
-      $.get(evidenceUrl, function(evidence) {
-        for (var row in evidence) {
-          var file = evidence[row];
-          curEvidence[file.url] = file.name; // create a hash lookup table for below
-          $('<tr>')
-            .html('<td><a href="' + file.url + '" target="_blank">' + file.name + '</a></td>' +
-              '<td><select multiple data-role="tagsinput"></select></td>')
-            .appendTo($currentTable);
-        }
-        initTagsInput($('[data-role=tagsinput]'));
-      });;
-      
-      // allow them to choose more files for evidence
-      var oauth = JSON.parse($.cookie('oauth'));
-      var accessToken = oauth.access_token;
-      var xhr = new XMLHttpRequest();
-      xhr.open("GET", "https://www.googleapis.com/drive/v2/files", true);
-      xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
-      xhr.onload = function (evt) {
-        if (xhr.status != 200) {
-          if (xhr.status == 401) { // google 'invalid credentials'
-            return doAuthentication(); // refresh token
+      refreshEvidence(evidenceUrl, $currentTable, function(evidence) {
+        // allow them to choose more files for evidence
+        var oauth = JSON.parse($.cookie('oauth'));
+        var accessToken = oauth.access_token;
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "https://www.googleapis.com/drive/v2/files", true);
+        xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+        xhr.onload = function (evt) {
+          if (xhr.status != 200) {
+            if (xhr.status == 401) { // google 'invalid credentials'
+              // refresh token
+              return doAuthentication(function(data) {
+                $.cookie('oauth', data.oauth);
+                //this.modalShown(widget, event);
+                xhr.onload(evt);
+              });
+            }
           }
-        }
-        var response = JSON.parse(xhr.responseText);
-        var filesTable = widget.modal.elem.find("#evidence table#files tbody");
-        for (var i = 0; i < response.items.length; i++) {
-            var item = response.items[i];
-            if (curEvidence[item.alternateLink]) continue;
-            var tr = $("<tr>");
-            var td1 = $("<td>")
-            td1.html("<input type='checkbox'>");
-            tr.append(td1);
-            var td2 = $("<td>").addClass('file');
-            td2.html("<a href='" + item.alternateLink + "' target='_blank'>" +
-                           "<img src='" + item.iconLink + "'>" + 
-                           item.title + "</a>");
-            tr.append(td2);
-            filesTable.append(tr);
-        }
-      };
-      xhr.send();
-      $(document).on('click', '#' + widget.modalId + ' :checkbox', function(event) {
-        var $this = $(this);
-        var $tr = $this.parent().parent();
-        var personaIx = widget.modal.currentIx;
-        if ($this.prop('checked')) {
-          $tr.addClass('success');
-          addEvidence(evidenceUrl, $tr, function(data) {
-            var td1 = $tr.find('td.file');
-            var $select = $('<select multiple data-role="tagsinput"></select>');
-            initTagsInput($select);
-            var td2 = $("<td>").append($select);
-            $("<tr>")
-              .append(td1)
-              .append(td2)
-              .appendTo($currentTable);
-            $tr.remove();
-          });
-        } else {
-          $tr.removeClass('success');
-        }
-      });
-      
-      // set up the 'details' tab...
-      // make fields editable (edit text -> post to server)
-      $('#' + widget.options.id + ' .editable-value').editable({
-        showbuttons: false,
-    		params: function(params) { return JSON.stringify(params); },
-    		onblur: 'submit',
-    		url: apiUrl,
-    		ajaxOptions: {
-    			type: 'post',
-    			dataType: 'json',
-    			contentType: 'application/json; charset=utf-8'
-    		},
-    		success: function(response, newValue) {
-    			if (typeof response == "object" && !response.success) {
-    				return response.error;
-    			}
-    		},
-    		error: function(a, b) {
-    			console.error(a, b);
-    		}
+          var response = JSON.parse(xhr.responseText);
+          var filesTable = widget.modal.elem.find("#evidence table#files tbody");
+          for (var i = 0; i < response.items.length; i++) {
+              var item = response.items[i];
+              if (evidence[item.alternateLink]) continue;
+              var tr = $("<tr>");
+              var td1 = $("<td>")
+              td1.html("<input type='checkbox'>");
+              tr.append(td1);
+              var td2 = $("<td>").addClass('file');
+              td2.html("<a href='" + item.alternateLink + "' target='_blank'>" +
+                             "<img src='" + item.iconLink + "'>" + 
+                             item.title + "</a>");
+              tr.append(td2);
+              filesTable.append(tr);
+          }
+        };
+        xhr.send();
+        $(document).on('click', '#' + widget.modalId + ' :checkbox', function(event) {
+          var $this = $(this);
+          var $tr = $this.parent().parent();
+          var personaIx = widget.modal.currentIx;
+          if ($this.prop('checked')) {
+            $tr.addClass('success');
+            addEvidence(evidenceUrl, $tr, function(data) {
+              var td1 = $tr.find('td.file');
+              var $select = $('<select multiple data-role="tagsinput"></select>');
+              var td2 = $("<td>").append($select);
+              $("<tr>")
+                .append(td1)
+                .append(td2)
+                .appendTo($currentTable);
+              initTagsInput($select);
+              $tr.remove();
+            });
+          } else {
+            $tr.removeClass('success');
+          }
+        });
+        
+        // set up the 'details' tab...
+        // make fields editable (edit text -> post to server)
+        $('#' + widget.options.id + ' .editable-value').editable({
+          showbuttons: false,
+      		params: function(params) { return JSON.stringify(params); },
+      		onblur: 'submit',
+      		url: apiUrl,
+      		ajaxOptions: {
+      			type: 'post',
+      			dataType: 'json',
+      			contentType: 'application/json; charset=utf-8'
+      		},
+      		success: function(response, newValue) {
+      			if (typeof response == "object" && !response.success) {
+      				return response.error;
+      			}
+      		},
+      		error: function(a, b) {
+      			console.error(a, b);
+      		}
+        });
       });
     }
   });
@@ -161,4 +156,21 @@ function initTagsInput($items) {
     // TODO: DELETE event.item
   });
   */
+}
+
+// FIXME: callback from $.get is being called twice, but no idea why
+function refreshEvidence(evidenceUrl, $currentTable, callback) {
+  $.get(evidenceUrl, function(evidence) {
+    $currentTable.empty();
+    for (var row in evidence) {
+      var file = evidence[row];
+      evidence[file.url] = file.name; // create a hash lookup table for below
+      $('<tr>')
+        .html('<td><a href="' + file.url + '" target="_blank"><img src="' + file.icon + '" />' + file.name + '</a></td>' +
+          '<td><select multiple data-role="tagsinput"></select></td>')
+        .appendTo($currentTable);
+    }
+    initTagsInput($('[data-role=tagsinput]'));
+    callback(evidence);
+  });;
 }

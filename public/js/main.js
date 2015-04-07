@@ -15,7 +15,7 @@ $.ajaxSetup({
 
 $(window).load(function() {
   // TODO: get this working without forcing another auth - saved identity token on server???
-  if ($.cookie('email')/* && getCookie('XSRF-TOKEN')*/) {
+  if ($.cookie('email') && $.cookie('oauth')/* && getCookie('XSRF-TOKEN')*/) {
 		var email = $.cookie('email');
 		$.get('/user/' + email, function(user) {
   		products = user.products;
@@ -24,22 +24,24 @@ $(window).load(function() {
       init();
 		});
   } else {
-    doAuthentication();
+    doAuthentication(function(data) {
+      $.cookie('email', data.user.email);
+      $.cookie('oauth', data.oauth);
+      products = data.user.products;
+      prod_id = products[0].id; // TODO: fetch the product they were last using
+      init();
+    });
   }
 });
 
-function doAuthentication() {
+function doAuthentication(callback) {
   retrieve_token(function(err, token) {
     if (err) {
       console.error(err);
     } else {
       authenticate(token, function(err, data) {
         if (data.success) {
-          $.cookie('email', data.user.email);
-          $.cookie('oauth', data.oauth);
-          products = data.user.products;
-          prod_id = products[0].id; // TODO: fetch the product they were last using
-          init();
+          callback(data);
         }
       });
     }

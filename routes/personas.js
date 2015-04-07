@@ -87,7 +87,7 @@ router.param('persona_ix', function(req, res, next) {
   var ix = req.params.persona_ix;
   var prod = req.product;
   if (ix && ix < prod.personas.length) {
-    req.personaIx = ix;
+    req.personaIx = ix; // need to save just the index because we're saving the entire product document to the db
     return next();
   }
   var err = new Error('No such user type');
@@ -98,7 +98,6 @@ router.param('persona_ix', function(req, res, next) {
 // ****** persona evidence *****
 
 // get persona evidence
-//router.get('/:product_id/personas/:persona_name/evidence', function(req, res, next) {
 router.get('/:persona_ix/evidence', function(req, res, next) {
   var prod = req.product;
   var ix = req.personaIx;
@@ -106,12 +105,11 @@ router.get('/:persona_ix/evidence', function(req, res, next) {
 });
 
 // add persona evidence
-//router.put('/:product_id/personas/:persona_name/evidence', function(req, res, next) {
 router.put('/:persona_ix/evidence', function(req, res, next) {
   var prod = req.product;
   var ix = req.personaIx;
-  // redefine just in case there were other req.body values
-  var evFile = { 
+  
+  var ev = { 
     name: req.body.name,
     url: req.body.url,
     icon: req.body.icon
@@ -120,7 +118,7 @@ router.put('/:persona_ix/evidence', function(req, res, next) {
   if (!('evidence' in prod.personas[ix])) {
     prod.personas[ix].evidence = [];
   }
-  prod.personas[ix].evidence.push(evFile);
+  prod.personas[ix].evidence.push(ev);
   
   return prod.save(function(err) {
     if (err) { // TODO: convert to next(err)?
@@ -137,21 +135,59 @@ router.put('/:persona_ix/evidence', function(req, res, next) {
 });
 
 // ***** persona trends ******
-/*
+
+router.param('ev_ix', function(req, res, next) {
+  // TODO: assert ev_ix is a normal int
+  var ix = req.params.ev_ix;
+  var prod = req.product;
+  if (ix && ix < prod.personas[req.personaIx].evidence.length) {
+    req.evIx = ix;
+    return next();
+  }
+  var err = new Error('No such evidence file');
+  err.status = 404;
+  next(err);
+});
+
 // get persona trends
-router.get('/:user_name/challenges', function(req, res, next) {
-  res.send('');
+router.get('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
+  var prod = req.product;
+  var personaIx = req.personaIx;
+  var evIx = req.evIx;
+  return res.json(prod.personas[personaIx].evidence[evIx].trends);
 });
 
 // add persona trends
-router.put('/:user_name/challenges', function(req, res, next) {
-  res.send('');
+router.put('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
+  var prod = req.product;
+  var personaIx = req.personaIx;
+  var evIx = req.evIx;
+  var trend = { 
+    name: req.body.name
+  };
+  
+  if (!('trends' in prod.personas[personaIx].evidence[evIx])) {
+    prod.personas[personaIx].evidence[evIx].trends = [];
+  }
+  prod.personas[personaIx].evidence[evIx].trends.push(ev);
+  
+  return prod.save(function(err) {
+    if (err) { // TODO: convert to next(err)?
+      return res.json({
+        success: false,
+        error: err
+      });
+    } else {
+      return res.json({
+        success: true
+      });
+    }
+  });
 });
 
-// change persona trends
-router.post('/:user_name/challenges/:challenge_name', function(req, res, next) {
+// delete persona trend
+router.delete('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
   res.send('');
 });
-*/
 
 module.exports = router;
