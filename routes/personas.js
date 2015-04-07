@@ -76,24 +76,20 @@ router.delete('/', function(req, res, next) {
     });
   }
  
-  //res.status(400);
   var err = new Error('Invalid request; index not specified');
   err.status = 400;
   next(err);
 });
 
 // persona evidence
-router.param('persona_name', function(req, res, next) {
-  // TODO: assert name is a normal string
-  var personaName = req.params.persona_name;
+router.param('persona_ix', function(req, res, next) {
+  // TODO: assert ix is a normal int
+  var ix = req.params.persona_ix;
   var prod = req.product;
-  for (var i in prod.personas) {
-    if (prod.personas[i].name == personaName) {
-      req.personaIx = i;
-      next();
-    }
+  if (ix && ix < prod.personas.length) {
+    req.personaIx = ix;
+    return next();
   }
-  //res.status(404);
   var err = new Error('No such user type');
   err.status = 404;
   next(err);
@@ -103,18 +99,24 @@ router.param('persona_name', function(req, res, next) {
 
 // get persona evidence
 //router.get('/:product_id/personas/:persona_name/evidence', function(req, res, next) {
-router.get('/:persona_name/evidence', function(req, res, next) {
+router.get('/:persona_ix/evidence', function(req, res, next) {
   var prod = req.product;
   var ix = req.personaIx;
-  res.json(prod.personas[ix].evidence);
+  return res.json(prod.personas[ix].evidence);
 });
 
 // add persona evidence
 //router.put('/:product_id/personas/:persona_name/evidence', function(req, res, next) {
-router.put('/:persona_name/evidence', function(req, res, next) {
+router.put('/:persona_ix/evidence', function(req, res, next) {
   var prod = req.product;
   var ix = req.personaIx;
-  var evFile = req.body.fileName;
+  // redefine just in case there were other req.body values
+  var evFile = { 
+    name: req.body.name,
+    url: req.body.url,
+    icon: req.body.icon
+  };
+  
   if (!('evidence' in prod.personas[ix])) {
     prod.personas[ix].evidence = [];
   }

@@ -5,13 +5,10 @@ function boardWidget(opts) {
   
   this.inputs = [];
   this.outputs = [];
-  this.rows = [
-    {name: "Type1", evidence: 5}, // test data
-    {name: "Type2", evidence: 0}
-  ];
+  this.rows = [];
   this.element = null;
   this.modal =  null;
-  this.template = "widget.html";
+  this.template = "templates/widget.html";
   
   // set up the modal
   this.modalId = this.options.id + 'modal';
@@ -89,7 +86,7 @@ boardWidget.prototype._refresh = function() {
 boardWidget.prototype._refreshHelper = function() {
     
   // refresh rows
-  var tbl = this.element.find('.table'); // FIXME: this will find .table in #widgets i think, not this single widget
+  var tbl = this.element.find('.table');
   tbl.find('tr').remove();
   for (var i = 0; i < this.rows.length; i++) {
     var row = this.rows[i];
@@ -110,11 +107,11 @@ boardWidget.prototype._refreshHelper = function() {
   var This = this;
   $(document).on('shown.bs.modal', '#' + this.modalId, function(event) {
     if (This.options.modalShown) {
-      This.options.modalShown();
+      This.options.modalShown(This, event);
     }
   });
   if (this.options.success) {
-    this.options.success();
+    this.options.success(this);
   }
 }
 
@@ -143,11 +140,12 @@ boardWidget.prototype.addModalTab = function(opts) {
 
 function widgetModal(title, id, widget) {
   
-  this.template = "modal.html";
+  this.template = "templates/modal.html";
   
   this.elem = null;
   this.title = title;
   this.widget = widget;
+  this.currentIx = -1;
   
   // - label: text to put on the tab
   // - content: html to put in the tab content
@@ -165,8 +163,6 @@ function widgetModal(title, id, widget) {
     This.elem.on('show.bs.modal', function(event) {
       This.show(event);
     });
-    //this.elem.find('.nav').empty();
-    //this.elem.find('.tab-content').empty();
   });
 }
   
@@ -174,7 +170,12 @@ widgetModal.prototype.show = function(event) {
   var tr = $(event.relatedTarget).parent().parent(); // a -> td -> tr
   var data = tr.data();
   var rownum = data.ix;
-  
+  this.currentIx = rownum;
+  this.elem.find('.nav').empty();
+  this.elem.find('.tab-content').empty();
+  for (var i in this.tabs) {
+    this.renderTab(i, rownum);
+  }
   var Modal = this;
   this.elem.find('.remove-item').click(function(event) {
     Modal.widget.deleteItem(rownum, function() {
@@ -184,7 +185,6 @@ widgetModal.prototype.show = function(event) {
 };
 
 widgetModal.prototype.addTab = function(opts) {
-  //this.renderTab(this.tabs.length, rownum);
   this.tabs.push(opts);
 };
 
@@ -195,7 +195,7 @@ widgetModal.prototype.renderTab = function(tabix, rowix) {
   var html = '<li role="presentation"><a href="#{label}" aria-controls="{label}" role="tab" data-toggle="tab">{Label}</a></li>'.replace(/{label}/g, labelLower).replace(/{Label}/g, label);
   var li = $(html);
   this.elem.find('.nav').append(li);
-  var str = tab.content.replace(/{i}/g, rowix).replace(/{name}/g, this.widget.rows[rowix]);
+  var str = tab.content.replace(/{i}/g, rowix);
   var datareps = str.match(/{data\.[a-z0-9]*}/g);
   for (var i in datareps) {
     var rep = datareps[i];

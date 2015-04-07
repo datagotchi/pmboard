@@ -2,7 +2,7 @@ var express = require('express');
 var session = require('express-session');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
-var csrf = require('csurf');
+//var csrf = require('csurf');
 //var cors = require('cors');
 var mongoose = require('mongoose');
 //var routes = require('./routes/index');
@@ -22,12 +22,12 @@ app.use(session({
   resave: true,
   saveUninitialized: false
 }));
-app.use(csrf());
-app.use(function(req, res, next) {
+//app.use(csrf());
+/*app.use(function(req, res, next) {
   res.cookie('XSRF-TOKEN', req.csrfToken());
   res.locals.csrftoken = req.csrfToken();
   next();
-});
+});*/
 
 /* Initialize and route oauth if necessary */
 try {
@@ -71,7 +71,7 @@ app.use(function(req, res, next) {
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
-    res.json({
+    return res.json({
       message: err.message,
       error: err
     });
@@ -82,7 +82,7 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
-  res.json({
+  return res.json({
     message: err.message,
     error: {}
   });

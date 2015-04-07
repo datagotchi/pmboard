@@ -9,9 +9,9 @@ router.get('/', function(req, res, next) {
 	var Product = req.app.get('Product');
 	Product.find(function(err, products) {
   	if (!err) {
-      res.json(products);
+      return res.json(products);
     } else {
-      next(err);
+      return next(err);
     }
   });
 });
@@ -38,9 +38,9 @@ router.param('product_id', function(req, res, next, product_id) {
       Product.findById(product_id, function(err, product) {
         if (!err) {
           req.product = product;
-          next();
+          return next();
         } else {
-          next(err);
+          return next(err);
         }
       });
   //});
@@ -49,7 +49,7 @@ router.param('product_id', function(req, res, next, product_id) {
 // get product
 router.get('/:product_id', function(req, res, next) {
   //var prod = req.product;
-  res.json(req.product);
+  return res.json(req.product);
 });
 
 router.use('/:product_id/personas', require('./personas'));

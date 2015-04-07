@@ -6,19 +6,21 @@ var personas_url;
 
 OAuth.initialize('K2P2q3_J6a76xcMJCcRRYTrbJ2c'); // TODO: hide this key somewhere via an ajax call? 
 $.cookie.json = true;
+$.ajaxSetup({
+	/*beforeSend: function(xhr, settings) {
+		xhr.setRequestHeader("x-csrf-token", getCookie('XSRF-TOKEN')); // TODO: $.cookie is broken here???
+	},*/
+  cache: false // TODO: find a better way to avoid HTTP 304 instances that don't return the $.get results
+});
 
 $(window).load(function() {
   // TODO: get this working without forcing another auth - saved identity token on server???
-  if ($.cookie('email') && getCookie('XSRF-TOKEN')) {
-    $.ajaxSetup({
-  		beforeSend: function(xhr, settings) {
-  			xhr.setRequestHeader("x-csrf-token", getCookie('XSRF-TOKEN')); // FIXME $.cookie is broken here???
-  		}
-		});
+  if ($.cookie('email')/* && getCookie('XSRF-TOKEN')*/) {
 		var email = $.cookie('email');
 		$.get('/user/' + email, function(user) {
   		products = user.products;
-      prod_id = products[0].id; // TODO: fetch the product they were last using
+  		var cur = typeof user.currentProduct === "number" ? user.currentProduct : 0;
+      prod_id = products[cur].id; 
       init();
 		});
   } else {
@@ -66,11 +68,6 @@ function authenticate(token, callback) {
 		//}
 	})
 		.done(function(r) {
-  		$.ajaxSetup({
-    		beforeSend: function(xhr, settings) {
-    			xhr.setRequestHeader("x-csrf-token", getCookie('XSRF-TOKEN')); // FIXME $.cookie is broken here???
-    		}
-  		});
 			$.ajax({
 				url: '/oauth/signin',
 				method: 'POST',
@@ -106,11 +103,6 @@ function getCookie(name) {
   return cookieValue;
 }
 
-function userResearchInfo() {
-	var x = 'js + html test';
-	return x;
-}
-
 function init() {
   
   product_url = "/products/" + prod_id;
@@ -137,27 +129,7 @@ function init() {
 	
 	personas_url = product_url + "/personas";
 	
-	$(document).on('shown.bs.modal', '.modal', function(event) {
-    $('.modal .editable-value').editable({
-      showbuttons: false,
-  		params: function(params) { return JSON.stringify(params); },
-  		onblur: 'submit',
-  		url: personas_url,
-  		ajaxOptions: {
-  			type: 'post',
-  			dataType: 'json',
-  			contentType: 'application/json; charset=utf-8'
-  		},
-  		success: function(response, newValue) {
-  			if (typeof response == "object" && !response.success) {
-  				return response.error;
-  			}
-  		},
-  		error: function(a, b) {
-  			console.err(a, b);
-  		}
-    });
-  });
+	createUserWidget(personas_url);
   
   $(document).on('hidden.bs.modal', '.modal', function(event) {
     // refresh relevant widget
@@ -166,99 +138,8 @@ function init() {
       widget._refresh();
   });
 	
-	
-	// TODO: move into a separate file/database so lots of widgets can exist in PMBoard
-	var userwidget = new boardWidget({
-    title: 'Who are your users?',
-    id: "users",
-    columns: ['Name'],
-    wrappers: [
-      '<a href="#" data-toggle="modal">',
-      //'<a href="#" class="editable-value editable-click" data-name="persona{i}" data-type="text" data-pk="{i}">',
-      //'<button type="button" class="evidence btn btn-default label-danger label" data-toggle="popover" data-placement="top" data-trigger="focus" title="Number of pieces of evidence" data-content="lorem ipsum">'
-    ],
-    api: personas_url,
-    addmoreText: "Add another user type",
-    addmoreAtts: {
-      id: 'newpersona'
-    }, 
-    container: '#widgets',
-    success: function() {
-      
-      userwidget.addModalTab({
-        label: 'Details',
-        content: '<strong>Name: </strong> <a href="#" class="editable-value editable-click" data-name="persona{i}" data-type="text" data-pk="{i}" data-url="' + personas_url + '">{data.name}</a>'
-      });
-      
-      $.get("listFiles.html", function(html) {
-        userwidget.addModalTab({
-          label: 'Evidence',
-          content: html
-        });
-      });
-      
-      $("#loading").hide();
-    },
-    modalShown: function() {
-      // set up the evidence tab
-      var oauth = JSON.parse($.cookie('oauth'));
-      var accessToken = oauth.access_token;
-    
-      var xhr = new XMLHttpRequest();
-      xhr.open("GET", "https://www.googleapis.com/drive/v2/files", true);
-      xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
-      xhr.onload = function (evt) {
-        if (xhr.status != 200) {
-          if (xhr.status == 401) { // google 'invalid credentials'
-            return doAuthentication();
-          }
-        }
-        var response = JSON.parse(xhr.responseText);
-        var table = userwidget.modal.elem.find("table#files tbody");
-        for (var i = 0; i < response.items.length; i++) {
-            var item = response.items[i];
-            var tr = $("<tr>");
-            var td1 = $("<td>")
-            td1.html("<input type='checkbox'>");
-            tr.append(td1);
-            var td2 = $("<td>");
-            td2.html("<a href='" + item.alternateLink + "' target='_blank'>" +
-                           "<img src='" + item.iconLink + "'>" + 
-                           item.title + "</a>");
-            tr.append(td2);
-            table.append(tr);
-        }
-      };
-      xhr.send();
-      $(document).on('click', ':checkbox', function(event) {
-        var $this = $(this);
-        var $tr = $this.parent().parent();
-        if ($this.prop('checked')) {
-          $tr.addClass('success');
-          addEvidence($tr);
-        } else {
-          $tr.removeClass('success');
-        }
-      });
-    }
-  });
-	
-	// TODO: turn productName into x-editable (along with a tagline)
 	$.get(product_url, function (data) {
 		var prod_name = data.name;
 		$("#productName").text(prod_name);
 	});
-}
-
-function addEvidence($tr) {
-  $.ajax({
-    method: 'PUT',
-    url: null,
-    success: function(data) {
-      
-    },
-    error: function(data) {
-      
-    }
-  });
 }
