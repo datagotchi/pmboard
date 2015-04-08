@@ -3,6 +3,7 @@ var products;
 var prod_id;
 var product_url;
 var personas_url;
+var email;
 
 OAuth.initialize('K2P2q3_J6a76xcMJCcRRYTrbJ2c'); // TODO: hide this key somewhere via an ajax call? 
 $.cookie.json = true;
@@ -16,8 +17,8 @@ $.ajaxSetup({
 $(window).load(function() {
   // TODO: get this working without forcing another auth - saved identity token on server???
   if ($.cookie('email') && $.cookie('oauth')/* && getCookie('XSRF-TOKEN')*/) {
-		var email = $.cookie('email');
-		$.get('/user/' + email, function(user) {
+		email = $.cookie('email');
+		$.get('/users/' + email, function(user) {
   		products = user.products;
   		var cur = typeof user.currentProduct === "number" ? user.currentProduct : 0;
       prod_id = products[cur].id; 
@@ -26,6 +27,7 @@ $(window).load(function() {
   } else {
     doAuthentication(function(data) {
       $.cookie('email', data.user.email);
+      email = data.user.email;
       $.cookie('oauth', data.oauth);
       products = data.user.products;
       prod_id = products[0].id; // TODO: fetch the product they were last using
@@ -105,17 +107,34 @@ function getCookie(name) {
   return cookieValue;
 }
 
+function changeProduct(ix, callback) {
+  $.post('/users/' + email, {currentProduct: ix}, function(data) {
+    if (data.success) {
+      if (callback) callback();
+    } else {
+      console.error(data.error);
+    }
+  })
+}
+
 function init() {
   
   product_url = "/products/" + prod_id;
   
   for (var p = 0; p < products.length; p++) {
     if (products[p].id == prod_id) {
-      $("#products").append('<li class="active"><a href="#">' + products[p].name + '</a></li>');
+      $("#products").append('<li class="active"><a href="#" class="products">' + products[p].name + '</a></li>');
     } else {
-      $("#products").append('<li><a href="#">' + products[p].name + '</a></li>');
+      $("#products").append('<li><a href="#" class="products">' + products[p].name + '</a></li>');
     }
   }
+  $("#products a.products").click(function(event) {
+    var $a = $(this);
+    var $li = $a.parent();
+    changeProduct($li.index(), function() {
+      location.reload();
+    });
+  });
   $("#products").append('<li class="divider"></li><li><a href="#"><span class="glyphicon glyphicon-plus"></span>New Product</a></li>');
   
 	//$('[data-toggle="popover"]').popover({

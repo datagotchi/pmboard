@@ -6,13 +6,11 @@ var router = express.Router();
 // ***** user personas *****
 
 // get user personas
-//router.get('/:product_id/personas', function(req, res, next) {
 router.get('/', function(req, res, next) {
   res.json(req.product.personas);
 });
 
 // add user persona
-//router.put('/:product_id/personas', function(req, res, next) {
 router.put('/', function(req, res, next) {
   var prod = req.product;
   var newpersona = req.body.value;
@@ -34,7 +32,6 @@ router.put('/', function(req, res, next) {
 });
 
 // change user persona
-//router.post('/:product_id/personas', function(req, res, next) {
 router.post('/', function(req, res, next) {
   var prod = req.product;
   var ix = req.body.pk;
@@ -55,7 +52,6 @@ router.post('/', function(req, res, next) {
 });
 
 // delete user persona
-//router.delete('/:product_id/personas', function(req, res, next) {
 router.delete('/', function(req, res, next) {
   var prod = req.product;
   if (req.body.ix) {

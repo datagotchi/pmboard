@@ -204,7 +204,7 @@ function initDeleteBtns(evidenceUrl, $btns) {
         var url = $tr.find('a').attr('href');
         var filesLink = $("#files").find('a[href="' + url + '"]'); //$tr.closest('div[role=tabpanel]').find('...')
         var filesTr = filesLink.parent().parent() // a -> td -> tr
-          .show();
+          .show()
           .removeClass('success', 2000); // TODO: would like a color animation here maybe
         filesTr.find(':checked').prop('checked', false);
         
