@@ -2,11 +2,10 @@ function createUserWidget(apiUrl) {
   return new boardWidget({
     title: 'Who are your users?',
     id: "users",
-    columns: ['Name'],
+    columns: [{name: 'Name', value: 'name'}, {name: '', value: 'evidence.length'}],
     wrappers: [
       '<a href="#" data-toggle="modal">',
-      //'<a href="#" class="editable-value editable-click" data-name="persona{i}" data-type="text" data-pk="{i}">',
-      //'<button type="button" class="evidence btn btn-default label-danger label" data-toggle="popover" data-placement="top" data-trigger="focus" title="Number of pieces of evidence" data-content="lorem ipsum">'
+      '<button type="button" class="evidence btn btn-default label" data-toggle="tooltip" data-placement="top" title="Number of pieces of evidence">'
     ],
     api: apiUrl,
     addmoreText: "Add another user type",
@@ -14,6 +13,19 @@ function createUserWidget(apiUrl) {
       id: 'newpersona'
     }, 
     container: '#widgets',
+    refresh: function() {
+      $('[data-toggle="tooltip"]').tooltip();
+      
+      $(".evidence").each(function(i, el) {
+        if (el.innerText == '0') {
+          $(el).addClass('label-danger');
+        } else if (el.innerText < 5) {
+          $(el).addClass('label-warning');
+        } else {
+          $(el).addClass('label-success');
+        }
+      });
+    },
     success: function(widget) {
       
       widget.addModalTab({
@@ -50,7 +62,7 @@ function createUserWidget(apiUrl) {
               // refresh token
               return doAuthentication(function(data) {
                 $.cookie('oauth', data.oauth);
-                this.modalShown(widget, event);
+                widget.options.modalShown(widget, event);
                 //xhr.onload(evt);
               });
             }
@@ -59,7 +71,7 @@ function createUserWidget(apiUrl) {
           var filesTable = widget.modal.elem.find("#evidence table#files tbody");
           for (var i = 0; i < response.items.length; i++) {
               var item = response.items[i];
-              if (evidence[item.alternateLink]) continue;
+              //if (evidence[item.alternateLink]) continue;
               var tr = $("<tr>");
               var td1 = $("<td>")
               td1.html("<input type='checkbox'>");
@@ -69,6 +81,7 @@ function createUserWidget(apiUrl) {
                              "<img src='" + item.iconLink + "'>" + 
                              item.title + "</a>");
               tr.append(td2);
+              if (evidence[item.alternateLink]) tr.hide();
               filesTable.append(tr);
           }
         };
@@ -80,15 +93,17 @@ function createUserWidget(apiUrl) {
           if ($this.prop('checked')) {
             $tr.addClass('success');
             addEvidence(evidenceUrl, $tr, function(data) {
-              var td1 = $tr.find('td.file');
+              /*var td1 = $tr.find('td.file');
               var $select = $('<select multiple data-role="tagsinput"></select>');
               var td2 = $("<td>").append($select);
               $("<tr>")
                 .append(td1)
                 .append(td2)
                 .appendTo($currentTable);
-              initTagsInput(evidenceUrl, $select);
-              $tr.remove();
+              initTagsInput(evidenceUrl, $select);*/
+              refreshEvidence(evidenceUrl, $currentTable, function() {
+                $tr.hide();
+              })
             });
           } else {
             $tr.removeClass('success');
@@ -175,6 +190,34 @@ function initTagsInput(evidenceUrl, $items) {
   });
 }
 
+function initDeleteBtns(evidenceUrl, $btns) {
+  $btns.on('click', function(event) {
+    var $tr = $(this).parent().parent();  // btn -> td -> tr
+    $.ajax({
+      method: 'DELETE',
+      url: evidenceUrl,
+      data: {
+        ix: $tr.index()
+      },
+      success: function() {
+        // show row in files table
+        var url = $tr.find('a').attr('href');
+        var filesLink = $("#files").find('a[href="' + url + '"]'); //$tr.closest('div[role=tabpanel]').find('...')
+        var filesTr = filesLink.parent().parent() // a -> td -> tr
+          .show();
+          .removeClass('success', 2000); // TODO: would like a color animation here maybe
+        filesTr.find(':checked').prop('checked', false);
+        
+        // remove from evidence table
+        $tr.remove(); 
+      },
+      error: function(data) {
+        
+      }
+    });
+  });
+}
+
 // FIXME: callback from $.get is being called twice, but no idea why
 function refreshEvidence(evidenceUrl, $currentTable, callback) {
   $.get(evidenceUrl, function(evidence) {
@@ -189,11 +232,13 @@ function refreshEvidence(evidenceUrl, $currentTable, callback) {
       }
       var td = $('<td>').append($select);
       $('<tr>')
+        .append('<td><button type="button" class="remove-evidence glyphicon glyphicon-remove btn-danger"></button></td>')
         .append('<td><a href="' + file.url + '" target="_blank"><img src="' + file.icon + '" />' + file.name + '</a></td>')
         .append(td)
         .appendTo($currentTable);
     }
     initTagsInput(evidenceUrl, $('[data-role=tagsinput]'));
+    initDeleteBtns(evidenceUrl, $currentTable.find('.remove-evidence'));
     callback(evidence);
   });;
 }

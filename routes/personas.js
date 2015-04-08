@@ -134,6 +134,32 @@ router.put('/:persona_ix/evidence', function(req, res, next) {
   });
 });
 
+// delete persona evidence
+router.delete('/:persona_ix/evidence', function(req, res, next) {
+  var prod = req.product;
+  if (req.body.ix) {
+    var ix = req.body.ix;
+    prod.personas[req.personaIx].evidence.splice(ix, 1);
+      
+    return prod.save(function(err) {
+      if (err || !prod) {
+        return res.json({
+          success: false,
+          error: err
+        });
+      } else {
+        return res.json({
+          success: true
+        });
+      }
+    });
+  }
+ 
+  var err = new Error('Invalid request; index not specified');
+  err.status = 400;
+  next(err);
+});
+
 // ***** persona trends ******
 
 router.param('ev_ix', function(req, res, next) {

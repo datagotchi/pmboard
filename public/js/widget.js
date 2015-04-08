@@ -25,7 +25,7 @@ function boardWidget(opts) {
       var tHead = $('<thead>');
       for (var i = 0; i < This.options.columns.length; i++) {
         $('<th>')
-          .text(This.options.columns[i])
+          .text(This.options.columns[i].name)
           .appendTo(tHead);
       }
       tHead.appendTo(el.find('.panel-body .table'));
@@ -93,8 +93,20 @@ boardWidget.prototype._refreshHelper = function() {
     var tr = $('<tr>');
     tr.attr('data-ix', i);
     for (var j = 0; j < this.options.columns.length; j++) {
-      var col = this.options.columns[j].toLowerCase();
-      var val = row[col] ? $(this.options.wrappers[j].replace(/{i}/g, i)).append(row[col]) : $(this.options.wrappers[j]).append(0);
+      var col = this.options.columns[j].value;
+      var val;
+      var field = col.split('.')[0];
+      var op = col.split('.')[1];
+      switch (op) {
+        case 'length':
+          val = row[field] ? row[field].length : 0;
+          break;
+        default: 
+          val = row[field] ? row[field] : '';
+      }
+      
+      val = $(this.options.wrappers[j].replace(/{i}/g, i)).text(val);
+      
       if (val.data('toggle') == 'modal') {
         val.attr('data-target', '#' + this.modalId);
       }
@@ -105,15 +117,22 @@ boardWidget.prototype._refreshHelper = function() {
     tr.appendTo(tbl); 
   }
   var This = this;
-  $(document).on('shown.bs.modal', '#' + this.modalId, function(event) {
-    if (This.options.modalShown) {
-      This.options.modalShown(This, event);
-    }
-  });
-  if (this.options.success && !this.loaded) {
+  if (!this.loaded) {
     this.loaded = true;
-    this.options.success(this);
+    $(document).on('shown.bs.modal', '#' + this.modalId, function(event) {
+      if (This.options.modalShown) {
+        This.options.modalShown(This, event);
+      }
+    });
+    if (this.options.success) {
+      this.options.success(this);
+    }
   }
+  
+  if (this.options.refresh) {
+    this.options.refresh(this);
+  }
+  
 }
 
 boardWidget.prototype.deleteItem = function(ix, callback) {
