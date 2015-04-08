@@ -28,8 +28,6 @@ router.get('/:user_email', function(req, res, next) {
 // change user
 // - currentProduct
 // - add product access
-// - TODO: remove product access
-// - TODO: update product name (from product db)
 // - TODO: change email address
 router.post('/:user_email', function(req, res, next) {
   
@@ -65,5 +63,52 @@ router.post('/:user_email', function(req, res, next) {
     });
   });
 });
+
+// change a record of an accessible product
+// - TODO: update product name
+router.post('/:user_email/:product_id', function(req, res, next) {
+  var email = req.params.user_email;
+  var newname = req.body.name;
+  if (!newname) {
+    var err = new Error("No new product name specified");
+    err.status = 400;
+    return next(err);
+  }
+  
+  User.findOne({email: email}, function(err, user) {
+    if (err) {
+      return next(err);
+    }
+    
+    var found = false;
+    for (var i in user.products) {
+      if (user.products[i].id === req.params.product_id) {
+        found = true;
+        user.products[i].name = newname;
+      }
+    }
+    
+    if (!found) {
+      var err = new Error("Invalid product_id");
+      err.status = 404;
+      return next(err);
+    }
+    
+    return user.save(function(err) { // TODO: turn into its own route so I can use next(...) to save a document?
+      if (err) { // TODO: convert to next(err)?
+        return res.json({
+          success: false,
+          error: err
+        });
+      } else {
+        return res.json({
+          success: true
+        });
+      }
+    });
+  });
+});
+
+// - TODO: remove product access (DELETE)
 
 module.exports = router;

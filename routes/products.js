@@ -41,9 +41,6 @@ router.put('/', function(req, res, next) {
   });
 });
 
-// TODO: change product details
-
-
 router.param('product_id', function(req, res, next, product_id) {
   // TODO: assert product_id is an integer
   
@@ -59,6 +56,27 @@ router.param('product_id', function(req, res, next, product_id) {
         }
       });
   //});
+});
+
+// change product details
+// - name
+router.post('/:product_id', function(req, res, next) {
+  var prod = req.product;
+  if (req.body.value) { // x-editable sends pk, name, and value; just use value for now (later: make it more generic to change other product details?)
+    prod.name = req.body.value;
+  }
+  return prod.save(function(err) {
+    if (err) { // TODO: convert to next(err)?
+      return res.json({
+        success: false,
+        error: err
+      });
+    } else {
+      return res.json({
+        success: true
+      });
+    }
+  });
 });
 
 // get product

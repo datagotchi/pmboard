@@ -117,7 +117,8 @@ function changeCurrentProduct(ix, callback) {
       } else {
         console.error(data.error);
       }
-    })
+    }
+  );
 }
 
 function createProduct(callback) {
@@ -196,9 +197,40 @@ function init() {
     if (widget)
       widget._refresh();
   });
-	
+
 	$.get(product_url, function (data) {
 		var prod_name = data.name;
 		$("#productName").text(prod_name);
+		$("#productName").editable({
+    	showbuttons: false,
+  		params: function(params) { return JSON.stringify(params); },
+  		onblur: 'submit',
+  		url: product_url,
+  		ajaxOptions: {
+  			type: 'post',
+  			dataType: 'json',
+  			contentType: 'application/json; charset=utf-8'
+  		},
+  		success: function(response, newValue) {
+  			if (typeof response == "object" && !response.success) {
+  				return response.error;
+  			}
+  			// edit the user's record of the product name, too
+  			$.post(
+          '/users/' + email + '/' + prod_id, 
+          {name: newValue}, 
+          function(data) {
+            if (data.success) {
+              location.reload();
+            } else {
+              console.error(data.error);
+            }
+          }
+        );
+  		},
+  		error: function(a, b) {
+  			console.error(a, b);
+  		}
+  	});
 	});
 }
