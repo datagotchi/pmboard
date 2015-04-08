@@ -4,6 +4,7 @@ var userSchema = new mongoose.Schema({
     "email": String,
     "oauths": Array,
     "products": [{
+      _id:false,
       name: String,
       id: String
     }],
