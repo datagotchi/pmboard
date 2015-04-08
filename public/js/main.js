@@ -107,14 +107,44 @@ function getCookie(name) {
   return cookieValue;
 }
 
-function changeProduct(ix, callback) {
-  $.post('/users/' + email, {currentProduct: ix}, function(data) {
-    if (data.success) {
-      if (callback) callback();
-    } else {
-      console.error(data.error);
+function changeCurrentProduct(ix, callback) {
+  $.post(
+    '/users/' + email, 
+    {currentProduct: ix}, 
+    function(data) {
+      if (data.success) {
+        if (callback) callback();
+      } else {
+        console.error(data.error);
+      }
+    })
+}
+
+function createProduct(callback) {
+  // create the product
+  $.ajax({
+    method: 'PUT',
+    url: '/products',
+    success: function(data) {
+      if (data.success) {
+        var prod = data.product;
+        // give this user access to the product
+        $.post(
+          '/users/' + email,
+          {name: prod.name, id: prod._id},
+          function(data2) {
+            if (data2.success) {
+              if (callback) callback();
+            } else {
+              console.error(data2.error);
+            }
+          }
+        );
+      } else {
+        console.error(data.error);
+      }
     }
-  })
+  });
 }
 
 function init() {
@@ -131,11 +161,19 @@ function init() {
   $("#products a.products").click(function(event) {
     var $a = $(this);
     var $li = $a.parent();
-    changeProduct($li.index(), function() {
+    changeCurrentProduct($li.index(), function() {
       location.reload();
     });
   });
-  $("#products").append('<li class="divider"></li><li><a href="#"><span class="glyphicon glyphicon-plus"></span>New Product</a></li>');
+  
+  $("#products").append('<li class="divider"></li><li><a href="#" id="newproduct"><span class="glyphicon glyphicon-plus"></span>New Product</a></li>');
+  $("#newproduct").click(function(event) {
+    createProduct(function() {
+      changeCurrentProduct($("#products .products").length, function() {
+        location.reload();
+      })
+    });
+  });
   
 	//$('[data-toggle="popover"]').popover({
 	//	html: true,

@@ -27,7 +27,7 @@ router.get('/:user_email', function(req, res, next) {
 
 // change user
 // - currentProduct
-// - TODO: add product access
+// - add product access
 // - TODO: remove product access
 // - TODO: update product name (from product db)
 // - TODO: change email address
@@ -42,6 +42,19 @@ router.post('/:user_email', function(req, res, next) {
     
     if (req.body.currentProduct) {
       user.currentProduct = req.body.currentProduct;
+    }
+    
+    console.log("req.body: ", req.body);
+    
+    console.log("user.products: ", user.products);
+    
+    if (req.body.name && req.body.id) {
+      user.products.push({
+        name: req.body.name,
+        id: req.body.id
+      });
+      
+      console.log("user's products is now: ", user.products);
     }
     
     return user.save(function(err) { // TODO: turn into its own route so I can use next(...) to save a document?
