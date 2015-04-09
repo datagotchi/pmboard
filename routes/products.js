@@ -87,6 +87,15 @@ router.get('/:product_id', function(req, res, next) {
   return res.json(req.product);
 });
 
+// delete product
+router.delete('/:product_id', function(req, res, next) {
+  req.product.remove(function() {
+    return res.json({
+      success: true
+    });
+  });
+});
+
 router.use('/:product_id/personas', require('./personas'));
 
 module.exports = router;

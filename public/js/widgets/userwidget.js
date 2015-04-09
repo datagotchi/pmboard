@@ -194,6 +194,7 @@ function initTagsInput(evidenceUrl, $items) {
 }
 
 function initDeleteBtns(evidenceUrl, $btns) {
+  $btns.css('cursor', 'pointer');
   $btns.on('click', function(event) {
     var This = this;
     var verify = bootbox.confirm("Are you sure?", function(result) {
@@ -241,7 +242,7 @@ function refreshEvidence(evidenceUrl, $currentTable, callback) {
       }
       var td = $('<td>').append($select);
       $('<tr>')
-        .append('<td><button type="button" class="remove-evidence glyphicon glyphicon-remove btn-danger"></button></td>')
+        .append('<td><span class="remove-evidence glyphicon glyphicon-remove"></span></td>')
         .append('<td><a href="' + file.url + '" target="_blank"><img src="' + file.icon + '" />' + file.name + '</a></td>')
         .append(td)
         .appendTo($currentTable);

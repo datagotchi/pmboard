@@ -1,5 +1,6 @@
 $.fn.editable.defaults.mode = 'inline';
 var products;
+var currentProduct;
 var prod_id;
 var product_url;
 var personas_url;
@@ -20,8 +21,8 @@ $(window).load(function() {
 		email = $.cookie('email');
 		$.get('/users/' + email, function(user) {
   		products = user.products;
-  		var cur = typeof user.currentProduct === "number" ? user.currentProduct : 0;
-      prod_id = products[cur]._id; 
+  		currentProduct = typeof user.currentProduct === "number" ? user.currentProduct : 0;
+      prod_id = products[currentProduct]._id; 
       init();
 		});
   } else {
@@ -30,8 +31,8 @@ $(window).load(function() {
       email = data.user.email;
       $.cookie('oauth', data.oauth);
       products = data.user.products;
-      var cur = typeof data.user.currentProduct === "number" ? data.user.currentProduct : 0;
-      prod_id = products[cur]._id;
+      currentProduct = typeof data.user.currentProduct === "number" ? data.user.currentProduct : 0;
+      prod_id = products[currentProduct]._id;
       init();
     });
   }
@@ -233,6 +234,24 @@ function init() {
   		error: function(a, b) {
   			console.error(a, b);
   		}
+  	});
+  	$("#deleteProduct").click(function(event) {
+    	bootbox.confirm("Are you sure?", function(result) {
+      	if (result) {
+        	$.ajax({
+          	method: 'DELETE',
+          	url: product_url,
+          	success: function(data) {
+            	if (data.success) {
+              	var newIx = currentProduct-1;
+              	changeCurrentProduct(newIx >= 0 ? newIx : 0, location.reload());
+            	} else {
+              	console.error(data);
+            	}
+          	}
+        	});
+        }
+    	});
   	});
 	});
 }
