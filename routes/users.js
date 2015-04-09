@@ -17,6 +17,11 @@ router.use(function(req, res, next) {
 // get user document via email
 router.get('/:user_email', function(req, res, next) {
   
+  if (!req.params.user_email) {
+    var err = new Error("Invalid request; please specify email address");
+    err.status = 400;
+    next(err);
+  }
   var email = req.params.user_email
   
   User.findOne({email: email})
