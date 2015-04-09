@@ -25,6 +25,11 @@ router.get('/:user_email', function(req, res, next) {
       if (err) {
         return next(err);
       }
+      if (!user) {
+        var err = new Error("No such user");
+        err.status = 404;
+        next(err);
+      }
       return res.json(user);
     });
 });
