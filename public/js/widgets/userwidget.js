@@ -40,6 +40,32 @@ function createUserWidget(apiUrl) {
         });
       });
       
+      $(document).on('click', '#' + widget.modalId + ' :checkbox', function(event) {
+        var evidenceUrl = widget.options.api + '/' + widget.modal.currentIx + '/evidence';
+        var $this = $(this);
+        var $tr = $this.parent().parent();
+        var personaIx = widget.modal.currentIx;
+        var $currentTable = $('#evidence table#current tbody');
+        if ($this.prop('checked')) {
+          $tr.addClass('success');
+          addEvidence(evidenceUrl, $tr, function(data) {
+            /*var td1 = $tr.find('td.file');
+            var $select = $('<select multiple data-role="tagsinput"></select>');
+            var td2 = $("<td>").append($select);
+            $("<tr>")
+              .append(td1)
+              .append(td2)
+              .appendTo($currentTable);
+            initTagsInput(evidenceUrl, $select);*/
+            refreshEvidence(evidenceUrl, $currentTable, function() {
+              $tr.hide();
+            })
+          });
+        } else {
+          $tr.removeClass('success');
+        }
+      });
+      
       $("#loading").hide();
     },
     modalShown: function(widget, event) {
@@ -86,29 +112,6 @@ function createUserWidget(apiUrl) {
           }
         };
         xhr.send();
-        $(document).on('click', '#' + widget.modalId + ' :checkbox', function(event) {
-          var $this = $(this);
-          var $tr = $this.parent().parent();
-          var personaIx = widget.modal.currentIx;
-          if ($this.prop('checked')) {
-            $tr.addClass('success');
-            addEvidence(evidenceUrl, $tr, function(data) {
-              /*var td1 = $tr.find('td.file');
-              var $select = $('<select multiple data-role="tagsinput"></select>');
-              var td2 = $("<td>").append($select);
-              $("<tr>")
-                .append(td1)
-                .append(td2)
-                .appendTo($currentTable);
-              initTagsInput(evidenceUrl, $select);*/
-              refreshEvidence(evidenceUrl, $currentTable, function() {
-                $tr.hide();
-              })
-            });
-          } else {
-            $tr.removeClass('success');
-          }
-        });
         
         // set up the 'details' tab...
         // make fields editable (edit text -> post to server)
