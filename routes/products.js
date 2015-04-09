@@ -62,7 +62,7 @@ router.param('product_id', function(req, res, next, product_id) {
 // - name
 router.post('/:product_id', function(req, res, next) {
   var prod = req.product;
-  if (req.body.value) { // x-editable sends pk, name, and value; just use value for now (later: make it more generic to change other product details?)
+  if (req.body.value) {
     prod.name = req.body.value;
   }
   return prod.save(function(err) {
@@ -72,6 +72,7 @@ router.post('/:product_id', function(req, res, next) {
         error: err
       });
     } else {
+      // TODO: change products in the users db ~ db.users.find({"products.id": "550cb3c96c2de13ab1cdd5fa"}) etc...
       return res.json({
         success: true
       });

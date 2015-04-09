@@ -112,7 +112,7 @@ function createUserWidget(apiUrl) {
         
         // set up the 'details' tab...
         // make fields editable (edit text -> post to server)
-        $('#' + widget.options.id + ' .editable-value').editable({
+        $('#' + widget.modalId + ' .editable-value').editable({
           showbuttons: false,
       		params: function(params) { return JSON.stringify(params); },
       		onblur: 'submit',
