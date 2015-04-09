@@ -30,7 +30,7 @@ $(window).load(function() {
       email = data.user.email;
       $.cookie('oauth', data.oauth);
       products = data.user.products;
-      var cur = typeof user.currentProduct === "number" ? user.currentProduct : 0;
+      var cur = typeof data.user.currentProduct === "number" ? data.user.currentProduct : 0;
       prod_id = products[cur]._id;
       init();
     });

@@ -29,22 +29,23 @@ router.post('/signin', function(req, res) {
 		return request_object.me();
 	})
 	.then(function(guser) {
-  	User.findOne({'email': guser.email}, function(err, user) {
-    	if (err) {
-        next(err);
-      }
-      req.session.email = user.email;
-      // TODO: write auth to database
-      res.json({
-        success: true,
-        user: user,
-        oauth: JSON.stringify(auth)
-      });
-  	});
+  	User.findOne({'email': guser.email})
+  	  .populate('products', 'name')
+  	  .exec(function(err, user) {
+      	if (err) {
+          next(err);
+        }
+        req.session.email = user.email;
+        // TODO: write auth to database
+        res.json({
+          success: true,
+          user: user,
+          oauth: JSON.stringify(auth)
+        });
+    	});
 	})
 	.fail(function (e) {
 		console.log(e);
-		//res.send(400, 'Code is incorrect');
 		res.sendStatus(500).send(e);
 	});
 });
