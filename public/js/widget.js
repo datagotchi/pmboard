@@ -137,18 +137,24 @@ boardWidget.prototype._refreshHelper = function() {
 
 boardWidget.prototype.deleteItem = function(ix, callback) {
   if (this.options.api) {
-		$.ajax({
-			method: 'delete',
-			url: this.options.api,
-			dataType: 'json',
-			contentType: 'application/json; charset=utf-8',
-			data: JSON.stringify({
-  			ix: ix
-			}),
-			success: function() {
-				if (callback) callback();
-			}
-		});
+    var This = this;
+    bootbox.confirm("Are you sure?", function(result) {
+      if (result) {
+        $.ajax({
+    			method: 'delete',
+    			url: This.options.api,
+    			dataType: 'json',
+    			contentType: 'application/json; charset=utf-8',
+    			data: JSON.stringify({
+      			ix: ix
+    			}),
+    			success: function() {
+    				if (callback) callback();
+    			}
+    		});
+      }
+    });
+		
   }
 };
 

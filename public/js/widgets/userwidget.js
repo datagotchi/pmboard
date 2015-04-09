@@ -192,29 +192,35 @@ function initTagsInput(evidenceUrl, $items) {
 
 function initDeleteBtns(evidenceUrl, $btns) {
   $btns.on('click', function(event) {
-    var $tr = $(this).parent().parent();  // btn -> td -> tr
-    $.ajax({
-      method: 'DELETE',
-      url: evidenceUrl,
-      data: {
-        ix: $tr.index()
-      },
-      success: function() {
-        // show row in files table
-        var url = $tr.find('a').attr('href');
-        var filesLink = $("#files").find('a[href="' + url + '"]'); //$tr.closest('div[role=tabpanel]').find('...')
-        var filesTr = filesLink.parent().parent() // a -> td -> tr
-          .show()
-          .removeClass('success', 2000); // TODO: would like a color animation here maybe
-        filesTr.find(':checked').prop('checked', false);
-        
-        // remove from evidence table
-        $tr.remove(); 
-      },
-      error: function(data) {
-        
+    var This = this;
+    var verify = bootbox.confirm("Are you sure?", function(result) {
+      if (result === true) {
+        var $tr = $(This).parent().parent();  // btn -> td -> tr
+        $.ajax({
+          method: 'DELETE',
+          url: evidenceUrl,
+          data: {
+            ix: $tr.index()
+          },
+          success: function() {
+            // show row in files table
+            var url = $tr.find('a').attr('href');
+            var filesLink = $("#files").find('a[href="' + url + '"]'); //$tr.closest('div[role=tabpanel]').find('...')
+            var filesTr = filesLink.parent().parent() // a -> td -> tr
+              .show()
+              .removeClass('success', 2000); // TODO: would like a color animation here maybe
+            filesTr.find(':checked').prop('checked', false);
+            
+            // remove from evidence table
+            $tr.remove(); 
+          },
+          error: function(data) {
+            
+          }
+        });
       }
     });
+    
   });
 }
 
