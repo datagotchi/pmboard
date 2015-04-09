@@ -12,6 +12,14 @@ var oauth = require('oauthio');
 
 var app = express();
 
+var db = mongoose.createConnection("mongodb://localhost/pmboard");
+var userSchema = require('./schema/User.js');
+User = db.model('User', userSchema);
+app.set('User', User);
+var productSchema = require('./schema/Product.js');
+Product = db.model('Product', productSchema);
+app.set('Product', Product);
+
 app.use(express.static('public'));
 //app.use(cors());
 app.use(bodyParser.json());

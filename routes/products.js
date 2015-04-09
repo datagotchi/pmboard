@@ -4,9 +4,11 @@ var oauth = require('oauthio');
 var mongoose = require('mongoose');
 var ObjectId = mongoose.Types.ObjectId;
 
-var proddb = mongoose.createConnection("mongodb://localhost/products");
-var productSchema = require('../schema/Product.js');
-var Product = proddb.model('Product', productSchema);
+var Product;
+router.use(function(req, res, next) {
+  Product = req.app.get('Product');
+  next();
+});
 
 // get products
 router.get('/', function(req, res, next) {

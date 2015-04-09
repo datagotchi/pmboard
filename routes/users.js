@@ -6,9 +6,11 @@ var ObjectId = mongoose.Types.ObjectId;
 
 // TODO: fix cookie-based auth at some point, but use these (VERY INSECURE) routes for now
 
-var db = mongoose.createConnection("mongodb://localhost/users");
-var schema = require('../schema/User.js');
-var User = db.model('User', schema);
+var User;
+router.use(function(req, res, next) {
+  User = req.app.get('User');
+  next();
+});
 
 // TODO: get list of users (e.g., for typeahead.js suggestions to share your project)
 
@@ -17,12 +19,14 @@ router.get('/:user_email', function(req, res, next) {
   
   var email = req.params.user_email
   
-  User.findOne({email: email}, function(err, user) {
-    if (err) {
-      return next(err);
-    }
-    return res.json(user);
-  });
+  User.findOne({email: email})
+    .populate('products', 'name')
+    .exec(function(err, user) {
+      if (err) {
+        return next(err);
+      }
+      return res.json(user);
+    });
 });
 
 // change user
@@ -42,11 +46,8 @@ router.post('/:user_email', function(req, res, next) {
       user.currentProduct = req.body.currentProduct;
     }
     
-    if (req.body.name && req.body.id) {
-      user.products.push({
-        name: req.body.name,
-        id: req.body.id
-      });
+    if (req.body.product_id) { // TODO: hacky; put in users.products.post below
+      user.products.push(req.body.product_id);
     }
     
     return user.save(function(err) { // TODO: turn into its own route so I can use next(...) to save a document?
@@ -65,10 +66,11 @@ router.post('/:user_email', function(req, res, next) {
 });
 
 // change a record of an accessible product
-// - TODO: update product name
-router.post('/:user_email/:product_id', function(req, res, next) {
+// - TODO: add accessible product (move from above route to here)
+// - TODO: remove accessible product
+/*router.post('/:user_email/products/:product_id', function(req, res, next) {
   var email = req.params.user_email;
-  var newname = req.body.name;
+  
   if (!newname) {
     var err = new Error("No new product name specified");
     err.status = 400;
@@ -82,9 +84,8 @@ router.post('/:user_email/:product_id', function(req, res, next) {
     
     var found = false;
     for (var i in user.products) {
-      if (user.products[i].id === req.params.product_id) {
+      if (user.products[i]._id === req.params.product_id) {
         found = true;
-        user.products[i].name = newname;
       }
     }
     
@@ -107,7 +108,7 @@ router.post('/:user_email/:product_id', function(req, res, next) {
       }
     });
   });
-});
+});*/
 
 // - TODO: remove product access (DELETE)
 

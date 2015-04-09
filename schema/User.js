@@ -1,13 +1,12 @@
 var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
-var userSchema = new mongoose.Schema({
+var userSchema = new Schema({
     "email": String,
     "oauths": Array,
-    "products": [{
-      _id:false,
-      name: String,
-      id: String
-    }],
+    "products": [
+      {type: Schema.ObjectId, ref: 'Product'}
+    ],
     "currentProduct": Number
     // TODO: add their current set of widgets/perspective (or make it per-product)?
   }

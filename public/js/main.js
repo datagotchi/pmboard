@@ -21,7 +21,7 @@ $(window).load(function() {
 		$.get('/users/' + email, function(user) {
   		products = user.products;
   		var cur = typeof user.currentProduct === "number" ? user.currentProduct : 0;
-      prod_id = products[cur].id; 
+      prod_id = products[cur]._id; 
       init();
 		});
   } else {
@@ -30,7 +30,8 @@ $(window).load(function() {
       email = data.user.email;
       $.cookie('oauth', data.oauth);
       products = data.user.products;
-      prod_id = products[0].id; // TODO: fetch the product they were last using
+      var cur = typeof user.currentProduct === "number" ? user.currentProduct : 0;
+      prod_id = products[cur]._id;
       init();
     });
   }
@@ -132,7 +133,7 @@ function createProduct(callback) {
         // give this user access to the product
         $.post(
           '/users/' + email,
-          {name: prod.name, id: prod._id},
+          {product_id: prod._id},
           function(data2) {
             if (data2.success) {
               if (callback) callback();
@@ -153,7 +154,7 @@ function init() {
   product_url = "/products/" + prod_id;
   
   for (var p = 0; p < products.length; p++) {
-    if (products[p].id == prod_id) {
+    if (products[p]._id == prod_id) {
       $("#products").append('<li class="active"><a href="#" class="products">' + products[p].name + '</a></li>');
     } else {
       $("#products").append('<li><a href="#" class="products">' + products[p].name + '</a></li>');
@@ -215,8 +216,9 @@ function init() {
   			if (typeof response == "object" && !response.success) {
   				return response.error;
   			}
+  			location.reload();
   			// edit the user's record of the product name, too
-  			$.post(
+  			/*$.post(
           '/users/' + email + '/' + prod_id, 
           {name: newValue}, 
           function(data) {
@@ -226,7 +228,7 @@ function init() {
               console.error(data.error);
             }
           }
-        );
+        );*/
   		},
   		error: function(a, b) {
   			console.error(a, b);
