@@ -4,7 +4,7 @@ var currentProduct;
 var prod_id;
 var product_url;
 var personas_url;
-var email;
+var userid;
 
 OAuth.initialize('K2P2q3_J6a76xcMJCcRRYTrbJ2c'); // TODO: hide this key somewhere via an ajax call? 
 $.cookie.json = true;
@@ -17,9 +17,9 @@ $.ajaxSetup({
 
 $(window).load(function() {
   // TODO: get this working without forcing another auth - saved identity token on server???
-  if ($.cookie('email') && $.cookie('oauth')/* && getCookie('XSRF-TOKEN')*/) {
-		email = $.cookie('email');
-		$.get('/users/' + email, function(user) {
+  if ($.cookie('userid') && $.cookie('oauth')/* && getCookie('XSRF-TOKEN')*/) {
+		userid = $.cookie('userid');
+		$.get('/users/' + userid, function(user) {
   		products = user.products;
   		currentProduct = typeof user.currentProduct === "number" ? user.currentProduct : 0;
   		if (currentProduct >= products.length) currentProduct = products.length - 1;
@@ -28,8 +28,8 @@ $(window).load(function() {
 		});
   } else {
     doAuthentication(function(data) {
-      $.cookie('email', data.user.email);
-      email = data.user.email;
+      $.cookie('userid', data.user._id);
+      userid = data.user._id;
       $.cookie('oauth', data.oauth);
       products = data.user.products;
       currentProduct = typeof data.user.currentProduct === "number" ? data.user.currentProduct : 0;
@@ -113,7 +113,7 @@ function getCookie(name) {
 
 function changeCurrentProduct(ix, callback) {
   $.post(
-    '/users/' + email, 
+    '/users/' + userid, 
     {currentProduct: ix}, 
     function(data) {
       if (data.success) {
@@ -135,7 +135,7 @@ function createProduct(callback) {
         var prod = data.product;
         // give this user access to the product
         $.post(
-          '/users/' + email,
+          '/users/' + userid,
           {product_id: prod._id},
           function(data2) {
             if (data2.success) {

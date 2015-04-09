@@ -15,16 +15,16 @@ router.use(function(req, res, next) {
 // TODO: get list of users (e.g., for typeahead.js suggestions to share your project)
 
 // get user document via email
-router.get('/:user_email', function(req, res, next) {
+router.get('/:user_id', function(req, res, next) {
   
-  if (!req.params.user_email) {
-    var err = new Error("Invalid request; please specify email address");
+  if (!req.params.user_id) {
+    var err = new Error("Invalid request; please specify user ID");
     err.status = 400;
     next(err);
   }
-  var email = req.params.user_email
+  var userid = req.params.user_id
   
-  User.findOne({email: email})
+  User.findOne({_id: ObjectId(userid)})
     .populate('products', 'name')
     .exec(function(err, user) {
       if (err) {
@@ -43,11 +43,11 @@ router.get('/:user_email', function(req, res, next) {
 // - currentProduct
 // - add product access
 // - TODO: change email address
-router.post('/:user_email', function(req, res, next) {
+router.post('/:user_id', function(req, res, next) {
   
-  var email = req.params.user_email;
+  var userid = req.params.user_id;
   
-  User.findOne({email: email}, function(err, user) {
+  User.findOne({_id: ObjectId(userid)}, function(err, user) {
     if (err) {
       return next(err);
     }
