@@ -3,6 +3,12 @@ var router = express.Router();
 var oauth = require('oauthio');
 var mongoose = require('mongoose');
 
+var User;
+router.use(function(req, res, next) {
+  User = req.app.get('User');
+  next();
+});
+
 router.get('/token', function(req, res) {
 	var token = oauth.generateStateToken(req.session);
 
@@ -23,10 +29,6 @@ router.post('/signin', function(req, res) {
 		return request_object.me();
 	})
 	.then(function(guser) {
-  	// fetch the google user (by email) from mongo and return it to the client (with its products)
-  	var db = mongoose.createConnection("mongodb://localhost/users");
-    var userSchema = require('../schema/User');
-    var User = db.model('User', userSchema);
   	User.findOne({'email': guser.email}, function(err, user) {
     	if (err) {
         next(err);
