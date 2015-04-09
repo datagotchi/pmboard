@@ -22,6 +22,7 @@ $(window).load(function() {
 		$.get('/users/' + email, function(user) {
   		products = user.products;
   		currentProduct = typeof user.currentProduct === "number" ? user.currentProduct : 0;
+  		if (currentProduct >= products.length) currentProduct = products.length - 1;
       prod_id = products[currentProduct]._id; 
       init();
 		});
@@ -32,6 +33,7 @@ $(window).load(function() {
       $.cookie('oauth', data.oauth);
       products = data.user.products;
       currentProduct = typeof data.user.currentProduct === "number" ? data.user.currentProduct : 0;
+      if (currentProduct >= products.length) currentProduct = products.length - 1;
       prod_id = products[currentProduct]._id;
       init();
     });
