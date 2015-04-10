@@ -24,7 +24,13 @@ router.get('/:user_id', function(req, res, next) {
   }
   var userid = req.params.user_id
   
-  User.findOne({_id: ObjectId(userid)})
+  if (userid != req.app.get('userid')) {
+    var err = new Error("Unauthorized");
+    err.status = 401;
+    next(err);
+  }
+  
+  User.findById(userid)
     .populate('products', 'name')
     .exec(function(err, user) {
       if (err) {
@@ -46,6 +52,12 @@ router.get('/:user_id', function(req, res, next) {
 router.post('/:user_id', function(req, res, next) {
   
   var userid = req.params.user_id;
+  
+  if (userid != req.app.get('userid')) {
+    var err = new Error("Unauthorized");
+    err.status = 401;
+    next(err);
+  }
   
   User.findOne({_id: ObjectId(userid)}, function(err, user) {
     if (err) {

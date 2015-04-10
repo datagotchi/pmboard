@@ -3,6 +3,14 @@ var router = express.Router();
 var oauth = require('oauthio');
 var mongoose = require('mongoose');
 
+/* Initialize and route oauth if necessary */
+try {
+  var config = require('./config');
+  oauth.initialize(config.key, config.secret);
+} catch (e) {
+  console.log(e);
+}
+
 var User;
 router.use(function(req, res, next) {
   User = req.app.get('User');

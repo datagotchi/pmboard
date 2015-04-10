@@ -37,14 +37,9 @@ app.use(session({
   next();
 });*/
 
-/* Initialize and route oauth if necessary */
-try {
-  var config = require('./config');
-  oauth.initialize(config.key, config.secret);
-} catch (e) {
-  console.log(e);
-}
 app.use('/oauth', oauth_route);
+
+app.set('userid', req.cookies.userid);
 
 app.use('/users', require('./routes/users'));
 

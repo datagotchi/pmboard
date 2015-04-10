@@ -11,7 +11,8 @@ router.use(function(req, res, next) {
 });
 
 // get products
-router.get('/', function(req, res, next) {
+// disabled, INSECURE
+/*router.get('/', function(req, res, next) {
 	Product.find(function(err, products) {
   	if (!err) {
       return res.json(products);
@@ -19,15 +20,16 @@ router.get('/', function(req, res, next) {
       return next(err);
     }
   });
-});
+});*/
 
 // add product
 router.put('/', function(req, res, next) {
   var newprod = new Product({
-    //name: req.body.name,
     name: 'NewProduct',
-    personas: []
+    personas: [],
+    permissions: {}
   });
+  newprod.permissions[req.app.get('userid')] = 10;
   return newprod.save(function(err) {
     if (err) { // TODO: convert to next(err)?
       return res.json({
@@ -48,8 +50,13 @@ router.param('product_id', function(req, res, next, product_id) {
   
   //oauth.auth('google', req.session)
   //.then(function (request_object) {
-      // TODO: validate w/ req.session.email that they have access to the product
       Product.findById(product_id, function(err, product) {
+        var userid = req.app.get('userid');
+        if (!(userid in product.permissions) || product.permissions[userid] < 1) {
+          var err = new Error("Unauthorized");
+          err.status = 401;
+          next(err);
+        }
         if (!err) {
           req.product = product;
           return next();
@@ -64,6 +71,12 @@ router.param('product_id', function(req, res, next, product_id) {
 // - name
 router.post('/:product_id', function(req, res, next) {
   var prod = req.product;
+  var userid = req.app.get('userid');
+  if (!(userid in prod.permissions) || prod.permissions[userid] < 2) {
+    var err = new Error("Unauthorized");
+    err.status = 401;
+    next(err);
+  }
   if (req.body.value) {
     prod.name = req.body.value;
   }
@@ -84,17 +97,56 @@ router.post('/:product_id', function(req, res, next) {
 
 // get product
 router.get('/:product_id', function(req, res, next) {
+  var userid = req.app.get('userid');
   return res.json(req.product);
 });
 
 // delete product
 router.delete('/:product_id', function(req, res, next) {
+  var userid = req.app.get('userid');
+  if (!(userid in req.product.permissions) || req.product.permissions[userid] < 3) {
+    var err = new Error("Unauthorized");
+    err.status = 401;
+    next(err);
+  }
+  var prodId = req.product._id;
+  var prodUsers = Object.keys(req.product.permissions);
   req.product.remove(function() {
-    return res.json({
-      success: true
+    req.app.get('User').find({_id: {$in: prodUsers}}, function(err, users) {
+      if (!err && users) {
+        for (var j = 0; j < users.length; j++) {
+          var user = removeUserProduct(users[j], prodId);
+          return user.save(function(err) {
+            if (err) {
+              return next(err);
+            } 
+          });
+        }
+        return res.json({
+          success: true
+        });
+      } else if (err) {
+        return next(err);
+      } else {
+        next("Oops! Something went wrong!");
+      }
     });
   });
 });
+
+function removeUserProduct(user, prodId) {
+  var index = -1;
+  for (var i = 0; i < user.products.length; i++) {
+    if (user.products[i] === prodId) {
+      index = i;
+    }
+  }
+  if (index >= 0) user.products.splice(index, 1);
+  if (user.currentProduct >= user.products.length) {
+    user.currentProduct = user.products.length - 1;
+  }
+  return user;
+}
 
 router.use('/:product_id/personas', require('./personas'));
 
