@@ -45,7 +45,7 @@ function createUserWidget(apiUrl) {
         var $this = $(this);
         var $tr = $this.parent().parent();
         var personaIx = widget.modal.currentIx;
-        var $currentTable = $('#evidence table#current tbody');
+        var $currentTable = $('#evidence table #current tbody');
         if ($this.prop('checked')) {
           $tr.addClass('success');
           addEvidence(evidenceUrl, $tr, function(data) {
@@ -94,7 +94,7 @@ function createUserWidget(apiUrl) {
             }
           }
           var response = JSON.parse(xhr.responseText);
-          var filesTable = widget.modal.elem.find("#evidence table#files tbody");
+          var filesTable = widget.modal.elem.find("#evidence table #files tbody");
           for (var i = 0; i < response.items.length; i++) {
               var item = response.items[i];
               //if (evidence[item.alternateLink]) continue;
