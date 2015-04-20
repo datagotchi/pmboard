@@ -64,7 +64,6 @@ router.param('product_id', function(req, res, next, product_id) {
             permLookup[product.permissions[i]._id] = product.permissions[i].value;
           }
           req.product.permLookup = permLookup;
-          console.log("my ({me}) permissions: ".replace('{me}', userid), req.product.permLookup[userid]);
           if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 1) {
             var err = new Error("Unauthorized");
             err.status = 401;
@@ -128,7 +127,7 @@ router.delete('/:product_id', function(req, res, next) {
       if (!err && users) {
         for (var j = 0; j < users.length; j++) {
           var user = removeUserProduct(users[j], prodId);
-          return user.save(function(err) {
+          user.save(function(err) {
             if (err) {
               return next(err);
             } 
@@ -140,7 +139,7 @@ router.delete('/:product_id', function(req, res, next) {
       } else if (err) {
         return next(err);
       } else {
-        next("Oops! Something went wrong!");
+        return next("Oops! Something went wrong!");
       }
     });
   });
@@ -149,7 +148,7 @@ router.delete('/:product_id', function(req, res, next) {
 function removeUserProduct(user, prodId) {
   var index = -1;
   for (var i = 0; i < user.products.length; i++) {
-    if (user.products[i] === prodId) {
+    if (prodId.equals(user.products[i])) {
       index = i;
     }
   }
