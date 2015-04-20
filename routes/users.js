@@ -25,11 +25,7 @@ router.get('/:user_id', function(req, res, next) {
   var paramUserId = req.params.user_id
   var cookieUserId = JSON.parse(req.cookies.userid);
   
-  //console.log("got params.user_id: ", paramUserId);
-  //console.log("got cookies.userid: ", cookieUserId);
-  
   if (paramUserId != cookieUserId) {
-    console.log(paramUserId, " != ", cookieUserId, "? ", paramUserId != cookieUserId);
     var err = new Error("Unauthorized");
     err.status = 401;
     next(err);
@@ -58,7 +54,7 @@ router.post('/:user_id', function(req, res, next) {
   
   var userid = req.params.user_id;
   
-  if (userid != req.app.get('userid')) {
+  if (userid != JSON.parse(req.cookies.userid)) {
     var err = new Error("Unauthorized");
     err.status = 401;
     next(err);
