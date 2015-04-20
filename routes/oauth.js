@@ -5,7 +5,7 @@ var mongoose = require('mongoose');
 
 /* Initialize and route oauth if necessary */
 try {
-  var config = require('./config');
+  var config = require('../config');
   oauth.initialize(config.key, config.secret);
 } catch (e) {
   console.log(e);

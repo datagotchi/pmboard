@@ -39,8 +39,6 @@ app.use(session({
 
 app.use('/oauth', oauth_route);
 
-app.set('userid', req.cookies.userid);
-
 app.use('/users', require('./routes/users'));
 
 app.use('/products', products);

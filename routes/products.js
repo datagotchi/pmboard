@@ -29,7 +29,11 @@ router.put('/', function(req, res, next) {
     personas: [],
     permissions: {}
   });
-  newprod.permissions[req.app.get('userid')] = 10;
+  var userid = JSON.parse(req.cookies.userid);
+  newprod.permissions.push({
+    _id: userid,
+    value:10
+  });
   return newprod.save(function(err) {
     if (err) { // TODO: convert to next(err)?
       return res.json({
@@ -51,14 +55,21 @@ router.param('product_id', function(req, res, next, product_id) {
   //oauth.auth('google', req.session)
   //.then(function (request_object) {
       Product.findById(product_id, function(err, product) {
-        var userid = req.app.get('userid');
-        if (!(userid in product.permissions) || product.permissions[userid] < 1) {
-          var err = new Error("Unauthorized");
-          err.status = 401;
-          next(err);
-        }
+        var userid = JSON.parse(req.cookies.userid);
         if (!err) {
           req.product = product;
+          // create loookup table for permissions (can't store it directly in the db, annoyingly)
+          var permLookup = {};
+          for (var i = 0; i < product.permissions.length; i++) {
+            permLookup[product.permissions[i]._id] = product.permissions[i].value;
+          }
+          req.product.permLookup = permLookup;
+          console.log("my ({me}) permissions: ".replace('{me}', userid), req.product.permLookup[userid]);
+          if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 1) {
+            var err = new Error("Unauthorized");
+            err.status = 401;
+            return next(err);
+          }
           return next();
         } else {
           return next(err);
@@ -71,8 +82,8 @@ router.param('product_id', function(req, res, next, product_id) {
 // - name
 router.post('/:product_id', function(req, res, next) {
   var prod = req.product;
-  var userid = req.app.get('userid');
-  if (!(userid in prod.permissions) || prod.permissions[userid] < 2) {
+  var userid = JSON.parse(req.cookies.userid);
+  if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
     var err = new Error("Unauthorized");
     err.status = 401;
     next(err);
@@ -97,20 +108,21 @@ router.post('/:product_id', function(req, res, next) {
 
 // get product
 router.get('/:product_id', function(req, res, next) {
-  var userid = req.app.get('userid');
+  //var userid = JSON.parse(req.cookies.userid);
+  // ...
   return res.json(req.product);
 });
 
 // delete product
 router.delete('/:product_id', function(req, res, next) {
-  var userid = req.app.get('userid');
-  if (!(userid in req.product.permissions) || req.product.permissions[userid] < 3) {
+  var userid = JSON.parse(req.cookies.userid);
+  if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 3) {
     var err = new Error("Unauthorized");
     err.status = 401;
     next(err);
   }
   var prodId = req.product._id;
-  var prodUsers = Object.keys(req.product.permissions);
+  var prodUsers = Object.keys(req.product.permLookup);
   req.product.remove(function() {
     req.app.get('User').find({_id: {$in: prodUsers}}, function(err, users) {
       if (!err && users) {
