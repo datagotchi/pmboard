@@ -2,11 +2,15 @@ function createUserWidget(apiUrl) {
   return new boardWidget({
     title: 'Who are your users?',
     id: "users",
-    columns: [{name: 'Name', value: 'name'}, {name: '', value: 'evidence.length'}],
-    wrappers: [
+    //columns: [{name: 'Name', value: 'name'}, {name: '', value: 'evidence.length'}],
+    // TODO: ^ implement dynamic columns in the 'wrapper' below
+    valueField: 'name',
+    /*wrappers: [
       '<a href="#" data-toggle="modal">',
       '<button type="button" class="evidence btn btn-default label" data-toggle="tooltip" data-placement="top" title="Number of pieces of evidence">'
-    ],
+    ],*/
+    //wrapper: '<a href="#" data-toggle="modal">',
+    wrapper: '<div class="dd-handle" data-toggle="modal">',
     api: apiUrl,
     addmoreText: "Add another user type",
     addmoreAtts: {

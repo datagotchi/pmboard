@@ -22,13 +22,13 @@ function boardWidget(opts) {
       el.find('.panel-title').text(This.options.title);
       el.attr('id', This.options.id);
       
-      var tHead = $('<thead>');
+      /*var tHead = $('<thead>');
       for (var i = 0; i < This.options.columns.length; i++) {
         $('<th>')
           .text(This.options.columns[i].name)
           .appendTo(tHead);
       }
-      tHead.appendTo(el.find('.panel-body .table'));
+      tHead.appendTo(el.find('.panel-body .table'));*/
       
       var addmore = $('<a href="#" class="editable-value new-value" data-type="text" data-pk="new"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> ' + This.options.addmoreText + '</a>');
       addmoreAttsKeys = Object.keys(This.options.addmoreAtts);
@@ -78,20 +78,53 @@ boardWidget.prototype._refresh = function() {
       This.rows = values;
       This._refreshHelper();
     });
-  } else {
+  } /*else {
     this._refreshHelper();
-  }
+  }*/
 };
+
+boardWidget.prototype._addListItems = function(list, data, indexes, visited) {
+  if (!visited) {
+    visited = {};
+  }
+  for (var i in indexes) {
+    var ix = indexes[i];
+    if (ix in visited && visited[ix] == true)
+      continue;
+    var li = $('<li class="dd-item">');
+    var value = data[ix][this.options.valueField];
+    //var div = $('<div class="dd-handle">').text(value);
+    //value = $(this.options.wrapper).append(div);
+    value = $(this.options.wrapper).text(value);
+    if (value.data('toggle') == 'modal') {
+      value.attr('data-target', '#' + this.modalId);
+    }
+    li
+      .append(value)
+      .appendTo(list);
+    visited[ix] = true;
+      
+    if ('children' in data[ix]) {
+      var ol = $('<ol class="dd-list">');
+      this._addListItems(ol, data, data[ix].children, visited);
+      ol.appendTo(li);
+    }
+  }
+}
   
 boardWidget.prototype._refreshHelper = function() {
     
   // refresh rows
-  var tbl = this.element.find('.table');
-  tbl.find('tr').remove();
-  for (var i = 0; i < this.rows.length; i++) {
+  //var tbl = this.element.find('.table');
+  var list = this.element.find('div.dd ol');
+  //tbl.find('tr').remove();
+  list.find('> li').remove();
+  /*for (var i = 0; i < this.rows.length; i++) {
     var row = this.rows[i];
-    var tr = $('<tr>');
-    tr.attr('data-ix', i);
+    //var tr = $('<tr>');
+    
+    //tr.attr('data-ix', i);
+    
     for (var j = 0; j < this.options.columns.length; j++) {
       var col = this.options.columns[j].value;
       var val;
@@ -114,8 +147,13 @@ boardWidget.prototype._refreshHelper = function() {
         .append(val)
         .appendTo(tr);
     }
-    tr.appendTo(tbl); 
-  }
+    //tr.appendTo(tbl); 
+  }*/
+  this._addListItems(list, this.rows, _.range(0,this.rows.length));
+  $("div.dd").nestable()
+    .on('change', function(e) {
+      console.log(e);
+    });
   var This = this;
   if (!this.loaded) {
     this.loaded = true;
