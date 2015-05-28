@@ -2,15 +2,15 @@ function createUserWidget(apiUrl) {
   return new boardWidget({
     title: 'Who are your users?',
     id: "users",
-    //columns: [{name: 'Name', value: 'name'}, {name: '', value: 'evidence.length'}],
+    columns: [{name: 'Name', value: 'name'}, {name: '', value: 'evidence.length'}],
     // TODO: ^ implement dynamic columns in the 'wrapper' below
     valueField: 'name',
-    /*wrappers: [
+    wrappers: [
       '<a href="#" data-toggle="modal">',
       '<button type="button" class="evidence btn btn-default label" data-toggle="tooltip" data-placement="top" title="Number of pieces of evidence">'
-    ],*/
-    //wrapper: '<a href="#" data-toggle="modal">',
-    wrapper: '<div class="dd-handle" data-toggle="modal">',
+    ],
+    wrapper: '<a href="#" data-toggle="modal">',
+    //wrapper: '<div class="dd-handle" data-toggle="modal">',
     api: apiUrl,
     addmoreText: "Add another user type",
     addmoreAtts: {
@@ -49,7 +49,7 @@ function createUserWidget(apiUrl) {
         var $this = $(this);
         var $tr = $this.parent().parent();
         var personaIx = widget.modal.currentIx;
-        var $currentTable = $('#evidence table #current tbody');
+        var $currentTable = $('#evidence #current table tbody');
         if ($this.prop('checked')) {
           $tr.addClass('success');
           addEvidence(evidenceUrl, $tr, function(data) {
@@ -78,7 +78,7 @@ function createUserWidget(apiUrl) {
       // set up the 'evidence' tab...
       
       // list current evidence files
-      var $currentTable = $('#evidence table#current tbody');
+      var $currentTable = $('#evidence #current table tbody');
       refreshEvidence(evidenceUrl, $currentTable, function(evidence) {
         // allow them to choose more files for evidence
         var oauth = JSON.parse($.cookie('oauth'));
@@ -98,7 +98,7 @@ function createUserWidget(apiUrl) {
             }
           }
           var response = JSON.parse(xhr.responseText);
-          var filesTable = widget.modal.elem.find("#evidence table #files tbody");
+          var filesTable = widget.modal.elem.find("#evidence #files table tbody");
           for (var i = 0; i < response.items.length; i++) {
               var item = response.items[i];
               //if (evidence[item.alternateLink]) continue;

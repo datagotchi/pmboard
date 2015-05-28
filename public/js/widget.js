@@ -22,13 +22,13 @@ function boardWidget(opts) {
       el.find('.panel-title').text(This.options.title);
       el.attr('id', This.options.id);
       
-      /*var tHead = $('<thead>');
+    var tHead = $('<thead>');
       for (var i = 0; i < This.options.columns.length; i++) {
         $('<th>')
           .text(This.options.columns[i].name)
           .appendTo(tHead);
       }
-      tHead.appendTo(el.find('.panel-body .table'));*/
+      tHead.appendTo(el.find('.panel-body .table'));
       
       var addmore = $('<a href="#" class="editable-value new-value" data-type="text" data-pk="new"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> ' + This.options.addmoreText + '</a>');
       addmoreAttsKeys = Object.keys(This.options.addmoreAtts);
@@ -78,11 +78,12 @@ boardWidget.prototype._refresh = function() {
       This.rows = values;
       This._refreshHelper();
     });
-  } /*else {
+  } else {
     this._refreshHelper();
-  }*/
+  }
 };
 
+/* // TODO: use this function for nested lists
 boardWidget.prototype._addListItems = function(list, data, indexes, visited) {
   if (!visited) {
     visited = {};
@@ -111,6 +112,7 @@ boardWidget.prototype._addListItems = function(list, data, indexes, visited) {
     }
   }
 }
+
   
 boardWidget.prototype._refreshHelper = function() {
     
@@ -149,11 +151,63 @@ boardWidget.prototype._refreshHelper = function() {
     }
     //tr.appendTo(tbl); 
   }*/
-  this._addListItems(list, this.rows, _.range(0,this.rows.length));
+  /*this._addListItems(list, this.rows, _.range(0,this.rows.length));
   $("div.dd").nestable()
     .on('change', function(e) {
       console.log(e);
     });
+  var This = this;
+  if (!this.loaded) {
+    this.loaded = true;
+    $(document).on('shown.bs.modal', '#' + this.modalId, function(event) {
+      if (This.options.modalShown) {
+        This.options.modalShown(This, event);
+      }
+    });
+    if (this.options.success) {
+      this.options.success(this);
+    }
+  }
+  
+  if (this.options.refresh) {
+    this.options.refresh(this);
+  }
+  
+}*/
+
+boardWidget.prototype._refreshHelper = function() {
+    
+  // refresh rows
+  var tbl = this.element.find('.table');
+  tbl.find('tr').remove();
+  for (var i = 0; i < this.rows.length; i++) {
+    var row = this.rows[i];
+    var tr = $('<tr>');
+    tr.attr('data-ix', i);
+    for (var j = 0; j < this.options.columns.length; j++) {
+      var col = this.options.columns[j].value;
+      var val;
+      var field = col.split('.')[0];
+      var op = col.split('.')[1];
+      switch (op) {
+        case 'length':
+          val = row[field] ? row[field].length : 0;
+          break;
+        default: 
+          val = row[field] ? row[field] : '';
+      }
+      
+      val = $(this.options.wrappers[j].replace(/{i}/g, i)).text(val);
+      
+      if (val.data('toggle') == 'modal') {
+        val.attr('data-target', '#' + this.modalId);
+      }
+      var td = $('<td>')
+        .append(val)
+        .appendTo(tr);
+    }
+    tr.appendTo(tbl); 
+  }
   var This = this;
   if (!this.loaded) {
     this.loaded = true;
