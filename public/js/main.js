@@ -46,7 +46,9 @@ function doAuthentication(callback) {
       console.error(err);
     } else {
       authenticate(token, function(err, data) {
-        if (data.success) {
+        if (err) {
+            console.error(err);
+        } else if (data.success) {
           callback(data);
         }
       });
