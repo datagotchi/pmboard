@@ -112,7 +112,7 @@ function getCookie(name) {
 }
 
 function changeCurrentProduct(ix, callback) {
-  $.post(
+  $.put(
     '/users/' + userid, 
     {currentProduct: ix}, 
     function(data) {
@@ -128,13 +128,13 @@ function changeCurrentProduct(ix, callback) {
 function createProduct(callback) {
   // create the product
   $.ajax({
-    method: 'PUT',
+    method: 'POST',
     url: '/products',
     success: function(data) {
       if (data.success) {
         var prod = data.product;
         // give this user access to the product
-        $.post(
+        $.put(
           '/users/' + userid,
           {product_id: prod._id},
           function(data2) {

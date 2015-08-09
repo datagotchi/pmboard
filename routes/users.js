@@ -50,7 +50,7 @@ router.get('/:user_id', function(req, res, next) {
 // - currentProduct
 // - add product access
 // - TODO: change email address
-router.post('/:user_id', function(req, res, next) {
+router.put('/:user_id', function(req, res, next) {
   
   var userid = req.params.user_id;
   
@@ -91,7 +91,7 @@ router.post('/:user_id', function(req, res, next) {
 // change a record of an accessible product
 // - TODO: add accessible product (move from above route to here)
 // - TODO: remove accessible product
-/*router.post('/:user_email/products/:product_id', function(req, res, next) {
+/*router.put('/:user_email/products/:product_id', function(req, res, next) {
   var email = req.params.user_email;
   
   if (!newname) {

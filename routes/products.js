@@ -23,7 +23,7 @@ router.use(function(req, res, next) {
 });*/
 
 // add product
-router.put('/', function(req, res, next) {
+router.post('/', function(req, res, next) {
   var newprod = new Product({
     name: 'NewProduct',
     personas: [],
@@ -79,7 +79,7 @@ router.param('product_id', function(req, res, next, product_id) {
 
 // change product details
 // - name
-router.post('/:product_id', function(req, res, next) {
+router.put('/:product_id', function(req, res, next) {
   var prod = req.product;
   var userid = JSON.parse(req.cookies.userid);
   if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
