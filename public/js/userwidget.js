@@ -34,7 +34,7 @@ function createUserWidget(apiUrl) {
       
       widget.addModalTab({
         label: 'Details',
-        content: '<strong>Name: </strong> <a href="#" class="editable-value editable-click" data-name="persona{i}" data-type="text" data-pk="{i}" data-url="' + apiUrl + '">{data.name}</a>'
+        content: '<strong>Name: </strong> <a href="#" class="editable-value editable-click" data-name="persona{i}" data-type="text" data-pk="{i}">{data.name}</a>' 
       });
       
       $.get("templates/evidence-tab.html", function(html) {
@@ -119,11 +119,12 @@ function createUserWidget(apiUrl) {
         
         // set up the 'details' tab...
         // make fields editable (edit text -> post to server)
+        var editUrl = apiUrl + '/' + widget.modal.currentIx;
         $('#' + widget.modalId + ' .editable-value').editable({
           showbuttons: false,
       		params: function(params) { return JSON.stringify(params); },
       		onblur: 'submit',
-      		url: apiUrl,
+      		url: editUrl,
       		ajaxOptions: {
       			type: 'put',
       			dataType: 'json',

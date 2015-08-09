@@ -39,8 +39,22 @@ router.post('/', function(req, res, next) {
   });
 });
 
+// persona evidence
+router.param('persona_ix', function(req, res, next) {
+  // TODO: assert ix is a normal int
+  var ix = req.params.persona_ix;
+  var prod = req.product;
+  if (ix && ix < prod.personas.length) {
+    req.personaIx = ix; // need to save just the index because we're saving the entire product document to the db
+    return next();
+  }
+  var err = new Error('No such user type');
+  err.status = 404;
+  next(err);
+});
+
 // change user persona
-router.put('/', function(req, res, next) {
+router.put('/:persona_ix', function(req, res, next) {
   
   var userid = JSON.parse(req.cookies.userid);
   if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
@@ -50,8 +64,10 @@ router.put('/', function(req, res, next) {
   }
   
   var prod = req.product;
-  var ix = req.body.pk;
-  prod.personas.splice(ix, 1, {name: req.body.value});
+  //var ix = req.body.pk;
+  var ix = req.personaIx;
+  
+  prod.personas[ix].name = req.body.value;
     
   return prod.save(function(err) {
     if (err) { // TODO: convert to next(err)?
@@ -68,7 +84,7 @@ router.put('/', function(req, res, next) {
 });
 
 // delete user persona
-router.delete('/', function(req, res, next) {
+router.delete('/:persona_ix', function(req, res, next) {
   
   var userid = JSON.parse(req.cookies.userid);
   if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
@@ -78,8 +94,9 @@ router.delete('/', function(req, res, next) {
   }
   
   var prod = req.product;
-  if (req.body.ix) {
-    var ix = req.body.ix;
+  //if (req.body.ix) {
+    var ix = req.personaIx;
+    //var ix = req.body.ix;
     prod.personas.splice(ix, 1);
       
     return prod.save(function(err) {
@@ -94,24 +111,11 @@ router.delete('/', function(req, res, next) {
         });
       }
     });
-  }
+  //}
  
+  // TODO: remove this/put in the param thing above
   var err = new Error('Invalid request; index not specified');
   err.status = 400;
-  next(err);
-});
-
-// persona evidence
-router.param('persona_ix', function(req, res, next) {
-  // TODO: assert ix is a normal int
-  var ix = req.params.persona_ix;
-  var prod = req.product;
-  if (ix && ix < prod.personas.length) {
-    req.personaIx = ix; // need to save just the index because we're saving the entire product document to the db
-    return next();
-  }
-  var err = new Error('No such user type');
-  err.status = 404;
   next(err);
 });
 
