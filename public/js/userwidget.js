@@ -169,13 +169,13 @@ function addEvidence(url, $tr, callback) {
 
 function initTagsInput(evidenceUrl, $items) {
   $items.tagsinput({
-    trimValue: true
+    trimValue: true,
+    confirmKeys: [13] // just enter to confirm
   });
   
   $items.on('itemAdded', function(event) {
     var trIx = $(this).parent().parent().index(); // select -> td -> tr
     var trendsUrl = evidenceUrl + '/' + trIx + '/trends';
-    // TODO: PUT event.item
     $.ajax({
       method: 'POST',
       url: trendsUrl,
@@ -187,7 +187,6 @@ function initTagsInput(evidenceUrl, $items) {
   $items.on('beforeItemRemove', function(event) {
     var trIx = $(this).parent().parent().index();
     var trendsUrl = evidenceUrl + '/' + trIx + '/trends';
-    // TODO: DELETE event.item
     $.ajax({
       method: 'DELETE',
       url: trendsUrl,
@@ -224,7 +223,7 @@ function initDeleteBtns(evidenceUrl, $btns) {
             $tr.remove(); 
           },
           error: function(data) {
-            
+            console.error(data);
           }
         });
       }
@@ -233,7 +232,6 @@ function initDeleteBtns(evidenceUrl, $btns) {
   });
 }
 
-// FIXME: callback from $.get is being called twice, but no idea why
 function refreshEvidence(evidenceUrl, $currentTable, callback) {
   $.get(evidenceUrl, function(evidence) {
     $currentTable.empty();
