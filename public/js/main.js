@@ -112,17 +112,18 @@ function getCookie(name) {
 }
 
 function changeCurrentProduct(ix, callback) {
-  $.put(
-    '/users/' + userid, 
-    {currentProduct: ix}, 
-    function(data) {
+  $.ajax({
+    method: 'PUT',
+    url: '/users/' + userid, 
+    data: {currentProduct: ix}, 
+    success: function(data) {
       if (data.success) {
         if (callback) callback();
       } else {
         console.error(data.error);
       }
     }
-  );
+  });
 }
 
 function createProduct(callback) {
