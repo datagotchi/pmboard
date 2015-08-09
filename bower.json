@@ -28,5 +28,8 @@
     "polymer": "~1.0.0",
     "listwidget": "~0.1.0",
     "userlist": "~0.1.0"
+  },
+  "resolutions": {
+    "bootstrap-tagsinput": "~0.5.0"
   }
 }
