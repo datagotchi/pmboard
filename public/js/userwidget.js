@@ -167,12 +167,34 @@ function addEvidence(url, $tr, callback) {
   });
 }
 
-function initTagsInput(evidenceUrl, $items) {
+var trendTypes = {
+  "Objective" : "label label-primary",
+  "Goal" : "label label-danger label-important",
+  "Activity" : "label label-success",
+  "Task" : "label label-default",
+  "Resource" : "label label-warning"
+};
+
+function initTagsInput(evidenceUrl, $items, trends) {
   $items.tagsinput({
     trimValue: true,
+    itemValue: 'type',
+    itemText: 'name',
     confirmKeys: [13], // just enter to confirm
-    allowDuplicates: true
+    //allowDuplicates: true // TODO: does this mean per-field? if so, then no... 
+    tagClass: function(trend) {
+      if (trend.type && trendTypes[trend.type]) {
+        return trendTypes[trend.type];
+      } else {
+        return 'label label-info'
+      }
+    }
   });
+  
+  for (var i in trends) {
+    var trend = trends[i];
+    $items.tagsinput('add', trend);
+  }
   
   $items.on('itemAdded', function(event) {
     var trIx = $(this).parent().parent().index(); // select -> td -> tr
@@ -196,6 +218,58 @@ function initTagsInput(evidenceUrl, $items) {
       }
     });
   });
+  
+  var $categories = $("ul#trendCategories");
+  var $selectedEvidence, $selectedTag;
+  for (var t in trendTypes) {
+    $categories.append("<li><a href='#'>" + t + "</a></li>");
+  }
+  $categories.append("<li><a href='#'>None</a></li>");
+  $categories.find("li > a")
+    .click(function(event) {
+      var trendIx = $selectedTag.index();
+      var typeIx = $(this).parent().index();
+      var evIx = $selectedEvidence.index();
+      changeTrendType(evidenceUrl, evIx, trendIx, typeIx);
+      $categories.hide();
+    });
+  
+  $("span.tag")
+    .hover(function() {
+      $(this).css("cursor", "pointer");
+    })
+    .click(function(event) {
+      if (event.shiftKey) {
+        $selectedEvidence = $(this).closest('tr');
+        $selectedTag = $(this);
+        $categories
+          .css("left", $(this).position().left)
+          .css("top", $(this).position().top + $(this).height())
+          .show();
+      }
+    });
+}
+
+function changeTrendType(rootUrl, evIx, index, newTypeIx) {
+  $.ajax({
+    method: 'PUT',
+    url: rootUrl + '/' + evIx + '/trends/' + index,
+    data: {
+      type: Object.keys(trendTypes)[newTypeIx]
+    },
+    success: function(data) {
+      if (data && data.trend) {
+        var $tr = $($("#current table tbody tr")[evIx]);
+        var $tagsData = $tr.find("[data-role='tagsinput']");
+        $span = $($tr.find("span.tag")[index]);
+        $span.data('item', data.trend);
+        $tagsData.tagsinput('refresh');
+      }
+    },
+    error: function(err) {
+      console.error(err);
+    }
+  })
 }
 
 function initDeleteBtns(evidenceUrl, $btns) {
@@ -236,22 +310,22 @@ function initDeleteBtns(evidenceUrl, $btns) {
 function refreshEvidence(evidenceUrl, $currentTable, callback) {
   $.get(evidenceUrl, function(evidence) {
     $currentTable.empty();
+    var trends = [];
     for (var row in evidence) {
       var file = evidence[row];
       evidence[file.url] = file.name; // create a hash lookup table for below
       var $select = $('<select multiple data-role="tagsinput"></select>');
-      for (var i in file.trends) {
-        var trend = file.trends[i].name;
-        $select.append($('<option selected value="' + trend + '">' + trend + '</option>'));
-      }
       var td = $('<td>').append($select);
       $('<tr>')
         .append('<td><span class="remove-evidence glyphicon glyphicon-remove"></span></td>')
         .append('<td><a href="' + file.url + '" target="_blank"><img src="' + file.icon + '" />' + file.name + '</a></td>')
         .append(td)
         .appendTo($currentTable);
+      if (file.trends.length > 0) {
+        trends.push(file.trends);
+      }
     }
-    initTagsInput(evidenceUrl, $('[data-role=tagsinput]'));
+    initTagsInput(evidenceUrl, $('[data-role=tagsinput]'), trends);
     initDeleteBtns(evidenceUrl, $currentTable.find('.remove-evidence'));
     callback(evidence);
   });;

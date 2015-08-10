@@ -124,7 +124,9 @@ router.delete('/:persona_ix', function(req, res, next) {
 // get persona evidence
 router.get('/:persona_ix/evidence', function(req, res, next) {
   var prod = req.product;
+  console.log(prod);
   var ix = req.personaIx;
+  console.log(prod.personas[ix]);
   return res.json(prod.personas[ix].evidence);
 });
 
@@ -177,7 +179,7 @@ router.delete('/:persona_ix/evidence', function(req, res, next) {
   }
   
   var prod = req.product;
-  if (req.body.ix) {
+  if (req.body.ix) { // TODO: update to a request parameter
     var ix = req.body.ix;
     prod.personas[req.personaIx].evidence.splice(ix, 1);
       
@@ -237,7 +239,8 @@ router.post('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
   var personaIx = req.personaIx;
   var evIx = req.evIx;
   var trend = { 
-    name: req.body.name
+    name: req.body.name,
+    type: null 
   };
   
   if (!('trends' in prod.personas[personaIx].evidence[evIx])) {
@@ -259,6 +262,45 @@ router.post('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
   });
 });
 
+// change persona trends
+router.put('/:persona_ix/evidence/:ev_ix/trends/:trend_ix', function(req, res, next) {
+  var userid = JSON.parse(req.cookies.userid);
+  if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
+    var err = new Error("Unauthorized");
+    err.status = 401;
+    next(err);
+  }
+  
+  var prod = req.product;
+  var personaIx = req.personaIx;
+  var evIx = req.evIx;
+  var trendIx = req.params.trend_ix;
+  var trend = prod.personas[personaIx].evidence[evIx].trends[trendIx];
+  
+  console.log(req.body);
+  
+  // execute the PUT changes
+  trend.name = req.body.name || trend.name;
+  trend.type = req.body.type || trend.type;
+  
+  console.log("local var: ", trend);
+  console.log("prod instance: ", prod.personas[personaIx].evidence[evIx].trends[trendIx]);
+  
+  return prod.save(function(err) {
+    if (err) { // TODO: convert to next(err)?
+      return res.json({
+        success: false,
+        error: err
+      });
+    } else {
+      return res.json({
+        success: true,
+        trend: this
+      });
+    }
+  });
+});
+
 // delete persona trend
 router.delete('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
   
@@ -272,7 +314,7 @@ router.delete('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
   var prod = req.product;
   var personaIx = req.personaIx;
   var evIx = req.evIx;
-  if (req.body.ix) {
+  if (req.body.ix) { // TODO: update to a request parameter
     var trendIx = req.body.ix;
     prod.personas[personaIx].evidence[evIx].trends.splice(trendIx, 1);
       
