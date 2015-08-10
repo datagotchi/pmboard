@@ -43,13 +43,16 @@ router.post('/signin', function(req, res) {
       	if (err) {
           next(err);
         }
-        req.session.email = user.email;
-        // TODO: write auth to database
-        res.json({
-          success: true,
-          user: user,
-          oauth: JSON.stringify(auth)
-        });
+        if (user) {
+            req.session.email = user.email;
+            // TODO: write auth to database
+            res.json({
+                success: true,
+                user: user,
+                oauth: JSON.stringify(auth)
+            });
+        }
+
     	});
 	})
 	.fail(function (e) {
