@@ -26,8 +26,7 @@
     "x-editable": "~1.5.1",
     "bootbox": "~4.4.0",
     "polymer": "~1.0.0",
-    "listwidget": "~0.1.0",
-    "userlist": "~0.1.0"
+    "listwidget": "~0.1.0"
   },
   "resolutions": {
     "bootstrap-tagsinput": "~0.5.0"
