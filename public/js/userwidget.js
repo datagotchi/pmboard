@@ -103,7 +103,7 @@ function createUserWidget(apiUrl) {
               var item = response.items[i];
               //if (evidence[item.alternateLink]) continue;
               var tr = $("<tr>");
-              var td1 = $("<td>")
+              var td1 = $("<td>").css("width", "100px");
               td1.html("<input type='checkbox'>");
               tr.append(td1);
               var td2 = $("<td>").addClass('file');
@@ -170,7 +170,8 @@ function addEvidence(url, $tr, callback) {
 function initTagsInput(evidenceUrl, $items) {
   $items.tagsinput({
     trimValue: true,
-    confirmKeys: [13] // just enter to confirm
+    confirmKeys: [13], // just enter to confirm
+    allowDuplicates: true
   });
   
   $items.on('itemAdded', function(event) {
