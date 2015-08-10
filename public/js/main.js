@@ -137,17 +137,18 @@ function createProduct(callback) {
       if (data.success) {
         var prod = data.product;
         // give this user access to the product
-        $.put(
-          '/users/' + userid,
-          {product_id: prod._id},
-          function(data2) {
-            if (data2.success) {
-              if (callback) callback();
-            } else {
-              console.error(data2.error);
+        $.ajax({
+            method: 'PUT',
+            url: '/users/' + userid,
+            data: {product_id: prod._id},
+            success: function (data2) {
+                if (data2.success) {
+                    if (callback) callback();
+                } else {
+                    console.error(data2.error);
+                }
             }
-          }
-        );
+        });
       } else {
         console.error(data.error);
       }
