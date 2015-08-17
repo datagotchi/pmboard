@@ -124,9 +124,7 @@ router.delete('/:persona_ix', function(req, res, next) {
 // get persona evidence
 router.get('/:persona_ix/evidence', function(req, res, next) {
   var prod = req.product;
-  console.log(prod);
   var ix = req.personaIx;
-  console.log(prod.personas[ix]);
   return res.json(prod.personas[ix].evidence);
 });
 
@@ -238,9 +236,10 @@ router.post('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
   var prod = req.product;
   var personaIx = req.personaIx;
   var evIx = req.evIx;
+  
   var trend = { 
     name: req.body.name,
-    type: null 
+    type: req.body.type
   };
   
   if (!('trends' in prod.personas[personaIx].evidence[evIx])) {
@@ -277,14 +276,9 @@ router.put('/:persona_ix/evidence/:ev_ix/trends/:trend_ix', function(req, res, n
   var trendIx = req.params.trend_ix;
   var trend = prod.personas[personaIx].evidence[evIx].trends[trendIx];
   
-  console.log(req.body);
-  
   // execute the PUT changes
   trend.name = req.body.name || trend.name;
   trend.type = req.body.type || trend.type;
-  
-  console.log("local var: ", trend);
-  console.log("prod instance: ", prod.personas[personaIx].evidence[evIx].trends[trendIx]);
   
   return prod.save(function(err) {
     if (err) { // TODO: convert to next(err)?

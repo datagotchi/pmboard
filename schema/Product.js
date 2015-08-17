@@ -24,8 +24,9 @@ var productSchema = new Schema({
           icon: String,
           trends: [
             {
+              _id: false,
               name: String,
-              type: String
+              type: {type: String}
             }
           ]
         }
