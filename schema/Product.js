@@ -25,7 +25,8 @@ var productSchema = new Schema({
           trends: [
             {
               _id: false,
-              name: String
+              name: String,
+              type: {type: String}
             }
           ]
         }

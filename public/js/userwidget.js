@@ -167,25 +167,57 @@ function addEvidence(url, $tr, callback) {
   });
 }
 
-function initTagsInput(evidenceUrl, $items) {
-  $items.tagsinput({
-    trimValue: true,
-    confirmKeys: [13], // just enter to confirm
-    allowDuplicates: true
+var trendTypes = {
+  "Objective" : "label label-primary",
+  "Goal" : "label label-danger label-important",
+  "Activity" : "label label-success",
+  "Task" : "label label-default",
+  "Resource" : "label label-warning"
+};
+
+var $selectedEvidence, $selectedTag;
+
+function initTagsInput(evidenceUrl, $select, trends) {
+  $select.tagsinput({
+    itemValue: 'name',
+    itemText: 'name',
+    allowDuplicates: true, // TODO: does this mean per-field? if so, then no... 
+    tagClass: function(trend) {
+      if (trend.type && trendTypes[trend.type]) {
+        return trendTypes[trend.type];
+      } else {
+        return 'label label-info'
+      }
+    }
   });
   
-  $items.on('itemAdded', function(event) {
+  for (var i in trends) {
+    var trend = trends[i];
+    $select.tagsinput('add', trend);
+  }
+  
+  var $text = $select.parent().find('input');
+  $text.on('keypress', function(event) {
+    if (event.which === 13) {
+      $select.tagsinput('add', {name: $(this).val(), type: ''})
+      $(this).val("");
+    }
+  });
+  
+  $select.on('itemAdded', function(event) {
     var trIx = $(this).parent().parent().index(); // select -> td -> tr
     var trendsUrl = evidenceUrl + '/' + trIx + '/trends';
     $.ajax({
       method: 'POST',
       url: trendsUrl,
-      data: {
-        name: event.item
+      data: event.item,
+      success: function(data) {
+        if (data && data.success)
+          initTagElement($("span.tag"));
       }
     });
   });
-  $items.on('beforeItemRemove', function(event) {
+  $select.on('beforeItemRemove', function(event) {
     var trIx = $(this).parent().parent().index();
     var trendsUrl = evidenceUrl + '/' + trIx + '/trends';
     $.ajax({
@@ -196,6 +228,64 @@ function initTagsInput(evidenceUrl, $items) {
       }
     });
   });
+  
+  var $categories = $("ul#trendCategories");
+  for (var t in trendTypes) {
+    $categories.append("<li><a href='#'>" + t + "</a></li>");
+  }
+  $categories.append("<li><a href='#'>None</a></li>");
+  $categories.find("li > a")
+    .click(function(event) {
+      var trendIx = $selectedTag.index();
+      var typeIx = $(this).parent().index();
+      var evIx = $selectedEvidence.index();
+      changeTrendType(evidenceUrl, evIx, trendIx, typeIx);
+      $categories.hide();
+    });
+  
+  initTagElement($("span.tag"));
+}
+
+function initTagElement($tag) {
+  var $popup = $("ul#trendCategories");
+  $tag
+    .hover(function() {
+      $(this).css("cursor", "pointer");
+    })
+    .click(function(event) {
+      if (event.shiftKey) {
+        $selectedEvidence = $(this).closest('tr');
+        $selectedTag = $(this);
+        $popup
+          .css("left", $(this).position().left)
+          .css("top", $(this).position().top + $(this).height())
+          .show();
+      }
+    });
+}
+
+function changeTrendType(rootUrl, evIx, index, newTypeIx) {
+  var newType = Object.keys(trendTypes)[newTypeIx];
+  $.ajax({
+    method: 'PUT',
+    url: rootUrl + '/' + evIx + '/trends/' + index,
+    data: {
+      type: newType
+    },
+    success: function(data) {
+      if (data && data.success) {
+        var $tr = $($("#current table tbody tr")[evIx]);
+        var $tagsData = $tr.find("[data-role='tagsinput']");
+        $span = $($tr.find("span.tag")[index]);
+        var item = $tagsData.tagsinput('items')[index];
+        item.type = newType;
+        $tagsData.tagsinput('refresh');
+      }
+    },
+    error: function(err) {
+      console.error(err);
+    }
+  })
 }
 
 function initDeleteBtns(evidenceUrl, $btns) {
@@ -236,22 +326,23 @@ function initDeleteBtns(evidenceUrl, $btns) {
 function refreshEvidence(evidenceUrl, $currentTable, callback) {
   $.get(evidenceUrl, function(evidence) {
     $currentTable.empty();
+    var trends = [];
     for (var row in evidence) {
       var file = evidence[row];
       evidence[file.url] = file.name; // create a hash lookup table for below
       var $select = $('<select multiple data-role="tagsinput"></select>');
-      for (var i in file.trends) {
-        var trend = file.trends[i].name;
-        $select.append($('<option selected value="' + trend + '">' + trend + '</option>'));
-      }
       var td = $('<td>').append($select);
       $('<tr>')
         .append('<td><span class="remove-evidence glyphicon glyphicon-remove"></span></td>')
         .append('<td><a href="' + file.url + '" target="_blank"><img src="' + file.icon + '" />' + file.name + '</a></td>')
         .append(td)
         .appendTo($currentTable);
+      //if (file.trends.length > 0) {
+      //  trends = file.trends;
+      //}
+      initTagsInput(evidenceUrl, $select, file.trends);
     }
-    initTagsInput(evidenceUrl, $('[data-role=tagsinput]'));
+    
     initDeleteBtns(evidenceUrl, $currentTable.find('.remove-evidence'));
     callback(evidence);
   });;
