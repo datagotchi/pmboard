@@ -232,7 +232,7 @@ function initTagsInput(evidenceUrl, $select, trends) {
   initTagElement($("span.tag"));
 }
 
-function initCategoryPopup() {
+function initCategoryPopup(evidenceUrl) {
     var $categories = $("ul#trendCategories");
     for (var t in trendTypes) {
         $categories.append("<li><a href='#'>" + t + "</a></li>");
@@ -345,7 +345,7 @@ function refreshEvidence(evidenceUrl, $currentTable, callback) {
       initTagsInput(evidenceUrl, $select, file.trends);
     }
 
-    initCategoryPopup();
+    initCategoryPopup(evidenceUrl);
     initDeleteBtns(evidenceUrl, $currentTable.find('.remove-evidence'));
     callback(evidence);
   });;
