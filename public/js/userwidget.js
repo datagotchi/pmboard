@@ -31,18 +31,20 @@ function createUserWidget(apiUrl) {
       });
     },
     success: function(widget) {
-      
-      widget.addModalTab({
-        label: 'Details',
-        content: '<strong>Name: </strong> <a href="#" class="editable-value editable-click" data-name="persona{i}" data-type="text" data-pk="{i}">{data.name}</a>' 
-      });
-      
-      $.get("templates/evidence-tab.html", function(html) {
+
+      $.get("templates/summary-tab.html", function(html) {
         widget.addModalTab({
-          label: 'Evidence',
-          content: html
+            label: 'Summary',
+            content: html
         });
-      });
+      }).then(
+        $.get("templates/evidence-tab.html", function(html) {
+            widget.addModalTab({
+                label: 'Add Evidence',
+                content: html
+            });
+          })
+      );
       
       $(document).on('click', '#' + widget.modalId + ' :checkbox', function(event) {
         var evidenceUrl = widget.options.api + '/' + widget.modal.currentIx + '/evidence';
