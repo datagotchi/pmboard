@@ -229,21 +229,23 @@ function initTagsInput(evidenceUrl, $select, trends) {
     });
   });
   
-  var $categories = $("ul#trendCategories");
-  for (var t in trendTypes) {
-    $categories.append("<li><a href='#'>" + t + "</a></li>");
-  }
-  $categories.append("<li><a href='#'>None</a></li>");
-  $categories.find("li > a")
-    .click(function(event) {
-      var trendIx = $selectedTag.index();
-      var typeIx = $(this).parent().index();
-      var evIx = $selectedEvidence.index();
-      changeTrendType(evidenceUrl, evIx, trendIx, typeIx);
-      $categories.hide();
-    });
-  
   initTagElement($("span.tag"));
+}
+
+function initCategoryPopup() {
+    var $categories = $("ul#trendCategories");
+    for (var t in trendTypes) {
+        $categories.append("<li><a href='#'>" + t + "</a></li>");
+    }
+    $categories.append("<li><a href='#'>None</a></li>");
+    $categories.find("li > a")
+        .click(function(event) {
+            var trendIx = $selectedTag.index();
+            var typeIx = $(this).parent().index();
+            var evIx = $selectedEvidence.index();
+            changeTrendType(evidenceUrl, evIx, trendIx, typeIx);
+            $categories.hide();
+        });
 }
 
 function initTagElement($tag) {
@@ -342,7 +344,8 @@ function refreshEvidence(evidenceUrl, $currentTable, callback) {
       //}
       initTagsInput(evidenceUrl, $select, file.trends);
     }
-    
+
+    initCategoryPopup();
     initDeleteBtns(evidenceUrl, $currentTable.find('.remove-evidence'));
     callback(evidence);
   });;
