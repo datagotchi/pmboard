@@ -51,7 +51,7 @@ function createUserWidget(apiUrl) {
         var $this = $(this);
         var $tr = $this.parent().parent();
         var personaIx = widget.modal.currentIx;
-        var $currentTable = $('#evidence #current table tbody');
+        var $currentTable = $('#addevidence #current table tbody');
         if ($this.prop('checked')) {
           $tr.addClass('success');
           addEvidence(evidenceUrl, $tr, function(data) {
@@ -80,7 +80,7 @@ function createUserWidget(apiUrl) {
       // set up the 'evidence' tab...
       
       // list current evidence files
-      var $currentTable = $('#evidence #current table tbody');
+      var $currentTable = $('#addevidence #current table tbody');
       refreshEvidence(evidenceUrl, $currentTable, function(evidence) {
         // allow them to choose more files for evidence
         var oauth = JSON.parse($.cookie('oauth'));
@@ -100,7 +100,7 @@ function createUserWidget(apiUrl) {
             }
           }
           var response = JSON.parse(xhr.responseText);
-          var filesTable = widget.modal.elem.find("#evidence #files table tbody");
+          var filesTable = widget.modal.elem.find("#addevidence #files table tbody");
           for (var i = 0; i < response.items.length; i++) {
               var item = response.items[i];
               //if (evidence[item.alternateLink]) continue;
