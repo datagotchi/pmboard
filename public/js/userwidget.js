@@ -32,17 +32,17 @@ function createUserWidget(apiUrl) {
     },
     success: function(widget) {
 
-      $.get("templates/summary-tab.html", function(html) {
+      $.get("templates/evidence-tab.html", function(html) {
         widget.addModalTab({
-            label: 'Summary',
+            label: 'Add Evidence',
             content: html
         });
       }).then(
-        $.get("templates/evidence-tab.html", function(html) {
+        $.get("templates/summary-tab.html", function(html) {
             widget.addModalTab({
-                label: 'Add Evidence',
-                content: html
-            });
+	            label: 'Summary',
+	            content: html
+	        });
           })
       );
       
