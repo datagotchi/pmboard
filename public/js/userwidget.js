@@ -1,3 +1,5 @@
+var currentEvidenceItems = [];
+
 function createUserWidget(apiUrl) {
   return new boardWidget({
     title: 'Who are your users?',
@@ -82,6 +84,7 @@ function createUserWidget(apiUrl) {
       // list current evidence files
       var $currentTable = $('#addevidence #current table tbody');
       refreshEvidence(evidenceUrl, $currentTable, function(evidence) {
+        currentEvidenceItems = evidence;
         // allow them to choose more files for evidence
         var oauth = JSON.parse($.cookie('oauth'));
         var accessToken = oauth.access_token;
@@ -119,7 +122,7 @@ function createUserWidget(apiUrl) {
         };
         xhr.send();
         
-        // set up the 'details' tab...
+        // set up the 'summary' tab...
         // make fields editable (edit text -> post to server)
         var editUrl = apiUrl + '/' + widget.modal.currentIx;
         $('#' + widget.modalId + ' .editable-value').editable({
@@ -141,6 +144,9 @@ function createUserWidget(apiUrl) {
       			console.error(a, b);
       		}
         });
+        
+        // TODO: get a list of trends from the evidence 
+        
       });
     }
   });

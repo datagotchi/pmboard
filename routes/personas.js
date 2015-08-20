@@ -288,8 +288,7 @@ router.put('/:persona_ix/evidence/:ev_ix/trends/:trend_ix', function(req, res, n
       });
     } else {
       return res.json({
-        success: true,
-        trend: this
+        success: true
       });
     }
   });
