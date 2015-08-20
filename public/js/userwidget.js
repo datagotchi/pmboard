@@ -57,14 +57,13 @@ function createUserWidget(apiUrl) {
           label: 'Summary',
           content: html
         });
-      }).then(
         $.get("templates/evidence-tab.html", function(html) {
           widget.addModalTab({
             label: 'Add Evidence',
             content: html
           });
         })
-      );
+      });
       
       $(document).on('click', '#' + widget.modalId + ' :checkbox', function(event) {
         var evidenceUrl = widget.options.api + '/' + widget.modal.currentIx + '/evidence';
