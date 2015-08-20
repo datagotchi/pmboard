@@ -75,14 +75,6 @@ function createUserWidget(apiUrl) {
         if ($this.prop('checked')) {
           $tr.addClass('success');
           addEvidence(evidenceUrl, $tr, function(data) {
-            /*var td1 = $tr.find('td.file');
-            var $select = $('<select multiple data-role="tagsinput"></select>');
-            var td2 = $("<td>").append($select);
-            $("<tr>")
-              .append(td1)
-              .append(td2)
-              .appendTo($currentTable);
-            initTagsInput(evidenceUrl, $select);*/
             refreshEvidence(evidenceUrl, $currentTable, function() {
               $tr.hide();
             })
@@ -96,15 +88,12 @@ function createUserWidget(apiUrl) {
     },
     modalShown: function(widget, event) {
       var evidenceUrl = apiUrl + '/' + widget.modal.currentIx + '/evidence';
-      //var evidence = {};
+      
       // set up the 'evidence' tab...
       
       // list current evidence files
       var $currentTable = $('#addevidence #current table tbody');
       refreshEvidence(evidenceUrl, $currentTable, function(evidence) {
-        currentEvidenceItems = evidence;
-        flattenTrends();
-        refreshSummaryTab();
         // allow them to choose more files for evidence
         var oauth = JSON.parse($.cookie('oauth'));
         var accessToken = oauth.access_token;
@@ -175,10 +164,10 @@ function flattenTrends() {
   currentTrends = [], currentTrendsMap = {};
   for (var e in currentEvidenceItems) {
     var evidence = currentEvidenceItems[e];
-    //currentTrends.concat(evidence.trends);
     for (var t in evidence.trends) {
       var trend = evidence.trends[t];
-      currentTrends.push(trend);
+      if (!(trend.name in currentTrends))
+        currentTrends.push(trend.name);
       if (!(trend.type in currentTrendsMap)) {
         currentTrendsMap[trend.type] = {};
       }
@@ -222,7 +211,6 @@ function addEvidence(url, $tr, callback) {
       if (callback) callback(data);
     },
     error: function(data) {
-      //$tr.find(':checkbox').removeAttr('checked');
       console.error(data);
       $tr.find(':checkbox').click();
     }
@@ -233,14 +221,21 @@ function initTagsInput(evidenceUrl, $select, trends) {
   $select.tagsinput({
     itemValue: 'name',
     itemText: 'name',
-    allowDuplicates: true, // TODO: does this mean per-field? if so, then no... 
-    tagClass: getTagClass/*,
+    allowDuplicates: true,
+    tagClass: getTagClass,
     typeaheadjs: {
-      name: 'currentTrends',
       displayKey: 'name',
-      valueKey: 'name',
-      source: currentTrends
-    }*/
+      source: function(query, callback) {
+        var ret = [];
+        for (var i in currentTrends) {
+          var trendName = currentTrends[i];
+          if (trendName.toLowerCase().indexOf(query.toLowerCase()) === 0) {
+            ret.push({name: trendName, type: ''});
+          }
+        }
+        callback(ret);
+      }
+    }
   });
   
   for (var i in trends) {
@@ -395,6 +390,9 @@ function initDeleteBtns(evidenceUrl, $btns) {
 
 function refreshEvidence(evidenceUrl, $currentTable, callback) {
   $.get(evidenceUrl, function(evidence) {
+    currentEvidenceItems = evidence;
+    flattenTrends();
+    refreshSummaryTab();
     $currentTable.empty();
     var trends = [];
     for (var row in evidence) {
