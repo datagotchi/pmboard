@@ -1,4 +1,22 @@
-var currentEvidenceItems = [];
+var currentEvidenceItems, currentTrends, currentTrendsMap;
+
+var $selectedEvidence, $selectedTag;
+
+var trendTypes = {
+  "Objective" : "label label-primary",
+  "Goal" : "label label-danger label-important",
+  "Activity" : "label label-success",
+  "Task" : "label label-default",
+  "Resource" : "label label-warning"
+};
+
+function getTagClass(trend) {
+  if (trend.type && trendTypes[trend.type]) {
+    return trendTypes[trend.type];
+  } else {
+    return 'label label-info'
+  }
+}
 
 function createUserWidget(apiUrl) {
   return new boardWidget({
@@ -34,18 +52,18 @@ function createUserWidget(apiUrl) {
     },
     success: function(widget) {
 
-      $.get("templates/evidence-tab.html", function(html) {
+      $.get("templates/summary-tab.html", function(html) {
         widget.addModalTab({
-            label: 'Add Evidence',
-            content: html
+          label: 'Summary',
+          content: html
         });
       }).then(
-        $.get("templates/summary-tab.html", function(html) {
-            widget.addModalTab({
-	            label: 'Summary',
-	            content: html
-	        });
-          })
+        $.get("templates/evidence-tab.html", function(html) {
+          widget.addModalTab({
+            label: 'Add Evidence',
+            content: html
+          });
+        })
       );
       
       $(document).on('click', '#' + widget.modalId + ' :checkbox', function(event) {
@@ -85,6 +103,8 @@ function createUserWidget(apiUrl) {
       var $currentTable = $('#addevidence #current table tbody');
       refreshEvidence(evidenceUrl, $currentTable, function(evidence) {
         currentEvidenceItems = evidence;
+        flattenTrends();
+        refreshSummaryTab();
         // allow them to choose more files for evidence
         var oauth = JSON.parse($.cookie('oauth'));
         var accessToken = oauth.access_token;
@@ -145,11 +165,42 @@ function createUserWidget(apiUrl) {
       		}
         });
         
-        // TODO: get a list of trends from the evidence 
-        
       });
     }
   });
+}
+
+function flattenTrends() {
+  // get a list of trends from the evidence 
+  currentTrends = [], currentTrendsMap = {};
+  for (var e in currentEvidenceItems) {
+    var evidence = currentEvidenceItems[e];
+    //currentTrends.concat(evidence.trends);
+    for (var t in evidence.trends) {
+      var trend = evidence.trends[t];
+      currentTrends.push(trend);
+      if (!(trend.type in currentTrendsMap)) {
+        currentTrendsMap[trend.type] = [];
+      }
+      currentTrendsMap[trend.type].push(trend);
+    }
+  }
+}
+
+function refreshSummaryTab() {
+  // show the trends on the summary tab
+  var $summaryTable = $("#trendSummary table tbody");
+  $summaryTable.empty();
+  for (var ttype in trendTypes) {
+    for (var t in currentTrendsMap[ttype]) {
+      var trend = currentTrendsMap[ttype][t];
+      $("<tr>")
+        .append("<td>" + ttype + "</td>")
+        .append("<td>" + trend.name + "</td>")
+        .addClass(getTagClass(trend))
+        .appendTo($summaryTable);
+    }
+  }
 }
 
 function addEvidence(url, $tr, callback) {
@@ -175,28 +226,18 @@ function addEvidence(url, $tr, callback) {
   });
 }
 
-var trendTypes = {
-  "Objective" : "label label-primary",
-  "Goal" : "label label-danger label-important",
-  "Activity" : "label label-success",
-  "Task" : "label label-default",
-  "Resource" : "label label-warning"
-};
-
-var $selectedEvidence, $selectedTag;
-
 function initTagsInput(evidenceUrl, $select, trends) {
   $select.tagsinput({
     itemValue: 'name',
     itemText: 'name',
     allowDuplicates: true, // TODO: does this mean per-field? if so, then no... 
-    tagClass: function(trend) {
-      if (trend.type && trendTypes[trend.type]) {
-        return trendTypes[trend.type];
-      } else {
-        return 'label label-info'
-      }
-    }
+    tagClass: getTagClass/*,
+    typeaheadjs: {
+      name: 'currentTrends',
+      displayKey: 'name',
+      valueKey: 'name',
+      source: currentTrends
+    }*/
   });
   
   for (var i in trends) {
@@ -215,13 +256,19 @@ function initTagsInput(evidenceUrl, $select, trends) {
   $select.on('itemAdded', function(event) {
     var trIx = $(this).parent().parent().index(); // select -> td -> tr
     var trendsUrl = evidenceUrl + '/' + trIx + '/trends';
+    var newIx = currentEvidenceItems[trIx].trends.length;
     $.ajax({
       method: 'POST',
       url: trendsUrl,
       data: event.item,
       success: function(data) {
-        if (data && data.success)
+        if (data && data.success) {
           initTagElement($("span.tag"));
+          
+          currentEvidenceItems[trIx].trends.push(event.item);
+          flattenTrends();
+          refreshSummaryTab();
+        }
       }
     });
   });
@@ -284,12 +331,21 @@ function changeTrendType(rootUrl, evIx, index, newTypeIx) {
     },
     success: function(data) {
       if (data && data.success) {
+        // refresh evidence tab
         var $tr = $($("#current table tbody tr")[evIx]);
         var $tagsData = $tr.find("[data-role='tagsinput']");
         $span = $($tr.find("span.tag")[index]);
         var item = $tagsData.tagsinput('items')[index];
         item.type = newType;
         $tagsData.tagsinput('refresh');
+        
+        // refresh summary tab
+        currentEvidenceItems[evIx].trends[index] = {
+          name: item.name,
+          type: item.type
+        };
+        flattenTrends();
+        refreshSummaryTab();
       }
     },
     error: function(err) {
