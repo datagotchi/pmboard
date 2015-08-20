@@ -3,11 +3,11 @@ var currentEvidenceItems, currentTrends, currentTrendsMap;
 var $selectedEvidence, $selectedTag;
 
 var trendTypes = {
-  "Objective" : "label label-primary",
-  "Goal" : "label label-danger label-important",
-  "Activity" : "label label-success",
+  "Objective" : "label label-danger",
+  "Goal" : "label label-warning",
+  "Activity" : "label label-primary",
   "Task" : "label label-default",
-  "Resource" : "label label-warning"
+  "Resource" : "label label-success"
 };
 
 function getTagClass(trend) {
