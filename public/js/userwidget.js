@@ -289,6 +289,7 @@ function initTagsInput(evidenceUrl, $select, trends) {
 
 function initCategoryPopup(evidenceUrl) {
     var $categories = $("ul#trendCategories");
+    $categories.empty();
     for (var t in trendTypes) {
         $categories.append("<li><a href='#'>" + t + "</a></li>");
     }
