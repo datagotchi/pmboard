@@ -180,9 +180,12 @@ function flattenTrends() {
       var trend = evidence.trends[t];
       currentTrends.push(trend);
       if (!(trend.type in currentTrendsMap)) {
-        currentTrendsMap[trend.type] = [];
+        currentTrendsMap[trend.type] = {};
       }
-      currentTrendsMap[trend.type].push(trend);
+      if (!(trend.name in currentTrendsMap[trend.type])) {
+        currentTrendsMap[trend.type][trend.name] = 0;
+      }
+      currentTrendsMap[trend.type][trend.name] += 1;
     }
   }
 }
@@ -192,12 +195,12 @@ function refreshSummaryTab() {
   var $summaryTable = $("#trendSummary table tbody");
   $summaryTable.empty();
   for (var ttype in trendTypes) {
-    for (var t in currentTrendsMap[ttype]) {
-      var trend = currentTrendsMap[ttype][t];
+    for (var trendName in currentTrendsMap[ttype]) {
+      var trendCount = currentTrendsMap[ttype][trendName];
       $("<tr>")
         .append("<td>" + ttype + "</td>")
-        .append("<td>" + trend.name + "</td>")
-        .addClass(getTagClass(trend))
+        .append("<td>" + trendName + " <span class=\"badge\">" + trendCount + "</span></td>")
+        .addClass(getTagClass({type: ttype}))
         .appendTo($summaryTable);
     }
   }
