@@ -183,17 +183,6 @@ function init() {
       })
     });
   });
-  
-	//$('[data-toggle="popover"]').popover({
-	//	html: true,
-	//	content: userResearchInfo
-	//});
-	//$('#requestEvaluation').on('hidden.bs.modal', function() {
-	//	$("#evaluationResults").show();
-	//});
-	//$('input:file').change(function() {
-	//	$('[data-target="#requestEvaluation"]').prop('disabled', false);
-	//});
 	
 	personas_url = product_url + "/personas";
 	
