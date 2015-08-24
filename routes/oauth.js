@@ -41,7 +41,7 @@ router.post('/signin', function(req, res) {
   	  .populate('products', 'name')
   	  .exec(function(err, user) {
       	if (err) {
-          next(err);
+          return next(err);
         }
         if (user) {
             req.session.email = user.email;

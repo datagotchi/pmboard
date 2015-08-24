@@ -85,7 +85,7 @@ router.put('/:product_id', function(req, res, next) {
   if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
     var err = new Error("Unauthorized");
     err.status = 401;
-    next(err);
+    return next(err);
   }
   if (req.body.value) {
     prod.name = req.body.value;
@@ -118,7 +118,7 @@ router.delete('/:product_id', function(req, res, next) {
   if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 3) {
     var err = new Error("Unauthorized");
     err.status = 401;
-    next(err);
+    return next(err);
   }
   var prodId = req.product._id;
   var prodUsers = Object.keys(req.product.permLookup);

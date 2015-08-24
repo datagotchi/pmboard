@@ -20,7 +20,7 @@ router.get('/:user_id', function(req, res, next) {
   if (!req.params.user_id) {
     var err = new Error("Invalid request; please specify user ID");
     err.status = 400;
-    next(err);
+    return next(err);
   }
   var paramUserId = req.params.user_id
   var cookieUserId = JSON.parse(req.cookies.userid);
@@ -28,7 +28,7 @@ router.get('/:user_id', function(req, res, next) {
   if (paramUserId != cookieUserId) {
     var err = new Error("Unauthorized");
     err.status = 401;
-    next(err);
+    return next(err);
   }
   
   User.findById(paramUserId)
@@ -40,7 +40,7 @@ router.get('/:user_id', function(req, res, next) {
       if (!user) {
         var err = new Error("No such user");
         err.status = 404;
-        next(err);
+        return next(err);
       }
       return res.json(user);
     });
@@ -57,7 +57,7 @@ router.put('/:user_id', function(req, res, next) {
   if (userid != JSON.parse(req.cookies.userid)) {
     var err = new Error("Unauthorized");
     err.status = 401;
-    next(err);
+    return next(err);
   }
   
   User.findOne({_id: ObjectId(userid)}, function(err, user) {

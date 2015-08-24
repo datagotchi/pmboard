@@ -17,7 +17,7 @@ router.post('/', function(req, res, next) {
   if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
     var err = new Error("Unauthorized");
     err.status = 401;
-    next(err);
+    return next(err);
   }
   
   var prod = req.product;
@@ -50,7 +50,7 @@ router.param('persona_ix', function(req, res, next) {
   }
   var err = new Error('No such user type');
   err.status = 404;
-  next(err);
+  return next(err);
 });
 
 // change user persona
@@ -60,11 +60,12 @@ router.put('/:persona_ix', function(req, res, next) {
   if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
     var err = new Error("Unauthorized");
     err.status = 401;
-    next(err);
+    return next(err);
   }
   
+  console.log(req.product.permLookup[userid]);
+  
   var prod = req.product;
-  //var ix = req.body.pk;
   var ix = req.personaIx;
   
   prod.personas[ix].name = req.body.value;
@@ -90,7 +91,7 @@ router.delete('/:persona_ix', function(req, res, next) {
   if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
     var err = new Error("Unauthorized");
     err.status = 401;
-    next(err);
+    return next(err);
   }
   
   var prod = req.product;
@@ -116,7 +117,7 @@ router.delete('/:persona_ix', function(req, res, next) {
   // TODO: remove this/put in the param thing above
   var err = new Error('Invalid request; index not specified');
   err.status = 400;
-  next(err);
+  return next(err);
 });
 
 // ****** persona evidence *****
@@ -135,7 +136,7 @@ router.post('/:persona_ix/evidence', function(req, res, next) {
   if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
     var err = new Error("Unauthorized");
     err.status = 401;
-    next(err);
+    return next(err);
   }
   
   var prod = req.product;
@@ -173,7 +174,7 @@ router.delete('/:persona_ix/evidence', function(req, res, next) {
   if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
     var err = new Error("Unauthorized");
     err.status = 401;
-    next(err);
+    return next(err);
   }
   
   var prod = req.product;
@@ -197,7 +198,7 @@ router.delete('/:persona_ix/evidence', function(req, res, next) {
  
   var err = new Error('Invalid request; index not specified');
   err.status = 400;
-  next(err);
+  return next(err);
 });
 
 // ***** persona trends ******
@@ -212,7 +213,7 @@ router.param('ev_ix', function(req, res, next) {
   }
   var err = new Error('No such evidence file');
   err.status = 404;
-  next(err);
+  return next(err);
 });
 
 // get persona trends
@@ -230,7 +231,7 @@ router.post('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
   if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
     var err = new Error("Unauthorized");
     err.status = 401;
-    next(err);
+    return next(err);
   }
   
   var prod = req.product;
@@ -267,7 +268,7 @@ router.put('/:persona_ix/evidence/:ev_ix/trends/:trend_ix', function(req, res, n
   if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
     var err = new Error("Unauthorized");
     err.status = 401;
-    next(err);
+    return next(err);
   }
   
   var prod = req.product;
@@ -301,7 +302,7 @@ router.delete('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
   if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
     var err = new Error("Unauthorized");
     err.status = 401;
-    next(err);
+    return next(err);
   }
   
   var prod = req.product;
