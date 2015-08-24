@@ -240,6 +240,7 @@ function initTagsInput(evidenceUrl, $select, trends) {
     tagClass: getTagClass,
     typeaheadjs: {
       displayKey: 'name',
+      hint: false,
       source: function(query, callback) {
         var ret = [];
         for (var i in currentTrends) {
@@ -262,7 +263,7 @@ function initTagsInput(evidenceUrl, $select, trends) {
   $text.on('keypress', function(event) {
     if (event.which === 13) {
       $select.tagsinput('add', {name: $(this).val(), type: ''})
-      $(this).val("");
+      $(this).typeahead('val', '');
     }
   });
   
