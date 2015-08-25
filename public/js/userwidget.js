@@ -277,7 +277,7 @@ function initTagsInput(evidenceUrl, $select, trends) {
       data: event.item,
       success: function(data) {
         if (data && data.success) {
-          initTagElement($("span.tag"));
+          initTagElement($("span.tag"), evidenceUrl, trIx);
           
           currentEvidenceItems[trIx].trends.push(event.item);
           flattenTrends();
@@ -298,7 +298,7 @@ function initTagsInput(evidenceUrl, $select, trends) {
     });
   });
   
-  initTagElement($("span.tag"));
+  initTagElement($("span.tag"), evidenceUrl);
 }
 
 function initCategoryPopup(evidenceUrl) {
@@ -318,13 +318,15 @@ function initCategoryPopup(evidenceUrl) {
         });
 }
 
-function initTagElement($tag) {
+function initTagElement($tag, evidenceUrl) {
   var $popup = $("ul#trendCategories");
+  var $row = $tag.closest('tr');
   $tag
     .hover(function() {
       $(this).css("cursor", "pointer");
     })
     .click(function(event) {
+      var $tag = $(this);
       if (event.shiftKey) {
         $selectedEvidence = $(this).closest('tr');
         $selectedTag = $(this);
@@ -332,7 +334,48 @@ function initTagElement($tag) {
           .css("left", $(this).position().left)
           .css("top", $(this).position().top + $(this).height())
           .show();
+      } else if (event.altKey) {
+        var $input = $("<input type='text' />")
+          .on('keypress', function(event) {
+            var $input = $(this);
+            if (event.which === 13) {
+              $.ajax({
+                method: 'PUT',
+                url: evidenceUrl + '/' + $row.index() + '/trends/' + $tag.index(),
+                data: {name: $input.val()},
+                success: function(data) {
+                  if (data && data.success) {
+                    $input.parent().remove();
+                    var $tr = $($("#current table tbody tr")[$row.index()]);
+                    var $tagsData = $tr.find("[data-role='tagsinput']")
+                    var item = $tagsData.tagsinput('items')[$tag.index()];
+                    item.name = $input.val();
+                    $tagsData.tagsinput('refresh');
+                  }
+                }
+              })
+            } 
+          })
+          .on('blur', function(event) {
+            if (!event.relatedTarget || event.relatedTarget === event.target) {
+              $(this).parent().remove();
+            }
+          })
+          .css('width', '100px');
+        $input.val($tag.text());
+        var $div = $("<div>")
+          .append("<p><strong>Rename Trend</strong></p>")
+          .append($input)
+          .addClass('modal-content')
+          .css('position', 'absolute')
+          .css('left', event.clientX - ($input.width()/2))
+          .css('top', event.clientY + 20)
+          .css('z-index', 1100)
+          //.appendTo($("#usersmodal .modal-dialog"));
+          .appendTo(document.body);
+        $div.find('input').focus();
       }
+      event.stopPropagation();
     });
 }
 
