@@ -364,21 +364,25 @@ function initTagElement($tag, evidenceUrl) {
               $(this).parent().remove();
             }
           })
-          .css('width', '100px')
-          .typeahead({
-            displayKey: 'name',
-            hint: false,
+          .css('width', '100px');
+          /*.typeahead({
+            hint: true,
+            highlight: true
+          }, {
             source: typeaheadCallback
-          });
+          });*/
         $input.val($tag.text());
+        //$input.typeahead('val', $tag.text());
         var $div = $("<div>")
           .append("<p><strong>Edit Trend</strong></p>")
           .append($input)
           .addClass('modal-content')
-          .css('position', 'absolute')
-          .css('left', event.clientX - ($input.width()/2))
-          .css('top', event.clientY + 20)
-          .css('z-index', 1100)
+          .css({
+            position: 'absolute',
+            left: event.clientX - ($input.width()/2),
+            top: event.clientY + 20,
+            zIndex: 1100
+          })
           //.appendTo($("#usersmodal .modal-dialog"));
           .appendTo(document.body);
         $div.find('input').focus();
