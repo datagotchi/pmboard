@@ -232,6 +232,18 @@ function addEvidence(url, $tr, callback) {
   });
 }
 
+function typeaheadCallback(query, callback) {
+  var ret = [];
+  for (var i in currentTrends) {
+    var trendName = currentTrends[i];
+    if (trendName.toLowerCase().indexOf(query.toLowerCase()) === 0) {
+      ret.push({name: trendName, type: ''});
+    }
+  }
+  callback(ret);
+}
+
+
 function initTagsInput(evidenceUrl, $select, trends) {
   $select.tagsinput({
     itemValue: 'name',
@@ -241,16 +253,7 @@ function initTagsInput(evidenceUrl, $select, trends) {
     typeaheadjs: {
       displayKey: 'name',
       hint: false,
-      source: function(query, callback) {
-        var ret = [];
-        for (var i in currentTrends) {
-          var trendName = currentTrends[i];
-          if (trendName.toLowerCase().indexOf(query.toLowerCase()) === 0) {
-            ret.push({name: trendName, type: ''});
-          }
-        }
-        callback(ret);
-      }
+      source: typeaheadCallback
     }
   });
   
@@ -298,7 +301,7 @@ function initTagsInput(evidenceUrl, $select, trends) {
     });
   });
   
-  initTagElement($("span.tag"), evidenceUrl);
+  initTagElement($select.parent().find("span.tag"), evidenceUrl);
 }
 
 function initCategoryPopup(evidenceUrl) {
@@ -341,7 +344,7 @@ function initTagElement($tag, evidenceUrl) {
             if (event.which === 13) {
               $.ajax({
                 method: 'PUT',
-                url: evidenceUrl + '/' + $row.index() + '/trends/' + $tag.index(),
+                url: evidenceUrl + '/trends/' + $tag.index(),
                 data: {name: $input.val()},
                 success: function(data) {
                   if (data && data.success) {
@@ -361,10 +364,15 @@ function initTagElement($tag, evidenceUrl) {
               $(this).parent().remove();
             }
           })
-          .css('width', '100px');
+          .css('width', '100px')
+          .typeahead({
+            displayKey: 'name',
+            hint: false,
+            source: typeaheadCallback
+          });
         $input.val($tag.text());
         var $div = $("<div>")
-          .append("<p><strong>Rename Trend</strong></p>")
+          .append("<p><strong>Edit Trend</strong></p>")
           .append($input)
           .addClass('modal-content')
           .css('position', 'absolute')
@@ -467,7 +475,7 @@ function refreshEvidence(evidenceUrl, $currentTable, callback) {
       //if (file.trends.length > 0) {
       //  trends = file.trends;
       //}
-      initTagsInput(evidenceUrl, $select, file.trends);
+      initTagsInput(evidenceUrl + '/' + row, $select, file.trends);
     }
 
     initCategoryPopup(evidenceUrl);
