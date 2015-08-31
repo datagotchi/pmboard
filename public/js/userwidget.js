@@ -272,7 +272,7 @@ function initTagsInput(evidenceUrl, $select, trends) {
   
   $select.on('itemAdded', function(event) {
     var trIx = $(this).parent().parent().index(); // select -> td -> tr
-    var trendsUrl = evidenceUrl + '/' + trIx + '/trends';
+    var trendsUrl = evidenceUrl + '/trends';
     var newIx = currentEvidenceItems[trIx].trends.length;
     $.ajax({
       method: 'POST',
@@ -291,7 +291,7 @@ function initTagsInput(evidenceUrl, $select, trends) {
   });
   $select.on('beforeItemRemove', function(event) {
     var trIx = $(this).parent().parent().index();
-    var trendsUrl = evidenceUrl + '/' + trIx + '/trends';
+    var trendsUrl = evidenceUrl + '/trends';
     $.ajax({
       method: 'DELETE',
       url: trendsUrl,
