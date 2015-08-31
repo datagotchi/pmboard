@@ -3,22 +3,29 @@ var router = express.Router();
 //var mongoose = require('mongoose');
 //var ObjectId = mongoose.Types.ObjectId;
 
+function checkUserAccess(req, req_level) {
+  var userid = JSON.parse(req.cookies.userid);
+  if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < req_level) {
+    var err = new Error("Unauthorized");
+    err.status = 401;
+    return err;
+  }
+}
+
 // ***** user personas *****
 
 // get user personas
 router.get('/', function(req, res, next) {
-  res.json(req.product.personas);
+  var err = checkUserAccess(req, 1);
+  if (err) return next(err);
+  return res.json(req.product.personas);
 });
 
 // add user persona
 router.post('/', function(req, res, next) {
   
-  var userid = JSON.parse(req.cookies.userid);
-  if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
-    var err = new Error("Unauthorized");
-    err.status = 401;
-    return next(err);
-  }
+  var err = checkUserAccess(req, 2);
+  if (err) return next(err);
   
   var prod = req.product;
   var newpersona = req.body.value;
@@ -39,7 +46,7 @@ router.post('/', function(req, res, next) {
   });
 });
 
-// persona evidence
+// persona index
 router.param('persona_ix', function(req, res, next) {
   // TODO: assert ix is a normal int
   var ix = req.params.persona_ix;
@@ -56,14 +63,8 @@ router.param('persona_ix', function(req, res, next) {
 // change user persona
 router.put('/:persona_ix', function(req, res, next) {
   
-  var userid = JSON.parse(req.cookies.userid);
-  if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
-    var err = new Error("Unauthorized");
-    err.status = 401;
-    return next(err);
-  }
-  
-  console.log(req.product.permLookup[userid]);
+  var err = checkUserAccess(req, 2);
+  if (err) return next(err);
   
   var prod = req.product;
   var ix = req.personaIx;
@@ -87,12 +88,8 @@ router.put('/:persona_ix', function(req, res, next) {
 // delete user persona
 router.delete('/:persona_ix', function(req, res, next) {
   
-  var userid = JSON.parse(req.cookies.userid);
-  if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
-    var err = new Error("Unauthorized");
-    err.status = 401;
-    return next(err);
-  }
+  var err = checkUserAccess(req, 2);
+  if (err) return next(err);
   
   var prod = req.product;
   //if (req.body.ix) {
@@ -124,6 +121,8 @@ router.delete('/:persona_ix', function(req, res, next) {
 
 // get persona evidence
 router.get('/:persona_ix/evidence', function(req, res, next) {
+  var err = checkUserAccess(req, 1);
+  if (err) return next(err);
   var prod = req.product;
   var ix = req.personaIx;
   return res.json(prod.personas[ix].evidence);
@@ -132,12 +131,8 @@ router.get('/:persona_ix/evidence', function(req, res, next) {
 // add persona evidence
 router.post('/:persona_ix/evidence', function(req, res, next) {
   
-  var userid = JSON.parse(req.cookies.userid);
-  if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
-    var err = new Error("Unauthorized");
-    err.status = 401;
-    return next(err);
-  }
+  var err = checkUserAccess(req, 2);
+  if (err) return next(err);
   
   var prod = req.product;
   var ix = req.personaIx;
@@ -170,12 +165,8 @@ router.post('/:persona_ix/evidence', function(req, res, next) {
 // delete persona evidence
 router.delete('/:persona_ix/evidence', function(req, res, next) {
   
-  var userid = JSON.parse(req.cookies.userid);
-  if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
-    var err = new Error("Unauthorized");
-    err.status = 401;
-    return next(err);
-  }
+  var err = checkUserAccess(req, 2);
+  if (err) return next(err);
   
   var prod = req.product;
   if (req.body.ix) { // TODO: update to a request parameter
@@ -218,6 +209,8 @@ router.param('ev_ix', function(req, res, next) {
 
 // get persona trends
 router.get('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
+  var err = checkUserAccess(req, 1);
+  if (err) return next(err);
   var prod = req.product;
   var personaIx = req.personaIx;
   var evIx = req.evIx;
@@ -227,12 +220,8 @@ router.get('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
 // add persona trends
 router.post('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
   
-  var userid = JSON.parse(req.cookies.userid);
-  if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
-    var err = new Error("Unauthorized");
-    err.status = 401;
-    return next(err);
-  }
+  var err = checkUserAccess(req, 2);
+  if (err) return next(err);
   
   var prod = req.product;
   var personaIx = req.personaIx;
@@ -264,12 +253,9 @@ router.post('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
 
 // change persona trends
 router.put('/:persona_ix/evidence/:ev_ix/trends/:trend_ix', function(req, res, next) {
-  var userid = JSON.parse(req.cookies.userid);
-  if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
-    var err = new Error("Unauthorized");
-    err.status = 401;
-    return next(err);
-  }
+  
+  var err = checkUserAccess(req, 2);
+  if (err) return next(err);
   
   var prod = req.product;
   var personaIx = req.personaIx;
@@ -298,12 +284,8 @@ router.put('/:persona_ix/evidence/:ev_ix/trends/:trend_ix', function(req, res, n
 // delete persona trend
 router.delete('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
   
-  var userid = JSON.parse(req.cookies.userid);
-  if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
-    var err = new Error("Unauthorized");
-    err.status = 401;
-    return next(err);
-  }
+  var err = checkUserAccess(req, 2);
+  if (err) return next(err);
   
   var prod = req.product;
   var personaIx = req.personaIx;

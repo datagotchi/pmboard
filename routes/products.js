@@ -27,6 +27,7 @@ router.post('/', function(req, res, next) {
   var newprod = new Product({
     name: 'NewProduct',
     personas: [],
+    stories: [],
     permissions: {}
   });
   var userid = JSON.parse(req.cookies.userid);
@@ -160,5 +161,7 @@ function removeUserProduct(user, prodId) {
 }
 
 router.use('/:product_id/personas', require('./personas'));
+
+router.use('/:product_id/stories', require('./stories'));
 
 module.exports = router;

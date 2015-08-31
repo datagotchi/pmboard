@@ -7,11 +7,6 @@ var productSchema = new Schema({
     _id: {type: Schema.ObjectId, ref: 'User'},
     value: Number // 0: no access, 1: read access, 2: write access, ... high number: owner/admin
   }],
-  /*
-  permissions: {
-    // want this, but I think I can't have :(
-    {type: Schema.ObjectId, ref: 'User'}: Number
-  }*/
   personas: [
     {
       _id: false, // uniquely access personas by array index
@@ -29,6 +24,18 @@ var productSchema = new Schema({
               type: {type: String}
             }
           ]
+        }
+      ]
+    }
+  ],
+  stories: [
+    {
+      _id: false,
+      name: String,
+      evidence: [
+        {
+          _id: false,
+          path: String
         }
       ]
     }

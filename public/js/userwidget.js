@@ -22,7 +22,7 @@ function createUserWidget(apiUrl) {
   return new boardWidget({
     title: 'Who are your users?',
     id: "users",
-    columns: [{name: 'Name', value: 'name'}, {name: '', value: 'evidence.length'}],
+    columns: [{name: 'User', value: 'name'}, {name: 'Validation', value: 'evidence.length'}],
     // TODO: ^ implement dynamic columns in the 'wrapper' below
     valueField: 'name',
     wrappers: [

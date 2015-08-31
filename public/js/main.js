@@ -4,6 +4,7 @@ var currentProduct;
 var prod_id;
 var product_url;
 var personas_url;
+var stories_url;
 var userid;
 
 OAuth.initialize('K2P2q3_J6a76xcMJCcRRYTrbJ2c'); // TODO: hide this key somewhere via an ajax call? 
@@ -187,6 +188,10 @@ function init() {
 	personas_url = product_url + "/personas";
 	
 	createUserWidget(personas_url);
+	
+	stories_url = product_url + "/stories";
+	
+	createProductWidget(stories_url);
   
   $(document).on('hidden.bs.modal', '.modal', function(event) {
     // refresh relevant widget
