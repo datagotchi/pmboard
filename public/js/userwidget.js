@@ -70,7 +70,7 @@ function createUserWidget(apiUrl) {
         var $this = $(this);
         var $tr = $this.parent().parent();
         var personaIx = widget.modal.currentIx;
-        var $currentTable = $('#addevidence #current table tbody');
+        var $currentTable = $('#addevidence .current table tbody');
         if ($this.prop('checked')) {
           $tr.addClass('success');
           addEvidence(evidenceUrl, $tr, function(data) {
@@ -165,7 +165,7 @@ function createUserWidget(apiUrl) {
       });
       
       // list current evidence files
-      var $currentTable = $('#addevidence #current table tbody');
+      var $currentTable = $('#addevidence .current table tbody');
       refreshEvidence(evidenceUrl, $currentTable, function(evidence) {
         // TODO: put summary stuff in there?
         
@@ -349,7 +349,7 @@ function initTagElement($tag, evidenceUrl) {
                 success: function(data) {
                   if (data && data.success) {
                     $input.parent().remove();
-                    var $tr = $($("#current table tbody tr")[$row.index()]);
+                    var $tr = $($(".current table tbody tr")[$row.index()]);
                     var $tagsData = $tr.find("[data-role='tagsinput']")
                     var item = $tagsData.tagsinput('items')[$tag.index()];
                     item.name = $input.val();
@@ -402,7 +402,7 @@ function changeTrendType(rootUrl, evIx, index, newTypeIx) {
     success: function(data) {
       if (data && data.success) {
         // refresh evidence tab
-        var $tr = $($("#current table tbody tr")[evIx]);
+        var $tr = $($(".current table tbody tr")[evIx]);
         var $tagsData = $tr.find("[data-role='tagsinput']");
         $span = $($tr.find("span.tag")[index]);
         var item = $tagsData.tagsinput('items')[index];

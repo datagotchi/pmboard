@@ -35,7 +35,15 @@ var productSchema = new Schema({
       evidence: [
         {
           _id: false,
-          path: String
+          name: String,
+          path: String,
+          trends: [
+            {
+              _id: false,
+              name: String,
+              type: {type: String}
+            }
+          ]
         }
       ]
     }

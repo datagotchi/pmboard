@@ -35,7 +35,7 @@ function createProductWidget(apiUrl) {
           label: 'Summary',
           content: html
         });
-        $.get("templates/trend-tab.html", function(html) {
+        $.get("templates/evidence-tab.html", function(html) {
           widget.addModalTab({
             label: 'Add Evidence',
             content: html
@@ -48,7 +48,7 @@ function createProductWidget(apiUrl) {
         var $this = $(this);
         var $tr = $this.parent().parent();
         var personaIx = widget.modal.currentIx;
-        var $currentTable = $('#addevidence #current table tbody');
+        var $currentTable = $('#addevidence .current table tbody');
         if ($this.prop('checked')) {
           $tr.addClass('success');
           addEvidence(evidenceUrl, $tr, function(data) {
@@ -93,57 +93,19 @@ function createProductWidget(apiUrl) {
       $(this).on('hide.bs.modal', function(event) {
         event.stopPropagation();
       });
-      $("#addFilesModal").on('show.bs.modal', function(event) {
+      $("#addPersonaModal").on('show.bs.modal', function(event) {
         event.stopPropagation();
         
-        if (!$("#addFilesModal").html()) {
-          $.get("templates/add-file.html", function(html) {
-            $("#addFilesModal").html(html);
-            /*$("#addFilesModal .modal-footer button.closeBtn").click(function() {
-              $("#addFilesModal").hide();
-            });*/
-            // allow them to choose more files for evidence
-            var oauth = JSON.parse($.cookie('oauth'));
-            var accessToken = oauth.access_token;
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", "https://www.googleapis.com/drive/v2/files", true);
-            xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
-            xhr.onload = function (evt) {
-              if (xhr.status != 200) {
-                if (xhr.status == 401) { // google 'invalid credentials'
-                  // refresh token
-                  return doAuthentication(function(data) {
-                    $.cookie('oauth', data.oauth);
-                    widget.options.modalShown(widget, event);
-                    //xhr.onload(evt);
-                  });
-                }
-              }
-              var response = JSON.parse(xhr.responseText);
-              var filesTable = widget.modal.elem.find("#addevidence #files table tbody");
-              for (var i = 0; i < response.items.length; i++) {
-                  var item = response.items[i];
-                  //if (evidence[item.alternateLink]) continue;
-                  var tr = $("<tr>");
-                  var td1 = $("<td>").css("width", "100px");
-                  td1.html("<input type='checkbox'>");
-                  tr.append(td1);
-                  var td2 = $("<td>").addClass('file');
-                  td2.html("<a href='" + item.alternateLink + "' target='_blank'>" +
-                                 "<img src='" + item.iconLink + "'>" + 
-                                 item.title + "</a>");
-                  tr.append(td2);
-                  if (currentEvidenceItems[item.alternateLink]) tr.hide();
-                  filesTable.append(tr);
-              }
-            };
-            xhr.send();
+        if (!$("#addPersonaModal").html()) {
+          $.get("templates/add-persona.html", function(html) {
+            $("#addPersonaModal").html(html);
+            // TODO: add personas to table and make them selectable
           });
         }
       });
       
       // list current evidence files
-      var $currentTable = $('#addevidence #current table tbody');
+      var $currentTable = $('#addevidence .current table tbody');
       refreshEvidence(evidenceUrl, $currentTable, function(evidence) {
         // TODO: put summary stuff in there?
         

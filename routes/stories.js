@@ -80,4 +80,77 @@ router.put('/:story_ix', function(req, res, next) {
   });
 });
 
+// delete user story
+router.delete('/:story_ix', function(req, res, next) {
+  
+  var err = checkUserAccess(req, 2);
+  if (err) return next(err);
+  
+  var prod = req.product;
+  var ix = req.storyIx;
+  prod.stories.splice(ix, 1);
+      
+  return prod.save(function(err) {
+    if (err || !prod) {
+      return res.json({
+        success: false,
+        error: err
+      });
+    } else {
+      return res.json({
+        success: true
+      });
+    }
+  });
+ 
+  // TODO: remove this/put in the param thing above
+  var err = new Error('Invalid request; index not specified');
+  err.status = 400;
+  return next(err);
+});
+
+// *** story evidence (personas -> trends) ***
+
+// get story evidence 
+router.get('/:story_ix/evidence', function(req, res, next) {
+  var err = checkUserAccess(req, 1);
+  if (err) return next(err);
+  
+  var prod = req.product;
+  var ix = req.storyIx;
+  return res.json(prod.stories[ix].evidence);
+});
+
+// add story evidence
+router.post('/:story_ix/evidence', function(req, res, next) {
+  var err = checkUserAccess(req, 2);
+  if (err) return next(err);
+  
+  var prod = req.product;
+  var ix = req.storyIx;
+  
+  var ev = { 
+    name: req.body.name,
+    path: req.body.path
+  };
+  
+  if (!('evidence' in prod.personas[ix])) {
+    prod.personas[ix].evidence = [];
+  }
+  prod.personas[ix].evidence.push(ev);
+  
+  return prod.save(function(err) {
+    if (err) { // TODO: convert to next(err)?
+      return res.json({
+        success: false,
+        error: err
+      });
+    } else {
+      return res.json({
+        success: true
+      });
+    }
+  });
+});
+
 module.exports = router;
