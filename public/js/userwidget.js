@@ -387,7 +387,6 @@ function initTagElement($tag, evidenceUrl) {
           .appendTo(document.body);
         $div.find('input').focus();
       }
-      event.stopPropagation();
     });
 }
 
