@@ -207,7 +207,7 @@ function init() {
 		onblur: 'submit',
 		url: product_url,
 		ajaxOptions: {
-			type: 'post',
+			type: 'put',
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8'
 		},
