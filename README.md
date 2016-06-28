@@ -8,7 +8,7 @@ containing collections named **products** and **users**, with at least one user 
 the Mongoose schema (https://github.com/bobness/pmboard/blob/master/schema/User.js) and an email address 
 matching a GMail or Google Apps account. 
 
-Then, clone the repo, do <code>npm install</code> and <code>bower install</code>, and finally run <code>node ./bin/www</code> 
+Then, clone the repo, do <code>npm install</code> and <code>bower install</code>, and finally run <code>npm start</code> 
 and go to <code>http://localhost:3000</code>, authenticating in the OAuth popup with your Google account.
 
 \* Currently porting to Angular.js to better organize the frontend codebase
