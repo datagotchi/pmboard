@@ -7,7 +7,7 @@ var personas_url;
 var stories_url;
 var userid;
 
-OAuth.initialize('K2P2q3_J6a76xcMJCcRRYTrbJ2c'); // TODO: hide this key somewhere via an ajax call? 
+OAuth.initialize('K2P2q3_J6a76xcMJCcRRYTrbJ2c'); // TODO: hide this key somewhere via an ajax call?
 $.cookie.json = true;
 $.ajaxSetup({
 	/*beforeSend: function(xhr, settings) {
@@ -23,8 +23,12 @@ $(window).load(function() {
 		$.get('/users/' + userid, function(user) {
   		products = user.products;
   		currentProduct = typeof user.currentProduct === "number" ? user.currentProduct : 0;
-  		if (currentProduct >= products.length) currentProduct = products.length - 1;
-      prod_id = products[currentProduct]._id; 
+			if (currentProduct >= products.length) currentProduct = products.length - 1;
+			if (currentProduct >= 0) {
+				prod_id = products[currentProduct]._id;
+			} else {
+				prod_id = null;
+			}
       init();
 		});
   } else {
@@ -72,7 +76,7 @@ function retrieve_token(callback) {
 function authenticate(token, callback) {
 	OAuth.popup('google', {
 		state: token,
-		// Google requires the following field 
+		// Google requires the following field
 		// to get a refresh token
 		//authorize: {
 		//  approval_prompt: 'force'
@@ -117,8 +121,8 @@ function getCookie(name) {
 function changeCurrentProduct(ix, callback) {
   $.ajax({
     method: 'PUT',
-    url: '/users/' + userid, 
-    data: {currentProduct: ix}, 
+    url: '/users/' + userid,
+    data: {currentProduct: ix},
     success: function(data) {
       if (data.success) {
         if (callback) callback();
@@ -158,85 +162,92 @@ function createProduct(callback) {
 }
 
 function init() {
-  
-  product_url = "/products/" + prod_id;
-  
-  for (var p = 0; p < products.length; p++) {
-    if (products[p]._id == prod_id) {
-      $("#products").append('<li class="active"><a href="#" class="products">' + products[p].name + '</a></li>');
-    } else {
-      $("#products").append('<li><a href="#" class="products">' + products[p].name + '</a></li>');
-    }
-  }
-  $("#products a.products").click(function(event) {
-    var $a = $(this);
-    var $li = $a.parent();
-    changeCurrentProduct($li.index(), function() {
-      location.reload();
-    });
-  });
-  
-  $("#products").append('<li class="divider"></li><li><a href="#" id="newproduct"><span class="glyphicon glyphicon-plus"></span>New Product</a></li>');
-  $("#newproduct").click(function(event) {
-    createProduct(function() {
-      changeCurrentProduct($("#products .products").length, function() {
-        location.reload();
-      })
-    });
-  });
-	
-	personas_url = product_url + "/personas";
-	
-	createUserWidget(personas_url);
-	
-	stories_url = product_url + "/stories";
-	
-	createProductWidget(stories_url);
-  
-  $(document).on('hidden.bs.modal', '.modal', function(event) {
-    // refresh relevant widget
-    var widget = event.currentTarget.widget;
-    if (widget)
-      widget._refresh();
-  });
 
-	$("#productName").text(products[currentProduct].name);
-	$("#productName").editable({
-  	showbuttons: false,
-		params: function(params) { return JSON.stringify(params); },
-		onblur: 'submit',
-		url: product_url,
-		ajaxOptions: {
-			type: 'put',
-			dataType: 'json',
-			contentType: 'application/json; charset=utf-8'
-		},
-		success: function(response, newValue) {
-			if (typeof response == "object" && !response.success) {
-				return response.error;
+	function doCreateProduct() {
+		createProduct(function() {
+			changeCurrentProduct($("#products .products").length, function() {
+				location.reload();
+			})
+		});
+	}
+
+	if (prod_id !== null) {
+		product_url = "/products/" + prod_id;
+
+	  for (var p = 0; p < products.length; p++) {
+	    if (products[p]._id == prod_id) {
+	      $("#products").append('<li class="active"><a href="#" class="products">' + products[p].name + '</a></li>');
+	    } else {
+	      $("#products").append('<li><a href="#" class="products">' + products[p].name + '</a></li>');
+	    }
+	  }
+	  $("#products a.products").click(function(event) {
+	    var $a = $(this);
+	    var $li = $a.parent();
+	    changeCurrentProduct($li.index(), function() {
+	      location.reload();
+	    });
+	  });
+
+	  $("#products").append('<li class="divider"></li><li><a href="#" id="newproduct"><span class="glyphicon glyphicon-plus"></span>New Product</a></li>');
+	  $("#newproduct").click(doCreateProduct);
+
+		personas_url = product_url + "/personas";
+
+		createUserWidget(personas_url);
+
+		stories_url = product_url + "/stories";
+
+		createProductWidget(stories_url);
+
+	  $(document).on('hidden.bs.modal', '.modal', function(event) {
+	    // refresh relevant widget
+	    var widget = event.currentTarget.widget;
+	    if (widget)
+	      widget._refresh();
+	  });
+
+		$("#productName").text(products[currentProduct].name);
+		$("#productName").editable({
+	  	showbuttons: false,
+			params: function(params) { return JSON.stringify(params); },
+			onblur: 'submit',
+			url: product_url,
+			ajaxOptions: {
+				type: 'put',
+				dataType: 'json',
+				contentType: 'application/json; charset=utf-8'
+			},
+			success: function(response, newValue) {
+				if (typeof response == "object" && !response.success) {
+					return response.error;
+				}
+				location.reload();
+			},
+			error: function(a, b) {
+				console.error(a, b);
 			}
-			location.reload();
-		},
-		error: function(a, b) {
-			console.error(a, b);
-		}
-	});
-	$("#deleteProduct").click(function(event) {
-  	bootbox.confirm("Are you sure?", function(result) {
-    	if (result) {
-      	$.ajax({
-        	method: 'DELETE',
-        	url: product_url,
-        	success: function(data) {
-          	if (data.success) {
-            	var newIx = currentProduct-1;
-            	changeCurrentProduct(newIx >= 0 ? newIx : 0, location.reload());
-          	} else {
-            	console.error(data);
-          	}
-        	}
-      	});
-      }
-  	});
-	});
+		});
+		$("#deleteProduct").click(function(event) {
+	  	bootbox.confirm("Are you sure?", function(result) {
+	    	if (result) {
+	      	$.ajax({
+	        	method: 'DELETE',
+	        	url: product_url,
+	        	success: function(data) {
+	          	if (data.success) {
+	            	var newIx = currentProduct-1;
+	            	changeCurrentProduct(newIx >= 0 ? newIx : 0, location.reload());
+	          	} else {
+	            	console.error(data);
+	          	}
+	        	}
+	      	});
+	      }
+	  	});
+		});
+	} else {
+		$("#widgets").append($("<button>").click(doCreateProduct).text("Create product"));
+		$("#loading").hide();
+	}
 }
