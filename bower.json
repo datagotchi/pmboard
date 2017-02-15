@@ -27,7 +27,10 @@
     "bootbox": "~4.4.0",
     "polymer": "~1.0.0",
     "listwidget": "~0.1.0",
-    "typeahead.js" : "~0.11.1"
+    "typeahead.js": "~0.11.1",
+    "angular": "1.5",
+    "angular-resource": "1.5",
+    "angular-xeditable": "0.5"
   },
   "resolutions": {
     "bootstrap-tagsinput": "~0.5.0"

@@ -1,14 +1,19 @@
 <div class="panel panel-default widget">
   <div class="panel-heading">
-    <h3 class="panel-title"></h3>
+    <h3 class="panel-title">{{ title }}</h3>
   </div>
   <div class="panel-body">
     <table class="table">
+      <thead>
+        <tr>
+          <td ng-repeat="column in columns">{{ column.name }}</td>
+        </tr>
+        <tr ng-repeat="row in data">
+          <td ng-repeat="column in columns">{{ getValue(column.value) }}</td>
+        </tr>
+      </thead>
     </table>
-    <!--<div class="dd">
-      <ol class="dd-list"></ol>
-    </div>-->
   </div>
-  <div class="panel-footer">
+  <div class="panel-footer">Add more...
   </div>
 </div>
