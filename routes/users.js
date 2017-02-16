@@ -65,7 +65,7 @@ router.put('/:user_id', function(req, res, next) {
       return next(err);
     }
     
-    if (req.body.currentProduct) {
+    if ('currentProduct' in req.body) {
       user.currentProduct = req.body.currentProduct;
     }
     
@@ -75,14 +75,9 @@ router.put('/:user_id', function(req, res, next) {
     
     return user.save(function(err) { // TODO: turn into its own route so I can use next(...) to save a document?
       if (err) { // TODO: convert to next(err)?
-        return res.json({
-          success: false,
-          error: err
-        });
+        return next(err);
       } else {
-        return res.json({
-          success: true
-        });
+        return res.json(user);
       }
     });
   });

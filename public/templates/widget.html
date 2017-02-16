@@ -8,8 +8,8 @@
         <tr>
           <td ng-repeat="column in columns">{{ column.name }}</td>
         </tr>
-        <tr ng-repeat="row in data">
-          <td ng-repeat="column in columns">{{ getValue(column.value) }}</td>
+        <tr ng-repeat="row in data track by $index">
+          <td ng-repeat="column in columns">{{ getValue($parent.$index, column.value) }}</td>
         </tr>
       </thead>
     </table>

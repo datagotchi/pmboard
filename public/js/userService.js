@@ -1,10 +1,18 @@
-angular.module('pmboard').factory('userService', ['$resource', function($resource) {
+angular.module('pmboard').factory('userService', ['$http', function($http) {
   var service = {};
   
-  var User = $resource('/users/:user_id', {user_id: '@id'});
-  
   service.getUser = function(userId) {
-    return User.get({user_id: userId}).$promise;
+    return $http.get('/users/' + userId).then(function(res) {
+      return res.data;
+    });
+  };
+  
+  service.changeCurrentProduct = function(userId, index) {
+    return $http.put('/users/' + userId, {currentProduct: index});
+  };
+  
+  service.addProductAccess = function(userId, prodId) {
+    return $http.put('/users/' + userId, { product_id: prodId });
   };
   
   return service;
