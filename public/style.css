@@ -1,4 +1,4 @@
-#widgets > div {
+#widgets div.widget {
 	vertical-align: top;
 }
 .panel.widget {

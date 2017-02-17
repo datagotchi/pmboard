@@ -39,15 +39,10 @@ router.post('/', function(req, res, next) {
   prod.personas.push({name: newpersona});
   
   return prod.save(function(err) {
-    if (err) { // TODO: convert to next(err)?
-      return res.json({
-        success: false,
-        error: err
-      });
+    if (err) {
+      return next(err);
     } else {
-      return res.json({
-        success: true
-      });
+      return res.json(prod.personas[prod.personas.length-1]);
     }
   });
 });

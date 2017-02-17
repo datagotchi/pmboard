@@ -7,7 +7,23 @@ angular.module('pmboard').controller('dashboardController', ['$scope', 'userServ
   $scope.currentProduct = null;
   
   $scope.userWidget = {
-    columns: [{name: 'User', value: 'name'}, {name: 'Validation', value: 'evidence.length'}]
+    column: {name: 'User', value: 'name'},
+    personas: []
+  };
+  
+  $scope.addPersona = function() {
+    var row = $scope.userWidget.personas[$scope.userWidget.personas.length - 1];
+    productService.addPersona($scope.currentProduct._id, row.name);
+  };
+  
+  $scope.productWidget = {
+    column: {name: 'Benefit', value: 'name'},
+    stories: []
+  };
+  
+  $scope.addStory = function() {
+    var row = $scope.productWidget.stories[$scope.productWidget.stories.length - 1];
+    productService.addStory($scope.currentProduct._id, row.name);
   };
   
   $scope.changeProduct = function(index) {
@@ -15,6 +31,7 @@ angular.module('pmboard').controller('dashboardController', ['$scope', 'userServ
       $scope.currentProduct = $scope.products[index];
       $scope.user.currentProduct = index;
       refreshUserWidget();
+      refreshProductWidget();
     });
   };
   
@@ -38,93 +55,29 @@ angular.module('pmboard').controller('dashboardController', ['$scope', 'userServ
   };
   
   var refreshUserWidget = function() {
+    $scope.loading = true;
     $scope.userWidget.url = '/products/' + $scope.currentProduct._id + "/personas"
     productService.getPersonas($scope.currentProduct._id).then(function(personas) {
       $scope.userWidget.personas = personas;
+      $scope.loading = false;
     });
   };
   
+  var refreshProductWidget = function() {
+    $scope.loading = true;
+    $scope.userWidget.url = '/products/' + $scope.currentProduct._id + "/stories"
+    productService.getStories($scope.currentProduct._id).then(function(stories) {
+      $scope.productWidget.stories = stories;
+      $scope.loading = false;
+    });
+  };
+  
+  $scope.loading = true;
   userService.getUser(debugUserId).then(function(user) {
     $scope.user = user;
     $scope.products = user.products;
     $scope.currentProduct = user.products[$scope.user.currentProduct];
     refreshUserWidget();
-/*
-		var currentProduct = Number(user.currentProduct) || 0;
-		if (currentProduct >= user.products.length) currentProduct = user.products.length - 1;
-		if (currentProduct >= 0) {
-			prod_id = user.products[currentProduct]._id;
-		} else {
-			prod_id = null;
-		}
-
-		if (prod_id !== null) {
-  		product_url = "/products/" + prod_id;
-  		
-
-  
-  	  $("#products").append('<li class="divider"></li><li><a href="#" id="newproduct"><span class="glyphicon glyphicon-plus"></span>New Product</a></li>');
-  	  $("#newproduct").click(doCreateProduct);
-  
-  		personas_url = product_url + "/personas";
-  
-  		createUserWidget(personas_url);
-  
-  		stories_url = product_url + "/stories";
-  
-  		createProductWidget(stories_url);
-  
-  	  $(document).on('hidden.bs.modal', '.modal', function(event) {
-  	    // refresh relevant widget
-  	    var widget = event.currentTarget.widget;
-  	    if (widget)
-  	      widget._refresh();
-  	  });
-  
-  		$("#productName").text(products[currentProduct].name);
-  		$("#productName").editable({
-  	  	showbuttons: false,
-  			params: function(params) { return JSON.stringify(params); },
-  			onblur: 'submit',
-  			url: product_url,
-  			ajaxOptions: {
-  				type: 'put',
-  				dataType: 'json',
-  				contentType: 'application/json; charset=utf-8'
-  			},
-  			success: function(response, newValue) {
-  				if (typeof response == "object" && !response.success) {
-  					return response.error;
-  				}
-  				location.reload();
-  			},
-  			error: function(a, b) {
-  				console.error(a, b);
-  			}
-  		});
-  		$("#deleteProduct").click(function(event) {
-  	  	bootbox.confirm("Are you sure?", function(result) {
-  	    	if (result) {
-  	      	$.ajax({
-  	        	method: 'DELETE',
-  	        	url: product_url,
-  	        	success: function(data) {
-  	          	if (data.success) {
-  	            	var newIx = currentProduct-1;
-  	            	changeCurrentProduct(newIx >= 0 ? newIx : 0, location.reload());
-  	          	} else {
-  	            	console.error(data);
-  	          	}
-  	        	}
-  	      	});
-  	      }
-  	  	});
-  		});
-  	} else {
-  		$("#widgets").append($("<button>").click(doCreateProduct).text("Create product"));
-  		$("#loading").hide();
-  		
-  	}
-  	*/
+    refreshProductWidget();
   });
 }]);

@@ -26,6 +26,24 @@ angular.module('pmboard').factory('productService', ['$http', function($http) {
       return res.data;
     });
   };
+  
+  service.addPersona = function(prodId, persona) {
+    return $http.post('/products/' + prodId + '/personas', {value: persona}).then(function(res) {
+      return res.data;
+    });
+  };
+  
+  service.getStories = function(prodId) {
+    return $http.get('/products/' + prodId + '/stories').then(function(res) {
+      return res.data;
+    });
+  };
+  
+  service.addStory = function(prodId, story) {
+    return $http.post('/products/' + prodId + '/stories', {value: story}).then(function(res) {
+      return res.data;
+    });
+  };
 
   
   return service;
