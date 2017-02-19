@@ -37,8 +37,9 @@ angular.module('pmboard').controller('dashboardController', ['$scope', 'userServ
   
   $scope.createProduct = function() {
     return productService.createProduct().then(function(product) {
+      $scope.products.push(product);
       return userService.addProductAccess($scope.user._id, product._id).then(function() {
-        location.reload();
+        $scope.changeProduct($scope.products.length-1);
       });
     });
   };
@@ -48,9 +49,14 @@ angular.module('pmboard').controller('dashboardController', ['$scope', 'userServ
   };
   
   $scope.deleteProduct = function(id) {
+    var index = $scope.products.map(function(p) { return p._id; }).indexOf(id);
     return productService.deleteProduct(id).then(function() {
       $scope.products = $scope.products.filter(function(p) { return p._id !== id; });
-      return $scope.changeProduct(0); // TODO go up/down the list by 1
+      var newIndex = index;
+      if (newIndex === $scope.products.length) {
+        newIndex = newIndex - 1 >= 0 ? newIndex - 1 : 0;
+      }
+      return $scope.changeProduct(newIndex);
     });
   };
   
