@@ -8,30 +8,104 @@ angular.module('pmboard').controller('dashboardController', ['$scope', 'userServ
   
   $scope.userWidget = {
     column: {name: 'User', value: 'name'},
-    personas: []
-  };
-  
-  $scope.addPersona = function() {
-    var row = $scope.userWidget.personas[$scope.userWidget.personas.length - 1];
-    productService.addPersona($scope.currentProduct._id, row.name);
+    personas: [],
+    refresh: function() {
+      $scope.loading = true;
+      $scope.userWidget.url = '/products/' + $scope.currentProduct._id + '/personas';
+      productService.getPersonas($scope.currentProduct._id).then(function(personas) {
+        
+        // refresh personas
+        $scope.userWidget.personas = personas;
+        
+        // refresh trends for each persona
+        $scope.userWidget.modalOptions.trendsByPersona = {};
+        personas.forEach(function(persona) {
+          
+          var trends = {};
+          persona.evidence.forEach(function(evidence) {
+            evidence.trends.forEach(function(trend) {
+              if (!(trend.name in trends)) {
+                trends[trend.name] = angular.extend({
+                  count: 0
+                }, trend);
+              }
+              trends[trend.name].count++;
+              trend.class = $scope.userWidget.modalOptions.trendTypes[trend.type];
+            });
+          });
+        
+          $scope.userWidget.modalOptions.trendsByPersona[persona.name] = Object.keys(trends)
+            .map(function(name) {return trends[name]; })
+            .sort(function(a, b) {
+              if (a.type === b.type) {
+                return a.count - b.count; 
+              } else {
+                var types = Object.keys($scope.userWidget.modalOptions.trendTypes);
+                return types.indexOf(a.type) - types.indexOf(b.type);
+              }
+            });
+          
+        });
+        
+        $scope.loading = false;
+      });
+    },
+    addPersona: function() {
+      var row = $scope.userWidget.personas[$scope.userWidget.personas.length - 1];
+      productService.addPersona($scope.currentProduct._id, row.name);
+    },
+    modalOptions: {
+      trends: [],
+      onUpdateName: function(personaIndex, name) {
+        return productService.updatePersona($scope.currentProduct._id, personaIndex, name);
+      },
+      trendTypes: {
+        "Objective" : "label-danger",
+        "Goal" : "label-warning",
+        "Activity" : "label-primary",
+        "Task" : "label-default",
+        "Resource" : "label-success"
+      },
+      trendsShown: {},
+      showTrendType: function(trend, trendMap) {
+        if (!(trend.type in trendMap)) {
+          trendMap[trend.type] = trend.name;
+          return trend.type;
+        } else if (trendMap[trend.type] === trend.name) {
+          return trend.type;
+        } else {
+          return '';
+        }
+      },
+      onClose: function() {
+        $scope.userWidget.modalOptions.trendsShown = {};
+      }
+    }
   };
   
   $scope.productWidget = {
     column: {name: 'Benefit', value: 'name'},
-    stories: []
-  };
-  
-  $scope.addStory = function() {
-    var row = $scope.productWidget.stories[$scope.productWidget.stories.length - 1];
-    productService.addStory($scope.currentProduct._id, row.name);
+    stories: [],
+    refresh: function() {
+      $scope.loading = true;
+      $scope.userWidget.url = '/products/' + $scope.currentProduct._id + '/stories';
+      productService.getStories($scope.currentProduct._id).then(function(stories) {
+        $scope.productWidget.stories = stories;
+        $scope.loading = false;
+      });
+    },
+    addStory: function() {
+      var row = $scope.productWidget.stories[$scope.productWidget.stories.length - 1];
+      productService.addStory($scope.currentProduct._id, row.name);
+    }
   };
   
   $scope.changeProduct = function(index) {
     userService.changeCurrentProduct($scope.user._id, index).then(function() {
       $scope.currentProduct = $scope.products[index];
       $scope.user.currentProduct = index;
-      refreshUserWidget();
-      refreshProductWidget();
+      $scope.userWidget.refresh();
+      $scope.productWidget.refresh();
     });
   };
   
@@ -60,30 +134,12 @@ angular.module('pmboard').controller('dashboardController', ['$scope', 'userServ
     });
   };
   
-  var refreshUserWidget = function() {
-    $scope.loading = true;
-    $scope.userWidget.url = '/products/' + $scope.currentProduct._id + "/personas"
-    productService.getPersonas($scope.currentProduct._id).then(function(personas) {
-      $scope.userWidget.personas = personas;
-      $scope.loading = false;
-    });
-  };
-  
-  var refreshProductWidget = function() {
-    $scope.loading = true;
-    $scope.userWidget.url = '/products/' + $scope.currentProduct._id + "/stories"
-    productService.getStories($scope.currentProduct._id).then(function(stories) {
-      $scope.productWidget.stories = stories;
-      $scope.loading = false;
-    });
-  };
-  
   $scope.loading = true;
   userService.getUser(debugUserId).then(function(user) {
     $scope.user = user;
     $scope.products = user.products;
     $scope.currentProduct = user.products[$scope.user.currentProduct];
-    refreshUserWidget();
-    refreshProductWidget();
+    $scope.userWidget.refresh();
+    $scope.productWidget.refresh();
   });
 }]);

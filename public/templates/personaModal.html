@@ -1,0 +1,53 @@
+<div id="trendSummary">
+  <div class="modal-header">
+    <button type="button" class="close" ng-click="cancel()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">Who are your users? - <a href="#" editable-text="row.name" onaftersave="modalOptions.onUpdateName(row.index, row.name)">{{ row.name }}</a></h4>
+  </div>
+  <div class="modal-body">
+    <div role="tabpanel">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#personaSummary" aria-controls="summary" role="tab" data-toggle="tab">Summary</a></li>
+        <li role="presentation"><a href="#personaEvidence" aria-controls="evidence" role="tab" data-toggle="tab">Evidence</a></li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="personaSummary">
+          <table class="table">
+            <tbody>
+              <tr ng-repeat="trend in modalOptions.trendsByPersona[row.name]" class="label {{ modalOptions.trendTypes[trend.type] }}">
+                <td>{{ modalOptions.showTrendType(trend, modalOptions.trendsShown) }}</td>
+                <td>{{ trend.name }} <span class="badge">{{ trend.count }}</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="personaEvidence">
+          <h2><a href="#" data-toggle="modal" data-target="#addFilesModal">Add File</a></h2>
+          <table class="table">
+            <tbody>
+              <tr ng-repeat="file in row.evidence">
+                <td><span class="remove-evidence glyphicon glyphicon-remove" style="cursor: pointer;"></span></td>
+                <td><a href="{{ file.url }}" target="_blank"><img ng-src="{{ file.icon }}"/>{{ file.name }}</a></td>
+                <td>
+                  <tags-input ng-model="file.trends" placeholder="Add a trend" display-property="name" template="tag-template">
+                    <auto-complete source="findTrend($query)"></auto-complete>
+                  </tags-input>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn-danger remove-item glyphicon glyphicon-remove" ng-click="modalOptions.onDeletePersona()" aria-label="Delete">Delete</button>
+    <button type="button" class="btn-primary" ng-click="cancel()" aria-label="Close">Close</button>
+  </div>
+  <div id="addFilesModal" class="modal" role="dialog" tabindex="-1"></div>
+  <script type="text/ng-template" id="tag-template">
+    <div class="tag-template tag label {{ data.class }}">
+      <span>{{$getDisplayText()}}</span>
+      <a class="remove-button" ng-click="$removeTag()">x</a>
+    </div>
+  </script>
+</div>

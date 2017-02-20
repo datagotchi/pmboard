@@ -27,8 +27,14 @@ angular.module('pmboard').factory('productService', ['$http', function($http) {
     });
   };
   
-  service.addPersona = function(prodId, persona) {
-    return $http.post('/products/' + prodId + '/personas', {value: persona}).then(function(res) {
+  service.addPersona = function(prodId, personaName) {
+    return $http.post('/products/' + prodId + '/personas', {value: personaName}).then(function(res) {
+      return res.data;
+    });
+  };
+  
+  service.updatePersona = function(prodId, personaIx, personaName) {
+    return $http.put('/products/' + prodId + '/personas/' + personaIx, {value: personaName}).then(function(res) {
       return res.data;
     });
   };

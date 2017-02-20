@@ -6,25 +6,48 @@ angular.module('pmboard').directive('widget', function() {
       column: '=',
       url: '@',
       data: '=',
-      onAdd: '&'
+      onAdd: '&',
+      modalTemplate: '@',
+      modalOptions: '='
     },
-    controller: ['$scope', function($scope) {
+    controller: ['$scope', '$uibModal', function($scope, $uibModal) {
       var self = this;
-    }],
-    link: function(scope) {
       
-      scope.newName = '';
+      $scope.newName = '';
       
-      scope.create = function(name) {
+      $scope.create = function(name) {
         var row = {name: name, evidence: []};
-        scope.newName = '';
-        scope.$applyAsync(function() {
-          scope.data.push(row);
-          if (scope.onAdd) {
-            scope.onAdd();
+        $scope.newName = '';
+        $scope.$applyAsync(function() {
+          $scope.data.push(row);
+          if ($scope.onAdd) {
+            $scope.onAdd();
           }
         })
       };
+      
+      $scope.openModal = function(index, tmpl) {
+        var modal = $uibModal.open({
+          ariaLabelledBy: 'modal-title',
+          ariaDescribedBy: 'modal-body',
+          templateUrl: tmpl,
+          scope: $scope,
+          controller: ['$uibModalInstance', function($uibModalInstance) {
+            $scope.row = $scope.data[index];
+            $scope.row.index = index;
+            $scope.cancel = function() {
+              $uibModalInstance.dismiss();
+            };
+          }]
+        });
+        modal.result.finally(function() {
+          if ($scope.modalOptions.onClose) {
+            $scope.modalOptions.onClose();
+          }
+        })
+      };
+    }],
+    link: function(scope) {
       
     }
   }

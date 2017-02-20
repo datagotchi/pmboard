@@ -14,8 +14,13 @@
     <script src="bower_components/angular-xeditable/dist/js/xeditable.js"></script>
     
     <!-- bootstrap -->
-		<link href="/bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
-		<script src="/bower_components/bootstrap/dist/js/bootstrap.js"></script>
+		<link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+		<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="js/lib/ui-bootstrap-tpls-2.5.0.min.js"></script>
+    
+    <!-- tags input for angular -->
+    <script src="bower_components/ng-tags-input/ng-tags-input.js"></script>
+    <link rel="stylesheet" type="text/css" href="bower_components/ng-tags-input/ng-tags-input.css">
     
     <!-- pmboard -->
 		<script src="js/app.js"></script>
@@ -72,8 +77,22 @@
 		</nav>
   	<div id="widgets">
       <div ng-show="loading" style="text-align: center"><img src="ajax-loader.gif" width="32" height="32"></div>
-  	  <widget title="Who are your users?" column="userWidget.column" url="userWidget.url" data="userWidget.personas" on-add="addPersona()"></widget>
-      <widget title="What is your product?" column="productWidget.column" url="productWidget.url" data="productWidget.stories" on-add="addStory()"></widget>
+  	  <widget 
+  	    title="Who are your users?" 
+  	    column="userWidget.column" 
+  	    url="userWidget.url" 
+  	    data="userWidget.personas" 
+  	    on-add="userWidget.addPersona()"
+  	    modal-template="templates/personaModal.html"
+  	    modal-options="userWidget.modalOptions"
+  	    ></widget>
+      <widget 
+        title="What is your product?" 
+        column="productWidget.column" 
+        url="productWidget.url" 
+        data="productWidget.stories" 
+        on-add="productWidget.addStory()"
+        ></widget>
   	</div>
 	</body>
 	
