@@ -28,7 +28,16 @@
                 <td><span class="remove-evidence glyphicon glyphicon-remove" style="cursor: pointer;" ng-click="modalOptions.removeFile(row, $index)"></span></td>
                 <td><a href="{{ file.url }}" target="_blank"><img ng-src="{{ file.icon }}"/>{{ file.name }}</a></td>
                 <td>
-                  <tags-input ng-model="file.trends" placeholder="Add a trend" display-property="name" template="tag-template" add-on-paste="true">
+                  <tags-input 
+                    ng-model="file.trends" 
+                    placeholder="Add a trend" 
+                    display-property="name" 
+                    template="tag-template" 
+                    add-on-paste="true"
+                    on-tag-adding="$tag.class='label-info'"
+                    on-tag-added="modalOptions.addTrend(row, $index, $tag)"
+                    on-tag-removing="modalOptions.removeTrend(row, $index, $tag)"
+                    >
                     <auto-complete 
                       source="modalOptions.findTrend(row, $query)"
                       load-on-focus="true"

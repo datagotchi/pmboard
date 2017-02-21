@@ -20,7 +20,8 @@ angular.module('pmboard').controller('dashboardController', [
         $scope.userWidget.personas = personas;
         
         // refresh trends for each persona
-        $scope.userWidget.modalOptions.trendsByPersona = {};
+        var trendsByPersona = $scope.userWidget.modalOptions.trendsByPersona = {}; // TODO: store data like this in a service for easier access
+        
         personas.forEach(function(persona) {
           
           var trends = {};
@@ -36,7 +37,7 @@ angular.module('pmboard').controller('dashboardController', [
             });
           });
         
-          this.modalOptions.trendsByPersona[persona.name] = Object.keys(trends)
+          trendsByPersona[persona.name] = Object.keys(trends)
             .map(function(name) {return trends[name]; })
             .sort(function(a, b) {
               if (a.type === b.type) {
@@ -141,6 +142,16 @@ angular.module('pmboard').controller('dashboardController', [
         return productService.removeEvidenceFromPersona($scope.currentProduct._id, persona.index, fileIx).then(function() {
           persona.evidence.splice(fileIx, 1);
         });
+      },
+      addTrend: function(persona, fileIx, trend) {
+        return productService.addPersonaTrend($scope.currentProduct._id, persona.index, fileIx, {
+          name: trend.name,
+          type: ''
+        });
+      },
+      removeTrend: function(persona, fileIx, trend) {
+        var trendIx = persona.evidence[fileIx].trends.map(function(trend) { return trend.name; }).indexOf(trend.name);
+        return productService.removePersonaTrend($scope.currentProduct._id, persona.index, fileIx, trendIx);
       }
     }
   };

@@ -251,15 +251,10 @@ router.post('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
   prod.personas[personaIx].evidence[evIx].trends.push(trend);
   
   return prod.save(function(err) {
-    if (err) { // TODO: convert to next(err)?
-      return res.json({
-        success: false,
-        error: err
-      });
+    if (err) { 
+      next(err);
     } else {
-      return res.json({
-        success: true
-      });
+      return res.json(trend);
     }
   });
 });
@@ -297,7 +292,7 @@ router.put('/:persona_ix/evidence/:ev_ix/trends/:trend_ix', function(req, res, n
 });
 
 // delete persona trend
-router.delete('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
+router.delete('/:persona_ix/evidence/:ev_ix/trends/:trend_ix', function(req, res, next) {
   
 /*
   var err = checkUserAccess(req, 2);
@@ -307,23 +302,21 @@ router.delete('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
   var prod = req.product;
   var personaIx = req.personaIx;
   var evIx = req.evIx;
-  if (req.body.ix) { // TODO: update to a request parameter
-    var trendIx = req.body.ix;
-    prod.personas[personaIx].evidence[evIx].trends.splice(trendIx, 1);
-      
-    return prod.save(function(err) {
-      if (err || !prod) {
-        return res.json({
-          success: false,
-          error: err
-        });
-      } else {
-        return res.json({
-          success: true
-        });
-      }
-    });
-  }
+  var trendIx = req.params.trend_ix;
+  prod.personas[personaIx].evidence[evIx].trends.splice(trendIx, 1);
+    
+  return prod.save(function(err) {
+    if (err || !prod) {
+      return res.json({
+        success: false,
+        error: err
+      });
+    } else {
+      return res.json({
+        success: true
+      });
+    }
+  });
 });
 
 module.exports = router;

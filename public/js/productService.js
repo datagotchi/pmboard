@@ -47,8 +47,17 @@ angular.module('pmboard').factory('productService', ['$http', function($http) {
   
   service.removeEvidenceFromPersona = function(prodId, personaIx, evidenceIx) {
     return $http.delete(`/products/${prodId}/personas/${personaIx}/evidence/${evidenceIx}`);
-//     return $http.delete(`/products/${prodId}/personas/${personaIx}/evidence`, {data: {ix: evidenceIx}}); // TODO: add index as a url param
   };
+  
+  service.addPersonaTrend = function(prodId, personaIx, evidenceIx, trend) {
+    return $http.post(`/products/${prodId}/personas/${personaIx}/evidence/${evidenceIx}/trends`, trend).then(function(res) {
+      return res.data;
+    });
+  };
+  
+  service.removePersonaTrend = function(prodId, personaIx, evidenceIx, trendIx) {
+    return $http.delete(`/products/${prodId}/personas/${personaIx}/evidence/${evidenceIx}/trends/${trendIx}`);
+  }
   
   service.getStories = function(prodId) {
     return $http.get('/products/' + prodId + '/stories').then(function(res) {
