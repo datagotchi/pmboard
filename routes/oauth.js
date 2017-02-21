@@ -17,7 +17,7 @@ router.use(function(req, res, next) {
   next();
 });
 
-router.get('/token', function(req, res) {
+router.get('/token', function(req, res, next) {
 	var token = oauth.generateStateToken(req.session);
 
 	res.json({
@@ -25,7 +25,7 @@ router.get('/token', function(req, res) {
 	});
 });
 
-router.post('/signin', function(req, res) {
+router.post('/signin', function(req, res, next) {
 	var code = req.body.code;
 	var auth;
 	
@@ -40,24 +40,23 @@ router.post('/signin', function(req, res) {
   	User.findOne({'email': guser.email})
   	  .populate('products', 'name')
   	  .exec(function(err, user) {
-      	if (err) {
-          return next(err);
-        }
         if (user) {
             req.session.email = user.email;
             // TODO: write auth to database
-            res.json({
+            var ret = {
                 success: true,
                 user: user,
                 oauth: JSON.stringify(auth)
-            });
+            };
+            return res.json(ret);
+        } else {
+          return next(err);
         }
 
     	});
 	})
 	.fail(function (e) {
-		console.log(e);
-		res.sendStatus(500).send(e);
+		return next(e);
 	});
 });
 

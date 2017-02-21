@@ -21,15 +21,19 @@
           </table>
         </div>
         <div role="tabpanel" class="tab-pane" id="personaEvidence">
-          <h2><a href="#" data-toggle="modal" data-target="#addFilesModal">Add File</a></h2>
+          <h2><a href="#" ng-click="modalOptions.openFilesModal(row)">Add File</a></h2>
           <table class="table">
             <tbody>
-              <tr ng-repeat="file in row.evidence">
-                <td><span class="remove-evidence glyphicon glyphicon-remove" style="cursor: pointer;"></span></td>
+              <tr ng-repeat="file in row.evidence track by $index">
+                <td><span class="remove-evidence glyphicon glyphicon-remove" style="cursor: pointer;" ng-click="modalOptions.removeFile(row, $index)"></span></td>
                 <td><a href="{{ file.url }}" target="_blank"><img ng-src="{{ file.icon }}"/>{{ file.name }}</a></td>
                 <td>
-                  <tags-input ng-model="file.trends" placeholder="Add a trend" display-property="name" template="tag-template">
-                    <auto-complete source="findTrend($query)"></auto-complete>
+                  <tags-input ng-model="file.trends" placeholder="Add a trend" display-property="name" template="tag-template" add-on-paste="true">
+                    <auto-complete 
+                      source="modalOptions.findTrend(row, $query)"
+                      load-on-focus="true"
+                      load-on-empty="true"
+                      ></auto-complete>
                   </tags-input>
                 </td>
               </tr>
@@ -43,7 +47,6 @@
     <button type="button" class="btn-danger remove-item glyphicon glyphicon-remove" ng-click="modalOptions.onDeletePersona()" aria-label="Delete">Delete</button>
     <button type="button" class="btn-primary" ng-click="cancel()" aria-label="Close">Close</button>
   </div>
-  <div id="addFilesModal" class="modal" role="dialog" tabindex="-1"></div>
   <script type="text/ng-template" id="tag-template">
     <div class="tag-template tag label {{ data.class }}">
       <span>{{$getDisplayText()}}</span>

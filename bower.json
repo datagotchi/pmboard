@@ -31,7 +31,8 @@
     "angular": "1.5",
     "angular-resource": "1.5",
     "angular-xeditable": "0.5",
-    "ng-tags-input": "^3.1.1"
+    "ng-tags-input": "^3.1.1",
+    "angular-cookies": "1.5.11"
   },
   "resolutions": {
     "bootstrap-tagsinput": "~0.5.0"

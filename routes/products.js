@@ -52,7 +52,7 @@ router.param('product_id', function(req, res, next, product_id) {
   //oauth.auth('google', req.session)
   //.then(function (request_object) {
       Product.findById(product_id, function(err, product) {
-        var userid = JSON.parse(req.cookies.userid);
+//         var userid = JSON.parse(req.cookies.userid);
         if (!err) {
           req.product = product;
           // create loookup table for permissions (can't store it directly in the db, annoyingly)
@@ -80,7 +80,7 @@ router.param('product_id', function(req, res, next, product_id) {
 // - name
 router.put('/:product_id', function(req, res, next) {
   var prod = req.product;
-  var userid = JSON.parse(req.cookies.userid);
+//   var userid = JSON.parse(req.cookies.userid);
 /*
   if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
     var err = new Error("Unauthorized");
@@ -110,7 +110,7 @@ router.get('/:product_id', function(req, res, next) {
 
 // delete product
 router.delete('/:product_id', function(req, res, next) {
-  var userid = JSON.parse(req.cookies.userid);
+//   var userid = JSON.parse(req.cookies.userid);
   /*
   if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 3) {
     var err = new Error("Unauthorized");

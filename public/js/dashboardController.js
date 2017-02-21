@@ -1,4 +1,6 @@
-angular.module('pmboard').controller('dashboardController', ['$scope', 'userService', 'productService', function($scope, userService, productService) {
+angular.module('pmboard').controller('dashboardController', [
+    '$scope', '$http', '$cookies', '$uibModal', 'userService', 'productService', 'oauthService',
+    function($scope, $http, $cookies, $uibModal, userService, productService, oauthService) {
   
   var debugUserId = '55271181777f411b3a90a2a5';
   
@@ -30,11 +32,11 @@ angular.module('pmboard').controller('dashboardController', ['$scope', 'userServ
                 }, trend);
               }
               trends[trend.name].count++;
-              trend.class = $scope.userWidget.modalOptions.trendTypes[trend.type];
+              trend.class = $scope.userWidget.modalOptions.trendTypes[trend.type] || 'label-info';
             });
           });
         
-          $scope.userWidget.modalOptions.trendsByPersona[persona.name] = Object.keys(trends)
+          this.modalOptions.trendsByPersona[persona.name] = Object.keys(trends)
             .map(function(name) {return trends[name]; })
             .sort(function(a, b) {
               if (a.type === b.type) {
@@ -51,11 +53,10 @@ angular.module('pmboard').controller('dashboardController', ['$scope', 'userServ
       });
     },
     addPersona: function() {
-      var row = $scope.userWidget.personas[$scope.userWidget.personas.length - 1];
+      var row = this.personas[$scope.userWidget.personas.length - 1];
       productService.addPersona($scope.currentProduct._id, row.name);
     },
     modalOptions: {
-      trends: [],
       onUpdateName: function(personaIndex, name) {
         return productService.updatePersona($scope.currentProduct._id, personaIndex, name);
       },
@@ -79,6 +80,67 @@ angular.module('pmboard').controller('dashboardController', ['$scope', 'userServ
       },
       onClose: function() {
         $scope.userWidget.modalOptions.trendsShown = {};
+      },
+      findTrend: function(persona, query) {
+        var found = this.trendsByPersona[persona.name]
+          .map(function(trend) { return trend.name.toLowerCase(); })
+          .filter(function(trendName) { return trendName.indexOf(query) > -1; })
+          .map(function(name) { return {name: name, class: 'label-info'}; });
+        return found;
+      },
+      openFilesModal: function(persona) {
+        var evidence = persona.evidence;
+        var modal = $uibModal.open({
+          ariaLabelledBy: 'modal-title',
+          ariaDescribedBy: 'modal-body',
+          templateUrl: 'templates/addFilesModal.html',
+          scope: $scope,
+          controller: ['$uibModalInstance', function($uibModalInstance) {
+            $scope.files = [];
+            $scope.cancel = function() {
+              $uibModalInstance.dismiss();
+            };
+            $scope.addFile = function(file) {
+              if (file.selected) {
+                var newFile = {
+                  name: file.title,
+                  url: file.alternateLink,
+                  icon: file.iconLink
+                };
+                productService.addEvidenceToPersona($scope.currentProduct._id, persona.index, newFile).then(function() {
+                  persona.evidence.push(newFile);
+                  $scope.files = $scope.files.filter(function(f) { return f.alternateLink !== file.alternateLink; });
+                });
+              }
+            }
+          }]
+        });
+        modal.rendered.then(function() {
+          $scope.loading = true;
+          var oauth = JSON.parse($cookies.get('oauth'));
+          var accessToken = oauth.access_token;
+          $http.get('https://www.googleapis.com/drive/v2/files', {headers: {Authorization: 'Bearer ' + accessToken}})
+            .then(function(res) {
+              $scope.files = res.data.items.filter(function(file) {
+                return evidence.map(function(f) { return f.url; }).indexOf(file.alternateLink) === -1;
+              });
+              $scope.loading = false;
+            })
+            .catch(function(res) {
+              $scope.loading = false;
+              if (res.status === 401) {
+                return oauthService.doAuthentication().then(function(data) {
+                  $cookies.put('oauth', data.oauth);
+                  location.reload(); // TODO: just go back to the modal that's open?
+                });
+              }
+            });
+        });
+      },
+      removeFile: function(persona, fileIx) {
+        return productService.removeEvidenceFromPersona($scope.currentProduct._id, persona.index, fileIx).then(function() {
+          persona.evidence.splice(fileIx, 1);
+        });
       }
     }
   };
@@ -134,12 +196,29 @@ angular.module('pmboard').controller('dashboardController', ['$scope', 'userServ
     });
   };
   
+  // initialize the page
+  
+  OAuth.initialize('K2P2q3_J6a76xcMJCcRRYTrbJ2c'); // TODO: hide this key somewhere via an ajax call?
+  
   $scope.loading = true;
-  userService.getUser(debugUserId).then(function(user) {
+  var init = function(user) {
     $scope.user = user;
     $scope.products = user.products;
     $scope.currentProduct = user.products[$scope.user.currentProduct];
     $scope.userWidget.refresh();
     $scope.productWidget.refresh();
-  });
+  };
+  // TODO: get this working without forcing another auth - saved identity token on server???
+  if ($cookies.get('userid') && $cookies.get('oauth')/* && getCookie('XSRF-TOKEN')*/) {
+    var userId = $cookies.get('userid');
+    userService.getUser(userId).then(function(user) {
+      init(user);
+    });
+  } else {
+    oauthService.doAuthentication().then(function(data) {
+      $cookies.put('oauth', data.oauth);
+      $cookies.put('userid', data.user._id);
+      init(data.user);
+    });
+  }
 }]);

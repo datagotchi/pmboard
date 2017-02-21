@@ -23,7 +23,8 @@ router.get('/:user_id', function(req, res, next) {
     return next(err);
   }
   var paramUserId = req.params.user_id
-  var cookieUserId = JSON.parse(req.cookies.userid);
+//   var cookieUserId = JSON.parse(req.cookies.userid);
+  var cookieUserId = req.cookies.userid;
   
   if (paramUserId != cookieUserId) {
     var err = new Error("Unauthorized");

@@ -11,7 +11,7 @@
       <tbody>
         <tr ng-repeat="row in data track by $index">
           <td><a href="#" ng-click="openModal($index, modalTemplate)">{{ row[column.value] }}</a></td>
-          <td><button type="button" class="evidence btn btn-default label" ng-class="{'label-danger': !row.evidence.length, 'label-warning': row.evidence.length < 10, 'label-success': row.evidence.length >= 10}">{{ row.evidence.length }}</button></td>
+          <td><span class="evidence label" ng-class="{'label-danger': !row.evidence.length, 'label-warning': row.evidence.length < 10, 'label-success': row.evidence.length >= 10}">{{ row.evidence.length }}</span></td>
         </tr>
       </tbody>
     </table>

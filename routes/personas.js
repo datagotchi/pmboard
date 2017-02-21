@@ -171,40 +171,6 @@ router.post('/:persona_ix/evidence', function(req, res, next) {
   });
 });
 
-// delete persona evidence
-router.delete('/:persona_ix/evidence', function(req, res, next) {
-  
-/*
-  var err = checkUserAccess(req, 2);
-  if (err) return next(err);
-*/
-  
-  var prod = req.product;
-  if (req.body.ix) { // TODO: update to a request parameter
-    var ix = req.body.ix;
-    prod.personas[req.personaIx].evidence.splice(ix, 1);
-      
-    return prod.save(function(err) {
-      if (err || !prod) {
-        return res.json({
-          success: false,
-          error: err
-        });
-      } else {
-        return res.json({
-          success: true
-        });
-      }
-    });
-  }
- 
-  var err = new Error('Invalid request; index not specified');
-  err.status = 400;
-  return next(err);
-});
-
-// ***** persona trends ******
-
 router.param('ev_ix', function(req, res, next) {
   // TODO: assert ev_ix is a normal int
   var ix = req.params.ev_ix;
@@ -217,6 +183,38 @@ router.param('ev_ix', function(req, res, next) {
   err.status = 404;
   return next(err);
 });
+
+// delete persona evidence
+router.delete('/:persona_ix/evidence/:ev_ix', function(req, res, next) {
+  
+/*
+  var err = checkUserAccess(req, 2);
+  if (err) return next(err);
+*/
+  
+  var prod = req.product;
+  var ix = req.evIx;
+  prod.personas[req.personaIx].evidence.splice(ix, 1);
+    
+  return prod.save(function(err) {
+    if (err || !prod) {
+      return res.json({
+        success: false,
+        error: err
+      });
+    } else {
+      return res.json({
+        success: true
+      });
+    }
+  });
+ 
+  var err = new Error('Invalid request; index not specified');
+  err.status = 400;
+  return next(err);
+});
+
+// ***** persona trends ******
 
 // get persona trends
 router.get('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
