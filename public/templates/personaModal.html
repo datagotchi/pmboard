@@ -13,7 +13,7 @@
         <div role="tabpanel" class="tab-pane active" id="personaSummary">
           <table class="table">
             <tbody>
-              <tr ng-repeat="trend in modalOptions.trendsByPersona[row.name]" class="label {{ modalOptions.trendTypes[trend.type] }}">
+              <tr ng-repeat="trend in modalOptions.trendsByPersona[row.name] | filter: modalOptions.hasType" class="label {{ modalOptions.trendTypes[trend.type] }}">
                 <td>{{ modalOptions.showTrendType(trend, modalOptions.trendsShown) }}</td>
                 <td>{{ trend.name }} <span class="badge">{{ trend.count }}</span></td>
               </tr>

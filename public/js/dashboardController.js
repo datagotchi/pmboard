@@ -152,6 +152,9 @@ angular.module('pmboard').controller('dashboardController', [
       removeTrend: function(persona, fileIx, trend) {
         var trendIx = persona.evidence[fileIx].trends.map(function(trend) { return trend.name; }).indexOf(trend.name);
         return productService.removePersonaTrend($scope.currentProduct._id, persona.index, fileIx, trendIx);
+      },
+      hasType: function(trend) {
+        return !!trend.type;
       }
     }
   };
