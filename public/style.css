@@ -1,7 +1,7 @@
 #widgets div.widget {
 	vertical-align: top;
 }
-.panel.widget {
+.widget {
 	width: 300px;
 	display: inline-block;
 	margin-left: 50px;

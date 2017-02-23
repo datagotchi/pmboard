@@ -55,7 +55,7 @@ router.put('/:user_id', function(req, res, next) {
   
   var userid = req.params.user_id;
   
-  if (userid != JSON.parse(req.cookies.userid)) {
+  if (userid != req.cookies.userid) {
     var err = new Error("Unauthorized");
     err.status = 401;
     return next(err);

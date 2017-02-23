@@ -7,8 +7,7 @@ angular.module('pmboard').directive('widget', function() {
       url: '@',
       data: '=',
       onAdd: '&',
-      modalTemplate: '@',
-      modalOptions: '='
+      modalTemplate: '@'
     },
     controller: ['$scope', '$uibModal', function($scope, $uibModal) {
       var self = this;
@@ -27,28 +26,35 @@ angular.module('pmboard').directive('widget', function() {
       };
       
       $scope.openModal = function(index, tmpl) {
+        $scope.row = $scope.data[index];
+        $scope.row.index = index;
         var modal = $uibModal.open({
           ariaLabelledBy: 'modal-title',
           ariaDescribedBy: 'modal-body',
-          templateUrl: tmpl,
+          template: tmpl,
           scope: $scope,
           controller: ['$uibModalInstance', function($uibModalInstance) {
+/*
             $scope.row = $scope.data[index];
             $scope.row.index = index;
+*/
             $scope.cancel = function() {
               $uibModalInstance.dismiss();
             };
           }]
         });
+        modal.rendered.then(function() {
+          if ($scope.onModalOpen) {
+            $scope.onModalOpen();
+          }
+        })
         modal.result.finally(function() {
-          if ($scope.modalOptions.onClose) {
-            $scope.modalOptions.onClose();
+          if ($scope.onModalClose) {
+            $scope.onModalClose();
           }
         })
       };
     }],
-    link: function(scope) {
-      
-    }
+    link: function(scope) {}
   }
 });

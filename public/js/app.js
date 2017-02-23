@@ -1,5 +1,5 @@
 angular.module('pmboard', [
-  'ngResource',
+//   'ngResource',
   'xeditable',
   'ui.bootstrap',
   'ngTagsInput',

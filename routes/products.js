@@ -30,7 +30,7 @@ router.post('/', function(req, res, next) {
     stories: [],
     permissions: {}
   });
-  var userid = JSON.parse(req.cookies.userid);
+  var userid = req.cookies.userid;
   newprod.permissions.push({
     _id: userid,
     value:10
