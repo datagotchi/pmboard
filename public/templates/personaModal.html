@@ -28,6 +28,7 @@
                 <td><span class="remove-evidence glyphicon glyphicon-remove" style="cursor: pointer;" ng-click="removeFile(persona, $index)"></span></td>
                 <td><a href="{{ file.url }}" target="_blank"><img ng-src="{{ file.icon }}"/>{{ file.name }}</a></td>
                 <td>
+<!--                   <select multiple data-role="tagsinput"></select> -->
                   <tags-input 
                     ng-model="file.trends" 
                     placeholder="Add a trend" 
@@ -41,7 +42,10 @@
                     <auto-complete 
                       source="findTrend(persona, $query)"
                       load-on-focus="true"
-                      load-on-empty="true"
+                      allow-duplicates="true"
+                      debounce-delay="10"
+                      display-property="name"
+                      min-length="1"
                       ></auto-complete>
                   </tags-input>
                 </td>

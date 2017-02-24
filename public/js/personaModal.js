@@ -10,8 +10,9 @@ angular.module('pmboard').directive('personaModal', [
     },
     controller: ['$scope', function($scope) {
       
+      var trends = {};
+      
       $scope.$watch('persona', function() {
-        var trends = {};
         $scope.persona.evidence.forEach(function(evidence) {
           if (!evidence.trends) {
             evidence.trends = [];
@@ -66,9 +67,8 @@ angular.module('pmboard').directive('personaModal', [
       };
       
       $scope.findTrend = function(persona, query) {
-        var found = this.trendsByPersona[persona.name]
-          .map(function(trend) { return trend.name.toLowerCase(); })
-          .filter(function(trendName) { return trendName.indexOf(query) > -1; })
+        var found = Object.keys(trends)
+          .filter(function(name) { return name.toLowerCase().indexOf(query.toLowerCase()) > -1; })
           .map(function(name) { return {name: name, class: 'label-info'}; });
         return found;
       };
@@ -133,12 +133,22 @@ angular.module('pmboard').directive('personaModal', [
         return productService.addPersonaTrend($scope.productId, persona.index, fileIx, {
           name: trend.name,
           type: ''
+        }).then(function(trend) {
+          if (!trends[trend.name]) {
+            trends[trend.name] = {
+              count: 0,
+              name: trend.name
+            };
+          }
+          trends[trend.name].count++;
         });
       };
       
       $scope.removeTrend = function(persona, fileIx, trend) {
         var trendIx = persona.evidence[fileIx].trends.map(function(trend) { return trend.name; }).indexOf(trend.name);
-        return productService.removePersonaTrend($scope.productId, persona.index, fileIx, trendIx);
+        return productService.removePersonaTrend($scope.productId, persona.index, fileIx, trendIx).then(function() {
+          trends[trend.name].count--;
+        });
       };
       
       $scope.hasType = function(trend) {
@@ -146,7 +156,7 @@ angular.module('pmboard').directive('personaModal', [
       };
       
     }],
-    link: function(scope) {}
+    link: function(scope, elem, attrs) {}
   };
   
 }]);
