@@ -1,147 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>PMBoard by Social Ergonomics</title>
+		<title>PMBoard</title>
 		
 		<!-- jquery/jquery-ui -->
 		<link rel="stylesheet" href="/bower_components/jquery-ui/themes/smoothness/jquery-ui.css">
 		<script src="/bower_components/jquery/dist/jquery.js"></script>
 		<script src="/bower_components/jquery-ui/jquery-ui.js"></script>
 		
-		<!-- underscore -->
-		<script src="/bower_components/underscore/underscore.js"></script>
+		<!-- angular -->
+		<script src="bower_components/angular/angular.min.js"></script>
+<!--     <script src="bower_components/angular-resource/angular-resource.min.js"></script> -->
+    <script src="bower_components/angular-xeditable/dist/js/xeditable.js"></script>
+    
+    <!-- bootstrap -->
+		<link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+		<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="js/lib/ui-bootstrap-tpls-2.5.0.min.js"></script>
+    
+    <!-- tags input for angular -->
+    <script src="js/lib/ng-tags-input.js"></script>
+    <link rel="stylesheet" type="text/css" href="bower_components/ng-tags-input/ng-tags-input.css">
+    
+    <!-- angular cookies -->
+    <script src="bower_components/angular-cookies/angular-cookies.min.js"></script>
+    
+    <!-- oauth.io -->
+    <script src="/bower_components/oauth-js/dist/oauth.js"></script>
+    
+    <!-- pmboard -->
+		<script src="js/app.js"></script>
+		<script src="js/dashboardController.js"></script>
+		<script src="js/userService.js"></script>
+		<script src="js/productService.js"></script>
+		<script src="js/oauthService.js"></script>
+		<script src="js/widget.js"></script>
+		<script src="js/userWidget.js"></script>
+		<script src="js/personaModal.js"></script>
+		<script src="js/productWidget.js"></script>
+		<script src="js/benefitModal.js"></script>
 		
-		<!-- bootstrap -->
-		<link href="/bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
-		<script src="/bower_components/bootstrap/dist/js/bootstrap.js"></script>
-		
-		<!-- bootstrap-editable (x-editable) -->
-		<link href="/bower_components/x-editable/dist/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
-		<script src="/bower_components/x-editable/dist/bootstrap3-editable/js/bootstrap-editable.js"></script>
-		
-		<!-- oauth.io -->
-		<script src="/bower_components/oauth-js/dist/oauth.js"></script>
-		
-		<!-- jquery cookie -->
-		<script src="/bower_components/jquery-cookie/jquery.cookie.js"></script>
-		
-		<!-- jquery nestable -->
-		<link rel="stylesheet" href="nestable.css">
-		<!--<script src="js/lib/jquery.nestable.js"></script>-->
-		
-		<!-- bootstrap tagsinput -->
-		<link href="/bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.css" rel="stylesheet" />
-		<script src="/bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.js"></script>
-		
-		<!-- typeahead.js -->
-		<script src="/bower_components/typeahead.js/dist/typeahead.jquery.js"></script>
-		
-		<!-- bootbox alerts -->
-		<script src="/bower_components/bootbox/bootbox.js"></script>
-		
-		<!-- listwidget.js -->
-		<script src="/bower_components/listwidget/widget.js"></script>
-		
-		<style>
-			#widgets > div {
-				vertical-align: top;
-			}
-			.panel.widget {
-				width: 300px;
-				display: inline-block;
-				margin-left: 50px;
-				margin-right: 50px; 
-			}
-			
-			#productName {
-				font-weight: bold;
-			}
-			.modal-dialog {
-  			width: 80%;
-			}
-			.modal-dailog h2 {
-  			text-align: center;
-			}
-			.modal-dialog .bootstrap-tagsinput {
-  			width: 100%;
-			}
-      .bootbox .modal-dialog {
-          text-align: center;
-      }
-      .bootbox .modal-content {
-          width: 200px;
-          display: inline-block;
-      }
-			#trendCategories {
-  			position: absolute;
-			}
-			#trendSummary table tbody tr.label {
-  			display: table-row;
-			}
-			#trendSummary table tbody tr.label td {
-  			display: table-cell;
-			}
-			#trendSummary table {
-  			margin-top: 20px;
-			}
-			.typeahead {
-        background-color: #fff;
-      }
-      
-      .typeahead:focus {
-        border: 2px solid #0097cf;
-      }
-      
-      .tt-query {
-        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-           -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-                box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-      }
-      
-      .tt-hint {
-        color: #999
-      }
-      
-      .tt-menu {
-        width: 422px;
-        margin: 12px 0;
-        padding: 8px 0;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        border: 1px solid rgba(0, 0, 0, 0.2);
-        -webkit-border-radius: 8px;
-           -moz-border-radius: 8px;
-                border-radius: 8px;
-        -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
-           -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
-                box-shadow: 0 5px 10px rgba(0,0,0,.2);
-      }
-      
-      .tt-suggestion {
-        padding: 3px 20px;
-        font-size: 18px;
-        line-height: 24px;
-      }
-      
-      .tt-suggestion:hover {
-        cursor: pointer;
-        color: #fff;
-        background-color: #0097cf;
-      }
-      
-      .tt-suggestion.tt-cursor {
-        color: #fff;
-        background-color: #0097cf;
-      
-      }
-		</style>
-		<script src="js/userwidget.js"></script>
-		<script src="js/productwidget.js"></script>
-		<script src="js/main.js"></script>
+		<link href="style.css" rel="stylesheet" />
 	</head>
-	
-	<body>
-		<nav class="navbar navbar-default">
+	<body ng-app="pmboard" ng-controller="dashboardController">
+  	
+  	<nav class="navbar navbar-default">
 		  <div class="container-fluid">
 		    <div class="navbar-header">
 		      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -157,13 +60,16 @@
 		      <ul class="nav navbar-nav">
 		        <li class="dropdown">
 		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Products <span class="caret"></span></a>
-		          <ul class="dropdown-menu" role="menu" id="products">
-		          </ul>
+		          <ul class="dropdown-menu" role="menu">
+  		          <li ng-repeat="product in products track by $index"><a href="#" ng-click="changeProduct($index)">{{ product.name }}</a></li>
+  		          <li class="divider"></li>
+  		          <li><a href="#" ng-click="createProduct()"><span class="glyphicon glyphicon-plus"></span>New Product</a></li>
+  		        </ul>
 		        </li>
 		      </ul>
 		      
-		      <p class="navbar-text">Current Product: <a href="#" class="editable-value editable-click" id="productName" data-type="text" data-pk="name"></a></p>
-		      <p class="navbar-text"><a href="#" id="deleteProduct"><span class="remove-evidence glyphicon glyphicon-remove"></span> Delete Product</a></p>
+		      <p class="navbar-text">Current Product: <a href="#" editable-text="currentProduct.name" onaftersave="updateProduct(currentProduct)">{{ currentProduct.name }}</a></p>
+		      <p class="navbar-text"><a href="#" ng-click="deleteProduct(currentProduct._id)"><span class="remove-evidence glyphicon glyphicon-remove"></span> Delete Product</a></p>
 		      
 		      <ul class="nav navbar-nav navbar-right">
   		      <li><a href="#"><span class="glyphicon glyphicon-share"></span> Share</a></li>
@@ -179,10 +85,11 @@
 		    </div><!-- /.navbar-collapse -->
 		  </div><!-- /.container-fluid -->
 		</nav>
-		
-		<div id="widgets">
-  		<div id="loading" style="text-align: center"><img src="ajax-loader.gif" width="32" height="32" /></div>
-		</div>
-		
+  	<div id="widgets">
+      <div ng-show="loading" style="text-align: center"><img src="ajax-loader.gif" width="32" height="32"></div>
+  	  <user-widget product-id="currentProduct._id"></user-widget>
+<!--       <product-widget product-id="currentProduct._id"></product-widget> -->
+  	</div>
 	</body>
+	
 </html>
