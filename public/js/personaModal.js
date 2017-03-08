@@ -15,6 +15,8 @@ angular.module('pmboard').directive('personaModal', [
       self.trends = {};
       
       self.updateTrendList = function() {
+        $scope.trendsShown = {};
+        self.trends = {};
         $scope.persona.evidence.forEach(function(evidence) {
           if (!evidence.trends) {
             evidence.trends = [];
@@ -139,21 +141,14 @@ angular.module('pmboard').directive('personaModal', [
         return productService.addPersonaTrend($scope.productId, persona.index, fileIx, {
           name: trend.name,
           type: ''
-        }).then(function(trend) {
-          if (!self.trends[trend.name]) {
-            self.trends[trend.name] = {
-              count: 0,
-              name: trend.name
-            };
-          }
-          self.trends[trend.name].count++;
         });
       };
       
       $scope.removeTrend = function(persona, fileIx, trend) {
         var trendIx = persona.evidence[fileIx].trends.map(function(trend) { return trend.name; }).indexOf(trend.name);
         return productService.removePersonaTrend($scope.productId, persona.index, fileIx, trendIx).then(function() {
-          self.trends[trend.name].count--;
+          var trends = $scope.persona.evidence[fileIx].trends;
+          self.updateTrendList();
         });
       };
       
@@ -179,8 +174,6 @@ angular.module('pmboard').directive('personaModal', [
             if ($typeChangePopup) {
               $typeChangePopup.remove();
             }
-            scope.trendsShown = {};
-            ctrl.trends = {};
             ctrl.updateTrendList();
           });
         }
