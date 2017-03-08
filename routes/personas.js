@@ -274,15 +274,11 @@ router.put('/:persona_ix/evidence/:ev_ix/trends/:trend_ix', function(req, res, n
   var trend = prod.personas[personaIx].evidence[evIx].trends[trendIx];
   
   // execute the PUT changes
-  trend.name = req.body.name || trend.name;
-  trend.type = req.body.type || trend.type;
+  trend.type = req.body.type;
   
   return prod.save(function(err) {
-    if (err) { // TODO: convert to next(err)?
-      return res.json({
-        success: false,
-        error: err
-      });
+    if (err) {
+      return next(err);
     } else {
       return res.json({
         success: true

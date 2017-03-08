@@ -28,7 +28,6 @@
                 <td><span class="remove-evidence glyphicon glyphicon-remove" style="cursor: pointer;" ng-click="removeFile(persona, $index)"></span></td>
                 <td><a href="{{ file.url }}" target="_blank"><img ng-src="{{ file.icon }}"/>{{ file.name }}</a></td>
                 <td>
-<!--                   <select multiple data-role="tagsinput"></select> -->
                   <tags-input 
                     ng-model="file.trends" 
                     placeholder="Add a trend" 
@@ -38,6 +37,8 @@
                     on-tag-adding="$tag.class='label-info'"
                     on-tag-added="addTrend(persona, $index, $tag)"
                     on-tag-removing="removeTrend(persona, $index, $tag)"
+                    on-tag-clicked="handleTrendClick($index, $event, $tag)"
+                    id="{{ file.name }}"
                     >
                     <auto-complete 
                       source="findTrend(persona, $query)"
@@ -60,6 +61,13 @@
     <button type="button" class="btn-danger remove-item glyphicon glyphicon-remove" ng-click="onDeletePersona()" aria-label="Delete">Delete</button>
     <button type="button" class="btn-primary" ng-click="cancel()" aria-label="Close">Close</button>
   </div>
+  <script type="text/ng-template" id="trend-type-popover-template">
+    <div style="position:absolute; z-index:20000;">
+      <ul class="trend-types">
+        <li ng-repeat="(type, class) in trendTypes" ng-click="changeTrendType(type)">{{ type }}</li>
+      </ul>
+    </div>
+  </script>
   <script type="text/ng-template" id="tag-template">
     <div class="tag-template tag label {{ data.class }}">
       <span>{{$getDisplayText()}}</span>

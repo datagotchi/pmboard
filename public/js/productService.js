@@ -55,6 +55,10 @@ angular.module('pmboard').factory('productService', ['$http', function($http) {
     });
   };
   
+  service.changeTrendType = function(prodId, personaIx, evidenceIx,  trendIx, trend) {
+    return $http.put(`/products/${prodId}/personas/${personaIx}/evidence/${evidenceIx}/trends/${trendIx}`, { type: trend.type });
+  };
+  
   service.removePersonaTrend = function(prodId, personaIx, evidenceIx, trendIx) {
     return $http.delete(`/products/${prodId}/personas/${personaIx}/evidence/${evidenceIx}/trends/${trendIx}`);
   }

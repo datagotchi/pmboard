@@ -1,6 +1,6 @@
 angular.module('pmboard').directive('personaModal', [
-  '$http', '$uibModal', '$cookies', 'productService', 'oauthService', 
-  function($http, $uibModal, $cookies, productService, oauthService) {
+  '$http', '$uibModal', '$cookies', '$compile', 'productService', 'oauthService', 
+  function($http, $uibModal, $cookies, $compile, productService, oauthService) {
   
   return {
     templateUrl: '../templates/personaModal.html',
@@ -10,26 +10,28 @@ angular.module('pmboard').directive('personaModal', [
     },
     controller: ['$scope', function($scope) {
       
-      var trends = {};
+      var self = this;
       
-      $scope.$watch('persona', function() {
+      self.trends = {};
+      
+      self.updateTrendList = function() {
         $scope.persona.evidence.forEach(function(evidence) {
           if (!evidence.trends) {
             evidence.trends = [];
           }
           evidence.trends.forEach(function(trend) {
-            if (!(trend.name in trends)) {
-              trends[trend.name] = angular.extend({
+            if (!(trend.name in self.trends)) {
+              self.trends[trend.name] = angular.extend({
                 count: 0
               }, trend);
             }
-            trends[trend.name].count++;
+            self.trends[trend.name].count++;
             trend.class = $scope.trendTypes[trend.type] || 'label-info';
           });
         });
       
-        $scope.trendList = Object.keys(trends)
-          .map(function(name) {return trends[name]; })
+        $scope.trendList = Object.keys(self.trends)
+          .map(function(name) {return self.trends[name]; })
           .sort(function(a, b) {
             if (a.type === b.type) {
               return a.count - b.count; 
@@ -38,15 +40,19 @@ angular.module('pmboard').directive('personaModal', [
               return types.indexOf(a.type) - types.indexOf(b.type);
             }
           });
-            
-      })
+      };
+      
+      $scope.$watch('persona', function() {
+        self.updateTrendList();
+      });
       
       $scope.trendTypes = {
         "Objective" : "label-danger",
         "Goal" : "label-warning",
         "Activity" : "label-primary",
         "Task" : "label-default",
-        "Resource" : "label-success"
+        "Resource" : "label-success",
+        "None": "label-info"
       };
       
       $scope.trendsShown = {};
@@ -67,7 +73,7 @@ angular.module('pmboard').directive('personaModal', [
       };
       
       $scope.findTrend = function(persona, query) {
-        var found = Object.keys(trends)
+        var found = Object.keys(self.trends)
           .filter(function(name) { return name.toLowerCase().indexOf(query.toLowerCase()) > -1; })
           .map(function(name) { return {name: name, class: 'label-info'}; });
         return found;
@@ -134,20 +140,20 @@ angular.module('pmboard').directive('personaModal', [
           name: trend.name,
           type: ''
         }).then(function(trend) {
-          if (!trends[trend.name]) {
-            trends[trend.name] = {
+          if (!self.trends[trend.name]) {
+            self.trends[trend.name] = {
               count: 0,
               name: trend.name
             };
           }
-          trends[trend.name].count++;
+          self.trends[trend.name].count++;
         });
       };
       
       $scope.removeTrend = function(persona, fileIx, trend) {
         var trendIx = persona.evidence[fileIx].trends.map(function(trend) { return trend.name; }).indexOf(trend.name);
         return productService.removePersonaTrend($scope.productId, persona.index, fileIx, trendIx).then(function() {
-          trends[trend.name].count--;
+          self.trends[trend.name].count--;
         });
       };
       
@@ -156,7 +162,50 @@ angular.module('pmboard').directive('personaModal', [
       };
       
     }],
-    link: function(scope, elem, attrs) {}
+    link: function(scope, elem, attrs, ctrl) {
+      
+      var $typeChangePopup;
+      var popupData = {};
+      
+      scope.changeTrendType = function(newType) {
+        var popupTrend = popupData.trend;
+        if (popupTrend) {
+          popupTrend.class = scope.trendTypes[newType]
+          if (newType === 'None') {
+            newType = undefined;
+          }
+          popupTrend.type = newType;
+          productService.changeTrendType(scope.productId, scope.persona.index, popupData.evidenceIndex, popupData.trendIndex, popupTrend).then(function() {
+            if ($typeChangePopup) {
+              $typeChangePopup.remove();
+            }
+            scope.trendsShown = {};
+            ctrl.trends = {};
+            ctrl.updateTrendList();
+          });
+        }
+      };
+      
+      scope.handleTrendClick = function(evidenceIndex, event, trend) {
+        event.stopPropagation(); // TODO: only do these if shift/meta?
+        event.preventDefault();
+        if (event.shiftKey) {
+          var $tmpl = angular.element('#trend-type-popover-template').html();
+          var $target = angular.element(event.currentTarget);
+          var $parent = $target.offsetParent();
+          $typeChangePopup = $compile($tmpl)(scope);
+          $typeChangePopup.css('top', $target.position().top + $target.height());
+          $typeChangePopup.css('left', $target.position().left /*+ ($target.width() / 2)*/);
+          $parent.append($typeChangePopup);
+          popupData = {
+            evidenceIndex: evidenceIndex,
+            trend: trend,
+            trendIndex: $target.index()
+          };
+        } 
+      };
+      
+    }
   };
   
 }]);
