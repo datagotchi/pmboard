@@ -30,7 +30,7 @@ router.post('/', function(req, res, next) {
     stories: [],
     permissions: {}
   });
-  var userid = JSON.parse(req.cookies.userid);
+  var userid = req.cookies.userid;
   newprod.permissions.push({
     _id: userid,
     value:10
@@ -38,14 +38,10 @@ router.post('/', function(req, res, next) {
   return newprod.save(function(err) {
     if (err) { // TODO: convert to next(err)?
       return res.json({
-        success: false,
         error: err
       });
     } else {
-      return res.json({
-        success: true,
-        product: newprod
-      });
+      return res.json(newprod);
     }
   });
 });
@@ -56,7 +52,7 @@ router.param('product_id', function(req, res, next, product_id) {
   //oauth.auth('google', req.session)
   //.then(function (request_object) {
       Product.findById(product_id, function(err, product) {
-        var userid = JSON.parse(req.cookies.userid);
+//         var userid = JSON.parse(req.cookies.userid);
         if (!err) {
           req.product = product;
           // create loookup table for permissions (can't store it directly in the db, annoyingly)
@@ -65,11 +61,13 @@ router.param('product_id', function(req, res, next, product_id) {
             permLookup[product.permissions[i]._id] = product.permissions[i].value;
           }
           req.product.permLookup = permLookup;
+/*
           if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 1) {
             var err = new Error("Unauthorized");
             err.status = 401;
             return next(err);
           }
+*/
           return next();
         } else {
           return next(err);
@@ -82,26 +80,23 @@ router.param('product_id', function(req, res, next, product_id) {
 // - name
 router.put('/:product_id', function(req, res, next) {
   var prod = req.product;
-  var userid = JSON.parse(req.cookies.userid);
+//   var userid = JSON.parse(req.cookies.userid);
+/*
   if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
     var err = new Error("Unauthorized");
     err.status = 401;
     return next(err);
   }
-  if (req.body.value) {
-    prod.name = req.body.value;
+*/
+  if (req.body.name) {
+    prod.name = req.body.name;
   }
   return prod.save(function(err) {
-    if (err) { // TODO: convert to next(err)?
-      return res.json({
-        success: false,
-        error: err
-      });
+    if (err) {
+      next(err);
     } else {
       // TODO: change products in the users db ~ db.users.find({"products.id": "550cb3c96c2de13ab1cdd5fa"}) etc...
-      return res.json({
-        success: true
-      });
+      return res.json(prod);
     }
   });
 });
@@ -115,12 +110,14 @@ router.get('/:product_id', function(req, res, next) {
 
 // delete product
 router.delete('/:product_id', function(req, res, next) {
-  var userid = JSON.parse(req.cookies.userid);
+//   var userid = JSON.parse(req.cookies.userid);
+  /*
   if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 3) {
     var err = new Error("Unauthorized");
     err.status = 401;
     return next(err);
   }
+*/
   var prodId = req.product._id;
   var prodUsers = Object.keys(req.product.permLookup);
   req.product.remove(function() {

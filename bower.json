@@ -20,16 +20,13 @@
     "jquery-ui": "~1.11.4",
     "oauth-js": "~0.4.3",
     "jquery-cookie": "~1.4.1",
-    "bootstrap-tagsinput": "~0.4.2",
-    "underscore": "~1.8.3",
-    "bootstrap-editable": "*",
     "x-editable": "~1.5.1",
     "bootbox": "~4.4.0",
-    "polymer": "~1.0.0",
-    "listwidget": "~0.1.0",
-    "typeahead.js" : "~0.11.1"
-  },
-  "resolutions": {
-    "bootstrap-tagsinput": "~0.5.0"
+    "typeahead.js": "~0.11.1",
+    "angular": "1.5",
+    "angular-resource": "1.5",
+    "angular-xeditable": "0.5",
+    "ng-tags-input": "^3.1.1",
+    "angular-cookies": "1.5.11"
   }
 }

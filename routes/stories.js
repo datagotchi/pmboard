@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
+/*
 function checkUserAccess(req, req_level) {
   var userid = JSON.parse(req.cookies.userid);
   if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < req_level) {
@@ -9,18 +10,23 @@ function checkUserAccess(req, req_level) {
     return err;
   }
 }
+*/
 
 // get user stories
 router.get('/', function(req, res, next) {
+/*
   var err = checkUserAccess(req, 1);
   if (err) return next(err);
+*/
   return res.json(req.product.stories);
 });
 
 // add user story
 router.post('/', function(req, res, next) {
+/*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
+*/
   
   var prod = req.product;
   var newstory = req.body.value;
@@ -58,8 +64,10 @@ router.param('story_ix', function(req, res, next) {
 // change user story
 router.put('/:story_ix', function(req, res, next) {
   
+/*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
+*/
   
   var prod = req.product;
   var ix = req.storyIx;
@@ -83,8 +91,10 @@ router.put('/:story_ix', function(req, res, next) {
 // delete user story
 router.delete('/:story_ix', function(req, res, next) {
   
+/*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
+*/
   
   var prod = req.product;
   var ix = req.storyIx;
@@ -113,8 +123,10 @@ router.delete('/:story_ix', function(req, res, next) {
 
 // get story evidence 
 router.get('/:story_ix/evidence', function(req, res, next) {
+/*
   var err = checkUserAccess(req, 1);
   if (err) return next(err);
+*/
   
   var prod = req.product;
   var ix = req.storyIx;
@@ -123,8 +135,10 @@ router.get('/:story_ix/evidence', function(req, res, next) {
 
 // add story evidence
 router.post('/:story_ix/evidence', function(req, res, next) {
+/*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
+*/
   
   var prod = req.product;
   var ix = req.storyIx;

@@ -1,0 +1,12 @@
+<div class="widget">
+  <div ng-show="loading" style="text-align: center"><img src="ajax-loader.gif" width="32" height="32"></div>
+  
+  <widget ng-show="!loading"
+    title="Who are your users?" 
+    column="column" 
+    url="url" 
+    data="personas" 
+    on-add="addPersona()"
+    modal-template="<persona-modal product-id='{{ productId }}' persona='row'></persona-modal>"
+    ></widget>
+</div>

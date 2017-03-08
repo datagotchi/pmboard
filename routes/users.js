@@ -23,7 +23,8 @@ router.get('/:user_id', function(req, res, next) {
     return next(err);
   }
   var paramUserId = req.params.user_id
-  var cookieUserId = JSON.parse(req.cookies.userid);
+//   var cookieUserId = JSON.parse(req.cookies.userid);
+  var cookieUserId = req.cookies.userid;
   
   if (paramUserId != cookieUserId) {
     var err = new Error("Unauthorized");
@@ -54,7 +55,7 @@ router.put('/:user_id', function(req, res, next) {
   
   var userid = req.params.user_id;
   
-  if (userid != JSON.parse(req.cookies.userid)) {
+  if (userid != req.cookies.userid) {
     var err = new Error("Unauthorized");
     err.status = 401;
     return next(err);
@@ -65,7 +66,7 @@ router.put('/:user_id', function(req, res, next) {
       return next(err);
     }
     
-    if (req.body.currentProduct) {
+    if ('currentProduct' in req.body) {
       user.currentProduct = req.body.currentProduct;
     }
     
@@ -75,14 +76,9 @@ router.put('/:user_id', function(req, res, next) {
     
     return user.save(function(err) { // TODO: turn into its own route so I can use next(...) to save a document?
       if (err) { // TODO: convert to next(err)?
-        return res.json({
-          success: false,
-          error: err
-        });
+        return next(err);
       } else {
-        return res.json({
-          success: true
-        });
+        return res.json(user);
       }
     });
   });

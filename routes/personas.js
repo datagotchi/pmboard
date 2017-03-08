@@ -3,6 +3,7 @@ var router = express.Router();
 //var mongoose = require('mongoose');
 //var ObjectId = mongoose.Types.ObjectId;
 
+/*
 function checkUserAccess(req, req_level) {
   var userid = JSON.parse(req.cookies.userid);
   if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < req_level) {
@@ -11,21 +12,26 @@ function checkUserAccess(req, req_level) {
     return err;
   }
 }
+*/
 
 // ***** user personas *****
 
 // get user personas
 router.get('/', function(req, res, next) {
+/*
   var err = checkUserAccess(req, 1);
   if (err) return next(err);
+*/
   return res.json(req.product.personas);
 });
 
 // add user persona
 router.post('/', function(req, res, next) {
   
+/*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
+*/
   
   var prod = req.product;
   var newpersona = req.body.value;
@@ -33,15 +39,10 @@ router.post('/', function(req, res, next) {
   prod.personas.push({name: newpersona});
   
   return prod.save(function(err) {
-    if (err) { // TODO: convert to next(err)?
-      return res.json({
-        success: false,
-        error: err
-      });
+    if (err) {
+      return next(err);
     } else {
-      return res.json({
-        success: true
-      });
+      return res.json(prod.personas[prod.personas.length-1]);
     }
   });
 });
@@ -63,8 +64,10 @@ router.param('persona_ix', function(req, res, next) {
 // change user persona
 router.put('/:persona_ix', function(req, res, next) {
   
+/*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
+*/
   
   var prod = req.product;
   var ix = req.personaIx;
@@ -88,8 +91,10 @@ router.put('/:persona_ix', function(req, res, next) {
 // delete user persona
 router.delete('/:persona_ix', function(req, res, next) {
   
+/*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
+*/
   
   var prod = req.product;
   //if (req.body.ix) {
@@ -121,8 +126,10 @@ router.delete('/:persona_ix', function(req, res, next) {
 
 // get persona evidence
 router.get('/:persona_ix/evidence', function(req, res, next) {
+/*
   var err = checkUserAccess(req, 1);
   if (err) return next(err);
+*/
   var prod = req.product;
   var ix = req.personaIx;
   return res.json(prod.personas[ix].evidence);
@@ -131,8 +138,10 @@ router.get('/:persona_ix/evidence', function(req, res, next) {
 // add persona evidence
 router.post('/:persona_ix/evidence', function(req, res, next) {
   
+/*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
+*/
   
   var prod = req.product;
   var ix = req.personaIx;
@@ -162,38 +171,6 @@ router.post('/:persona_ix/evidence', function(req, res, next) {
   });
 });
 
-// delete persona evidence
-router.delete('/:persona_ix/evidence', function(req, res, next) {
-  
-  var err = checkUserAccess(req, 2);
-  if (err) return next(err);
-  
-  var prod = req.product;
-  if (req.body.ix) { // TODO: update to a request parameter
-    var ix = req.body.ix;
-    prod.personas[req.personaIx].evidence.splice(ix, 1);
-      
-    return prod.save(function(err) {
-      if (err || !prod) {
-        return res.json({
-          success: false,
-          error: err
-        });
-      } else {
-        return res.json({
-          success: true
-        });
-      }
-    });
-  }
- 
-  var err = new Error('Invalid request; index not specified');
-  err.status = 400;
-  return next(err);
-});
-
-// ***** persona trends ******
-
 router.param('ev_ix', function(req, res, next) {
   // TODO: assert ev_ix is a normal int
   var ix = req.params.ev_ix;
@@ -207,10 +184,44 @@ router.param('ev_ix', function(req, res, next) {
   return next(err);
 });
 
+// delete persona evidence
+router.delete('/:persona_ix/evidence/:ev_ix', function(req, res, next) {
+  
+/*
+  var err = checkUserAccess(req, 2);
+  if (err) return next(err);
+*/
+  
+  var prod = req.product;
+  var ix = req.evIx;
+  prod.personas[req.personaIx].evidence.splice(ix, 1);
+    
+  return prod.save(function(err) {
+    if (err || !prod) {
+      return res.json({
+        success: false,
+        error: err
+      });
+    } else {
+      return res.json({
+        success: true
+      });
+    }
+  });
+ 
+  var err = new Error('Invalid request; index not specified');
+  err.status = 400;
+  return next(err);
+});
+
+// ***** persona trends ******
+
 // get persona trends
 router.get('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
+/*
   var err = checkUserAccess(req, 1);
   if (err) return next(err);
+*/
   var prod = req.product;
   var personaIx = req.personaIx;
   var evIx = req.evIx;
@@ -220,8 +231,10 @@ router.get('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
 // add persona trends
 router.post('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
   
+/*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
+*/
   
   var prod = req.product;
   var personaIx = req.personaIx;
@@ -238,15 +251,10 @@ router.post('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
   prod.personas[personaIx].evidence[evIx].trends.push(trend);
   
   return prod.save(function(err) {
-    if (err) { // TODO: convert to next(err)?
-      return res.json({
-        success: false,
-        error: err
-      });
+    if (err) { 
+      next(err);
     } else {
-      return res.json({
-        success: true
-      });
+      return res.json(trend);
     }
   });
 });
@@ -254,8 +262,10 @@ router.post('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
 // change persona trends
 router.put('/:persona_ix/evidence/:ev_ix/trends/:trend_ix', function(req, res, next) {
   
+/*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
+*/
   
   var prod = req.product;
   var personaIx = req.personaIx;
@@ -264,15 +274,11 @@ router.put('/:persona_ix/evidence/:ev_ix/trends/:trend_ix', function(req, res, n
   var trend = prod.personas[personaIx].evidence[evIx].trends[trendIx];
   
   // execute the PUT changes
-  trend.name = req.body.name || trend.name;
-  trend.type = req.body.type || trend.type;
+  trend.type = req.body.type;
   
   return prod.save(function(err) {
-    if (err) { // TODO: convert to next(err)?
-      return res.json({
-        success: false,
-        error: err
-      });
+    if (err) {
+      return next(err);
     } else {
       return res.json({
         success: true
@@ -282,31 +288,31 @@ router.put('/:persona_ix/evidence/:ev_ix/trends/:trend_ix', function(req, res, n
 });
 
 // delete persona trend
-router.delete('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
+router.delete('/:persona_ix/evidence/:ev_ix/trends/:trend_ix', function(req, res, next) {
   
+/*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
+*/
   
   var prod = req.product;
   var personaIx = req.personaIx;
   var evIx = req.evIx;
-  if (req.body.ix) { // TODO: update to a request parameter
-    var trendIx = req.body.ix;
-    prod.personas[personaIx].evidence[evIx].trends.splice(trendIx, 1);
-      
-    return prod.save(function(err) {
-      if (err || !prod) {
-        return res.json({
-          success: false,
-          error: err
-        });
-      } else {
-        return res.json({
-          success: true
-        });
-      }
-    });
-  }
+  var trendIx = req.params.trend_ix;
+  prod.personas[personaIx].evidence[evIx].trends.splice(trendIx, 1);
+    
+  return prod.save(function(err) {
+    if (err || !prod) {
+      return res.json({
+        success: false,
+        error: err
+      });
+    } else {
+      return res.json({
+        success: true
+      });
+    }
+  });
 });
 
 module.exports = router;
