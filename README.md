@@ -1,3 +1,5 @@
+![](https://github.com/bobness/pmboard/blob/master/pmboard%20ss.png)
+
 PMBoard is a dashboard for product managers and startup founders to link user research, product features/plans, 
 and evaluation results.
 
