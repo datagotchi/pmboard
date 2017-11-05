@@ -44,7 +44,7 @@ angular.module('pmboard').controller('dashboardController', [
   
   // initialize the page
   
-  OAuth.initialize('K2P2q3_J6a76xcMJCcRRYTrbJ2c'); // TODO: hide this key somewhere via an ajax call?
+  OAuth.initialize('N5J17iZMUHN_P1M48zvwBu-YQP4'); // TODO: hide this key somewhere via an ajax call?
   
   $scope.loading = true;
   var init = function(user) {
