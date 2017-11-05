@@ -21,14 +21,15 @@ angular.module('pmboard').factory('oauthService', ['$http', '$q', 'userService',
     		//authorize: {
     		//  approval_prompt: 'force'
     		//}
-    	})
-    		.done(function(res) {
-      		$http.post('/oauth/signin', {code: res.code}).then(function(res) {
-        		resolve(res.data);
-      		});
-    		}).fail(function(err) {
-    			reject(err);
-  		  });
+    	}).done(function(res) {
+    		$http.post('/oauth/signin', {code: res.code}).then(function(res) {
+      		resolve(res.data);
+    		}).catch(function(err) {
+      		reject(err);
+    		});
+  		}).fail(function(err) { // FIXME: I get an origin error, but it doesn't go into my code for some reason upon breakpoint
+  			reject(err);
+		  });
   	});
   }
   
