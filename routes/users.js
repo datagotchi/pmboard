@@ -24,13 +24,15 @@ router.get('/:user_id', function(req, res, next) {
   }
   var paramUserId = req.params.user_id
 //   var cookieUserId = JSON.parse(req.cookies.userid);
-  var cookieUserId = req.cookies.userid;
+//   var cookieUserId = req.cookies.userid;
   
+/*
   if (paramUserId != cookieUserId) {
     var err = new Error("Unauthorized");
     err.status = 401;
     return next(err);
   }
+*/
   
   User.findById(paramUserId)
     .populate('products', 'name')
@@ -55,11 +57,13 @@ router.put('/:user_id', function(req, res, next) {
   
   var userid = req.params.user_id;
   
+/*
   if (userid != req.cookies.userid) {
     var err = new Error("Unauthorized");
     err.status = 401;
     return next(err);
   }
+*/
   
   User.findOne({_id: ObjectId(userid)}, function(err, user) {
     if (err) {

@@ -44,7 +44,7 @@ angular.module('pmboard').controller('dashboardController', [
   
   // initialize the page
   
-  OAuth.initialize('N5J17iZMUHN_P1M48zvwBu-YQP4'); // TODO: hide this key somewhere via an ajax call?
+//   OAuth.initialize('N5J17iZMUHN_P1M48zvwBu-YQP4'); // TODO: hide this key somewhere via an ajax call?
   
   $scope.loading = true;
   var init = function(user) {
@@ -56,16 +56,19 @@ angular.module('pmboard').controller('dashboardController', [
     $scope.loading = false;
   };
   // TODO: get this working without forcing another auth - saved identity token on server???
-  if ($cookies.get('userid') && $cookies.get('oauth')/* && getCookie('XSRF-TOKEN')*/) {
-    var userId = $cookies.get('userid');
+//   if ($cookies.get('userid') && $cookies.get('oauth')/* && getCookie('XSRF-TOKEN')*/) {
+//     var userId = $cookies.get('userid');
+    var userId = '55271181777f411b3a90a2a5';
     userService.getUser(userId).then(function(user) {
       init(user);
     });
-  } else {
+//   } else {
+/*
     oauthService.doAuthentication().then(function(data) {
       $cookies.put('oauth', data.oauth);
       $cookies.put('userid', data.user._id);
       init(data.user);
     });
-  }
+*/
+//   }
 }]);
