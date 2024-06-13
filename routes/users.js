@@ -1,51 +1,55 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
-var oauth = require('oauthio');
-var mongoose = require('mongoose');
+var oauth = require("oauthio");
+var mongoose = require("mongoose");
 var ObjectId = mongoose.Types.ObjectId;
 
 // TODO: fix cookie-based auth at some point, but use these (VERY INSECURE) routes for now
 
 var User;
-router.use(function(req, res, next) {
-  User = req.app.get('User');
+router.use(function (req, res, next) {
+  User = req.app.get("User");
   next();
 });
 
 // TODO: get list of users (e.g., for typeahead.js suggestions to share your project)
 
 // get user document via email
-router.get('/:user_id', function(req, res, next) {
-  
+router.get("/:user_id", function (req, res, next) {
   if (!req.params.user_id) {
     var err = new Error("Invalid request; please specify user ID");
     err.status = 400;
     return next(err);
   }
-  var paramUserId = req.params.user_id
-//   var cookieUserId = JSON.parse(req.cookies.userid);
-//   var cookieUserId = req.cookies.userid;
-  
-/*
+  var paramUserId = req.params.user_id;
+  //   var cookieUserId = JSON.parse(req.cookies.userid);
+  //   var cookieUserId = req.cookies.userid;
+
+  /*
   if (paramUserId != cookieUserId) {
     var err = new Error("Unauthorized");
     err.status = 401;
     return next(err);
   }
 */
-  
+
+  // User.find({})
   User.findById(paramUserId)
-    .populate('products', 'name')
-    .exec(function(err, user) {
-      if (err) {
-        return next(err);
-      }
+    // User.findOne(ObjectId(paramUserId))
+    // .populate("products", "name")
+    .then(function (user) {
       if (!user) {
         var err = new Error("No such user");
         err.status = 404;
         return next(err);
       }
       return res.json(user);
+    })
+    .catch(function (err) {
+      console.log("*** err: ", err);
+      if (err) {
+        return next(err);
+      }
     });
 });
 
@@ -53,33 +57,35 @@ router.get('/:user_id', function(req, res, next) {
 // - currentProduct
 // - add product access
 // - TODO: change email address
-router.put('/:user_id', function(req, res, next) {
-  
+router.put("/:user_id", function (req, res, next) {
   var userid = req.params.user_id;
-  
-/*
+
+  /*
   if (userid != req.cookies.userid) {
     var err = new Error("Unauthorized");
     err.status = 401;
     return next(err);
   }
 */
-  
-  User.findOne({_id: ObjectId(userid)}, function(err, user) {
+
+  User.findOne({ _id: ObjectId(userid) }, function (err, user) {
     if (err) {
       return next(err);
     }
-    
-    if ('currentProduct' in req.body) {
+
+    if ("currentProduct" in req.body) {
       user.currentProduct = req.body.currentProduct;
     }
-    
-    if (req.body.product_id) { // TODO: hacky; put in users.products.post below
+
+    if (req.body.product_id) {
+      // TODO: hacky; put in users.products.post below
       user.products.push(req.body.product_id);
     }
-    
-    return user.save(function(err) { // TODO: turn into its own route so I can use next(...) to save a document?
-      if (err) { // TODO: convert to next(err)?
+
+    return user.save(function (err) {
+      // TODO: turn into its own route so I can use next(...) to save a document?
+      if (err) {
+        // TODO: convert to next(err)?
         return next(err);
       } else {
         return res.json(user);

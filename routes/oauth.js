@@ -1,63 +1,66 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
-var oauth = require('oauthio');
-var mongoose = require('mongoose');
+var oauth = require("oauthio");
+var mongoose = require("mongoose");
 
 /* Initialize and route oauth if necessary */
 try {
-  var config = require('../config');
+  var config = require("../config");
   oauth.initialize(config.key, config.secret);
 } catch (e) {
   console.log(e);
 }
 
 var User;
-router.use(function(req, res, next) {
-  User = req.app.get('User');
+router.use(function (req, res, next) {
+  User = req.app.get("User");
   next();
 });
 
-router.get('/token', function(req, res, next) {
-	var token = oauth.generateStateToken(req.session);
+router.get("/token", function (req, res, next) {
+  var token = oauth.generateStateToken(req.session);
 
-	res.json({
-		token: token
-	});
+  res.json({
+    token: token,
+  });
 });
 
-router.post('/signin', function(req, res, next) {
-	var code = req.body.code;
-	var auth;
-	
-	oauth.auth('google', req.session, {
-		code: code
-	})
-	.then(function (request_object) {
-		auth = request_object;
-		return request_object.me();
-	})
-	.then(function(guser) {
-  	User.findOne({'email': guser.email})
-  	  .populate('products', 'name')
-  	  .exec(function(err, user) {
-        if (user) {
+router.post("/signin", function (req, res, next) {
+  var code = req.body.code;
+  var auth;
+
+  oauth
+    .auth("google", req.session, {
+      code: code,
+    })
+    .then(function (request_object) {
+      auth = request_object;
+      return request_object.me();
+    })
+    .then(function (guser) {
+      User.findOne({ email: guser.email })
+        .populate("products", "name")
+        .then(function (user) {
+          if (user) {
             req.session.email = user.email;
             // TODO: write auth to database
             var ret = {
-                success: true,
-                user: user,
-                oauth: JSON.stringify(auth)
+              success: true,
+              user: user,
+              oauth: JSON.stringify(auth),
             };
             return res.json(ret);
-        } else {
-          return next(err);
-        }
-
-    	});
-	})
-	.fail(function (e) {
-		return next(e);
-	});
+          }
+        })
+        .catch(function (err) {
+          if (err) {
+            return next(err);
+          }
+        });
+    })
+    .fail(function (e) {
+      return next(e);
+    });
 });
 
 module.exports = router;
