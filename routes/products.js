@@ -1,12 +1,12 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
-var oauth = require('oauthio');
-var mongoose = require('mongoose');
+var oauth = require("oauthio");
+var mongoose = require("mongoose");
 var ObjectId = mongoose.Types.ObjectId;
 
 var Product;
-router.use(function(req, res, next) {
-  Product = req.app.get('Product');
+router.use(function (req, res, next) {
+  Product = req.app.get("Product");
   next();
 });
 
@@ -23,65 +23,66 @@ router.use(function(req, res, next) {
 });*/
 
 // add product
-router.post('/', function(req, res, next) {
+router.post("/", function (req, res, next) {
   var newprod = new Product({
-    name: 'NewProduct',
+    name: "NewProduct",
     personas: [],
     stories: [],
-    permissions: {}
+    permissions: {},
   });
   var userid = req.cookies.userid;
+  console.log("*** userid: ", userid);
   newprod.permissions.push({
     _id: userid,
-    value:10
+    value: 10,
   });
-  return newprod.save(function(err) {
-    if (err) { // TODO: convert to next(err)?
-      return res.json({
-        error: err
-      });
-    } else {
+  return newprod
+    .then(function (err) {
       return res.json(newprod);
-    }
-  });
+    })
+    .catch(function (err) {
+      if (err) {
+        next(err);
+      }
+    });
 });
 
-router.param('product_id', function(req, res, next, product_id) {
+router.param("product_id", function (req, res, next, product_id) {
   // TODO: assert product_id is an integer
-  
+
   //oauth.auth('google', req.session)
   //.then(function (request_object) {
-      Product.findById(product_id, function(err, product) {
-//         var userid = JSON.parse(req.cookies.userid);
-        if (!err) {
-          req.product = product;
-          // create loookup table for permissions (can't store it directly in the db, annoyingly)
-          var permLookup = {};
-          for (var i = 0; i < product.permissions.length; i++) {
-            permLookup[product.permissions[i]._id] = product.permissions[i].value;
-          }
-          req.product.permLookup = permLookup;
-/*
+  Product.findById(product_id, function (err, product) {
+    //         var userid = JSON.parse(req.cookies.userid);
+    if (!err) {
+      req.product = product;
+      // create loookup table for permissions (can't store it directly in the db, annoyingly)
+      var permLookup = {};
+      for (var i = 0; i < product.permissions.length; i++) {
+        permLookup[product.permissions[i]._id] = product.permissions[i].value;
+      }
+      req.product.permLookup = permLookup;
+      /*
           if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 1) {
             var err = new Error("Unauthorized");
             err.status = 401;
             return next(err);
           }
 */
-          return next();
-        } else {
-          return next(err);
-        }
-      });
+      return next();
+    } else {
+      return next(err);
+    }
+  });
   //});
 });
 
 // change product details
 // - name
-router.put('/:product_id', function(req, res, next) {
+router.put("/:product_id", function (req, res, next) {
   var prod = req.product;
-//   var userid = JSON.parse(req.cookies.userid);
-/*
+  //   var userid = JSON.parse(req.cookies.userid);
+  /*
   if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
     var err = new Error("Unauthorized");
     err.status = 401;
@@ -91,7 +92,7 @@ router.put('/:product_id', function(req, res, next) {
   if (req.body.name) {
     prod.name = req.body.name;
   }
-  return prod.save(function(err) {
+  return prod.save(function (err) {
     if (err) {
       next(err);
     } else {
@@ -102,15 +103,15 @@ router.put('/:product_id', function(req, res, next) {
 });
 
 // get product
-router.get('/:product_id', function(req, res, next) {
+router.get("/:product_id", function (req, res, next) {
   //var userid = JSON.parse(req.cookies.userid);
   // ...
   return res.json(req.product);
 });
 
 // delete product
-router.delete('/:product_id', function(req, res, next) {
-//   var userid = JSON.parse(req.cookies.userid);
+router.delete("/:product_id", function (req, res, next) {
+  //   var userid = JSON.parse(req.cookies.userid);
   /*
   if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 3) {
     var err = new Error("Unauthorized");
@@ -120,26 +121,28 @@ router.delete('/:product_id', function(req, res, next) {
 */
   var prodId = req.product._id;
   var prodUsers = Object.keys(req.product.permLookup);
-  req.product.remove(function() {
-    req.app.get('User').find({_id: {$in: prodUsers}}, function(err, users) {
-      if (!err && users) {
-        for (var j = 0; j < users.length; j++) {
-          var user = removeUserProduct(users[j], prodId);
-          user.save(function(err) {
-            if (err) {
-              return next(err);
-            } 
+  req.product.remove(function () {
+    req.app
+      .get("User")
+      .find({ _id: { $in: prodUsers } }, function (err, users) {
+        if (!err && users) {
+          for (var j = 0; j < users.length; j++) {
+            var user = removeUserProduct(users[j], prodId);
+            user.save(function (err) {
+              if (err) {
+                return next(err);
+              }
+            });
+          }
+          return res.json({
+            success: true,
           });
+        } else if (err) {
+          return next(err);
+        } else {
+          return next("Oops! Something went wrong!");
         }
-        return res.json({
-          success: true
-        });
-      } else if (err) {
-        return next(err);
-      } else {
-        return next("Oops! Something went wrong!");
-      }
-    });
+      });
   });
 });
 
@@ -157,8 +160,8 @@ function removeUserProduct(user, prodId) {
   return user;
 }
 
-router.use('/:product_id/personas', require('./personas'));
+router.use("/:product_id/personas", require("./personas"));
 
-router.use('/:product_id/stories', require('./stories'));
+router.use("/:product_id/stories", require("./stories"));
 
 module.exports = router;

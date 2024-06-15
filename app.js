@@ -7,8 +7,7 @@ var cookieParser = require("cookie-parser");
 var mongoose = require("mongoose");
 //var routes = require('./routes/index');
 var products = require("./routes/products");
-var oauth_route = require("./routes/oauth");
-var oauth = require("oauthio");
+var auth_route = require("./routes/auth");
 
 var app = express();
 
@@ -39,7 +38,7 @@ app.use(
   next();
 });*/
 
-app.use("/oauth", oauth_route);
+app.use("/auth", auth_route);
 
 app.use("/users", require("./routes/users"));
 

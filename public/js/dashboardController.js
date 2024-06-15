@@ -1,22 +1,18 @@
 angular.module("pmboard").controller("dashboardController", [
-  "$scope",
   "$http",
+  "$scope",
   "$cookies",
-  "$uibModal",
   "userService",
   "productService",
   "oauthService",
   function (
-    $scope,
     $http,
+    $scope,
     $cookies,
-    $uibModal,
     userService,
     productService,
     oauthService
   ) {
-    var debugUserId = "666a66f70155b15c9d39c784";
-
     $scope.products = [];
     $scope.user = null;
     $scope.currentProduct = null;
@@ -67,32 +63,33 @@ angular.module("pmboard").controller("dashboardController", [
 
     // initialize the page
 
-    //   OAuth.initialize('N5J17iZMUHN_P1M48zvwBu-YQP4'); // TODO: hide this key somewhere via an ajax call?
-
     $scope.loading = true;
     var init = function (user) {
       $scope.user = user;
       $scope.products = user.products;
-      $scope.currentProduct = user.products[$scope.user.currentProduct];
+      $scope.currentProduct = user.products[$scope.user.currentProduct ?? 0];
       //$scope.userWidget.refresh();
       //$scope.productWidget.refresh();
       $scope.loading = false;
     };
-    // TODO: get this working without forcing another auth - saved identity token on server???
-    //   if ($cookies.get('userid') && $cookies.get('oauth')/* && getCookie('XSRF-TOKEN')*/) {
-    //     var userId = $cookies.get('userid');
-    var userId = "666a66f70155b15c9d39c784";
-    userService.getUser(userId).then(function (user) {
-      init(user);
-    });
-    //   } else {
-    /*
-    oauthService.doAuthentication().then(function(data) {
-      $cookies.put('oauth', data.oauth);
-      $cookies.put('userid', data.user._id);
-      init(data.user);
-    });
-*/
-    //   }
+
+    if ($cookies.get("userid") && $cookies.get("token")) {
+      var userId = $cookies.get("userid"); // TODO verify this is the expression session cookie.userid
+      userService
+        .getUser(userId)
+        .then((user) => {
+          init(user);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    } else {
+      // TODO: load login page
+      // oauthService.doAuthentication().then(function (data) {
+      //   $cookies.put("oauth", data.oauth);
+      //   $cookies.put("userid", data.user._id);
+      //   init(data.user);
+      // });
+    }
   },
 ]);
