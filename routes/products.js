@@ -36,15 +36,8 @@ router.post("/", function (req, res, next) {
     _id: userid,
     value: 10,
   });
-  return newprod
-    .then(function (err) {
-      return res.json(newprod);
-    })
-    .catch(function (err) {
-      if (err) {
-        next(err);
-      }
-    });
+
+  return res.json(newprod);
 });
 
 router.param("product_id", function (req, res, next, product_id) {

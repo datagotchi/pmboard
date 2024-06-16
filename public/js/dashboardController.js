@@ -4,15 +4,7 @@ angular.module("pmboard").controller("dashboardController", [
   "$cookies",
   "userService",
   "productService",
-  "oauthService",
-  function (
-    $http,
-    $scope,
-    $cookies,
-    userService,
-    productService,
-    oauthService
-  ) {
+  function ($http, $scope, $cookies, userService, productService) {
     $scope.products = [];
     $scope.user = null;
     $scope.currentProduct = null;
@@ -74,7 +66,7 @@ angular.module("pmboard").controller("dashboardController", [
     };
 
     if ($cookies.get("userid") && $cookies.get("token")) {
-      var userId = $cookies.get("userid"); // TODO verify this is the expression session cookie.userid
+      var userId = $cookies.get("userid"); // TODO verify this is the express session cookie.userid
       userService
         .getUser(userId)
         .then((user) => {
@@ -85,11 +77,6 @@ angular.module("pmboard").controller("dashboardController", [
         });
     } else {
       // TODO: load login page
-      // oauthService.doAuthentication().then(function (data) {
-      //   $cookies.put("oauth", data.oauth);
-      //   $cookies.put("userid", data.user._id);
-      //   init(data.user);
-      // });
     }
   },
 ]);
