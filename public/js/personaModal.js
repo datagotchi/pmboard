@@ -138,8 +138,8 @@ angular.module("pmboard").directive("personaModal", [
             });
             modal.rendered.then(function () {
               $scope.loading = true;
-              var oauth = JSON.parse($cookies.get("oauth"));
-              var accessToken = oauth.access_token;
+              // var oauth = JSON.parse($cookies.get("oauth"));
+              // var accessToken = oauth.access_token;
               $http
                 .get("https://www.googleapis.com/drive/v2/files", {
                   headers: { Authorization: "Bearer " + accessToken },
