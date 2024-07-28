@@ -83,7 +83,7 @@ router.put("/:persona_ix", function (req, res, next) {
 });
 
 // delete user persona
-router.delete("/:persona_ix", function (req, res, next) {
+router.delete("/:persona_ix", async (req, res, next) => {
   /*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
@@ -95,18 +95,14 @@ router.delete("/:persona_ix", function (req, res, next) {
   //var ix = req.body.ix;
   prod.personas.splice(ix, 1);
 
-  return prod.save(function (err) {
-    if (err || !prod) {
-      return res.json({
-        success: false,
-        error: err,
-      });
-    } else {
-      return res.json({
-        success: true,
-      });
-    }
-  });
+  try {
+    await prod.save();
+    return res.json({
+      success: true,
+    });
+  } catch (err) {
+    return next(err);
+  }
   //}
 
   // TODO: remove this/put in the param thing above

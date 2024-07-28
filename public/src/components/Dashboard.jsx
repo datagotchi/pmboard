@@ -125,7 +125,7 @@ const Dashboard = () => {
             </p>
             <p className="navbar-text">
               <a ng-click="deleteProduct(currentProduct._id)">
-                <span className="remove-evidence glyphicon glyphicon-remove"></span>
+                <span className="remove-evidence glyphicon glyphicon-remove" />{" "}
                 Delete Product
               </a>
             </p>

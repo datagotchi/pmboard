@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { WidgetDataItem } from "../types";
 
 /**
  * The HTML component for all PMBoard widgets
  * to document and visualize information
  *
  * @component
- * @param data {any | undefined} The data to show in the widget.
+ * @param data {WidgetDataItem[] | undefined} The data to show in the widget.
  * @param type {string} The type of the data rows.
  * @param title {string} The title to show at the top of the widget.
  * @param children {any} The modal to show when a data item is clicked.
@@ -15,13 +16,29 @@ import React, { useState } from "react";
  * @example
  * <ResearchWidget productId={5} />
  */
-const Widget = ({ data, type, title, addFunc, children }) => {
+const Widget = ({ data, type, title, addFunc, deleteFunc, children }) => {
+  /**
+   * @type {[WidgetDataItem[] | undefined, React.Dispatch<any[]>]}
+   */
+  const [liveData, setLiveData] = useState();
+
+  useEffect(() => {
+    if (data && !liveData) {
+      setLiveData(data);
+    }
+  }, [data]);
+
+  /**
+   * @type {[number | undefined, React.Dispatch<number>]}
+   */
+  const [currentDataIndex, setCurrentDataIndex] = useState();
+
   /**
    * @type {[HTMLDialogElement | undefined, React.Dispatch<HTMLDialogElement>]}
    */
   const [dialog, setDialog] = useState();
+
   /**
-   *
    * @param {React.MouseEvent<HTMLButtonElement, MouseEvent>} event
    */
   const showCreateDialog = (event) => {
@@ -31,6 +48,17 @@ const Widget = ({ data, type, title, addFunc, children }) => {
     const dialog = document.getElementById("newItemDialog");
     setDialog(dialog);
     dialog.showModal();
+  };
+
+  const getEvidenceLabelClass = (item) => {
+    switch (item.evidence.length) {
+      case item.evidence.length > 0 && item.evidence.length < 10:
+        return "label-warning";
+      case item.evidence.length >= 10:
+        return "label-success";
+      default:
+        return "label-danger";
+    }
   };
 
   return (
@@ -45,16 +73,36 @@ const Widget = ({ data, type, title, addFunc, children }) => {
               <tr>
                 <th>{type}</th>
                 <th>Evidence</th>
+                <th>Delete</th>
               </tr>
             </thead>
             <tbody>
-              {data?.map((datum) => (
-                <tr>
+              {liveData?.map((item, index) => (
+                <tr key={`Item #${index}`}>
                   <td>
-                    {/* <a onClick="openModal({datum.id})">{row[column.value]}</a> */}
+                    <a onClick={() => openModal(item._id)}>{item.name}</a>
                   </td>
                   <td>
-                    {/* <span className="evidence label" ng-className="{'label-danger': !row.evidence.length, 'label-warning': row.evidence.length < 10, 'label-success': row.evidence.length >= 10}">{{ row.evidence.length }}</span> */}
+                    <span
+                      className={`evidence label ${getEvidenceLabelClass(
+                        item
+                      )}`}
+                    >
+                      {item.evidence.length}
+                    </span>
+                  </td>
+                  <td>
+                    <a
+                      style={{ cusor: "pointer" }}
+                      onClick={() => {
+                        deleteFunc(index);
+                        liveData.splice(index, 1);
+                        setLiveData([...liveData]);
+                      }}
+                    >
+                      <span className="remove-evidence glyphicon glyphicon-remove" />{" "}
+                      Delete
+                    </a>
                   </td>
                 </tr>
               ))}
@@ -77,9 +125,14 @@ const Widget = ({ data, type, title, addFunc, children }) => {
           <p>
             <button
               onClick={() => {
-                const newName = document.getElementById("newName").value;
-                addFunc({ name: newName });
+                const newNameField = document.getElementById("newName");
+                const newName = newNameField.value;
+                const newItem = { name: newName, evidence: [] };
+                setCurrentDataIndex(liveData.length);
+                setLiveData([...liveData, newItem]);
+                addFunc(newItem);
                 dialog?.close();
+                newNameField.value = "";
               }}
             >
               Create

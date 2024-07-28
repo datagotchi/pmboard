@@ -26,10 +26,9 @@ const useModifyPersonas = (productId) => {
   };
 
   const updatePersona = (persona) => {
-    fetch({
+    fetch(`/products/${productId}/personas/${persona.id}`, {
       method: "PUT",
       // TODO: credentials/headers
-      url: `/products/${productId}/personas/${persona.id}`,
       body: persona,
     });
   };
@@ -37,13 +36,12 @@ const useModifyPersonas = (productId) => {
   /**
    * Delete a persona from the server via ID
    *
-   * @param {number} personaId
+   * @param {number} personaIndex
    */
-  const deletePersona = (personaId) => {
-    fetch({
+  const deletePersona = (personaIndex) => {
+    fetch(`/products/${productId}/personas/${personaIndex}`, {
       method: "DELETE",
       // TODO: credentials/headers
-      url: `/products/${productId}/personas/${personaId}`,
     });
   };
 

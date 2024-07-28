@@ -25,7 +25,7 @@ const ResearchWidget = ({ productId }) => {
       type="Persona"
       title="Who are your users/customers?"
       addFunc={addPersona}
-      deleteFunct={deletePersona}
+      deleteFunc={deletePersona}
     >
       <Modal />
     </Widget>
