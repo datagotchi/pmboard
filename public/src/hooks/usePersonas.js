@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Persona from "./types/Persona";
+import Persona from "../types/Persona";
 
 /**
  * A hook to download product personas

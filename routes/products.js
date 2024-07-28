@@ -1,6 +1,5 @@
 var express = require("express");
 var router = express.Router();
-var oauth = require("oauthio");
 var mongoose = require("mongoose");
 var ObjectId = mongoose.Types.ObjectId;
 
@@ -12,15 +11,10 @@ router.use(function (req, res, next) {
 
 // get products
 // disabled, INSECURE
-/*router.get('/', function(req, res, next) {
-	Product.find(function(err, products) {
-  	if (!err) {
-      return res.json(products);
-    } else {
-      return next(err);
-    }
-  });
-});*/
+router.get("/", async (req, res, next) => {
+  const products = await Product.find();
+  return res.json(products);
+});
 
 // add product
 router.post("/", function (req, res, next) {

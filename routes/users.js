@@ -1,6 +1,5 @@
 var express = require("express");
 var router = express.Router();
-var oauth = require("oauthio");
 var mongoose = require("mongoose");
 var ObjectId = mongoose.Types.ObjectId;
 

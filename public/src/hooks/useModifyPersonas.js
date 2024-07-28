@@ -1,4 +1,4 @@
-import Persona from "./types/Persona";
+import Persona from "../types/Persona";
 
 /**
  * A hook to modify product personas

@@ -1,4 +1,4 @@
 /**
  * @typedef Persona
- * @property {string} name
+ * @property {string} name The name of the persona
  */

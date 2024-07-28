@@ -1,10 +1,11 @@
 var express = require("express");
-var session = require("express-session");
-var bodyParser = require("body-parser");
-var cookieParser = require("cookie-parser");
+// var session = require("express-session");
+// var bodyParser = require("body-parser");
+// var cookieParser = require("cookie-parser");
 //var csrf = require('csurf');
 //var cors = require('cors');
 var mongoose = require("mongoose");
+
 //var routes = require('./routes/index');
 var products = require("./routes/products");
 var auth_route = require("./routes/auth");
@@ -19,18 +20,18 @@ var productSchema = require("./schema/Product.js");
 var Product = db.model("Product", productSchema);
 app.set("Product", Product);
 
-app.use(express.static("public"));
+app.use(express.static("public/dist"));
 //app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(
-  session({
-    secret: "keyboard cat",
-    resave: true,
-    saveUninitialized: false,
-  })
-);
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: false }));
+// app.use(cookieParser());
+// app.use(
+//   session({
+//     secret: "keyboard cat",
+//     resave: true,
+//     saveUninitialized: false,
+//   })
+// );
 //app.use(csrf());
 /*app.use(function(req, res, next) {
   res.cookie('XSRF-TOKEN', req.csrfToken());
@@ -63,6 +64,11 @@ app.use(function (err, req, res, next) {
   });
 });
 // }
+
+const port = process.env.PORT || 8000;
+app.listen(port, () => {
+  console.log("Listening on ", port);
+});
 
 // production error handler
 // no stacktraces leaked to user
