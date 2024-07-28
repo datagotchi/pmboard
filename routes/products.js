@@ -34,33 +34,27 @@ router.post("/", function (req, res, next) {
   return res.json(newprod);
 });
 
-router.param("product_id", function (req, res, next, product_id) {
+router.param("product_id", async (req, res, next, product_id) => {
   // TODO: assert product_id is an integer
 
   //oauth.auth('google', req.session)
   //.then(function (request_object) {
-  Product.findById(product_id, function (err, product) {
-    //         var userid = JSON.parse(req.cookies.userid);
-    if (!err) {
-      req.product = product;
-      // create loookup table for permissions (can't store it directly in the db, annoyingly)
-      var permLookup = {};
-      for (var i = 0; i < product.permissions.length; i++) {
-        permLookup[product.permissions[i]._id] = product.permissions[i].value;
-      }
-      req.product.permLookup = permLookup;
-      /*
+  const product = await Product.findById(product_id);
+  req.product = product;
+  // create loookup table for permissions (can't store it directly in the db, annoyingly)
+  var permLookup = {};
+  for (var i = 0; i < product.permissions.length; i++) {
+    permLookup[product.permissions[i]._id] = product.permissions[i].value;
+  }
+  req.product.permLookup = permLookup;
+  /*
           if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 1) {
             var err = new Error("Unauthorized");
             err.status = 401;
             return next(err);
           }
-*/
-      return next();
-    } else {
-      return next(err);
-    }
-  });
+      */
+  return next();
   //});
 });
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 /**
  * The HTML component for all PMBoard widgets
@@ -15,39 +15,77 @@ import React from "react";
  * @example
  * <ResearchWidget productId={5} />
  */
-const Widget = (data, type, title, addFunc, children) => {
+const Widget = ({ data, type, title, addFunc, children }) => {
+  /**
+   * @type {[HTMLDialogElement | undefined, React.Dispatch<HTMLDialogElement>]}
+   */
+  const [dialog, setDialog] = useState();
+  /**
+   *
+   * @param {React.MouseEvent<HTMLButtonElement, MouseEvent>} event
+   */
+  const showCreateDialog = (event) => {
+    /**
+     * @type HTMLDialogElement
+     */
+    const dialog = document.getElementById("newItemDialog");
+    setDialog(dialog);
+    dialog.showModal();
+  };
+
   return (
     <>
-      <div class="panel panel-default widget">
-        <div class="panel-heading">
-          <h3 class="panel-title">{title}</h3>
+      <div className="panel panel-default widget">
+        <div className="panel-heading">
+          <h3 className="panel-title">{title}</h3>
         </div>
-        <div class="panel-body">
-          <table class="table">
+        <div className="panel-body">
+          <table className="table">
             <thead>
-              <th>{type}</th>
-              <th>Evidence</th>
+              <tr>
+                <th>{type}</th>
+                <th>Evidence</th>
+              </tr>
             </thead>
             <tbody>
               {data?.map((datum) => (
                 <tr>
                   <td>
-                    <a onClick="openModal({datum.id})">{row[column.value]}</a>
+                    {/* <a onClick="openModal({datum.id})">{row[column.value]}</a> */}
                   </td>
                   <td>
-                    {/* <span class="evidence label" ng-class="{'label-danger': !row.evidence.length, 'label-warning': row.evidence.length < 10, 'label-success': row.evidence.length >= 10}">{{ row.evidence.length }}</span> */}
+                    {/* <span className="evidence label" ng-className="{'label-danger': !row.evidence.length, 'label-warning': row.evidence.length < 10, 'label-success': row.evidence.length >= 10}">{{ row.evidence.length }}</span> */}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-        <div class="panel-footer">
-          <a href="#" editable-text="newName" onaftersave="create(newName)">
-            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        <div className="panel-footer">
+          <button onClick={showCreateDialog}>
+            <span
+              className="glyphicon glyphicon-plus"
+              aria-hidden="true"
+            ></span>
             Add another
-          </a>
+          </button>
         </div>
+        <dialog id="newItemDialog">
+          <p>
+            New name: <input type="text" id="newName" />
+          </p>
+          <p>
+            <button
+              onClick={() => {
+                const newName = document.getElementById("newName").value;
+                addFunc({ name: newName });
+                dialog?.close();
+              }}
+            >
+              Create
+            </button>
+          </p>
+        </dialog>
       </div>
       {children}
     </>

@@ -1,4 +1,4 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
 //var mongoose = require('mongoose');
 //var ObjectId = mongoose.Types.ObjectId;
@@ -17,8 +17,8 @@ function checkUserAccess(req, req_level) {
 // ***** user personas *****
 
 // get user personas
-router.get('/', function(req, res, next) {
-/*
+router.get("/", (req, res, next) => {
+  /*
   var err = checkUserAccess(req, 1);
   if (err) return next(err);
 */
@@ -26,29 +26,23 @@ router.get('/', function(req, res, next) {
 });
 
 // add user persona
-router.post('/', function(req, res, next) {
-  
-/*
+router.post("/", async (req, res, next) => {
+  /*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
 */
-  
+
   var prod = req.product;
-  var newpersona = req.body.value;
-  
-  prod.personas.push({name: newpersona});
-  
-  return prod.save(function(err) {
-    if (err) {
-      return next(err);
-    } else {
-      return res.json(prod.personas[prod.personas.length-1]);
-    }
-  });
+  var newpersona = req.body;
+
+  prod.personas.push(newpersona);
+  await prod.save();
+
+  return res.json(prod.personas[prod.personas.length - 1]);
 });
 
 // persona index
-router.param('persona_ix', function(req, res, next) {
+router.param("persona_ix", function (req, res, next) {
   // TODO: assert ix is a normal int
   var ix = req.params.persona_ix;
   var prod = req.product;
@@ -56,68 +50,67 @@ router.param('persona_ix', function(req, res, next) {
     req.personaIx = ix; // need to save just the index because we're saving the entire product document to the db
     return next();
   }
-  var err = new Error('No such user type');
+  var err = new Error("No such user type");
   err.status = 404;
   return next(err);
 });
 
 // change user persona
-router.put('/:persona_ix', function(req, res, next) {
-  
-/*
+router.put("/:persona_ix", function (req, res, next) {
+  /*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
 */
-  
+
   var prod = req.product;
   var ix = req.personaIx;
-  
+
   prod.personas[ix].name = req.body.value;
-    
-  return prod.save(function(err) {
-    if (err) { // TODO: convert to next(err)?
+
+  return prod.save(function (err) {
+    if (err) {
+      // TODO: convert to next(err)?
       return res.json({
         success: false,
-        error: err
+        error: err,
       });
     } else {
       return res.json({
-        success: true
+        success: true,
       });
     }
   });
 });
 
 // delete user persona
-router.delete('/:persona_ix', function(req, res, next) {
-  
-/*
+router.delete("/:persona_ix", function (req, res, next) {
+  /*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
 */
-  
+
   var prod = req.product;
   //if (req.body.ix) {
-    var ix = req.personaIx;
-    //var ix = req.body.ix;
-    prod.personas.splice(ix, 1);
-      
-    return prod.save(function(err) {
-      if (err || !prod) {
-        return res.json({
-          success: false,
-          error: err
-        });
-      } else {
-        return res.json({
-          success: true
-        });
-      }
-    });
+  var ix = req.personaIx;
+  //var ix = req.body.ix;
+  prod.personas.splice(ix, 1);
+
+  return prod.save(function (err) {
+    if (err || !prod) {
+      return res.json({
+        success: false,
+        error: err,
+      });
+    } else {
+      return res.json({
+        success: true,
+      });
+    }
+  });
   //}
- 
+
   // TODO: remove this/put in the param thing above
-  var err = new Error('Invalid request; index not specified');
+  var err = new Error("Invalid request; index not specified");
   err.status = 400;
   return next(err);
 });
@@ -125,8 +118,8 @@ router.delete('/:persona_ix', function(req, res, next) {
 // ****** persona evidence *****
 
 // get persona evidence
-router.get('/:persona_ix/evidence', function(req, res, next) {
-/*
+router.get("/:persona_ix/evidence", function (req, res, next) {
+  /*
   var err = checkUserAccess(req, 1);
   if (err) return next(err);
 */
@@ -136,42 +129,42 @@ router.get('/:persona_ix/evidence', function(req, res, next) {
 });
 
 // add persona evidence
-router.post('/:persona_ix/evidence', function(req, res, next) {
-  
-/*
+router.post("/:persona_ix/evidence", function (req, res, next) {
+  /*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
 */
-  
+
   var prod = req.product;
   var ix = req.personaIx;
-  
-  var ev = { 
+
+  var ev = {
     name: req.body.name,
     url: req.body.url,
-    icon: req.body.icon
+    icon: req.body.icon,
   };
-  
-  if (!('evidence' in prod.personas[ix])) {
+
+  if (!("evidence" in prod.personas[ix])) {
     prod.personas[ix].evidence = [];
   }
   prod.personas[ix].evidence.push(ev);
-  
-  return prod.save(function(err) {
-    if (err) { // TODO: convert to next(err)?
+
+  return prod.save(function (err) {
+    if (err) {
+      // TODO: convert to next(err)?
       return res.json({
         success: false,
-        error: err
+        error: err,
       });
     } else {
       return res.json({
-        success: true
+        success: true,
       });
     }
   });
 });
 
-router.param('ev_ix', function(req, res, next) {
+router.param("ev_ix", function (req, res, next) {
   // TODO: assert ev_ix is a normal int
   var ix = req.params.ev_ix;
   var prod = req.product;
@@ -179,37 +172,36 @@ router.param('ev_ix', function(req, res, next) {
     req.evIx = ix;
     return next();
   }
-  var err = new Error('No such evidence file');
+  var err = new Error("No such evidence file");
   err.status = 404;
   return next(err);
 });
 
 // delete persona evidence
-router.delete('/:persona_ix/evidence/:ev_ix', function(req, res, next) {
-  
-/*
+router.delete("/:persona_ix/evidence/:ev_ix", function (req, res, next) {
+  /*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
 */
-  
+
   var prod = req.product;
   var ix = req.evIx;
   prod.personas[req.personaIx].evidence.splice(ix, 1);
-    
-  return prod.save(function(err) {
+
+  return prod.save(function (err) {
     if (err || !prod) {
       return res.json({
         success: false,
-        error: err
+        error: err,
       });
     } else {
       return res.json({
-        success: true
+        success: true,
       });
     }
   });
- 
-  var err = new Error('Invalid request; index not specified');
+
+  var err = new Error("Invalid request; index not specified");
   err.status = 400;
   return next(err);
 });
@@ -217,8 +209,8 @@ router.delete('/:persona_ix/evidence/:ev_ix', function(req, res, next) {
 // ***** persona trends ******
 
 // get persona trends
-router.get('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
-/*
+router.get("/:persona_ix/evidence/:ev_ix/trends", function (req, res, next) {
+  /*
   var err = checkUserAccess(req, 1);
   if (err) return next(err);
 */
@@ -229,29 +221,28 @@ router.get('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
 });
 
 // add persona trends
-router.post('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
-  
-/*
+router.post("/:persona_ix/evidence/:ev_ix/trends", function (req, res, next) {
+  /*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
 */
-  
+
   var prod = req.product;
   var personaIx = req.personaIx;
   var evIx = req.evIx;
-  
-  var trend = { 
+
+  var trend = {
     name: req.body.name,
-    type: req.body.type
+    type: req.body.type,
   };
-  
-  if (!('trends' in prod.personas[personaIx].evidence[evIx])) {
+
+  if (!("trends" in prod.personas[personaIx].evidence[evIx])) {
     prod.personas[personaIx].evidence[evIx].trends = [];
   }
   prod.personas[personaIx].evidence[evIx].trends.push(trend);
-  
-  return prod.save(function(err) {
-    if (err) { 
+
+  return prod.save(function (err) {
+    if (err) {
       next(err);
     } else {
       return res.json(trend);
@@ -260,59 +251,63 @@ router.post('/:persona_ix/evidence/:ev_ix/trends', function(req, res, next) {
 });
 
 // change persona trends
-router.put('/:persona_ix/evidence/:ev_ix/trends/:trend_ix', function(req, res, next) {
-  
-/*
+router.put(
+  "/:persona_ix/evidence/:ev_ix/trends/:trend_ix",
+  function (req, res, next) {
+    /*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
 */
-  
-  var prod = req.product;
-  var personaIx = req.personaIx;
-  var evIx = req.evIx;
-  var trendIx = req.params.trend_ix;
-  var trend = prod.personas[personaIx].evidence[evIx].trends[trendIx];
-  
-  // execute the PUT changes
-  trend.type = req.body.type;
-  
-  return prod.save(function(err) {
-    if (err) {
-      return next(err);
-    } else {
-      return res.json({
-        success: true
-      });
-    }
-  });
-});
+
+    var prod = req.product;
+    var personaIx = req.personaIx;
+    var evIx = req.evIx;
+    var trendIx = req.params.trend_ix;
+    var trend = prod.personas[personaIx].evidence[evIx].trends[trendIx];
+
+    // execute the PUT changes
+    trend.type = req.body.type;
+
+    return prod.save(function (err) {
+      if (err) {
+        return next(err);
+      } else {
+        return res.json({
+          success: true,
+        });
+      }
+    });
+  }
+);
 
 // delete persona trend
-router.delete('/:persona_ix/evidence/:ev_ix/trends/:trend_ix', function(req, res, next) {
-  
-/*
+router.delete(
+  "/:persona_ix/evidence/:ev_ix/trends/:trend_ix",
+  function (req, res, next) {
+    /*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
 */
-  
-  var prod = req.product;
-  var personaIx = req.personaIx;
-  var evIx = req.evIx;
-  var trendIx = req.params.trend_ix;
-  prod.personas[personaIx].evidence[evIx].trends.splice(trendIx, 1);
-    
-  return prod.save(function(err) {
-    if (err || !prod) {
-      return res.json({
-        success: false,
-        error: err
-      });
-    } else {
-      return res.json({
-        success: true
-      });
-    }
-  });
-});
+
+    var prod = req.product;
+    var personaIx = req.personaIx;
+    var evIx = req.evIx;
+    var trendIx = req.params.trend_ix;
+    prod.personas[personaIx].evidence[evIx].trends.splice(trendIx, 1);
+
+    return prod.save(function (err) {
+      if (err || !prod) {
+        return res.json({
+          success: false,
+          error: err,
+        });
+      } else {
+        return res.json({
+          success: true,
+        });
+      }
+    });
+  }
+);
 
 module.exports = router;

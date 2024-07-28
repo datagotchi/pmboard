@@ -1,13 +1,11 @@
-import Persona from "../types/Persona";
+import { Persona } from "../types";
 
 /**
  * A hook to modify product personas
  *
- * @hook
  * @param productId {number} the ID of the current product.
- * @returns {Object} An object of functions.
  * @example
- * const { addPersona, deletePersona } = useModifyPersonas();
+ * const { addPersona, updatePersona, deletePersona } = useModifyPersonas();
  */
 const useModifyPersonas = (productId) => {
   /**
@@ -16,11 +14,14 @@ const useModifyPersonas = (productId) => {
    * @param {Persona} persona
    */
   const addPersona = (persona) => {
-    fetch({
+    fetch(`/products/${productId}/personas`, {
       method: "POST",
-      // TODO: credentials/headers
-      url: `/products/${productId}/personas`,
-      body: persona,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      // TODO: credentials
+      body: JSON.stringify(persona),
     });
   };
 

@@ -1,104 +1,167 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Product } from "../types";
+import ResearchWidget from "./ResearchWidget";
+import useProductAPI from "../hooks/useProductAPI";
 
+/**
+ * The container of all widgets
+ *
+ * @component
+ * @returns {JSX.Element} The rendered dashboard.
+ * @example
+ *  <Dashboard>
+ *    <Widget>
+ *    <Widget>
+ *    ...
+ *  </Dashboard>
+ */
 const Dashboard = () => {
+  const CURRENT_PRODUCT_ID_SESSION_KEY = "currentProductId";
+  /**
+   * @type {[Product[] | undefined, React.Dispatch<Product[]>]}
+   */
+  const [products, setProducts] = useState();
+
+  const currentProjectIdFromStorage = sessionStorage.getItem(
+    CURRENT_PRODUCT_ID_SESSION_KEY
+  );
+  /**
+   * @type {[string, React.Dispatch<string>]}
+   */
+  const [currentProductId, setCurrentProductId] = useState(
+    currentProjectIdFromStorage
+  );
+  /**
+   * @type {[Product | undefined, React.Dispatch<Product>]}
+   */
   const [currentProduct, setCurrentProduct] = useState();
 
+  // TODO: eventually when there is a lot of data, save just the IDs, not all products
+  useEffect(() => {
+    if (!products) {
+      getProducts().then((products) => {
+        setProducts(products);
+      });
+    }
+  }, [products]);
+
+  useEffect(() => {
+    if (currentProductId && products) {
+      const product = products.find(
+        (product) => product._id === currentProductId
+      );
+      setCurrentProduct(product);
+    }
+  }, [currentProductId, products]);
+
+  const { getProducts, createProduct } = useProductAPI();
+
+  const handleSetCurrentProduct = (productId) => {
+    const product = products.find((product) => product._id === productId);
+    if (product) {
+      sessionStorage.setItem(CURRENT_PRODUCT_ID_SESSION_KEY, productId);
+      setCurrentProduct(product);
+    }
+  };
+
   return (
-    <nav class="navbar navbar-default">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button
-            type="button"
-            class="navbar-toggle collapsed"
-            data-toggle="collapse"
-            data-target="#bs-example-navbar-collapse-1"
-          >
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">
-            PMBoard
-          </a>
-        </div>
-
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-          <ul class="nav navbar-nav">
-            <li class="dropdown">
-              <a
-                href="#"
-                class="dropdown-toggle"
-                data-toggle="dropdown"
-                role="button"
-                aria-expanded="false"
-              >
-                Products <span class="caret"></span>
-              </a>
-              <ul class="dropdown-menu" role="menu">
-                <li ng-repeat="product in products track by $index">
-                  <a href="#" ng-click="changeProduct($index)">
-                    {currentProduct.name}
-                  </a>
-                </li>
-                <li class="divider"></li>
-                <li>
-                  <a href="#" ng-click="createProduct()">
-                    <span class="glyphicon glyphicon-plus"></span>
-                    New Product
-                  </a>
-                </li>
-              </ul>
-            </li>
-          </ul>
-
-          <p class="navbar-text">
-            Current Product:
-            <a
-              href="#"
-              editable-text="currentProduct.name"
-              onaftersave="updateProduct(currentProduct)"
+    <>
+      <nav className="navbar navbar-default">
+        <div className="container-fluid">
+          <div className="navbar-header">
+            <button
+              type="button"
+              className="navbar-toggle collapsed"
+              data-toggle="collapse"
+              data-target="#bs-example-navbar-collapse-1"
             >
-              {currentProduct.name}
-            </a>
-          </p>
-          <p class="navbar-text">
-            <a href="#" ng-click="deleteProduct(currentProduct._id)">
-              <span class="remove-evidence glyphicon glyphicon-remove"></span>
-              Delete Product
-            </a>
-          </p>
+              <span className="sr-only">Toggle navigation</span>
+              <span className="icon-bar"></span>
+              <span className="icon-bar"></span>
+              <span className="icon-bar"></span>
+            </button>
+            <a className="navbar-brand">PMBoard</a>
+          </div>
 
-          <ul class="nav navbar-nav navbar-right">
-            <li>
-              <a href="#">
-                <span class="glyphicon glyphicon-share"></span> Share
+          <div
+            className="collapse navbar-collapse"
+            id="bs-example-navbar-collapse-1"
+          >
+            <ul className="nav navbar-nav">
+              <li className="dropdown">
+                <a
+                  className="dropdown-toggle"
+                  data-toggle="dropdown"
+                  role="button"
+                  aria-expanded="false"
+                >
+                  Products <span className="caret"></span>
+                </a>
+                <ul className="dropdown-menu" role="menu">
+                  {products?.map((product) => (
+                    <li key={`Product #${product.id}`}>
+                      <a onClick={() => handleSetCurrentProduct(product._id)}>
+                        {product.name}
+                      </a>
+                    </li>
+                  ))}
+                  <li className="divider"></li>
+                  <li>
+                    <a onClick={createProduct}>
+                      <span className="glyphicon glyphicon-plus"></span>
+                      New Product
+                    </a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+
+            <p className="navbar-text">
+              Current Product:{" "}
+              {/*   TODO: use react-xeditable           <a editable-text="currentProduct.name"
+              onaftersave="updateProduct(currentProduct)"> */}
+              {currentProduct?.name}
+              {/* </a> */}
+            </p>
+            <p className="navbar-text">
+              <a ng-click="deleteProduct(currentProduct._id)">
+                <span className="remove-evidence glyphicon glyphicon-remove"></span>
+                Delete Product
               </a>
-            </li>
-            <li class="dropdown">
-              <a
-                href="#"
-                class="dropdown-toggle"
-                data-toggle="dropdown"
-                role="button"
-                aria-expanded="false"
-              >
-                My Account <span class="caret"></span>
-              </a>
-              <ul class="dropdown-menu" role="menu">
-                <li>
-                  <a href="#">Profile</a>
-                </li>
-                <li class="divider"></li>
-                <li>
-                  <a href="#">Logout</a>
-                </li>
-              </ul>
-            </li>
-          </ul>
+            </p>
+
+            <ul className="nav navbar-nav navbar-right">
+              <li>
+                <a>
+                  <span className="glyphicon glyphicon-share"></span> Share
+                </a>
+              </li>
+              <li className="dropdown">
+                <a
+                  className="dropdown-toggle"
+                  data-toggle="dropdown"
+                  role="button"
+                  aria-expanded="false"
+                >
+                  My Account <span className="caret"></span>
+                </a>
+                <ul className="dropdown-menu" role="menu">
+                  <li>
+                    <a>Profile</a>
+                  </li>
+                  <li className="divider"></li>
+                  <li>
+                    <a>Logout</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+      {!currentProduct && <span>Select a product from the menu.</span>}
+      {currentProduct && <ResearchWidget productId={currentProduct._id} />}
+    </>
   );
 };
 

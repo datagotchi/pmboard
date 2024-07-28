@@ -11,11 +11,12 @@ import useModifyPersonas from "../hooks/useModifyPersonas";
  * @param productId {number | undefined} the ID of the current product.
  * @returns {JSX.Element} The rendered widget.
  * @example
- *  <ResearchWidget productId={5} />
+ *  <ResearchWidget productId={*} />
  */
-const ResearchWidget = (productId) => {
-  const personas = usePersonas();
-  const { addPersona, updatePersona, deletePersona } = useModifyPersonas();
+const ResearchWidget = ({ productId }) => {
+  const personas = usePersonas(productId);
+  const { addPersona, updatePersona, deletePersona } =
+    useModifyPersonas(productId);
   const [selectedPersona, setSelectedPersona] = useState();
 
   return (

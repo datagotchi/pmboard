@@ -1,6 +1,6 @@
 var express = require("express");
 // var session = require("express-session");
-// var bodyParser = require("body-parser");
+var bodyParser = require("body-parser");
 // var cookieParser = require("cookie-parser");
 //var csrf = require('csurf');
 //var cors = require('cors');
@@ -22,8 +22,8 @@ app.set("Product", Product);
 
 app.use(express.static("public/dist"));
 //app.use(cors());
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(cookieParser());
 // app.use(
 //   session({
