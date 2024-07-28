@@ -3,29 +3,28 @@ import { WidgetDataItem } from "../types";
 import Modal from "./Modal";
 
 /**
- * The HTML component for all PMBoard widgets
- * to document and visualize information
+ * The HTML component for all PMBoard widgets to document and visualize information
  *
- * @component
- * @param data {WidgetDataItem[] | undefined} The data to show in the widget.
- * @param type {string} The type of the data rows.
- * @param title {string} The title to show at the top of the widget.
- * @param children {any} The modal to show when a data item is clicked.
- * @param addFunc {function} The function to call when a new item is added.
- * @param deleteFunc {function} The function to call when a new item is deleted.
- * @param itemModalId {string} The ID of the item modal passed in `children`.
+ * @param {object} props
+ * @param {WidgetDataItem[] | undefined} props.data The data to show in the widget.
+ * @param {string} props.type The type of the data rows.
+ * @param {string} props.title The title to show at the top of the widget.
+ * @param {(persona: Persona) => void} props.addFunc The function to call when a new item is added.
+ * @param {(persona: Persona) => void} props.updateFunc The function to call when an item is updated.
+ * @param {(personaIndex: number) => void} props.deleteFunc The function to call when a new item is deleted.
+ * @param {string} props.itemModalId The ID of the item modal passed in `children`.
  * @returns {JSX.Element} The rendered widget.
  * @example
- * <ResearchWidget productId={5} />
+ * <Widget data={*} type={*} title="*" addFunc={*} deleteFunc={*} itemModalId="*" />
  */
 const Widget = ({
   data,
   type,
   title,
   addFunc,
+  updateFunc,
   deleteFunc,
   itemModalId,
-  children,
 }) => {
   /**
    * @type {[WidgetDataItem[] | undefined, React.Dispatch<any[]>]}
@@ -39,14 +38,19 @@ const Widget = ({
   }, [data]);
 
   /**
-   * @type {[number | undefined, React.Dispatch<number>]}
+   * @type {[WidgetDataItem | undefined, React.Dispatch<WidgetDataItem>]}
    */
-  const [currentDataIndex, setCurrentDataIndex] = useState();
+  const [currentItem, setCurrentItem] = useState();
 
   /**
-   * @type {[HTMLDialogElement | undefined, React.Dispatch<HTMLDialogElement>]}
+   * @type {[HTMLDialogElement | undefined, React.Dispatch<HTMLDialogElement | undefined>]}
    */
-  const [dialog, setDialog] = useState();
+  const [itemModal, setItemModal] = useState();
+
+  /**
+   * @type {[HTMLDialogElement | undefined, React.Dispatch<HTMLDialogElement | undefined>]}
+   */
+  const [createDialog, setCreateDialog] = useState();
 
   /**
    * @param {React.MouseEvent<HTMLButtonElement, MouseEvent>} event
@@ -56,7 +60,13 @@ const Widget = ({
      * @type HTMLDialogElement
      */
     const dialog = document.getElementById("newItemDialog");
-    setDialog(dialog);
+    setCreateDialog(dialog);
+    // TODO: only add once
+    dialog.addEventListener("click", (event) => {
+      if (event.target === event.currentTarget) {
+        dialog.close();
+      }
+    });
     dialog.showModal();
   };
 
@@ -70,6 +80,30 @@ const Widget = ({
         return "label-danger";
     }
   };
+
+  useEffect(() => {
+    if (currentItem) {
+      if (itemModal) {
+        // TODO: track if these have been added/removed so they don't get added multiple times
+        itemModal.addEventListener("click", (event) => {
+          if (event.target === event.currentTarget) {
+            itemModal.close();
+          }
+        });
+        itemModal.addEventListener("close", () => {
+          setItemModal(undefined);
+          setCurrentItem(undefined);
+        });
+        itemModal.showModal();
+      } else {
+        /**
+         * @type HTMLDialogElement
+         */
+        const modal = document.getElementById(itemModalId);
+        setItemModal(modal);
+      }
+    }
+  }, [currentItem, itemModal]);
 
   return (
     <>
@@ -93,8 +127,7 @@ const Widget = ({
                     <a
                       style={{ cursor: "pointer" }}
                       onClick={() => {
-                        const modal = document.getElementById(itemModalId);
-                        modal.showModal();
+                        setCurrentItem(item);
                       }}
                     >
                       {item.name}
@@ -146,10 +179,10 @@ const Widget = ({
                 const newNameField = document.getElementById("newName");
                 const newName = newNameField.value;
                 const newItem = { name: newName, evidence: [] };
-                setCurrentDataIndex(liveData.length);
                 setLiveData([...liveData, newItem]);
                 addFunc(newItem);
-                dialog?.close();
+                createDialog.close();
+                setCreateDialog(undefined);
                 newNameField.value = "";
               }}
             >
@@ -158,8 +191,18 @@ const Widget = ({
           </p>
         </dialog>
       </div>
-      {liveData && (
-        <Modal dialogId={itemModalId} item={liveData[currentDataIndex]} />
+      {currentItem && (
+        <Modal
+          dialogId={itemModalId}
+          item={currentItem}
+          deleteFunc={(item) => {
+            const itemIndex = liveData.indexOf(item);
+            liveData.splice(itemIndex, 1);
+            setLiveData([...liveData]);
+            deleteFunc(itemIndex);
+          }}
+          updateFunc={updateFunc}
+        />
       )}
     </>
   );

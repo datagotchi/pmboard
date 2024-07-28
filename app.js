@@ -9,6 +9,7 @@ var mongoose = require("mongoose");
 //var routes = require('./routes/index');
 var products = require("./routes/products");
 var auth_route = require("./routes/auth");
+var oauth_route = require("./routes/oauth");
 
 var app = express();
 
@@ -40,9 +41,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 });*/
 
 app.use("/auth", auth_route);
-
+app.use("/oauth", oauth_route);
 app.use("/users", require("./routes/users"));
-
 app.use("/products", products);
 
 /* Error Handlers */
