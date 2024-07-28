@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Widget from "./Widget";
-import Modal from "./Modal";
 import usePersonas from "../hooks/usePersonas";
 import useModifyPersonas from "../hooks/useModifyPersonas";
 
@@ -19,6 +18,8 @@ const ResearchWidget = ({ productId }) => {
     useModifyPersonas(productId);
   const [selectedPersona, setSelectedPersona] = useState();
 
+  const PERSONA_MODAL_ID = "personaModal";
+
   return (
     <Widget
       data={personas}
@@ -26,9 +27,8 @@ const ResearchWidget = ({ productId }) => {
       title="Who are your users/customers?"
       addFunc={addPersona}
       deleteFunc={deletePersona}
-    >
-      <Modal />
-    </Widget>
+      itemModalId={PERSONA_MODAL_ID}
+    />
   );
 };
 

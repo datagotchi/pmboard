@@ -120,11 +120,14 @@ const Dashboard = () => {
               Current Product:{" "}
               {/*   TODO: use react-xeditable           <a editable-text="currentProduct.name"
               onaftersave="updateProduct(currentProduct)"> */}
-              {currentProduct?.name}
+              <strong>{currentProduct?.name}</strong>
               {/* </a> */}
             </p>
             <p className="navbar-text">
-              <a ng-click="deleteProduct(currentProduct._id)">
+              <a
+                style={{ cursor: "pointer" }}
+                ng-click="deleteProduct(currentProduct._id)"
+              >
                 <span className="remove-evidence glyphicon glyphicon-remove" />{" "}
                 Delete Product
               </a>

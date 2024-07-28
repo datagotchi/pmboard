@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { WidgetDataItem } from "../types";
+import Modal from "./Modal";
 
 /**
  * The HTML component for all PMBoard widgets
@@ -12,11 +13,20 @@ import { WidgetDataItem } from "../types";
  * @param children {any} The modal to show when a data item is clicked.
  * @param addFunc {function} The function to call when a new item is added.
  * @param deleteFunc {function} The function to call when a new item is deleted.
+ * @param itemModalId {string} The ID of the item modal passed in `children`.
  * @returns {JSX.Element} The rendered widget.
  * @example
  * <ResearchWidget productId={5} />
  */
-const Widget = ({ data, type, title, addFunc, deleteFunc, children }) => {
+const Widget = ({
+  data,
+  type,
+  title,
+  addFunc,
+  deleteFunc,
+  itemModalId,
+  children,
+}) => {
   /**
    * @type {[WidgetDataItem[] | undefined, React.Dispatch<any[]>]}
    */
@@ -80,7 +90,15 @@ const Widget = ({ data, type, title, addFunc, deleteFunc, children }) => {
               {liveData?.map((item, index) => (
                 <tr key={`Item #${index}`}>
                   <td>
-                    <a onClick={() => openModal(item._id)}>{item.name}</a>
+                    <a
+                      style={{ cursor: "pointer" }}
+                      onClick={() => {
+                        const modal = document.getElementById(itemModalId);
+                        modal.showModal();
+                      }}
+                    >
+                      {item.name}
+                    </a>
                   </td>
                   <td>
                     <span
@@ -93,7 +111,7 @@ const Widget = ({ data, type, title, addFunc, deleteFunc, children }) => {
                   </td>
                   <td>
                     <a
-                      style={{ cusor: "pointer" }}
+                      style={{ cursor: "pointer" }}
                       onClick={() => {
                         deleteFunc(index);
                         liveData.splice(index, 1);
@@ -114,7 +132,7 @@ const Widget = ({ data, type, title, addFunc, deleteFunc, children }) => {
             <span
               className="glyphicon glyphicon-plus"
               aria-hidden="true"
-            ></span>
+            ></span>{" "}
             Add another
           </button>
         </div>
@@ -140,7 +158,9 @@ const Widget = ({ data, type, title, addFunc, deleteFunc, children }) => {
           </p>
         </dialog>
       </div>
-      {children}
+      {liveData && (
+        <Modal dialogId={itemModalId} item={liveData[currentDataIndex]} />
+      )}
     </>
   );
 };
