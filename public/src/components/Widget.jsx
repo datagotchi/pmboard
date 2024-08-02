@@ -150,9 +150,11 @@ const Widget = ({
                     <a
                       style={{ cursor: "pointer" }}
                       onClick={() => {
-                        deleteFunc(index);
-                        liveData.splice(index, 1);
-                        setLiveData([...liveData]);
+                        if (confirm("Are you sure?")) {
+                          deleteFunc(index);
+                          liveData.splice(index, 1);
+                          setLiveData([...liveData]);
+                        }
                       }}
                     >
                       <span className="remove-evidence glyphicon glyphicon-remove" />{" "}

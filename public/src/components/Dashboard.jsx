@@ -108,18 +108,28 @@ const Dashboard = () => {
                   Products <span className="caret"></span>
                 </a>
                 <ul className="dropdown-menu" role="menu">
-                  {products?.map((product) => (
-                    <li key={`Product #${product.id}`}>
-                      <a onClick={() => handleSetCurrentProduct(product._id)}>
-                        {product.name}
-                      </a>
-                    </li>
-                  ))}
+                  {products &&
+                    products.map((product) => (
+                      <li key={`Product #${product.id}`}>
+                        <a onClick={() => handleSetCurrentProduct(product._id)}>
+                          {product.name}
+                        </a>
+                      </li>
+                    ))}
                   <li className="divider"></li>
                   <li>
-                    <a onClick={createProduct}>
-                      <span className="glyphicon glyphicon-plus"></span>
-                      New Product
+                    <a
+                      onClick={async () => {
+                        const name = prompt("Give the new product a name:");
+                        if (name) {
+                          const newProduct = await createProduct({ name });
+                          setProducts([...products, newProduct]);
+                          setCurrentProductId(newProduct._id);
+                        }
+                      }}
+                    >
+                      <span className="glyphicon glyphicon-plus"></span> New
+                      Product
                     </a>
                   </li>
                 </ul>
@@ -136,7 +146,17 @@ const Dashboard = () => {
             <p className="navbar-text">
               <a
                 style={{ cursor: "pointer" }}
-                onClick={() => deleteProduct(currentProduct._id)}
+                onClick={async () => {
+                  if (confirm("Are you sure?")) {
+                    await deleteProduct(currentProduct._id);
+                    setProducts(
+                      products.filter(
+                        (product) => product._id !== currentProduct._id
+                      )
+                    );
+                    setCurrentProduct(undefined);
+                  }
+                }}
               >
                 <span className="remove-evidence glyphicon glyphicon-remove" />{" "}
                 Delete Product

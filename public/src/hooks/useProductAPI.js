@@ -8,9 +8,15 @@ const useProductAPI = () => {
   const deleteProduct = (productId) =>
     fetch(`/products/${productId}`, { method: "DELETE" });
 
-  /**
-   */
-  const createProduct = () => {};
+  const createProduct = (bodyJson) =>
+    fetch("/products", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(bodyJson),
+    }).then((response) => response.json());
 
   return {
     getProducts,

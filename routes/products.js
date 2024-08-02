@@ -3,7 +3,7 @@ var router = express.Router();
 var mongoose = require("mongoose");
 var ObjectId = mongoose.Types.ObjectId;
 
-var Product;
+let Product;
 router.use(function (req, res, next) {
   Product = req.app.get("Product");
   next();
@@ -17,19 +17,21 @@ router.get("/", async (req, res, next) => {
 });
 
 // add product
-router.post("/", function (req, res, next) {
+router.post("/", async (req, res, next) => {
+  const { name } = req.body;
   var newprod = new Product({
-    name: "NewProduct",
+    name,
     personas: [],
     stories: [],
     permissions: {},
   });
-  var userid = req.cookies.userid;
-  console.log("*** userid: ", userid);
-  newprod.permissions.push({
-    _id: userid,
-    value: 10,
-  });
+  await Product.create(newprod);
+  // var userid = req.cookies.userid;
+  // console.log("*** userid: ", userid);
+  // newprod.permissions.push({
+  //   _id: userid,
+  //   value: 10,
+  // });
 
   return res.json(newprod);
 });
@@ -91,7 +93,7 @@ router.get("/:product_id", function (req, res, next) {
 });
 
 // delete product
-router.delete("/:product_id", function (req, res, next) {
+router.delete("/:product_id", async (req, res, next) => {
   //   var userid = JSON.parse(req.cookies.userid);
   /*
   if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 3) {
@@ -102,28 +104,20 @@ router.delete("/:product_id", function (req, res, next) {
 */
   var prodId = req.product._id;
   var prodUsers = Object.keys(req.product.permLookup);
-  req.product.remove(function () {
-    req.app
-      .get("User")
-      .find({ _id: { $in: prodUsers } }, function (err, users) {
-        if (!err && users) {
-          for (var j = 0; j < users.length; j++) {
-            var user = removeUserProduct(users[j], prodId);
-            user.save(function (err) {
-              if (err) {
-                return next(err);
-              }
-            });
-          }
-          return res.json({
-            success: true,
-          });
-        } else if (err) {
-          return next(err);
-        } else {
-          return next("Oops! Something went wrong!");
-        }
-      });
+  await req.product.deleteOne();
+
+  // const users = await req.app.get("User").find({ _id: { $in: prodUsers } });
+  // for (var j = 0; j < users.length; j++) {
+  //   var user = removeUserProduct(users[j], prodId);
+  //   user.save(function (err) {
+  //     if (err) {
+  //       return next(err);
+  //     }
+  //   });
+  // }
+
+  return res.json({
+    success: true,
   });
 });
 
