@@ -1,24 +1,24 @@
-var express = require("express");
-var router = express.Router();
-var oauth = require("oauthio");
-var mongoose = require("mongoose");
+const express = require("express");
+const router = express.Router();
+const mongoose = require("mongoose");
+let oauth;
 
-/* Initialize and route oauth if necessary */
-try {
-  var config = require("../config");
-  oauth.initialize(config.key, config.secret);
-} catch (e) {
-  console.log(e);
-}
+const importOAuth = async () => {
+  oauth = await import("oauth4webapi");
+};
 
 var User;
-router.use(function (req, res, next) {
+router.use(async (req, res, next) => {
   User = req.app.get("User");
+  await importOAuth();
   next();
 });
 
 router.get("/token", function (req, res, next) {
+  console.log("*** in GET /token");
+  console.log("*** req.session: ", req.session);
   var token = oauth.generateStateToken(req.session);
+  console.log("*** token: ", token);
 
   res.json({
     token: token,

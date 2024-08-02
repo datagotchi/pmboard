@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Product } from "../types";
 import ResearchWidget from "./ResearchWidget";
 import useProductAPI from "../hooks/useProductAPI";
+import useOAuthAPI from "../hooks/useOAuthAPI";
 
 /**
  * The container of all widgets
@@ -35,6 +36,10 @@ const Dashboard = () => {
    * @type {[Product | undefined, React.Dispatch<Product>]}
    */
   const [currentProduct, setCurrentProduct] = useState();
+
+  const { doAuthentication } = useOAuthAPI();
+
+  const token = useMemo(() => doAuthentication(), []);
 
   // TODO: eventually when there is a lot of data, save just the IDs, not all products
   useEffect(() => {

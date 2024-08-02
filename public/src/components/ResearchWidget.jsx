@@ -1,7 +1,7 @@
 import React from "react";
 import Widget from "./Widget";
 import usePersonas from "../hooks/usePersonas";
-import useModifyPersonas from "../hooks/useModifyPersonas";
+import usePersonasAPI from "../hooks/usePersonasAPI";
 
 /**
  * A widget to document and visualize user/customer problems
@@ -15,7 +15,7 @@ import useModifyPersonas from "../hooks/useModifyPersonas";
 const ResearchWidget = ({ productId }) => {
   const personas = usePersonas(productId);
   const { addPersona, updatePersona, deletePersona } =
-    useModifyPersonas(productId);
+    usePersonasAPI(productId);
 
   const PERSONA_MODAL_ID = "personaModal";
 

@@ -5,9 +5,9 @@ import { Persona } from "../types";
  *
  * @param productId {number} the ID of the current product.
  * @example
- * const { addPersona, updatePersona, deletePersona } = useModifyPersonas();
+ * const { addPersona, updatePersona, deletePersona } = usePersonasAPI();
  */
-const useModifyPersonas = (productId) => {
+const usePersonasAPI = (productId) => {
   /**
    * Add a persona to the server
    *
@@ -52,4 +52,4 @@ const useModifyPersonas = (productId) => {
   };
 };
 
-export default useModifyPersonas;
+export default usePersonasAPI;

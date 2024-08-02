@@ -28,7 +28,8 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
     // FIXME: make sure I don't want to use the state variable being undefined as state
     setAddFilesModal(document.getElementById("addFilesModal"));
 
-    // FIXME: get `accessToken`
+    // FIXME: maybe the access token is from the oauth result?
+    const accessToken = "AIzaSyCdYyuvA4mB7NIccDTVG6W2osJkIXN90UM";
     axios
       .get("https://www.googleapis.com/drive/v2/files", {
         headers: { Authorization: "Bearer " + accessToken },

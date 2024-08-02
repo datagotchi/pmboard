@@ -1,8 +1,8 @@
 var express = require("express");
-// var session = require("express-session");
+var session = require("express-session");
 var bodyParser = require("body-parser");
 // var cookieParser = require("cookie-parser");
-//var csrf = require('csurf');
+var csurf = require("csurf");
 //var cors = require('cors');
 var mongoose = require("mongoose");
 
@@ -26,19 +26,19 @@ app.use(express.static("public/dist"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(cookieParser());
-// app.use(
-//   session({
-//     secret: "keyboard cat",
-//     resave: true,
-//     saveUninitialized: false,
-//   })
-// );
-//app.use(csrf());
-/*app.use(function(req, res, next) {
-  res.cookie('XSRF-TOKEN', req.csrfToken());
+app.use(
+  session({
+    secret: "keyboard cat",
+    resave: true,
+    saveUninitialized: false,
+  })
+);
+app.use(csurf());
+app.use(function (req, res, next) {
+  res.cookie("XSRF-TOKEN", req.csrfToken());
   res.locals.csrftoken = req.csrfToken();
   next();
-});*/
+});
 
 app.use("/auth", auth_route);
 app.use("/oauth", oauth_route);
