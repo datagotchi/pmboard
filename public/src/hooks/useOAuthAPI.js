@@ -1,8 +1,8 @@
 import * as oauth from "oauth4webapi";
 
-const useOAuthAPI = () => {
-  const service = {};
+import { GoogleFile } from "../types";
 
+const useOAuthAPI = () => {
   const redirect_uri = "http://localhost:8000";
   const issuer = new URL("https://accounts.google.com");
   /**
@@ -28,7 +28,7 @@ const useOAuthAPI = () => {
     authorizationUrl.searchParams.set("client_id", client.client_id);
     authorizationUrl.searchParams.set("redirect_uri", redirect_uri);
     authorizationUrl.searchParams.set("response_type", "code");
-    // authorizationUrl.searchParams.set("scope", "api:read");
+    authorizationUrl.searchParams.set("access_type", "offline");
     authorizationUrl.searchParams.set(
       "scope",
       "https://www.googleapis.com/auth/drive.readonly"
@@ -61,7 +61,7 @@ const useOAuthAPI = () => {
    * @param {oauth.Client} client
    * @param {string} code_verifier
    */
-  const getAccessToken = async (
+  const getAccessTokenFromGoogle = async (
     authorizationServer,
     client,
     code_verifier,
@@ -108,7 +108,7 @@ const useOAuthAPI = () => {
     }
 
     const result = await oauth.processAuthorizationCodeOAuth2Response(
-      as,
+      authorizationServer,
       client,
       response
     );
@@ -131,12 +131,13 @@ const useOAuthAPI = () => {
   /**
    *
    * @param {string} access_token
+   * @returns {Promise<GoogleFile[]>}
    */
-  const protectedResourceRequest = async (access_token) => {
+  const getGoogleDriveFiles = async (access_token) => {
     const response = await oauth.protectedResourceRequest(
       access_token,
       "GET",
-      new URL("https://rs.example.com/api")
+      new URL("https://www.googleapis.com/drive/v2/files")
     );
 
     /**
@@ -150,9 +151,13 @@ const useOAuthAPI = () => {
       throw new Error(); // Handle WWW-Authenticate Challenges as needed
     }
 
-    console.log("Protected Resource Response", await response.json());
+    return await response.json();
   };
 
+  /**
+   *
+   * @returns {oauth.AuthorizationServer, oauth.Client, string}
+   */
   const init = async () => {
     authorizationServer = await getAuthorizationServer();
     var config = require("../../../config");
@@ -165,10 +170,12 @@ const useOAuthAPI = () => {
       token_endpoint_auth_method: "client_secret_basic",
     };
     code_challenge_method = "S256";
-    /**
-     * @type string
-     */
-    code_verifier = oauth.generateRandomCodeVerifier();
+    if (sessionStorage.getItem("code_verifier")) {
+      code_verifier = sessionStorage.getItem("code_verifier");
+    } else {
+      code_verifier = oauth.generateRandomCodeVerifier();
+      sessionStorage.setItem("code_verifier", code_verifier);
+    }
     code_challenge = await oauth.calculatePKCECodeChallenge(code_verifier);
     return {
       authorizationServer,
@@ -177,24 +184,35 @@ const useOAuthAPI = () => {
     };
   };
 
-  service.doAuthentication = async () => {
-    if (!window.location.search.includes("code=")) {
-      await init();
-      gotoAuthorizationUrl(client, code_challenge, code_challenge_method);
+  const getAccessToken = async () => {
+    if (
+      sessionStorage.getItem("access_token") &&
+      sessionStorage.getItem("access_token") !== "undefined"
+    ) {
+      return sessionStorage.getItem("access_token");
     } else {
-      const { authorizationServer, client, code_verifier } = await init();
-      console.log("hi");
-      const access_token = await getAccessToken(
-        authorizationServer,
-        client,
-        code_verifier,
-        state
-      );
-      await protectedResourceRequest(access_token);
+      if (!window.location.search.includes("code=")) {
+        await init();
+        gotoAuthorizationUrl(client, code_challenge, code_challenge_method);
+      } else {
+        const { authorizationServer, client, code_verifier } = await init();
+        const access_token = await getAccessTokenFromGoogle(
+          authorizationServer,
+          client,
+          code_verifier,
+          state
+        );
+        sessionStorage.setItem("access_token", access_token);
+        sessionStorage.removeItem("code_verifier");
+        open(window.location.origin, "_self");
+      }
     }
   };
 
-  return service;
+  return {
+    getAccessToken,
+    getGoogleDriveFiles,
+  };
 };
 
 export default useOAuthAPI;

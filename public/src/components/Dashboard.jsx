@@ -37,9 +37,14 @@ const Dashboard = () => {
    */
   const [currentProduct, setCurrentProduct] = useState();
 
-  const { doAuthentication } = useOAuthAPI();
+  const { getAccessToken } = useOAuthAPI();
 
-  const token = useMemo(() => doAuthentication(), []);
+  if (
+    !sessionStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token") === "undefined"
+  ) {
+    getAccessToken();
+  }
 
   // TODO: eventually when there is a lot of data, save just the IDs, not all products
   useEffect(() => {

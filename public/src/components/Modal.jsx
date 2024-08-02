@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
+import useOAuthAPI from "../hooks/useOAuthAPI";
 
 import { EvidenceFile, Persona, WidgetDataItem, GoogleFile } from "../types";
 
@@ -27,34 +28,34 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
     setMainDialog(document.getElementById(dialogId));
     // FIXME: make sure I don't want to use the state variable being undefined as state
     setAddFilesModal(document.getElementById("addFilesModal"));
-
-    // FIXME: maybe the access token is from the oauth result?
-    const accessToken = "AIzaSyCdYyuvA4mB7NIccDTVG6W2osJkIXN90UM";
-    axios
-      .get("https://www.googleapis.com/drive/v2/files", {
-        headers: { Authorization: "Bearer " + accessToken },
-      })
-      .then((response) => {
-        const files = response.data.items.filter(
-          (file) =>
-            evidence
-              .map(function (f) {
-                return f.url;
-              })
-              .indexOf(file.alternateLink) === -1
-        );
-        setFiles([...files]);
-      })
-      .catch((err) => {
-        console.error(err);
-        // if (res.status === 401) {
-        // TODO: load login page
-        // }
-      })
-      .finally(() => {
-        // setListFilesLoading(false);
-      });
   }, []);
+
+  const { getGoogleDriveFiles } = useOAuthAPI();
+
+  const accessToken = useMemo(() => sessionStorage.getItem("access_token"));
+
+  useEffect(() => {
+    if (accessToken) {
+      const encodedToken = encodeURI(accessToken);
+      getGoogleDriveFiles(encodedToken)
+        .then((response) => {
+          const files = response.items.filter(
+            (file) =>
+              item.evidence
+                .map(function (f) {
+                  return f.url;
+                })
+                .indexOf(file.alternateLink) === -1
+          );
+          setFiles([...files]);
+        })
+        .catch((err) => {
+          console.error(err);
+          // sessionStorage.removeItem("access_token");
+          // window.location.reload();
+        });
+    }
+  }, [accessToken]);
 
   /**
    * @param {Persona} persona
@@ -229,20 +230,22 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
             <h5>Add File to Evidence for {item.name}</h5>
           </div>
           <div className="modal-body">
-            <div ng-show="loading" style={{ textAlign: "center" }}>
+            {/* <div ng-show="loading" style={{ textAlign: "center" }}>
               <img src="ajax-loader.gif" width="32" height="32" />
-            </div>
+            </div> */}
             <div id="files">
               <table className="table">
                 <tbody>
                   {files &&
                     files.map((file) => (
-                      <tr>
+                      <tr key={`file #${file.alternateLink}`}>
                         <td style={{ width: "100px" }}>
                           <input
                             type="checkbox"
                             // ng-model="file.selected"
-                            onChange={addFile(file, $parent.getRowIndex(name))}
+                            onChange={() =>
+                              addFile(file, $parent.getRowIndex(name))
+                            }
                           />
                         </td>
                         <td className="file">
@@ -261,7 +264,7 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
             <button
               type="button"
               className="btn-primary"
-              data-dismiss="modal"
+              onClick={() => addFilesModal.close()}
               aria-label="Close"
             >
               Close

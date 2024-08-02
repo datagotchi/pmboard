@@ -20,7 +20,7 @@
 /**
  * @typedef GoogleFile
  * @property {string} title,
- * @property {string} alternateLin
+ * @property {string} alternateLink
  * @property {string} iconLink
  */
 
