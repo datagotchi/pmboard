@@ -1,20 +1,22 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import useOAuthAPI from "../hooks/useOAuthAPI";
 
-import { EvidenceFile, Persona, WidgetDataItem, GoogleFile } from "../types";
+import { EvidenceFile, WidgetDataItem, GoogleFile } from "../types";
 
 /**
  * @param {object} props
  * @param {WidgetDataItem} props.item The item to show in the modal.
  * @param {string} props.dialogId The ID to give the dialog.
- * @param {(personaIndex: number) => void} props.deleteFunc The function to call when a new item is deleted.
- * @param {(persona: Persona) => void} props.updateFunc The function to call when a new item is updated.
+ * @param {(itemIndex: number) => void} props.deleteFunc The function to call when a new item is deleted.
+ * @param {(item: WidgetDataItem, index: number) => void} props.updateFunc The function to call when a new item is updated.
  * @returns {JSX.Element} The rendered modal.
  * @example
- *  <Modal item={*} dialogId="*" />
+ *  <Modal item={*} dialogId="*" deleteFunc={*} updateFunc={*} />
  */
 const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
+  const ADD_FILES_DIALOG_ID = `addFilesModal: ${dialogId}`;
+
   /**
    * @type {[HTMLDialogElement | undefined, React.Disptch<HTMLDialogElement | undefined>]}
    */
@@ -26,8 +28,7 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
 
   useEffect(() => {
     setMainDialog(document.getElementById(dialogId));
-    // FIXME: make sure I don't want to use the state variable being undefined as state
-    setAddFilesModal(document.getElementById("addFilesModal"));
+    setAddFilesModal(document.getElementById(ADD_FILES_DIALOG_ID));
   }, []);
 
   const { getGoogleDriveFiles } = useOAuthAPI();
@@ -48,20 +49,22 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
                 .indexOf(file.alternateLink) === -1
           );
           setFiles([...files]);
+          setFilteredFiles([...files]);
         })
         .catch((err) => {
-          console.error(err);
-          // sessionStorage.removeItem("access_token");
-          // window.location.reload();
+          sessionStorage.removeItem("access_token");
+          window.location.reload();
         });
     }
   }, [accessToken]);
 
-  /**
-   * @param {Persona} persona
-   */
-  const openFilesModal = (persona) => {
+  const openFilesModal = () => {
     if (addFilesModal) {
+      addFilesModal.addEventListener("click", (event) => {
+        if (event.target === event.currentTarget) {
+          addFilesModal.close();
+        }
+      });
       addFilesModal.showModal();
     }
   };
@@ -70,10 +73,52 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
    * @type {[GoogleFile[] | undefined, React.Dispatch<GoogleFile[] | undefined>]}
    */
   const [files, setFiles] = useState();
+  const [filteredFiles, setFilteredFiles] = useState();
+
+  const addFile = useCallback(
+    /**
+     *
+     * @param {GoogleFile} file
+     * @param {React.ChangeEvent<HTMLInputElement>} event
+     * @returns
+     */
+    async (file, event) => {
+      const checkbox = event.target;
+      if (checkbox.checked) {
+        var newFile = {
+          name: file.title,
+          url: file.alternateLink,
+          icon: file.iconLink,
+        };
+        item.evidence.push(newFile);
+        updateFunc(item);
+
+        const newFiles = files.filter(
+          (f) => f.alternateLink !== file.alternateLink
+        );
+        setFiles(newFiles);
+        document.getElementById("fileFilter").value = "";
+        setFilteredFiles(newFiles);
+        addFilesModal.close();
+      }
+    },
+    [files]
+  );
+
+  const removeFile = (file) => {
+    item.evidence = item.evidence.filter(
+      (file2) => file2.alternateLink !== file.alternateLink
+    );
+    updateFunc(item);
+    const newFiles = [...files, file];
+    setFiles(newFiles);
+    setFilteredFiles(newFiles);
+    document.getElementById("fileFilter").value = "";
+  };
 
   return (
     <>
-      <dialog id={dialogId}>
+      <dialog id={dialogId} style={{ width: "600px", height: "900px" }}>
         <div>
           <div>
             <div>
@@ -97,7 +142,7 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
                   <ul className="nav nav-tabs" role="tablist">
                     <li role="presentation">
                       <a
-                        href="#personaSummary"
+                        href="#modalSummary"
                         aria-controls="summary"
                         role="tab"
                         data-toggle="tab"
@@ -107,7 +152,7 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
                     </li>
                     <li role="presentation" className="active">
                       <a
-                        href="#personaEvidence"
+                        href="#modalEvidence"
                         aria-controls="evidence"
                         role="tab"
                         data-toggle="tab"
@@ -117,11 +162,7 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
                     </li>
                   </ul>
                   <div className="tab-content">
-                    <div
-                      role="tabpanel"
-                      className="tab-pane"
-                      id="personaSummary"
-                    >
+                    <div role="tabpanel" className="tab-pane" id="modalSummary">
                       {item.evidence.length === 0 && (
                         <span>
                           There is no evidence. Start by adding a file!
@@ -138,7 +179,7 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
                     <div
                       role="tabpanel"
                       className="tab-pane active"
-                      id="personaEvidence"
+                      id="modalEvidence"
                     >
                       <h2>
                         <a
@@ -150,13 +191,13 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
                       </h2>
                       <table className="table">
                         <tbody>
-                          {item.evidence.map((file, index) => (
-                            <tr>
+                          {item.evidence.map((file) => (
+                            <tr key={`Item evidence: ${file.alternateLink} `}>
                               <td>
                                 <span
                                   className="remove-evidence glyphicon glyphicon-remove"
                                   style={{ cursor: "pointer" }}
-                                  onClick={removeFile(persona, index)}
+                                  onClick={() => removeFile(file)}
                                 ></span>
                               </td>
                               <td>
@@ -224,7 +265,10 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
           </div>
         </div>
       </dialog>
-      <dialog id="addFilesModal">
+      <dialog
+        id={ADD_FILES_DIALOG_ID}
+        style={{ width: "400px", height: "600px" }}
+      >
         <div className="modal-content">
           <div className="modal-header">
             <h5>Add File to Evidence for {item.name}</h5>
@@ -233,19 +277,32 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
             {/* <div ng-show="loading" style={{ textAlign: "center" }}>
               <img src="ajax-loader.gif" width="32" height="32" />
             </div> */}
+            <input
+              type="text"
+              id="fileFilter"
+              placeholder="Search files..."
+              style={{ width: "100%" }}
+              onChange={(event) => {
+                setFilteredFiles(
+                  files.filter((file) =>
+                    file.title
+                      .toLocaleLowerCase()
+                      .includes(event.target.value.toLocaleLowerCase())
+                  )
+                );
+              }}
+            />
             <div id="files">
               <table className="table">
                 <tbody>
-                  {files &&
-                    files.map((file) => (
+                  {filteredFiles &&
+                    filteredFiles.map((file) => (
                       <tr key={`file #${file.alternateLink}`}>
                         <td style={{ width: "100px" }}>
                           <input
                             type="checkbox"
                             // ng-model="file.selected"
-                            onChange={() =>
-                              addFile(file, $parent.getRowIndex(name))
-                            }
+                            onChange={(event) => addFile(file, event)}
                           />
                         </td>
                         <td className="file">

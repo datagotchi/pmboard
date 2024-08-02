@@ -42,6 +42,8 @@ const Widget = ({
    */
   const [currentItem, setCurrentItem] = useState();
 
+  const [currentItemIndex, setCurrentItemIndex] = useState();
+
   /**
    * @type {[HTMLDialogElement | undefined, React.Dispatch<HTMLDialogElement | undefined>]}
    */
@@ -59,15 +61,15 @@ const Widget = ({
     /**
      * @type HTMLDialogElement
      */
-    const dialog = document.getElementById("newItemDialog");
-    setCreateDialog(dialog);
+    const createDialog = document.getElementById("createDialog");
+    setCreateDialog(createDialog);
     // TODO: only add once
-    dialog.addEventListener("click", (event) => {
+    createDialog.addEventListener("click", (event) => {
       if (event.target === event.currentTarget) {
-        dialog.close();
+        createDialog.close();
       }
     });
-    dialog.showModal();
+    createDialog.showModal();
   };
 
   const getEvidenceLabelClass = (item) => {
@@ -93,6 +95,7 @@ const Widget = ({
         itemModal.addEventListener("close", () => {
           setItemModal(undefined);
           setCurrentItem(undefined);
+          setCurrentItemIndex(undefined);
         });
         itemModal.showModal();
       } else {
@@ -128,6 +131,7 @@ const Widget = ({
                       style={{ cursor: "pointer" }}
                       onClick={() => {
                         setCurrentItem(item);
+                        setCurrentItemIndex(index);
                       }}
                     >
                       {item.name}
@@ -169,7 +173,7 @@ const Widget = ({
             Add another
           </button>
         </div>
-        <dialog id="newItemDialog">
+        <dialog id="createDialog">
           <p>
             New name: <input type="text" id="newName" />
           </p>
@@ -201,7 +205,7 @@ const Widget = ({
             setLiveData([...liveData]);
             deleteFunc(itemIndex);
           }}
-          updateFunc={updateFunc}
+          updateFunc={(item) => updateFunc(item, currentItemIndex)}
         />
       )}
     </>

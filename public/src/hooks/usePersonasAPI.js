@@ -25,8 +25,8 @@ const usePersonasAPI = (productId) => {
     });
   };
 
-  const updatePersona = (persona) => {
-    fetch(`/products/${productId}/personas/${persona.id}`, {
+  const updatePersona = (persona, index) => {
+    fetch(`/products/${productId}/personas/${index}`, {
       method: "PUT",
       // TODO: credentials/headers
       body: persona,
@@ -49,6 +49,7 @@ const usePersonasAPI = (productId) => {
     addPersona,
     updatePersona,
     deletePersona,
+    // addEvidenceToPersona,
   };
 };
 

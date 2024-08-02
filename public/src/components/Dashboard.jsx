@@ -64,7 +64,7 @@ const Dashboard = () => {
     }
   }, [currentProductId, products]);
 
-  const { getProducts, createProduct } = useProductAPI();
+  const { getProducts, createProduct, deleteProduct } = useProductAPI();
 
   const handleSetCurrentProduct = (productId) => {
     const product = products.find((product) => product._id === productId);
@@ -136,7 +136,7 @@ const Dashboard = () => {
             <p className="navbar-text">
               <a
                 style={{ cursor: "pointer" }}
-                ng-click="deleteProduct(currentProduct._id)"
+                onClick={() => deleteProduct(currentProduct._id)}
               >
                 <span className="remove-evidence glyphicon glyphicon-remove" />{" "}
                 Delete Product

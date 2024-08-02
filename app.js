@@ -2,7 +2,7 @@ var express = require("express");
 var session = require("express-session");
 var bodyParser = require("body-parser");
 // var cookieParser = require("cookie-parser");
-var csurf = require("csurf");
+// var csurf = require("csurf");
 //var cors = require('cors');
 var mongoose = require("mongoose");
 
@@ -33,12 +33,12 @@ app.use(
     saveUninitialized: false,
   })
 );
-app.use(csurf());
-app.use(function (req, res, next) {
-  res.cookie("XSRF-TOKEN", req.csrfToken());
-  res.locals.csrftoken = req.csrfToken();
-  next();
-});
+// app.use(csurf());
+// app.use(function (req, res, next) {
+//   res.cookie("XSRF-TOKEN", req.csrfToken());
+//   res.locals.csrftoken = req.csrfToken();
+//   next();
+// });
 
 app.use("/auth", auth_route);
 app.use("/oauth", oauth_route);
@@ -58,6 +58,7 @@ app.use(function (req, res, next) {
 // will print stacktrace
 // if (app.get('env') === 'development') {
 app.use(function (err, req, res, next) {
+  // console.log("*** caught error from req: ", req);
   return res.status(err.status || 500).json({
     message: err.message,
     error: err,

@@ -14,8 +14,6 @@ function checkUserAccess(req, req_level) {
 }
 */
 
-// ***** user personas *****
-
 // get user personas
 router.get("/", (req, res, next) => {
   /*
@@ -41,7 +39,6 @@ router.post("/", async (req, res, next) => {
   return res.json(prod.personas[prod.personas.length - 1]);
 });
 
-// persona index
 router.param("persona_ix", function (req, res, next) {
   // TODO: assert ix is a normal int
   var ix = req.params.persona_ix;
@@ -55,8 +52,7 @@ router.param("persona_ix", function (req, res, next) {
   return next(err);
 });
 
-// change user persona
-router.put("/:persona_ix", function (req, res, next) {
+router.put("/:persona_ix", async (req, res, next) => {
   /*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
@@ -65,20 +61,13 @@ router.put("/:persona_ix", function (req, res, next) {
   var prod = req.product;
   var ix = req.personaIx;
 
+  console.log(`*** storing prod.personas[${ix}] = ${req.body.value}`);
+
   prod.personas[ix].name = req.body.value;
 
-  return prod.save(function (err) {
-    if (err) {
-      // TODO: convert to next(err)?
-      return res.json({
-        success: false,
-        error: err,
-      });
-    } else {
-      return res.json({
-        success: true,
-      });
-    }
+  await prod.save();
+  return res.json({
+    success: true,
   });
 });
 

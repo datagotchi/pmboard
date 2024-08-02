@@ -2,8 +2,11 @@ const useProductAPI = () => {
   /**
    * @returns {Promise<Product[]>} all products from the server
    */
-  const getProducts = async () =>
+  const getProducts = () =>
     fetch("/products").then((response) => response.json());
+
+  const deleteProduct = (productId) =>
+    fetch(`/products/${productId}`, { method: "DELETE" });
 
   /**
    */
@@ -12,6 +15,7 @@ const useProductAPI = () => {
   return {
     getProducts,
     createProduct,
+    deleteProduct,
   };
 };
 
