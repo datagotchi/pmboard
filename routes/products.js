@@ -1,116 +1,111 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
-var oauth = require('oauthio');
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 var ObjectId = mongoose.Types.ObjectId;
 
-var Product;
-router.use(function(req, res, next) {
-  Product = req.app.get('Product');
+let Product;
+router.use(function (req, res, next) {
+  Product = req.app.get("Product");
   next();
 });
 
 // get products
 // disabled, INSECURE
-/*router.get('/', function(req, res, next) {
-	Product.find(function(err, products) {
-  	if (!err) {
-      return res.json(products);
-    } else {
-      return next(err);
-    }
-  });
-});*/
-
-// add product
-router.post('/', function(req, res, next) {
-  var newprod = new Product({
-    name: 'NewProduct',
-    personas: [],
-    stories: [],
-    permissions: {}
-  });
-  var userid = req.cookies.userid;
-  newprod.permissions.push({
-    _id: userid,
-    value:10
-  });
-  return newprod.save(function(err) {
-    if (err) { // TODO: convert to next(err)?
-      return res.json({
-        error: err
-      });
-    } else {
-      return res.json(newprod);
-    }
-  });
+router.get("/", async (req, res, next) => {
+  const products = await Product.find();
+  return res.json(products);
 });
 
-router.param('product_id', function(req, res, next, product_id) {
+// add product
+router.post("/", async (req, res, next) => {
+  const { name } = req.body;
+  var newprod = new Product({
+    name,
+    personas: [],
+    stories: [],
+    permissions: {},
+  });
+  await Product.create(newprod);
+  // var userid = req.cookies.userid;
+  // console.log("*** userid: ", userid);
+  // newprod.permissions.push({
+  //   _id: userid,
+  //   value: 10,
+  // });
+
+  return res.json(newprod);
+});
+
+router.param("product_id", async (req, res, next, product_id) => {
   // TODO: assert product_id is an integer
-  
+
   //oauth.auth('google', req.session)
   //.then(function (request_object) {
-      Product.findById(product_id, function(err, product) {
-//         var userid = JSON.parse(req.cookies.userid);
-        if (!err) {
-          req.product = product;
-          // create loookup table for permissions (can't store it directly in the db, annoyingly)
-          var permLookup = {};
-          for (var i = 0; i < product.permissions.length; i++) {
-            permLookup[product.permissions[i]._id] = product.permissions[i].value;
-          }
-          req.product.permLookup = permLookup;
-/*
+  const product = await Product.findById(product_id);
+  req.product = product;
+  // create loookup table for permissions (can't store it directly in the db, annoyingly)
+  // var permLookup = {};
+  // for (var i = 0; i < product.permissions.length; i++) {
+  //   permLookup[product.permissions[i]._id] = product.permissions[i].value;
+  // }
+  // req.product.permLookup = permLookup;
+  /*
           if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 1) {
             var err = new Error("Unauthorized");
             err.status = 401;
             return next(err);
           }
-*/
-          return next();
-        } else {
-          return next(err);
-        }
-      });
+      */
+  return next();
   //});
 });
 
 // change product details
 // - name
-router.put('/:product_id', function(req, res, next) {
-  var prod = req.product;
-//   var userid = JSON.parse(req.cookies.userid);
-/*
-  if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
-    var err = new Error("Unauthorized");
-    err.status = 401;
-    return next(err);
-  }
-*/
-  if (req.body.name) {
-    prod.name = req.body.name;
-  }
-  return prod.save(function(err) {
-    if (err) {
-      next(err);
-    } else {
-      // TODO: change products in the users db ~ db.users.find({"products.id": "550cb3c96c2de13ab1cdd5fa"}) etc...
-      return res.json(prod);
-    }
-  });
+// router.put("/:product_id", function (req, res, next) {
+//   var prod = req.product;
+//   //   var userid = JSON.parse(req.cookies.userid);
+//   /*
+//   if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
+//     var err = new Error("Unauthorized");
+//     err.status = 401;
+//     return next(err);
+//   }
+// */
+//   if (req.body.name) {
+//     prod.name = req.body.name;
+//   }
+//   return prod.save(function (err) { // mongoose now uses promises, not callbacks
+//     if (err) {
+//       next(err);
+//     } else {
+//       // TODO: change products in the users db ~ db.users.find({"products.id": "550cb3c96c2de13ab1cdd5fa"}) etc...
+//       return res.json(prod);
+//     }
+//   });
+// });
+
+router.put("/:product_id/:collection_name", async (req, res, next) => {
+  const product = req.product;
+  const collectionName = req.params.collection_name;
+  const { body: newCollection } = req;
+
+  product[collectionName] = newCollection;
+  await product.save();
+
+  return res.json(newCollection);
 });
 
 // get product
-router.get('/:product_id', function(req, res, next) {
+router.get("/:product_id", function (req, res, next) {
   //var userid = JSON.parse(req.cookies.userid);
   // ...
   return res.json(req.product);
 });
 
 // delete product
-router.delete('/:product_id', function(req, res, next) {
-//   var userid = JSON.parse(req.cookies.userid);
+router.delete("/:product_id", async (req, res, next) => {
+  //   var userid = JSON.parse(req.cookies.userid);
   /*
   if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 3) {
     var err = new Error("Unauthorized");
@@ -120,26 +115,20 @@ router.delete('/:product_id', function(req, res, next) {
 */
   var prodId = req.product._id;
   var prodUsers = Object.keys(req.product.permLookup);
-  req.product.remove(function() {
-    req.app.get('User').find({_id: {$in: prodUsers}}, function(err, users) {
-      if (!err && users) {
-        for (var j = 0; j < users.length; j++) {
-          var user = removeUserProduct(users[j], prodId);
-          user.save(function(err) {
-            if (err) {
-              return next(err);
-            } 
-          });
-        }
-        return res.json({
-          success: true
-        });
-      } else if (err) {
-        return next(err);
-      } else {
-        return next("Oops! Something went wrong!");
-      }
-    });
+  await req.product.deleteOne();
+
+  // const users = await req.app.get("User").find({ _id: { $in: prodUsers } });
+  // for (var j = 0; j < users.length; j++) {
+  //   var user = removeUserProduct(users[j], prodId);
+  //   user.save(function (err) {
+  //     if (err) {
+  //       return next(err);
+  //     }
+  //   });
+  // }
+
+  return res.json({
+    success: true,
   });
 });
 
@@ -157,8 +146,8 @@ function removeUserProduct(user, prodId) {
   return user;
 }
 
-router.use('/:product_id/personas', require('./personas'));
+router.use("/:product_id/personas", require("./personas"));
 
-router.use('/:product_id/stories', require('./stories'));
+router.use("/:product_id/stories", require("./stories"));
 
 module.exports = router;

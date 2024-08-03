@@ -1,10 +1,7 @@
 var express = require("express");
 var router = express.Router();
-var oauth = require("oauthio");
 var mongoose = require("mongoose");
 var ObjectId = mongoose.Types.ObjectId;
-
-// TODO: fix cookie-based auth at some point, but use these (VERY INSECURE) routes for now
 
 var User;
 router.use(function (req, res, next) {
@@ -12,9 +9,9 @@ router.use(function (req, res, next) {
   next();
 });
 
-// TODO: get list of users (e.g., for typeahead.js suggestions to share your project)
+// TODO: get list of users (e.g., for typeahead suggestions to share your project)
+// for <datalist> on the frontend
 
-// get user document via email
 router.get("/:user_id", function (req, res, next) {
   if (!req.params.user_id) {
     var err = new Error("Invalid request; please specify user ID");
@@ -33,10 +30,8 @@ router.get("/:user_id", function (req, res, next) {
   }
 */
 
-  // User.find({})
   User.findById(paramUserId)
-    // User.findOne(ObjectId(paramUserId))
-    // .populate("products", "name")
+    .populate("products", "name")
     .then(function (user) {
       if (!user) {
         var err = new Error("No such user");
@@ -46,7 +41,6 @@ router.get("/:user_id", function (req, res, next) {
       return res.json(user);
     })
     .catch(function (err) {
-      console.log("*** err: ", err);
       if (err) {
         return next(err);
       }
@@ -66,32 +60,32 @@ router.put("/:user_id", function (req, res, next) {
     err.status = 401;
     return next(err);
   }
-*/
+  */
 
-  User.findOne({ _id: ObjectId(userid) }, function (err, user) {
-    if (err) {
-      return next(err);
-    }
-
-    if ("currentProduct" in req.body) {
-      user.currentProduct = req.body.currentProduct;
-    }
-
-    if (req.body.product_id) {
-      // TODO: hacky; put in users.products.post below
-      user.products.push(req.body.product_id);
-    }
-
-    return user.save(function (err) {
-      // TODO: turn into its own route so I can use next(...) to save a document?
-      if (err) {
-        // TODO: convert to next(err)?
-        return next(err);
-      } else {
-        return res.json(user);
+  User.findById(userid)
+    .then((user) => {
+      if ("currentProduct" in req.body) {
+        user.currentProduct = req.body.currentProduct;
       }
+
+      if (req.body.product_id) {
+        // TODO: hacky; put in users.products.post below
+        user.products.push(req.body.product_id);
+      }
+
+      return user.save(function (err) {
+        // TODO: turn into its own route so I can use next(...) to save a document?
+        if (err) {
+          // TODO: convert to next(err)?
+          return next(err);
+        } else {
+          return res.json(user);
+        }
+      });
+    })
+    .catch((err) => {
+      return next(err);
     });
-  });
 });
 
 // change a record of an accessible product
