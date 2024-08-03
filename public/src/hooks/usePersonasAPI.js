@@ -28,8 +28,11 @@ const usePersonasAPI = (productId) => {
   const updatePersona = (persona, index) => {
     fetch(`/products/${productId}/personas/${index}`, {
       method: "PUT",
-      // TODO: credentials/headers
-      body: persona,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(persona),
     });
   };
 

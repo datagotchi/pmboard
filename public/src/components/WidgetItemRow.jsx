@@ -5,9 +5,10 @@ import { WidgetDataItem } from "../types";
 /**
  * @param {Object} props
  * @param {WidgetDataItem | undefined} props.item The item to show in this row
- * @param {(item: WidgetDataItem) => void} props.deleteFunc The function to call when deleting this item
+ * @param {(item: WidgetDataItem) => void} props.onDeleteCallback The function to call when deleting this item
+ * @param {(item: WidgetDataItem) => void} props.onClickCallback The function to call when the name is clicked
  */
-const WidgetItemRow = ({ item, deleteFunc }) => {
+const WidgetItemRow = ({ item, onDeleteCallback, onClickCallback }) => {
   const getEvidenceLabelClass = (item) => {
     switch (item.evidence.length) {
       case item.evidence.length > 0 && item.evidence.length < 10:
@@ -34,8 +35,7 @@ const WidgetItemRow = ({ item, deleteFunc }) => {
         <a
           style={{ cursor: "pointer" }}
           onClick={() => {
-            setCurrentItem(item);
-            setCurrentItemIndex(index);
+            onClickCallback(item);
           }}
         >
           {item.name}
@@ -51,7 +51,7 @@ const WidgetItemRow = ({ item, deleteFunc }) => {
           style={{ cursor: "pointer" }}
           onClick={() => {
             if (confirm("Are you sure?")) {
-              deleteFunc(item);
+              onDeleteCallback(item);
             }
           }}
         >

@@ -61,9 +61,7 @@ router.put("/:persona_ix", async (req, res, next) => {
   var prod = req.product;
   var ix = req.personaIx;
 
-  console.log(`*** storing prod.personas[${ix}] = ${req.body.value}`);
-
-  prod.personas[ix].name = req.body.value;
+  prod.personas[ix] = req.body;
 
   await prod.save();
   return res.json({

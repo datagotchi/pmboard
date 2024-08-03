@@ -170,6 +170,15 @@ const Widget = ({
     [liveData]
   );
 
+  const widgetOnClickCallback = useCallback(
+    (item) => {
+      setCurrentItem(item);
+      const index = liveData.indexOf(item);
+      setCurrentItemIndex(index);
+    },
+    [liveData]
+  );
+
   return (
     <>
       <div
@@ -206,7 +215,8 @@ const Widget = ({
                   <WidgetItemRow
                     item={item}
                     key={`WidgetItemRow #${index}`}
-                    deleteFunc={deleteItemCallback}
+                    onDeleteCallback={deleteItemCallback}
+                    onClickCallback={widgetOnClickCallback}
                   />
                 ))}
             </tbody>
