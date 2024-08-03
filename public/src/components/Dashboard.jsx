@@ -71,6 +71,7 @@ const Dashboard = () => {
     if (product) {
       sessionStorage.setItem(CURRENT_PRODUCT_ID_SESSION_KEY, productId);
       setCurrentProduct(product);
+      setCurrentProductId(product._id);
     }
   };
 
@@ -110,7 +111,7 @@ const Dashboard = () => {
                 <ul className="dropdown-menu" role="menu">
                   {products &&
                     products.map((product) => (
-                      <li key={`Product #${product.id}`}>
+                      <li key={`Product #${product._id}`}>
                         <a onClick={() => handleSetCurrentProduct(product._id)}>
                           {product.name}
                         </a>

@@ -8,20 +8,31 @@ const useProductAPI = () => {
   const deleteProduct = (productId) =>
     fetch(`/products/${productId}`, { method: "DELETE" });
 
-  const createProduct = (bodyJson) =>
+  const createProduct = (bodyObject) =>
     fetch("/products", {
       method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(bodyJson),
+      body: JSON.stringify(bodyObject),
     }).then((response) => response.json());
+
+  const updateProductCollection = (productId, collectionName, bodyObject) =>
+    fetch(`/products/${productId}/${collectionName}`, {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(bodyObject),
+    });
 
   return {
     getProducts,
     createProduct,
     deleteProduct,
+    updateProductCollection,
   };
 };
 

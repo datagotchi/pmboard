@@ -44,11 +44,11 @@ router.param("product_id", async (req, res, next, product_id) => {
   const product = await Product.findById(product_id);
   req.product = product;
   // create loookup table for permissions (can't store it directly in the db, annoyingly)
-  var permLookup = {};
-  for (var i = 0; i < product.permissions.length; i++) {
-    permLookup[product.permissions[i]._id] = product.permissions[i].value;
-  }
-  req.product.permLookup = permLookup;
+  // var permLookup = {};
+  // for (var i = 0; i < product.permissions.length; i++) {
+  //   permLookup[product.permissions[i]._id] = product.permissions[i].value;
+  // }
+  // req.product.permLookup = permLookup;
   /*
           if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 1) {
             var err = new Error("Unauthorized");
@@ -62,27 +62,38 @@ router.param("product_id", async (req, res, next, product_id) => {
 
 // change product details
 // - name
-router.put("/:product_id", function (req, res, next) {
-  var prod = req.product;
-  //   var userid = JSON.parse(req.cookies.userid);
-  /*
-  if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
-    var err = new Error("Unauthorized");
-    err.status = 401;
-    return next(err);
-  }
-*/
-  if (req.body.name) {
-    prod.name = req.body.name;
-  }
-  return prod.save(function (err) {
-    if (err) {
-      next(err);
-    } else {
-      // TODO: change products in the users db ~ db.users.find({"products.id": "550cb3c96c2de13ab1cdd5fa"}) etc...
-      return res.json(prod);
-    }
-  });
+// router.put("/:product_id", function (req, res, next) {
+//   var prod = req.product;
+//   //   var userid = JSON.parse(req.cookies.userid);
+//   /*
+//   if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < 2) {
+//     var err = new Error("Unauthorized");
+//     err.status = 401;
+//     return next(err);
+//   }
+// */
+//   if (req.body.name) {
+//     prod.name = req.body.name;
+//   }
+//   return prod.save(function (err) { // mongoose now uses promises, not callbacks
+//     if (err) {
+//       next(err);
+//     } else {
+//       // TODO: change products in the users db ~ db.users.find({"products.id": "550cb3c96c2de13ab1cdd5fa"}) etc...
+//       return res.json(prod);
+//     }
+//   });
+// });
+
+router.put("/:product_id/:collection_name", async (req, res, next) => {
+  const product = req.product;
+  const collectionName = req.params.collection_name;
+  const { body: newCollection } = req;
+
+  product[collectionName] = newCollection;
+  await product.save();
+
+  return res.json(newCollection);
 });
 
 // get product

@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Sortable, Plugins } from "@shopify/draggable";
+
 import { WidgetDataItem } from "../types";
 import Modal from "./Modal";
+import WidgetItemRow from "./WidgetItemRow";
 
 /**
  * The HTML component for all PMBoard widgets to document and visualize information
@@ -9,22 +12,24 @@ import Modal from "./Modal";
  * @param {WidgetDataItem[] | undefined} props.data The data to show in the widget.
  * @param {string} props.type The type of the data rows.
  * @param {string} props.title The title to show at the top of the widget.
- * @param {(persona: Persona) => void} props.addFunc The function to call when a new item is added.
- * @param {(persona: Persona) => void} props.updateFunc The function to call when an item is updated.
- * @param {(personaIndex: number) => void} props.deleteFunc The function to call when a new item is deleted.
+ * @param {(item: WidgetDataItem) => void} props.addItemFunc The function to call when a new item is added.
+ * @param {(item: WidgetDataItem) => void} props.updateItemFunc The function to call when an item is updated.
+ * @param {(itemIndex: number) => void} props.deleteItemFunc The function to call when a new item is deleted.
  * @param {string} props.itemModalId The ID of the item modal passed in `children`.
+ * @param {(object) => void} props.updateCollectionFunc The function to call when the order of items is changed.
  * @returns {JSX.Element} The rendered widget.
  * @example
- * <Widget data={*} type={*} title="*" addFunc={*} deleteFunc={*} itemModalId="*" />
+ * <Widget data={*} type={*} title="*" addItemFunc={*} deleteItemFunc={*} itemModalId="*" />
  */
 const Widget = ({
   data,
   type,
   title,
-  addFunc,
-  updateFunc,
-  deleteFunc,
+  addItemFunc,
+  updateItemFunc,
+  deleteItemFunc,
   itemModalId,
+  updateCollectionFunc,
 }) => {
   /**
    * @type {[WidgetDataItem[] | undefined, React.Dispatch<any[]>]}
@@ -32,7 +37,7 @@ const Widget = ({
   const [liveData, setLiveData] = useState();
 
   useEffect(() => {
-    if (data && !liveData) {
+    if (data) {
       setLiveData(data);
     }
   }, [data]);
@@ -72,17 +77,6 @@ const Widget = ({
     createDialog.showModal();
   };
 
-  const getEvidenceLabelClass = (item) => {
-    switch (item.evidence.length) {
-      case item.evidence.length > 0 && item.evidence.length < 10:
-        return "label-warning";
-      case item.evidence.length >= 10:
-        return "label-success";
-      default:
-        return "label-danger";
-    }
-  };
-
   useEffect(() => {
     if (currentItem) {
       if (itemModal) {
@@ -108,9 +102,91 @@ const Widget = ({
     }
   }, [currentItem, itemModal]);
 
+  const draggableContainer = document.getElementById("itemsTbody");
+  const draggable = useMemo(() => {
+    if (draggableContainer) {
+      return new Sortable(draggableContainer, {
+        draggable: "tr",
+        collidables: "tr",
+        distance: 0,
+        handle: ".dragHandle",
+        plugins: [Plugins.SortAnimation],
+        swapAnimation: {
+          duration: 200,
+          easingFunction: "ease-in-out",
+        },
+        mirror: {
+          constrainDimensions: true,
+        },
+      });
+    }
+  }, [draggableContainer]);
+
+  let currentDragIndex = -1;
+  const hr = document.getElementsByTagName("hr")[0];
+  let [draggableListenersAdded, setDraggableListenersAdded] = useState(false);
+  useEffect(() => {
+    if (draggable && liveData) {
+      draggable.on("drag:start", (event) => {
+        const trElements = Array.from(draggableContainer.childNodes);
+        currentDragIndex = trElements.indexOf(event.source);
+      });
+      draggable.on("drag:move", (event) => {
+        hr.style.display = "block";
+        hr.style.top = `${event.sensorEvent.clientY - 100}px`;
+      });
+      draggable.on("drag:stop", (event) => {
+        const trElements = Array.from(draggableContainer.childNodes);
+        const newIndex = trElements.indexOf(event.source);
+        if (newIndex !== currentDragIndex) {
+          const newData = [...liveData];
+          [newData[newIndex], newData[currentDragIndex]] = [
+            newData[currentDragIndex],
+            newData[newIndex],
+          ];
+          updateCollectionFunc([...newData]).then(() => {
+            // TODO: refreshing the page works, but I'd prefer not to
+            // setLiveData(newData); // resets the live data, but renders it the old way (!)
+            window.location.reload();
+          });
+        }
+
+        // done: cleanup
+        hr.style.display = "none";
+        currentDragIndex = -1;
+      });
+      setDraggableListenersAdded(true);
+    }
+  }, [draggable, liveData]);
+
+  // TODO: (above TODO) vs: this uses old `liveData` after drag reordering
+  const deleteItemCallback = useCallback(
+    (item) => {
+      const itemIndex = liveData.indexOf(item);
+      liveData.splice(itemIndex, 1);
+      setLiveData([...liveData]);
+      deleteItemFunc(itemIndex);
+    },
+    [liveData]
+  );
+
   return (
     <>
-      <div className="panel panel-default widget">
+      <div
+        className="panel panel-default widget"
+        style={{ position: "relative" }}
+      >
+        <hr
+          style={{
+            display: "none",
+            position: "relative",
+            left: "35px",
+            border: "2px solid black",
+            zIndex: 1000,
+            width: "1000px",
+            margin: 0,
+          }}
+        />
         <div className="panel-heading">
           <h3 className="panel-title">{title}</h3>
         </div>
@@ -118,51 +194,21 @@ const Widget = ({
           <table className="table">
             <thead>
               <tr>
+                <th style={{ width: "20px" }}></th>
                 <th>{type}</th>
                 <th>Evidence</th>
                 <th>Delete</th>
               </tr>
             </thead>
-            <tbody>
-              {liveData?.map((item, index) => (
-                <tr key={`Item #${index}`}>
-                  <td>
-                    <a
-                      style={{ cursor: "pointer" }}
-                      onClick={() => {
-                        setCurrentItem(item);
-                        setCurrentItemIndex(index);
-                      }}
-                    >
-                      {item.name}
-                    </a>
-                  </td>
-                  <td>
-                    <span
-                      className={`evidence label ${getEvidenceLabelClass(
-                        item
-                      )}`}
-                    >
-                      {item.evidence.length}
-                    </span>
-                  </td>
-                  <td>
-                    <a
-                      style={{ cursor: "pointer" }}
-                      onClick={() => {
-                        if (confirm("Are you sure?")) {
-                          deleteFunc(index);
-                          liveData.splice(index, 1);
-                          setLiveData([...liveData]);
-                        }
-                      }}
-                    >
-                      <span className="remove-evidence glyphicon glyphicon-remove" />{" "}
-                      Delete
-                    </a>
-                  </td>
-                </tr>
-              ))}
+            <tbody id="itemsTbody">
+              {liveData &&
+                liveData.map((item, index) => (
+                  <WidgetItemRow
+                    item={item}
+                    key={`WidgetItemRow #${index}`}
+                    deleteFunc={deleteItemCallback}
+                  />
+                ))}
             </tbody>
           </table>
         </div>
@@ -172,42 +218,40 @@ const Widget = ({
               className="glyphicon glyphicon-plus"
               aria-hidden="true"
             ></span>{" "}
-            Add another
+            Add
           </button>
         </div>
         <dialog id="createDialog">
-          <p>
-            New name: <input type="text" id="newName" />
-          </p>
-          <p>
-            <button
-              onClick={() => {
-                const newNameField = document.getElementById("newName");
-                const newName = newNameField.value;
-                const newItem = { name: newName, evidence: [] };
-                setLiveData([...liveData, newItem]);
-                addFunc(newItem);
-                createDialog.close();
-                setCreateDialog(undefined);
-                newNameField.value = "";
-              }}
-            >
-              Create
-            </button>
-          </p>
+          <form>
+            <p>
+              New name: <input type="text" id="newName" />
+            </p>
+            <p>
+              <button
+                type="submit"
+                onClick={() => {
+                  const newNameField = document.getElementById("newName");
+                  const newName = newNameField.value;
+                  const newItem = { name: newName, evidence: [] };
+                  setLiveData([...liveData, newItem]);
+                  addItemFunc(newItem);
+                  createDialog.close();
+                  setCreateDialog(undefined);
+                  newNameField.value = "";
+                }}
+              >
+                Create
+              </button>
+            </p>
+          </form>
         </dialog>
       </div>
       {currentItem && (
         <Modal
           dialogId={itemModalId}
           item={currentItem}
-          deleteFunc={(item) => {
-            const itemIndex = liveData.indexOf(item);
-            liveData.splice(itemIndex, 1);
-            setLiveData([...liveData]);
-            deleteFunc(itemIndex);
-          }}
-          updateFunc={(item) => updateFunc(item, currentItemIndex)}
+          deleteFunc={deleteItemCallback}
+          updateFunc={(item) => updateItemFunc(item, currentItemIndex)}
         />
       )}
     </>
