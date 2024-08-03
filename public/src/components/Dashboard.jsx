@@ -137,11 +137,7 @@ const Dashboard = () => {
             </ul>
 
             <p className="navbar-text">
-              Current Product:{" "}
-              {/*   TODO: use react-xeditable           <a editable-text="currentProduct.name"
-              onaftersave="updateProduct(currentProduct)"> */}
-              <strong>{currentProduct?.name}</strong>
-              {/* </a> */}
+              Current Product: <strong>{currentProduct?.name}</strong>
             </p>
             <p className="navbar-text">
               <a
