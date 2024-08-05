@@ -53,9 +53,22 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
 
   const updateAllTags = (trendTags) => {
     const newAllTags = [];
+    const tagCountMap = {};
     Object.keys(trendTags).forEach((fileUrl) => {
-      const fileTags = trendTags[fileUrl];
-      newAllTags.push(...fileTags);
+      const fileTags = JSON.parse(JSON.stringify(trendTags[fileUrl]));
+      fileTags.forEach((tag) => {
+        if (!tagCountMap[tag.text]) {
+          tagCountMap[tag.text] = 0;
+        }
+        tagCountMap[tag.text] += 1;
+      });
+    });
+    Object.keys(tagCountMap).forEach((tagText) => {
+      newAllTags.push({
+        id: tagText,
+        text: `${tagText} (${tagCountMap[tagText]})`,
+        className: "",
+      });
     });
     setAllTags(newAllTags);
   };
@@ -199,8 +212,11 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
       font-weight: 700;
       cursor: pointer !important;
     }
-    .trendItem:hover::before {
-      content: "Test" 
+    .objective {
+      background-color: "red";
+    }
+    .goal {
+      background-color: "orange";
     }
     .readOnly {
       padding: 0 5px;
@@ -318,54 +334,65 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
                                 </a>
                               </td>
                               <td>
-                                <ReactTags
-                                  tags={trendTags[file.url]}
-                                  handleAddition={(tag) => {
-                                    const fileTags = [...trendTags[file.url]];
-                                    fileTags.push(tag);
-                                    setTrendTags({
-                                      ...trendTags,
-                                      [file.url]: fileTags,
-                                    });
-                                  }}
-                                  editable={true}
-                                  onTagUpdate={(index, tag) => {
-                                    const fileTags = [...trendTags[file.url]];
-                                    fileTags[index] = tag;
-                                    setTrendTags({
-                                      ...trendTags,
-                                      [file.url]: fileTags,
-                                    });
-                                  }}
-                                  placeholder="Add a trend"
-                                  classNames={{
-                                    tag: "trendItem",
-                                    remove: "removeButton",
-                                  }}
-                                  allowUnique={true}
-                                  inputFieldPosition="top"
-                                  removeComponent={({
-                                    className,
-                                    onRemove,
-                                  }) => {
-                                    return (
-                                      <button
-                                        onClick={onRemove}
-                                        className={className}
-                                      >
-                                        X
-                                      </button>
-                                    );
-                                  }}
-                                  handleDelete={(index, event) => {
-                                    const thisFileTrends = trendTags[file.url];
-                                    thisFileTrends.splice(index, 1);
-                                    setTrendTags({
-                                      ...trendTags,
-                                      [file.url]: trendTags[file.url],
-                                    });
-                                  }}
-                                />
+                                {allTags && (
+                                  <ReactTags
+                                    tags={trendTags[file.url]}
+                                    separators={[SEPARATORS.ENTER]}
+                                    handleAddition={(tag) => {
+                                      const fileTags = [...trendTags[file.url]];
+                                      fileTags.push(tag);
+                                      setTrendTags({
+                                        ...trendTags,
+                                        [file.url]: fileTags,
+                                      });
+                                    }}
+                                    suggestions={allTags.filter(
+                                      (tag) =>
+                                        !trendTags[file.url]
+                                          .map((t) => t.text)
+                                          .includes(tag.text)
+                                    )}
+                                    // renderSuggestion={(item, query) => {}}
+                                    editable={true}
+                                    onTagUpdate={(index, tag) => {
+                                      const fileTags = [...trendTags[file.url]];
+                                      fileTags[index] = tag;
+                                      setTrendTags({
+                                        ...trendTags,
+                                        [file.url]: fileTags,
+                                      });
+                                    }}
+                                    placeholder="Add a trend"
+                                    classNames={{
+                                      tag: "trendItem",
+                                      remove: "removeButton",
+                                    }}
+                                    allowUnique={true}
+                                    inputFieldPosition="top"
+                                    removeComponent={({
+                                      className,
+                                      onRemove,
+                                    }) => {
+                                      return (
+                                        <button
+                                          onClick={onRemove}
+                                          className={className}
+                                        >
+                                          X
+                                        </button>
+                                      );
+                                    }}
+                                    handleDelete={(index, event) => {
+                                      const thisFileTrends =
+                                        trendTags[file.url];
+                                      thisFileTrends.splice(index, 1);
+                                      setTrendTags({
+                                        ...trendTags,
+                                        [file.url]: trendTags[file.url],
+                                      });
+                                    }}
+                                  />
+                                )}
                               </td>
                             </tr>
                           ))}
