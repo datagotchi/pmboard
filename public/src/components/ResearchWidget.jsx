@@ -15,7 +15,7 @@ import useProductAPI from "../hooks/useProductAPI";
  */
 const ResearchWidget = ({ productId }) => {
   const personas = usePersonas(productId);
-  const { addPersona, updatePersona, deletePersona } =
+  const { addPersona, updatePersona, deletePersona, updateTrend } =
     usePersonasAPI(productId);
   const { updateProductCollection } = useProductAPI();
 
@@ -33,6 +33,7 @@ const ResearchWidget = ({ productId }) => {
       updateCollectionFunc={(collection) =>
         updateProductCollection(productId, "personas", collection)
       }
+      updateTrendFunc={updateTrend}
     />
   );
 };

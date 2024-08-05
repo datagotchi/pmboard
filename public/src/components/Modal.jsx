@@ -2,26 +2,37 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { WithContext as ReactTags, SEPARATORS } from "react-tag-input";
 
 import useOAuthAPI from "../hooks/useOAuthAPI";
-import usePersonasAPI from "../hooks/usePersonasAPI";
-import { EvidenceFile, WidgetDataItem, GoogleFile } from "../types";
+import {
+  EvidenceFile,
+  EvidenceTrend,
+  WidgetDataItem,
+  GoogleFile,
+} from "../types";
 
 /**
  * @param {object} props
  * @param {WidgetDataItem} props.item The item to show in the modal.
  * @param {string} props.dialogId The ID to give the dialog.
- * @param {(itemIndex: number) => void} props.deleteFunc The function to call when a new item is deleted.
- * @param {(item: WidgetDataItem) => void} props.updateFunc The function to call when a new item is updated.
+ * @param {(itemIndex: number) => void} props.deleteItemFunc The function to call when a new item is deleted.
+ * @param {(item: WidgetDataItem) => void} props.updateItemFunc The function to call when a new item is updated.
+ * @param {(trendIndex: number, trend: EvidenceTrend) => Promise<void>} props.updateTrendFunc The functino to call when a trend is updated.
  * @returns {JSX.Element} The rendered modal.
  * @example
- *  <Modal item={*} dialogId="*" deleteFunc={*} updateFunc={*} />
+ *  <Modal item={*} dialogId="*" deleteItemFunc={*} updateItemFunc={*} />
  */
-const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
+const Modal = ({
+  item,
+  dialogId,
+  deleteItemFunc,
+  updateItemFunc,
+  updateTrendFunc,
+}) => {
   const ADD_FILES_DIALOG_ID = `addFilesModal: ${dialogId}`;
 
   /**
    * @type {[{[key: string]: ReactTags.Tag[]}, ReactDispatch<{[key: string]: ReactTags.Tag[]}>]}
    */
-  const [trendTags, setTrendTags] = useState({});
+  const [trendTagsPerFile, setTrendTagsPerFile] = useState();
 
   useEffect(() => {
     const initialTrendTags = item.evidence.reduce((trendsMap, file) => {
@@ -34,9 +45,14 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
       }
       return trendsMap;
     }, {});
-    updateAllTags(initialTrendTags);
-    setTrendTags(initialTrendTags);
+    setTrendTagsPerFile(initialTrendTags);
   }, []);
+
+  useEffect(() => {
+    if (trendTagsPerFile) {
+      updateAllTagsFromTrendTags();
+    }
+  }, [trendTagsPerFile]);
 
   const sortString = (a, b) => {
     if (a < b) {
@@ -51,48 +67,69 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
   const getJsonSortedString = (trends) =>
     JSON.stringify(trends.map((trend) => trend.name).sort(sortString));
 
-  const updateAllTags = (trendTags) => {
+  const updateAllTagsFromTrendTags = useCallback(() => {
     const newAllTags = [];
-    const tagCountMap = {};
-    Object.keys(trendTags).forEach((fileUrl) => {
-      const fileTags = JSON.parse(JSON.stringify(trendTags[fileUrl]));
+    const tagDataMap = {};
+    Object.keys(trendTagsPerFile).forEach((fileUrl) => {
+      const fileTags = JSON.parse(JSON.stringify(trendTagsPerFile[fileUrl]));
       fileTags.forEach((tag) => {
-        if (!tagCountMap[tag.text]) {
-          tagCountMap[tag.text] = 0;
+        if (!tagDataMap[tag.text]) {
+          tagDataMap[tag.text] = {
+            count: 0,
+            className: tag.className,
+          };
         }
-        tagCountMap[tag.text] += 1;
+        tagDataMap[tag.text].count += 1;
       });
     });
-    Object.keys(tagCountMap).forEach((tagText) => {
+    Object.keys(tagDataMap).forEach((tagText) => {
+      const tagData = tagDataMap[tagText];
       newAllTags.push({
         id: tagText,
-        text: `${tagText} (${tagCountMap[tagText]})`,
-        className: "",
+        text: `${tagText} (${tagData.count})`,
+        className: tagData.className,
       });
     });
     setAllTags(newAllTags);
+  }, [trendTagsPerFile]);
+
+  /**
+   *
+   * @param {ReactTags.Tag[]} allTags
+   */
+  const updateTagTrendsFromAllTagsClassNames = (allTags) => {
+    Object.keys(trendTagsPerFile).forEach((fileUrl) => {
+      trendTagsPerFile[fileUrl].forEach((tag) => {
+        const allTagsTag = allTags.find((t) => t.id === tag.id);
+        tag.className = allTagsTag.className;
+      });
+    });
   };
 
   useEffect(() => {
-    let thereAreChanges = false;
-    item.evidence.forEach((file) => {
-      const tags = trendTags[file.url];
-      if (tags) {
-        const trends = tags.map((tag) => ({
-          name: tag.text,
-          type: tag.className,
-        }));
-        if (getJsonSortedString(file.trends) !== getJsonSortedString(trends)) {
-          file.trends = trends;
-          thereAreChanges = true;
+    if (trendTagsPerFile) {
+      let thereAreChanges = false;
+      item.evidence.forEach((file) => {
+        const tags = trendTagsPerFile[file.url];
+        if (tags) {
+          const trends = tags.map((tag) => ({
+            name: tag.text,
+            type: tag.className,
+          }));
+          if (
+            getJsonSortedString(file.trends) !== getJsonSortedString(trends)
+          ) {
+            file.trends = trends;
+            thereAreChanges = true;
+          }
         }
+      });
+      if (thereAreChanges) {
+        updateAllTagsFromTrendTags(trendTagsPerFile);
+        updateItemFunc(item);
       }
-    });
-    if (thereAreChanges) {
-      updateAllTags(trendTags);
-      updateFunc(item);
     }
-  }, [trendTags, allTags]);
+  }, [trendTagsPerFile]);
 
   /**
    * @type {[ReactTags.Tag[] | undefined, React.Dispatch<ReactTags.Tag[] | undefined>]}
@@ -173,7 +210,7 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
           icon: file.iconLink,
         };
         item.evidence.push(newFile);
-        updateFunc(item);
+        updateItemFunc(item);
 
         const newFiles = files.filter(
           (f) => f.alternateLink !== file.alternateLink
@@ -191,7 +228,7 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
     item.evidence = item.evidence.filter(
       (file2) => file2.alternateLink !== file.alternateLink
     );
-    updateFunc(item);
+    updateItemFunc(item);
     const newFiles = [...files, file];
     setFiles(newFiles);
     setFilteredFiles(newFiles);
@@ -213,10 +250,19 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
       cursor: pointer !important;
     }
     .objective {
-      background-color: "red";
+      background-color: red;
     }
     .goal {
-      background-color: "orange";
+      background-color: purple;
+    }
+    .activity { 
+      background-color: blue;
+    }
+    .task {
+      background-color: green;
+    }
+    .resource {
+      background-color: gray;
     }
     .readOnly {
       padding: 0 5px;
@@ -233,7 +279,22 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
     .removeButton:hover {
       background-color: rgba(204, 204, 204, 0.5);
     }
+    #modalSummary .ReactTags__tagInput {
+      display: none;
+    }
   `;
+
+  const indexToClassName = [
+    "objective",
+    "goal",
+    "activity",
+    "task",
+    "resource",
+  ];
+  const classNameToIndex = {};
+  indexToClassName.forEach((className, index) => {
+    classNameToIndex[className] = index;
+  });
 
   return (
     <>
@@ -290,17 +351,58 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
                           </span>
                         ))}
                       {allTags && allTags.length > 0 && (
-                        // <table className="table">
-                        //   <tbody>
-                        <ReactTags
-                          tags={allTags}
-                          classNames={{
-                            tag: "trendItem readOnly",
-                          }}
-                          readOnly={true}
-                        />
-                        //   </tbody>
-                        // </table>
+                        // TODO: put tags in a table to hierarchicall organize them
+                        <table className="table">
+                          <tbody>
+                            {[...indexToClassName, ""].map((trendType) => {
+                              const typedTags = allTags.filter(
+                                (tag) => tag.className === trendType
+                              );
+                              return (
+                                <tr key={`ReactTags for '${trendType}'`}>
+                                  <td>
+                                    <strong>
+                                      {trendType.charAt(0).toUpperCase() +
+                                        trendType.slice(1)}
+                                    </strong>
+                                  </td>
+                                  <td>
+                                    <ReactTags
+                                      tags={typedTags}
+                                      classNames={{
+                                        tag: "trendItem readOnly",
+                                      }}
+                                      removeComponent={() => {
+                                        // because readOnly={true} makes `handleTagClick` do nothing
+                                        return "";
+                                      }}
+                                      handleTagClick={(tagIndex) => {
+                                        const tag = typedTags[tagIndex];
+                                        const currentClassIndex = tag.className
+                                          ? classNameToIndex[tag.className]
+                                          : -1;
+                                        const newClassName =
+                                          indexToClassName[
+                                            (currentClassIndex + 1) %
+                                              indexToClassName.length
+                                          ];
+                                        tag.className = newClassName;
+                                        setAllTags([...allTags]); // to refresh their className displays
+                                        updateTagTrendsFromAllTagsClassNames(
+                                          allTags
+                                        );
+                                        updateTrendFunc(tagIndex, {
+                                          name: tag.id,
+                                          type: tag.className,
+                                        });
+                                      }}
+                                    />
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
                       )}
                     </div>
                     <div
@@ -336,29 +438,33 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
                               <td>
                                 {allTags && (
                                   <ReactTags
-                                    tags={trendTags[file.url]}
+                                    tags={trendTagsPerFile[file.url]}
                                     separators={[SEPARATORS.ENTER]}
                                     handleAddition={(tag) => {
-                                      const fileTags = [...trendTags[file.url]];
+                                      const fileTags = [
+                                        ...trendTagsPerFile[file.url],
+                                      ];
                                       fileTags.push(tag);
-                                      setTrendTags({
-                                        ...trendTags,
+                                      setTrendTagsPerFile({
+                                        ...trendTagsPerFile,
                                         [file.url]: fileTags,
                                       });
                                     }}
                                     suggestions={allTags.filter(
                                       (tag) =>
-                                        !trendTags[file.url]
+                                        !trendTagsPerFile[file.url]
                                           .map((t) => t.text)
                                           .includes(tag.text)
                                     )}
                                     // renderSuggestion={(item, query) => {}}
                                     editable={true}
                                     onTagUpdate={(index, tag) => {
-                                      const fileTags = [...trendTags[file.url]];
+                                      const fileTags = [
+                                        ...trendTagsPerFile[file.url],
+                                      ];
                                       fileTags[index] = tag;
-                                      setTrendTags({
-                                        ...trendTags,
+                                      setTrendTagsPerFile({
+                                        ...trendTagsPerFile,
                                         [file.url]: fileTags,
                                       });
                                     }}
@@ -384,11 +490,11 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
                                     }}
                                     handleDelete={(index, event) => {
                                       const thisFileTrends =
-                                        trendTags[file.url];
+                                        trendTagsPerFile[file.url];
                                       thisFileTrends.splice(index, 1);
-                                      setTrendTags({
-                                        ...trendTags,
-                                        [file.url]: trendTags[file.url],
+                                      setTrendTagsPerFile({
+                                        ...trendTagsPerFile,
+                                        [file.url]: trendTagsPerFile[file.url],
                                       });
                                     }}
                                   />
@@ -409,7 +515,7 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
                   aria-label="Delete"
                   onClick={() => {
                     if (confirm("Are you sure?")) {
-                      deleteFunc(item);
+                      deleteItemFunc(item);
                       mainDialog.close();
                     }
                   }}
