@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { WithContext as ReactTags } from "react-tag-input";
+import { WithContext as ReactTags, SEPARATORS } from "react-tag-input";
 
 import useOAuthAPI from "../hooks/useOAuthAPI";
 import usePersonasAPI from "../hooks/usePersonasAPI";
@@ -168,8 +168,15 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
     document.getElementById("fileFilter").value = "";
   };
 
+  const css = `
+    .trendItem {
+      display: block;
+    }
+  `;
+
   return (
     <>
+      <style>{css}</style>
       <dialog id={dialogId} style={{ width: "600px", height: "900px" }}>
         <div>
           <div>
@@ -270,9 +277,11 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
                                     });
                                   }}
                                   // autocomplete={true}
-                                  allowDragDrop={true}
+                                  // allowDragDrop={true}
                                   placeholder="Add a trend"
-                                  classNames={{}}
+                                  classNames={{
+                                    tag: "trendItem",
+                                  }}
                                   // allowUnique={true}
                                   inputFieldPosition="top"
                                   handleDelete={(index, event) => {
