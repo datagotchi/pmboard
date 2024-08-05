@@ -34,6 +34,7 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
       }
       return trendsMap;
     }, {});
+    updateAllTags(initialTrendTags);
     setTrendTags(initialTrendTags);
   }, []);
 
@@ -49,6 +50,16 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
 
   const getJsonSortedString = (trends) =>
     JSON.stringify(trends.map((trend) => trend.name).sort(sortString));
+
+  const updateAllTags = (trendTags) => {
+    const newAllTags = [];
+    Object.keys(trendTags).forEach((fileUrl) => {
+      const fileTags = trendTags[fileUrl];
+      newAllTags.push(...fileTags);
+    });
+    setAllTags(newAllTags);
+  };
+
   useEffect(() => {
     let thereAreChanges = false;
     item.evidence.forEach((file) => {
@@ -65,9 +76,15 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
       }
     });
     if (thereAreChanges) {
+      updateAllTags(trendTags);
       updateFunc(item);
     }
-  }, [trendTags]);
+  }, [trendTags, allTags]);
+
+  /**
+   * @type {[ReactTags.Tag[] | undefined, React.Dispatch<ReactTags.Tag[] | undefined>]}
+   */
+  const [allTags, setAllTags] = useState();
 
   /**
    * @type {[HTMLDialogElement | undefined, React.Disptch<HTMLDialogElement | undefined>]}
@@ -170,7 +187,35 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
 
   const css = `
     .trendItem {
-      display: block;
+      margin: 2px;
+      padding: 0 0 0 5px;
+      display: inline-block;
+      font: 12px "Helvetica Neue", Helvetica, Arial, sans-serif;
+      height: 26px;
+      line-height: 25px;
+      border-radius: 3px;
+      background-color: #337ab7;
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer !important;
+    }
+    .trendItem:hover::before {
+      content: "Test" 
+    }
+    .readOnly {
+      padding: 0 5px;
+    }
+    .removeButton {
+      background-color: transparent;
+      height: 22px;
+      border-radius: 5px;
+      float: right;
+      margin: 2px 0 0 5px;
+      font-size: 12px;
+      line-height: 12px;
+    }
+    .removeButton:hover {
+      background-color: rgba(204, 204, 204, 0.5);
     }
   `;
 
@@ -222,17 +267,24 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
                   </ul>
                   <div className="tab-content">
                     <div role="tabpanel" className="tab-pane" id="modalSummary">
-                      {item.evidence.length === 0 && (
-                        <span>
-                          There is no evidence. Start by adding a file!
-                        </span>
-                      )}
-                      {item.evidence.length > 0 && (
-                        <table className="table">
-                          <tbody>
-                            {/* ng-repeat="trend in trendList | filter: hasType track by $index" */}
-                          </tbody>
-                        </table>
+                      {!allTags ||
+                        (allTags.length === 0 && (
+                          <span>
+                            There is no evidence. Start by adding a file!
+                          </span>
+                        ))}
+                      {allTags && allTags.length > 0 && (
+                        // <table className="table">
+                        //   <tbody>
+                        <ReactTags
+                          tags={allTags}
+                          classNames={{
+                            tag: "trendItem readOnly",
+                          }}
+                          readOnly={true}
+                        />
+                        //   </tbody>
+                        // </table>
                       )}
                     </div>
                     <div
@@ -269,21 +321,42 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
                                 <ReactTags
                                   tags={trendTags[file.url]}
                                   handleAddition={(tag) => {
-                                    const thisFileTrends = trendTags[file.url];
-                                    thisFileTrends.push(tag);
+                                    const fileTags = [...trendTags[file.url]];
+                                    fileTags.push(tag);
                                     setTrendTags({
                                       ...trendTags,
-                                      [file.url]: trendTags[file.url],
+                                      [file.url]: fileTags,
                                     });
                                   }}
-                                  // autocomplete={true}
-                                  // allowDragDrop={true}
+                                  editable={true}
+                                  onTagUpdate={(index, tag) => {
+                                    const fileTags = [...trendTags[file.url]];
+                                    fileTags[index] = tag;
+                                    setTrendTags({
+                                      ...trendTags,
+                                      [file.url]: fileTags,
+                                    });
+                                  }}
                                   placeholder="Add a trend"
                                   classNames={{
                                     tag: "trendItem",
+                                    remove: "removeButton",
                                   }}
-                                  // allowUnique={true}
+                                  allowUnique={true}
                                   inputFieldPosition="top"
+                                  removeComponent={({
+                                    className,
+                                    onRemove,
+                                  }) => {
+                                    return (
+                                      <button
+                                        onClick={onRemove}
+                                        className={className}
+                                      >
+                                        X
+                                      </button>
+                                    );
+                                  }}
                                   handleDelete={(index, event) => {
                                     const thisFileTrends = trendTags[file.url];
                                     thisFileTrends.splice(index, 1);
@@ -293,28 +366,6 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
                                     });
                                   }}
                                 />
-                                {/* <tags-input
-                                  ng-model="file.trends"
-                                  placeholder="Add a trend"
-                                  display-property="name"
-                                  template="tag-template"
-                                  add-on-paste="true"
-                                  on-tag-adding="$tag.className='label-info'"
-                                  on-tag-added="addTrend(persona, $index, $tag)"
-                                  on-tag-removing="removeTrend(persona, $index, $tag)"
-                                  on-tag-clicked="handleTrendClick($index, $event, $tag)"
-                                  replace-spaces-with-dashes={false}
-                                  id={file.name}
-                                >
-                                  <auto-complete
-                                    source="findTrend(persona, $query)"
-                                    load-on-focus="true"
-                                    allow-duplicates="true"
-                                    debounce-delay="10"
-                                    display-property="name"
-                                    min-length="1"
-                                  ></auto-complete>
-                                </tags-input> */}
                               </td>
                             </tr>
                           ))}
@@ -330,8 +381,10 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
                   className="btn-danger remove-item glyphicon glyphicon-remove"
                   aria-label="Delete"
                   onClick={() => {
-                    deleteFunc(item);
-                    mainDialog.close();
+                    if (confirm("Are you sure?")) {
+                      deleteFunc(item);
+                      mainDialog.close();
+                    }
                   }}
                 >
                   Delete
