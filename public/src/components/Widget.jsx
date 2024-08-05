@@ -146,7 +146,7 @@ const Widget = ({
           ];
           updateCollectionFunc([...newData]).then(() => {
             // TODO: refreshing the page works, but I'd prefer not to
-            // setLiveData(newData); // resets the live data, but renders it the old way (!)
+            // setLiveData((prevLiveData) => [...newData]); // resets the live data, but renders it the old way (!)
             window.location.reload();
           });
         }

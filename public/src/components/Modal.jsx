@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import axios from "axios";
-import useOAuthAPI from "../hooks/useOAuthAPI";
+import { WithContext as ReactTags } from "react-tag-input";
 
+import useOAuthAPI from "../hooks/useOAuthAPI";
+import usePersonasAPI from "../hooks/usePersonasAPI";
 import { EvidenceFile, WidgetDataItem, GoogleFile } from "../types";
 
 /**
@@ -9,13 +10,64 @@ import { EvidenceFile, WidgetDataItem, GoogleFile } from "../types";
  * @param {WidgetDataItem} props.item The item to show in the modal.
  * @param {string} props.dialogId The ID to give the dialog.
  * @param {(itemIndex: number) => void} props.deleteFunc The function to call when a new item is deleted.
- * @param {(item: WidgetDataItem, index: number) => void} props.updateFunc The function to call when a new item is updated.
+ * @param {(item: WidgetDataItem) => void} props.updateFunc The function to call when a new item is updated.
  * @returns {JSX.Element} The rendered modal.
  * @example
  *  <Modal item={*} dialogId="*" deleteFunc={*} updateFunc={*} />
  */
 const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
   const ADD_FILES_DIALOG_ID = `addFilesModal: ${dialogId}`;
+
+  /**
+   * @type {[{[key: string]: ReactTags.Tag[]}, ReactDispatch<{[key: string]: ReactTags.Tag[]}>]}
+   */
+  const [trendTags, setTrendTags] = useState({});
+
+  useEffect(() => {
+    const initialTrendTags = item.evidence.reduce((trendsMap, file) => {
+      if (!trendsMap[file.url]) {
+        trendsMap[file.url] = file.trends.map((trend) => ({
+          id: trend.name,
+          text: trend.name,
+          className: trend.type,
+        }));
+      }
+      return trendsMap;
+    }, {});
+    setTrendTags(initialTrendTags);
+  }, []);
+
+  const sortString = (a, b) => {
+    if (a < b) {
+      return 1;
+    }
+    if (b < a) {
+      return -1;
+    }
+    return 0;
+  };
+
+  const getJsonSortedString = (trends) =>
+    JSON.stringify(trends.map((trend) => trend.name).sort(sortString));
+  useEffect(() => {
+    let thereAreChanges = false;
+    item.evidence.forEach((file) => {
+      const tags = trendTags[file.url];
+      if (tags) {
+        const trends = tags.map((tag) => ({
+          name: tag.text,
+          type: tag.className,
+        }));
+        if (getJsonSortedString(file.trends) !== getJsonSortedString(trends)) {
+          file.trends = trends;
+          thereAreChanges = true;
+        }
+      }
+    });
+    if (thereAreChanges) {
+      updateFunc(item);
+    }
+  }, [trendTags]);
 
   /**
    * @type {[HTMLDialogElement | undefined, React.Disptch<HTMLDialogElement | undefined>]}
@@ -192,7 +244,7 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
                       <table className="table">
                         <tbody>
                           {item.evidence.map((file) => (
-                            <tr key={`Item evidence: ${file.alternateLink} `}>
+                            <tr key={`Item evidence: ${file.url} `}>
                               <td>
                                 <span
                                   className="remove-evidence glyphicon glyphicon-remove"
@@ -207,7 +259,32 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
                                 </a>
                               </td>
                               <td>
-                                <tags-input
+                                <ReactTags
+                                  tags={trendTags[file.url]}
+                                  handleAddition={(tag) => {
+                                    const thisFileTrends = trendTags[file.url];
+                                    thisFileTrends.push(tag);
+                                    setTrendTags({
+                                      ...trendTags,
+                                      [file.url]: trendTags[file.url],
+                                    });
+                                  }}
+                                  // autocomplete={true}
+                                  allowDragDrop={true}
+                                  placeholder="Add a trend"
+                                  classNames={{}}
+                                  // allowUnique={true}
+                                  inputFieldPosition="top"
+                                  handleDelete={(index, event) => {
+                                    const thisFileTrends = trendTags[file.url];
+                                    thisFileTrends.splice(index, 1);
+                                    setTrendTags({
+                                      ...trendTags,
+                                      [file.url]: trendTags[file.url],
+                                    });
+                                  }}
+                                />
+                                {/* <tags-input
                                   ng-model="file.trends"
                                   placeholder="Add a trend"
                                   display-property="name"
@@ -228,7 +305,7 @@ const Modal = ({ item, dialogId, deleteFunc, updateFunc }) => {
                                     display-property="name"
                                     min-length="1"
                                   ></auto-complete>
-                                </tags-input>
+                                </tags-input> */}
                               </td>
                             </tr>
                           ))}
