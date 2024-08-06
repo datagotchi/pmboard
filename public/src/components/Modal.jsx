@@ -173,27 +173,18 @@ const Modal = ({
   useEffect(() => {
     if (accessToken) {
       const encodedToken = encodeURI(accessToken);
-      getGoogleDriveFiles(encodedToken)
-        .then((files) => {
-          const filteredFiles = files.filter(
-            (file) =>
-              item.evidence
-                .map(function (f) {
-                  return f.url;
-                })
-                .indexOf(file.alternateLink) === -1
-          );
-          setGoogleFiles([...filteredFiles]);
-          setFilteredFiles([...filteredFiles]);
-        })
-        .catch((err) => {
-          if (err.status == 401) {
-            sessionStorage.removeItem("access_token");
-            window.location.reload();
-          } else {
-            throw err;
-          }
-        });
+      getGoogleDriveFiles(encodedToken).then((files) => {
+        const filteredFiles = files.filter(
+          (file) =>
+            item.evidence
+              .map(function (f) {
+                return f.url;
+              })
+              .indexOf(file.alternateLink) === -1
+        );
+        setGoogleFiles([...filteredFiles]);
+        setFilteredFiles([...filteredFiles]);
+      });
     }
   }, [accessToken]);
 

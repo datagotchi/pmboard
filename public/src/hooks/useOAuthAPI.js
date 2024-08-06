@@ -139,6 +139,10 @@ const useOAuthAPI = () => {
         )
       )
       .then(async (response) => {
+        if (response.status === 401) {
+          sessionStorage.removeItem("access_token");
+          window.location.reload();
+        }
         /**
          * @type oauth.WWWAuthenticateChallenge[] | undefined
          */
