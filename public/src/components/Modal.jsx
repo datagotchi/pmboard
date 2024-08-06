@@ -439,7 +439,7 @@ const Modal = ({
                                 ></span>
                               </td>
                               <td>
-                                <a href={file.url} target="_blank">
+                                <a href={file.url} target="_blank" rel="noreferrer">
                                   <img src={file.icon} />
                                   {file.name}
                                 </a>
@@ -589,7 +589,7 @@ const Modal = ({
                           />
                         </td>
                         <td className="file">
-                          <a href={file.alternateLink} target="_blank">
+                          <a href={file.alternateLink} target="_blank" rel="noreferrer">
                             <img src={file.iconLink} />
                             {file.title}
                           </a>
