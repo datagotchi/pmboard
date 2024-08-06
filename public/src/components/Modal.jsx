@@ -107,7 +107,19 @@ const Modal = ({
         const allTagsTag = allTags.find((t) => t.id === tag.id);
         tag.className = allTagsTag.className;
       });
+      /**
+       * @type EvidenceTrend[]
+       */
+      const newTrends = trendTagsPerFile[fileUrl].map((tag) => ({
+        name: tag.id,
+        type: tag.className,
+      }));
+      const evidenceFile = item.evidence.find((file) => file.url === fileUrl);
+      if (evidenceFile) {
+        evidenceFile.trends = newTrends;
+      }
     });
+    setTrendTagsPerFile({ ...trendTagsPerFile });
   };
 
   useEffect(() => {
@@ -171,13 +183,16 @@ const Modal = ({
                 })
                 .indexOf(file.alternateLink) === -1
           );
-          setFiles([...filteredFiles]);
+          setGoogleFiles([...filteredFiles]);
           setFilteredFiles([...filteredFiles]);
         })
         .catch((err) => {
-          throw err;
-          // sessionStorage.removeItem("access_token");
-          // window.location.reload();
+          if (err.status == 401) {
+            sessionStorage.removeItem("access_token");
+            window.location.reload();
+          } else {
+            throw err;
+          }
         });
     }
   }, [accessToken]);
@@ -196,7 +211,7 @@ const Modal = ({
   /**
    * @type {[GoogleFile[] | undefined, React.Dispatch<GoogleFile[] | undefined>]}
    */
-  const [files, setFiles] = useState();
+  const [googleFiles, setGoogleFiles] = useState();
   const [filteredFiles, setFilteredFiles] = useState();
 
   const addFile = useCallback(
@@ -217,27 +232,25 @@ const Modal = ({
         item.evidence.push(newFile);
         updateItemFunc(item);
 
-        const newFiles = files.filter(
+        const newFiles = googleFiles.filter(
           (f) => f.alternateLink !== file.alternateLink
         );
-        setFiles(newFiles);
+        setGoogleFiles(newFiles);
         document.getElementById("fileFilter").value = "";
         setFilteredFiles(newFiles);
         addFilesModal.close();
       }
     },
-    [files]
+    [googleFiles]
   );
 
   const removeFile = (file) => {
-    item.evidence = item.evidence.filter(
-      (file2) => file2.alternateLink !== file.alternateLink
-    );
+    item.evidence = item.evidence.filter((file2) => file2.url !== file.url);
     updateItemFunc(item);
-    const newFiles = [...files, file];
-    setFiles(newFiles);
-    setFilteredFiles(newFiles);
+    const newFiles = [...googleFiles, file];
+    setGoogleFiles(newFiles);
     document.getElementById("fileFilter").value = "";
+    // setFilteredFiles(newFiles);
   };
 
   const css = `
@@ -445,6 +458,7 @@ const Modal = ({
                                   <ReactTags
                                     tags={trendTagsPerFile[file.url]}
                                     separators={[SEPARATORS.ENTER]}
+                                    allowAdditionFromPaste={false}
                                     handleAddition={(tag) => {
                                       const fileTags = [
                                         ...trendTagsPerFile[file.url],
@@ -554,7 +568,7 @@ const Modal = ({
             {/* <div ng-show="loading" style={{ textAlign: "center" }}>
               <img src="ajax-loader.gif" width="32" height="32" />
             </div> */}
-            {files && (
+            {googleFiles && (
               <input
                 type="text"
                 id="fileFilter"
@@ -562,7 +576,7 @@ const Modal = ({
                 style={{ width: "100%" }}
                 onChange={(event) => {
                   setFilteredFiles(
-                    files.filter((file) =>
+                    googleFiles.filter((file) =>
                       file.title
                         .toLocaleLowerCase()
                         .includes(event.target.value.toLocaleLowerCase())
