@@ -9,7 +9,7 @@ export default [
   jsdoc.configs["flat/recommended-error"],
   {
     files: ["**/*.{js,mjs,cjs,jsx}"],
-    ignores: ["**/bower_components/"],
+    ignores: ["**/bower_components/**/*.js"],
     plugins: {
       jsdoc,
     },

@@ -109,7 +109,7 @@ const Modal = ({
         name: tag.id,
         type: tag.className,
       }));
-       
+
       const evidenceFile = item.evidence.find((file) => file.url === fileUrl);
       if (evidenceFile) {
         evidenceFile.trends = newTrends;
@@ -121,7 +121,7 @@ const Modal = ({
   useEffect(() => {
     if (trendTagsPerFile) {
       let thereAreChanges = false;
-       
+
       item.evidence.forEach((file) => {
         const tags = trendTagsPerFile[file.url];
         if (tags) {
@@ -321,10 +321,6 @@ const Modal = ({
                 <h4 className="modal-title">{item.name}</h4>
               </div>
               <div className="modal-body">
-                {/* <div role="tabpanel">
-                <ul className="nav nav-tabs" role="tablist"></ul>
-                <div className="tab-content"></div>
-              </div> */}
                 <div role="tabpanel">
                   <ul className="nav nav-tabs" role="tablist">
                     <li role="presentation" className="active">
@@ -358,58 +354,64 @@ const Modal = ({
                           </span>
                         ))}
                       {allTags && allTags.length > 0 && (
-                        // TODO: put tags in a table to hierarchicall organize them
-                        <table className="table">
-                          <tbody>
-                            {[...indexToClassName, ""].map((trendType) => {
-                              const typedTags = allTags.filter(
-                                (tag) => tag.className === trendType
-                              );
-                              return (
-                                <tr key={`ReactTags for '${trendType}'`}>
-                                  <td>
-                                    <strong>
-                                      {trendType.charAt(0).toUpperCase() +
-                                        trendType.slice(1)}
-                                    </strong>
-                                  </td>
-                                  <td>
-                                    <ReactTags
-                                      tags={typedTags}
-                                      classNames={{
-                                        tag: "trendItem readOnly",
-                                      }}
-                                      removeComponent={() => {
-                                        // because readOnly={true} makes `handleTagClick` do nothing
-                                        return "";
-                                      }}
-                                      handleTagClick={(tagIndex) => {
-                                        const tag = typedTags[tagIndex];
-                                        const currentClassIndex = tag.className
-                                          ? classNameToIndex[tag.className]
-                                          : -1;
-                                        const newClassName =
-                                          indexToClassName[
-                                            (currentClassIndex + 1) %
-                                              indexToClassName.length
-                                          ];
-                                        tag.className = newClassName;
-                                        setAllTags([...allTags]); // to refresh their className displays
-                                        updateTagTrendsFromAllTagsClassNames(
-                                          allTags
-                                        );
-                                        updateTrendFunc(tagIndex, {
-                                          name: tag.id,
-                                          type: tag.className,
-                                        });
-                                      }}
-                                    />
-                                  </td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
+                        <>
+                          {/* <div style={{ float: "left", fontSize: "25px" }}>
+                            <p>⬆️</p>
+                            <p>Why?</p>
+                          </div> */}
+                          <table className="table" style={{ width: "90%" }}>
+                            <tbody>
+                              {[...indexToClassName, ""].map((trendType) => {
+                                const typedTags = allTags.filter(
+                                  (tag) => tag.className === trendType
+                                );
+                                return (
+                                  <tr key={`ReactTags for '${trendType}'`}>
+                                    <td>
+                                      <strong>
+                                        {trendType.charAt(0).toUpperCase() +
+                                          trendType.slice(1)}
+                                      </strong>
+                                    </td>
+                                    <td>
+                                      <ReactTags
+                                        tags={typedTags}
+                                        classNames={{
+                                          tag: "trendItem readOnly",
+                                        }}
+                                        removeComponent={() => {
+                                          // because readOnly={true} makes `handleTagClick` do nothing
+                                          return "";
+                                        }}
+                                        handleTagClick={(tagIndex) => {
+                                          const tag = typedTags[tagIndex];
+                                          const currentClassIndex =
+                                            tag.className
+                                              ? classNameToIndex[tag.className]
+                                              : -1;
+                                          const newClassName =
+                                            indexToClassName[
+                                              (currentClassIndex + 1) %
+                                                indexToClassName.length
+                                            ];
+                                          tag.className = newClassName;
+                                          setAllTags([...allTags]); // to refresh their className displays
+                                          updateTagTrendsFromAllTagsClassNames(
+                                            allTags
+                                          );
+                                          updateTrendFunc(tagIndex, {
+                                            name: tag.id,
+                                            type: tag.className,
+                                          });
+                                        }}
+                                      />
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </>
                       )}
                     </div>
                     <div
@@ -481,7 +483,10 @@ const Modal = ({
                                       const fileTags = [
                                         ...trendTagsPerFile[file.url],
                                       ];
-                                      fileTags[index] = tag;
+                                      fileTags[index] = {
+                                        ...tag,
+                                        className: fileTags[index].className,
+                                      };
                                       setTrendTagsPerFile({
                                         ...trendTagsPerFile,
                                         [file.url]: fileTags,

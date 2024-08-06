@@ -6,9 +6,9 @@ import useProductAPI from "../hooks/useProductAPI";
 
 /**
  * A widget to document and visualize user/customer problems
- * @param {object} props
+ * @param {object} props The component properties.
  * @param {number | undefined} props.productId the ID of the current product.
- * @returns {JSX.Element} The rendered widget.
+ * @returns {React.JSX.Element} The rendered widget.
  * @example
  *  <ResearchWidget productId={*} />
  */
@@ -24,7 +24,7 @@ const ResearchWidget = ({ productId }) => {
     <Widget
       data={personas}
       type="Persona"
-      title="Who are your users/customers?"
+      title="Who are the stakeholders?"
       addItemFunc={addPersona}
       updateItemFunc={updatePersona}
       deleteItemFunc={deletePersona}
