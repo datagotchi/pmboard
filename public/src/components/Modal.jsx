@@ -37,11 +37,15 @@ const Modal = ({
   useEffect(() => {
     const initialTrendTags = item.evidence.reduce((trendsMap, file) => {
       if (!trendsMap[file.url]) {
-        trendsMap[file.url] = file.trends.map((trend) => ({
-          id: trend.name,
-          text: trend.name,
-          className: trend.type,
-        }));
+        if (file.trends) {
+          trendsMap[file.url] = file.trends.map((trend) => ({
+            id: trend.name,
+            text: trend.name,
+            className: trend.type,
+          }));
+        } else {
+          trendsMap[file.url] = [];
+        }
       }
       return trendsMap;
     }, {});
@@ -152,14 +156,14 @@ const Modal = ({
 
   const { getGoogleDriveFiles } = useOAuthAPI();
 
-  const accessToken = useMemo(() => sessionStorage.getItem("access_token"));
+  const accessToken = useMemo(() => sessionStorage.getItem("access_token"), []);
 
   useEffect(() => {
     if (accessToken) {
       const encodedToken = encodeURI(accessToken);
       getGoogleDriveFiles(encodedToken)
-        .then((response) => {
-          const files = response.items.filter(
+        .then((files) => {
+          const filteredFiles = files.filter(
             (file) =>
               item.evidence
                 .map(function (f) {
@@ -167,12 +171,13 @@ const Modal = ({
                 })
                 .indexOf(file.alternateLink) === -1
           );
-          setFiles([...files]);
-          setFilteredFiles([...files]);
+          setFiles([...filteredFiles]);
+          setFilteredFiles([...filteredFiles]);
         })
         .catch((err) => {
-          sessionStorage.removeItem("access_token");
-          window.location.reload();
+          throw err;
+          // sessionStorage.removeItem("access_token");
+          // window.location.reload();
         });
     }
   }, [accessToken]);
@@ -549,21 +554,23 @@ const Modal = ({
             {/* <div ng-show="loading" style={{ textAlign: "center" }}>
               <img src="ajax-loader.gif" width="32" height="32" />
             </div> */}
-            <input
-              type="text"
-              id="fileFilter"
-              placeholder="Search files..."
-              style={{ width: "100%" }}
-              onChange={(event) => {
-                setFilteredFiles(
-                  files.filter((file) =>
-                    file.title
-                      .toLocaleLowerCase()
-                      .includes(event.target.value.toLocaleLowerCase())
-                  )
-                );
-              }}
-            />
+            {files && (
+              <input
+                type="text"
+                id="fileFilter"
+                placeholder="Search files..."
+                style={{ width: "100%" }}
+                onChange={(event) => {
+                  setFilteredFiles(
+                    files.filter((file) =>
+                      file.title
+                        .toLocaleLowerCase()
+                        .includes(event.target.value.toLocaleLowerCase())
+                    )
+                  );
+                }}
+              />
+            )}
             <div id="files">
               <table className="table">
                 <tbody>
@@ -573,13 +580,12 @@ const Modal = ({
                         <td style={{ width: "100px" }}>
                           <input
                             type="checkbox"
-                            // ng-model="file.selected"
                             onChange={(event) => addFile(file, event)}
                           />
                         </td>
                         <td className="file">
-                          <a href="{{ file.alternateLink }}" target="_blank">
-                            <img ng-src="{{ file.iconLink }}" />
+                          <a href={file.alternateLink} target="_blank">
+                            <img src={file.iconLink} />
                             {file.title}
                           </a>
                         </td>

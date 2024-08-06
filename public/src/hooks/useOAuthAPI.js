@@ -127,31 +127,47 @@ const useOAuthAPI = () => {
       .discoveryRequest(issuer, { algorithm: "oidc" })
       .then((response) => oauth.processDiscoveryResponse(issuer, response));
 
-  // Protected Resource Request
+  const getNextPage = (filesArray, access_token, nextPageToken = null) =>
+    oauth
+      .protectedResourceRequest(
+        access_token,
+        "GET",
+        new URL(
+          `https://www.googleapis.com/drive/v2/files${
+            nextPageToken ? `?pageToken=${nextPageToken}` : ""
+          }`
+        )
+      )
+      .then(async (response) => {
+        /**
+         * @type oauth.WWWAuthenticateChallenge[] | undefined
+         */
+        let challenges;
+        if ((challenges = oauth.parseWwwAuthenticateChallenges(response))) {
+          for (const challenge of challenges) {
+            console.error("WWW-Authenticate Challenge", challenge);
+          }
+          throw new Error(); // Handle WWW-Authenticate Challenges as needed
+        }
+        return response.json();
+      })
+      .then((data) => {
+        filesArray.push(...data.items);
+        if (data.nextPageToken) {
+          return getNextPage(filesArray, access_token, data.nextPageToken);
+        } else {
+          return filesArray;
+        }
+      });
+
   /**
    *
    * @param {string} access_token
    * @returns {Promise<GoogleFile[]>}
    */
   const getGoogleDriveFiles = async (access_token) => {
-    const response = await oauth.protectedResourceRequest(
-      access_token,
-      "GET",
-      new URL("https://www.googleapis.com/drive/v2/files")
-    );
-
-    /**
-     * @type oauth.WWWAuthenticateChallenge[] | undefined
-     */
-    let challenges;
-    if ((challenges = oauth.parseWwwAuthenticateChallenges(response))) {
-      for (const challenge of challenges) {
-        console.error("WWW-Authenticate Challenge", challenge);
-      }
-      throw new Error(); // Handle WWW-Authenticate Challenges as needed
-    }
-
-    return await response.json();
+    const files = await getNextPage([], access_token);
+    return files;
   };
 
   /**
