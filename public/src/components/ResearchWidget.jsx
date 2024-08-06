@@ -6,7 +6,6 @@ import useProductAPI from "../hooks/useProductAPI";
 
 /**
  * A widget to document and visualize user/customer problems
- *
  * @param {object} props
  * @param {number | undefined} props.productId the ID of the current product.
  * @returns {JSX.Element} The rendered widget.

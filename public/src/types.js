@@ -21,7 +21,6 @@
  * @property {string} url
  * @property {any} icon
  * @property {EvidenceTrend[]} trends
- *
  */
 
 /**

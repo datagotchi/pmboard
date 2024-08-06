@@ -2,21 +2,16 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { WithContext as ReactTags, SEPARATORS } from "react-tag-input";
 
 import useOAuthAPI from "../hooks/useOAuthAPI";
-import {
-  EvidenceFile,
-  EvidenceTrend,
-  WidgetDataItem,
-  GoogleFile,
-} from "../types";
+import { EvidenceTrend, WidgetDataItem, GoogleFile } from "../types";
 
 /**
- * @param {object} props
+ * @param {object} props The component properties.
  * @param {WidgetDataItem} props.item The item to show in the modal.
  * @param {string} props.dialogId The ID to give the dialog.
  * @param {(itemIndex: number) => void} props.deleteItemFunc The function to call when a new item is deleted.
  * @param {(item: WidgetDataItem) => void} props.updateItemFunc The function to call when a new item is updated.
  * @param {(trendIndex: number, trend: EvidenceTrend) => Promise<void>} props.updateTrendFunc The functino to call when a trend is updated.
- * @returns {JSX.Element} The rendered modal.
+ * @returns {React.JSX.Element} The rendered modal.
  * @example
  *  <Modal item={*} dialogId="*" deleteItemFunc={*} updateItemFunc={*} />
  */
@@ -30,7 +25,7 @@ const Modal = ({
   const ADD_FILES_DIALOG_ID = `addFilesModal: ${dialogId}`;
 
   /**
-   * @type {[{[key: string]: ReactTags.Tag[]}, ReactDispatch<{[key: string]: ReactTags.Tag[]}>]}
+   * @type {[{[key: string]: ReactTags.Tag[]}, React.Dispatch<{[key: string]: ReactTags.Tag[]}>]}
    */
   const [trendTagsPerFile, setTrendTagsPerFile] = useState();
 
@@ -77,20 +72,20 @@ const Modal = ({
     Object.keys(trendTagsPerFile).forEach((fileUrl) => {
       const fileTags = JSON.parse(JSON.stringify(trendTagsPerFile[fileUrl]));
       fileTags.forEach((tag) => {
-        if (!tagDataMap[tag.text]) {
-          tagDataMap[tag.text] = {
+        if (!tagDataMap[tag.id]) {
+          tagDataMap[tag.id] = {
             count: 0,
             className: tag.className,
           };
         }
-        tagDataMap[tag.text].count += 1;
+        tagDataMap[tag.id].count += 1;
       });
     });
-    Object.keys(tagDataMap).forEach((tagText) => {
-      const tagData = tagDataMap[tagText];
+    Object.keys(tagDataMap).forEach((tagId) => {
+      const tagData = tagDataMap[tagId];
       newAllTags.push({
-        id: tagText,
-        text: `${tagText} (${tagData.count})`,
+        id: tagId,
+        text: `${tagId} (${tagData.count})`,
         className: tagData.className,
       });
     });
@@ -99,7 +94,7 @@ const Modal = ({
 
   /**
    *
-   * @param {ReactTags.Tag[]} allTags
+   * @param {ReactTags.Tag[]} allTags All tags for the Summary tab.
    */
   const updateTagTrendsFromAllTagsClassNames = (allTags) => {
     Object.keys(trendTagsPerFile).forEach((fileUrl) => {
@@ -108,12 +103,13 @@ const Modal = ({
         tag.className = allTagsTag.className;
       });
       /**
-       * @type EvidenceTrend[]
+       * @type {EvidenceTrend[]}
        */
       const newTrends = trendTagsPerFile[fileUrl].map((tag) => ({
         name: tag.id,
         type: tag.className,
       }));
+       
       const evidenceFile = item.evidence.find((file) => file.url === fileUrl);
       if (evidenceFile) {
         evidenceFile.trends = newTrends;
@@ -125,11 +121,12 @@ const Modal = ({
   useEffect(() => {
     if (trendTagsPerFile) {
       let thereAreChanges = false;
+       
       item.evidence.forEach((file) => {
         const tags = trendTagsPerFile[file.url];
         if (tags) {
           const trends = tags.map((tag) => ({
-            name: tag.text,
+            name: tag.id,
             type: tag.className,
           }));
           if (
@@ -208,9 +205,9 @@ const Modal = ({
   const addFile = useCallback(
     /**
      *
-     * @param {GoogleFile} file
-     * @param {React.ChangeEvent<HTMLInputElement>} event
-     * @returns
+     * @param {GoogleFile} file The gdrive file to add as evidence.
+     * @param {React.ChangeEvent<HTMLInputElement>} event The event called on <input> change
+     * @returns {void}
      */
     async (file, event) => {
       const checkbox = event.target;
@@ -308,7 +305,7 @@ const Modal = ({
   return (
     <>
       <style>{css}</style>
-      <dialog id={dialogId} style={{ width: "600px", height: "900px" }}>
+      <dialog id={dialogId} style={{ width: "800px", height: "900px" }}>
         <div>
           <div>
             <div>
@@ -330,16 +327,6 @@ const Modal = ({
               </div> */}
                 <div role="tabpanel">
                   <ul className="nav nav-tabs" role="tablist">
-                    <li role="presentation">
-                      <a
-                        href="#modalSummary"
-                        aria-controls="summary"
-                        role="tab"
-                        data-toggle="tab"
-                      >
-                        Summary
-                      </a>
-                    </li>
                     <li role="presentation" className="active">
                       <a
                         href="#modalEvidence"
@@ -350,8 +337,19 @@ const Modal = ({
                         Evidence
                       </a>
                     </li>
+                    <li role="presentation">
+                      <a
+                        href="#modalSummary"
+                        aria-controls="summary"
+                        role="tab"
+                        data-toggle="tab"
+                      >
+                        Summary
+                      </a>
+                    </li>
                   </ul>
                   <div className="tab-content">
+                    {/* TODO: use d3.js instead of ReactTags */}
                     <div role="tabpanel" className="tab-pane" id="modalSummary">
                       {!allTags ||
                         (allTags.length === 0 && (
@@ -439,7 +437,11 @@ const Modal = ({
                                 ></span>
                               </td>
                               <td>
-                                <a href={file.url} target="_blank" rel="noreferrer">
+                                <a
+                                  href={file.url}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                >
                                   <img src={file.icon} />
                                   {file.name}
                                 </a>
@@ -460,12 +462,19 @@ const Modal = ({
                                         [file.url]: fileTags,
                                       });
                                     }}
-                                    suggestions={allTags.filter(
-                                      (tag) =>
-                                        !trendTagsPerFile[file.url]
-                                          .map((t) => t.text)
-                                          .includes(tag.text)
-                                    )}
+                                    suggestions={allTags
+                                      .filter(
+                                        (tag) =>
+                                          trendTagsPerFile[file.url] &&
+                                          !trendTagsPerFile[file.url]
+                                            .map((t) => t.id)
+                                            .includes(tag.id)
+                                      )
+                                      .map((allTag) => ({
+                                        id: allTag.id,
+                                        text: allTag.id,
+                                        className: allTag.className,
+                                      }))}
                                     // renderSuggestion={(item, query) => {}}
                                     editable={true}
                                     onTagUpdate={(index, tag) => {
@@ -498,7 +507,7 @@ const Modal = ({
                                         </button>
                                       );
                                     }}
-                                    handleDelete={(index, event) => {
+                                    handleDelete={(index) => {
                                       const thisFileTrends =
                                         trendTagsPerFile[file.url];
                                       thisFileTrends.splice(index, 1);
@@ -589,7 +598,11 @@ const Modal = ({
                           />
                         </td>
                         <td className="file">
-                          <a href={file.alternateLink} target="_blank" rel="noreferrer">
+                          <a
+                            href={file.alternateLink}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
                             <img src={file.iconLink} />
                             {file.title}
                           </a>

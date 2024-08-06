@@ -7,8 +7,7 @@ import WidgetItemRow from "./WidgetItemRow";
 
 /**
  * The HTML component for all PMBoard widgets to document and visualize information
- *
- * @param {object} props
+ * @param {object} props The component props
  * @param {WidgetDataItem[] | undefined} props.data The data to show in the widget.
  * @param {string} props.type The type of the data rows.
  * @param {string} props.title The title to show at the top of the widget.
@@ -61,12 +60,9 @@ const Widget = ({
    */
   const [createDialog, setCreateDialog] = useState();
 
-  /**
-   * @param {React.MouseEvent<HTMLButtonElement, MouseEvent>} event
-   */
-  const showCreateDialog = (event) => {
+  const showCreateDialog = () => {
     /**
-     * @type HTMLDialogElement
+     * @type {HTMLDialogElement}
      */
     const createDialog = document.getElementById("createDialog");
     setCreateDialog(createDialog);
@@ -96,7 +92,7 @@ const Widget = ({
         itemModal.showModal();
       } else {
         /**
-         * @type HTMLDialogElement
+         * @type {HTMLDialogElement}
          */
         const modal = document.getElementById(itemModalId);
         setItemModal(modal);
@@ -126,7 +122,7 @@ const Widget = ({
 
   let currentDragIndex = -1;
   const hr = document.getElementsByTagName("hr")[0];
-  let [draggableListenersAdded, setDraggableListenersAdded] = useState(false);
+  // let [draggableListenersAdded, setDraggableListenersAdded] = useState(false);
   useEffect(() => {
     if (draggable && liveData) {
       draggable.on("drag:start", (event) => {
@@ -157,7 +153,7 @@ const Widget = ({
         hr.style.display = "none";
         currentDragIndex = -1;
       });
-      setDraggableListenersAdded(true);
+      // setDraggableListenersAdded(true);
     }
   }, [draggable, liveData]);
 
