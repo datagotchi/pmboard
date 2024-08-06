@@ -13,7 +13,7 @@ const usePersonasAPI = (productId) => {
    *
    * @param {Persona} persona
    */
-  const addPersona = (persona) => {
+  const addPersona = (persona) =>
     fetch(`/products/${productId}/personas`, {
       method: "POST",
       headers: {
@@ -23,10 +23,9 @@ const usePersonasAPI = (productId) => {
       // TODO: credentials
       body: JSON.stringify(persona),
     });
-  };
 
-  const updatePersona = (persona, index) => {
-    fetch(`/products/${productId}/personas/${index}`, {
+  const updatePersona = (persona, personaIndex) =>
+    fetch(`/products/${productId}/personas/${personaIndex}`, {
       method: "PUT",
       headers: {
         Accept: "application/json",
@@ -34,25 +33,46 @@ const usePersonasAPI = (productId) => {
       },
       body: JSON.stringify(persona),
     });
-  };
 
   /**
    * Delete a persona from the server via ID
    *
    * @param {number} personaIndex
    */
-  const deletePersona = (personaIndex) => {
+  const deletePersona = (personaIndex) =>
     fetch(`/products/${productId}/personas/${personaIndex}`, {
       method: "DELETE",
       // TODO: credentials/headers
     });
-  };
+  // const addTrendToEvidence = (personaIndex, evidenceIndex, trend) =>
+  //   fetch(`/products/${productId}/personas/${personaIndex}/evidence/${evidenceIndex}/trends`, {
+  //     method: "POST",
+  //     headers: {
+  //       Accept: "application/json",
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(trend),
+  //   });
+
+  const updateTrend = (personaIndex, evidenceIndex, trendIndex, trend) =>
+    fetch(
+      `/products/${productId}/personas/${personaIndex}/evidence/${evidenceIndex}/trends/${trendIndex}`,
+      {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(trend),
+      }
+    );
 
   return {
     addPersona,
     updatePersona,
     deletePersona,
     // addEvidenceToPersona,
+    updateTrend,
   };
 };
 

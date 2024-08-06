@@ -204,7 +204,7 @@ router.get("/:persona_ix/evidence/:ev_ix/trends", function (req, res, next) {
 });
 
 // add persona trends
-router.post("/:persona_ix/evidence/:ev_ix/trends", function (req, res, next) {
+router.post("/:persona_ix/evidence/:ev_ix/trends", async (req, res, next) => {
   /*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
@@ -224,19 +224,14 @@ router.post("/:persona_ix/evidence/:ev_ix/trends", function (req, res, next) {
   }
   prod.personas[personaIx].evidence[evIx].trends.push(trend);
 
-  return prod.save(function (err) {
-    if (err) {
-      next(err);
-    } else {
-      return res.json(trend);
-    }
-  });
+  await prod.save();
+  return res.json(trend);
 });
 
 // change persona trends
 router.put(
   "/:persona_ix/evidence/:ev_ix/trends/:trend_ix",
-  function (req, res, next) {
+  async (req, res, next) => {
     /*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
@@ -251,14 +246,9 @@ router.put(
     // execute the PUT changes
     trend.type = req.body.type;
 
-    return prod.save(function (err) {
-      if (err) {
-        return next(err);
-      } else {
-        return res.json({
-          success: true,
-        });
-      }
+    await prod.save();
+    return res.json({
+      success: true,
     });
   }
 );

@@ -10,10 +10,17 @@
  */
 
 /**
+ * @typedef EvidenceTrend
+ * @property {string} name
+ * @property {string} type
+ */
+
+/**
  * @typedef EvidenceFile
  * @property {string} name
  * @property {string} url
  * @property {any} icon
+ * @property {EvidenceTrend[]} trends
  *
  */
 
@@ -28,7 +35,7 @@
 /**
  * @typedef Persona
  * @property {string} name The name of the persona
- * @property {any[]} evidence The documents with evidence
+ * @property {EvidenceFile[]} evidence The documents with evidence
  */
 
 module.exports = {};

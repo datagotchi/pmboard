@@ -13,10 +13,11 @@ import WidgetItemRow from "./WidgetItemRow";
  * @param {string} props.type The type of the data rows.
  * @param {string} props.title The title to show at the top of the widget.
  * @param {(item: WidgetDataItem) => void} props.addItemFunc The function to call when a new item is added.
- * @param {(item: WidgetDataItem) => void} props.updateItemFunc The function to call when an item is updated.
+ * @param {(item: WidgetDataItem, itemIndex: number) => void} props.updateItemFunc The function to call when an item is updated.
  * @param {(itemIndex: number) => void} props.deleteItemFunc The function to call when a new item is deleted.
  * @param {string} props.itemModalId The ID of the item modal passed in `children`.
  * @param {(object) => void} props.updateCollectionFunc The function to call when the order of items is changed.
+ * @param {} props.updateTrendFunc The function to call to update an item::evidence::trend.
  * @returns {JSX.Element} The rendered widget.
  * @example
  * <Widget data={*} type={*} title="*" addItemFunc={*} deleteItemFunc={*} itemModalId="*" />
@@ -30,6 +31,7 @@ const Widget = ({
   deleteItemFunc,
   itemModalId,
   updateCollectionFunc,
+  updateTrendFunc,
 }) => {
   /**
    * @type {[WidgetDataItem[] | undefined, React.Dispatch<any[]>]}
@@ -146,7 +148,7 @@ const Widget = ({
           ];
           updateCollectionFunc([...newData]).then(() => {
             // TODO: refreshing the page works, but I'd prefer not to
-            // setLiveData(newData); // resets the live data, but renders it the old way (!)
+            // setLiveData((prevLiveData) => [...newData]); // resets the live data, but renders it the old way (!)
             window.location.reload();
           });
         }
@@ -232,7 +234,7 @@ const Widget = ({
           </button>
         </div>
         <dialog id="createDialog">
-          <form>
+          <form name="createItemForm">
             <p>
               New name: <input type="text" id="newName" />
             </p>
@@ -260,8 +262,18 @@ const Widget = ({
         <Modal
           dialogId={itemModalId}
           item={currentItem}
-          deleteFunc={deleteItemCallback}
-          updateFunc={(item) => updateItemFunc(item, currentItemIndex)}
+          deleteItemFunc={deleteItemCallback}
+          updateItemFunc={(item) => updateItemFunc(item, currentItemIndex)}
+          updateTrendFunc={(trendIndex, trend) => {
+            currentItem.evidence.forEach((file, fileIndex) => {
+              const trendIndex = file.trends
+                .map((trend) => trend.name)
+                .indexOf(trend.name);
+              if (trendIndex > -1) {
+                updateTrendFunc(currentItemIndex, fileIndex, trendIndex, trend);
+              }
+            });
+          }}
         />
       )}
     </>
