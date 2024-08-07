@@ -317,14 +317,14 @@ const Modal = ({
     classNameToIndex[className] = index;
   });
 
-  const pluralizeTrendType = (trendType) => {
-    switch (trendType) {
+  const formatTrendTypeText = (trendType) => {
+    switch (trendType.toLocaleLowerCase()) {
       case "activity":
         return "Activities";
       case "":
         return "";
       default:
-        return `${trendType}s`;
+        return `${trendType.charAt(0).toUpperCase() + trendType.slice(1)}s`;
     }
   };
 
@@ -395,10 +395,7 @@ const Modal = ({
                                   <tr key={`ReactTags for '${trendType}'`}>
                                     <td>
                                       <strong>
-                                        {pluralizeTrendType(
-                                          trendType.charAt(0).toUpperCase() +
-                                            trendType.slice(1)
-                                        )}
+                                        {formatTrendTypeText(trendType)}
                                       </strong>
                                     </td>
                                     <td>
