@@ -321,6 +321,8 @@ const Modal = ({
     switch (trendType.toLocaleLowerCase()) {
       case "activity":
         return "Activities";
+      case "resource":
+        return "Resources & Constraints";
       case "":
         return "";
       default:
@@ -474,85 +476,88 @@ const Modal = ({
                                 </a>
                               </td>
                               <td>
-                                {allTags && trendTagsPerFile && (
-                                  <ReactTags
-                                    tags={trendTagsPerFile[file.url]}
-                                    separators={[SEPARATORS.ENTER]}
-                                    allowAdditionFromPaste={false}
-                                    handleAddition={(tag) => {
-                                      const fileTags = [
-                                        ...trendTagsPerFile[file.url],
-                                      ];
-                                      fileTags.push(tag);
-                                      setTrendTagsPerFile({
-                                        ...trendTagsPerFile,
-                                        [file.url]: fileTags,
-                                      });
-                                    }}
-                                    suggestions={allTags
-                                      .filter(
-                                        (tag) =>
-                                          trendTagsPerFile[file.url] &&
-                                          !trendTagsPerFile[file.url]
-                                            .map((t) => t.id)
-                                            .includes(tag.id)
-                                      )
-                                      .map((allTag) => ({
-                                        id: allTag.id,
-                                        text: allTag.id,
-                                        className: allTag.className,
-                                      }))}
-                                    // renderSuggestion={(item, query) => {}}
-                                    editable={true}
-                                    onTagUpdate={(index, tag) => {
-                                      const fileTags = [
-                                        ...trendTagsPerFile[file.url],
-                                      ];
-                                      fileTags[index] = {
-                                        id:
-                                          tag.id.charAt(0).toUpperCase() +
-                                          tag.id.slice(1),
-                                        text:
-                                          tag.text.charAt(0).toUpperCase() +
-                                          tag.text.slice(1),
-                                        className: fileTags[index].className,
-                                      };
-                                      setTrendTagsPerFile({
-                                        ...trendTagsPerFile,
-                                        [file.url]: fileTags,
-                                      });
-                                    }}
-                                    placeholder="Add a trend"
-                                    classNames={{
-                                      tag: "trendItem",
-                                      remove: "removeButton",
-                                    }}
-                                    allowUnique={true}
-                                    inputFieldPosition="top"
-                                    removeComponent={({
-                                      className,
-                                      onRemove,
-                                    }) => {
-                                      return (
-                                        <button
-                                          onClick={onRemove}
-                                          className={className}
-                                        >
-                                          X
-                                        </button>
-                                      );
-                                    }}
-                                    handleDelete={(index) => {
-                                      const thisFileTrends =
-                                        trendTagsPerFile[file.url];
-                                      thisFileTrends.splice(index, 1);
-                                      setTrendTagsPerFile({
-                                        ...trendTagsPerFile,
-                                        [file.url]: trendTagsPerFile[file.url],
-                                      });
-                                    }}
-                                  />
-                                )}
+                                {allTags &&
+                                  trendTagsPerFile &&
+                                  trendTagsPerFile[file.url] && (
+                                    <ReactTags
+                                      tags={trendTagsPerFile[file.url]}
+                                      separators={[SEPARATORS.ENTER]}
+                                      allowAdditionFromPaste={false}
+                                      handleAddition={(tag) => {
+                                        const fileTags = [
+                                          ...trendTagsPerFile[file.url],
+                                        ];
+                                        fileTags.push(tag);
+                                        setTrendTagsPerFile({
+                                          ...trendTagsPerFile,
+                                          [file.url]: fileTags,
+                                        });
+                                      }}
+                                      suggestions={allTags
+                                        .filter(
+                                          (tag) =>
+                                            trendTagsPerFile[file.url] &&
+                                            !trendTagsPerFile[file.url]
+                                              .map((t) => t.id)
+                                              .includes(tag.id)
+                                        )
+                                        .map((allTag) => ({
+                                          id: allTag.id,
+                                          text: allTag.id,
+                                          className: allTag.className,
+                                        }))}
+                                      // renderSuggestion={(item, query) => {}}
+                                      editable={true}
+                                      onTagUpdate={(index, tag) => {
+                                        const fileTags = [
+                                          ...trendTagsPerFile[file.url],
+                                        ];
+                                        fileTags[index] = {
+                                          id:
+                                            tag.id.charAt(0).toUpperCase() +
+                                            tag.id.slice(1),
+                                          text:
+                                            tag.text.charAt(0).toUpperCase() +
+                                            tag.text.slice(1),
+                                          className: fileTags[index].className,
+                                        };
+                                        setTrendTagsPerFile({
+                                          ...trendTagsPerFile,
+                                          [file.url]: fileTags,
+                                        });
+                                      }}
+                                      placeholder="Add a trend"
+                                      classNames={{
+                                        tag: "trendItem",
+                                        remove: "removeButton",
+                                      }}
+                                      allowUnique={true}
+                                      inputFieldPosition="top"
+                                      removeComponent={({
+                                        className,
+                                        onRemove,
+                                      }) => {
+                                        return (
+                                          <button
+                                            onClick={onRemove}
+                                            className={className}
+                                          >
+                                            X
+                                          </button>
+                                        );
+                                      }}
+                                      handleDelete={(index) => {
+                                        const thisFileTrends =
+                                          trendTagsPerFile[file.url];
+                                        thisFileTrends.splice(index, 1);
+                                        setTrendTagsPerFile({
+                                          ...trendTagsPerFile,
+                                          [file.url]:
+                                            trendTagsPerFile[file.url],
+                                        });
+                                      }}
+                                    />
+                                  )}
                               </td>
                             </tr>
                           ))}
