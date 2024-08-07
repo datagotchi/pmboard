@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Sortable, Plugins } from "@shopify/draggable";
 
-import { WidgetDataItem } from "../types";
+import { EvidenceTrend, WidgetDataItem } from "../types";
 import Modal from "./Modal";
 import WidgetItemRow from "./WidgetItemRow";
 
@@ -16,8 +16,8 @@ import WidgetItemRow from "./WidgetItemRow";
  * @param {(itemIndex: number) => void} props.deleteItemFunc The function to call when a new item is deleted.
  * @param {string} props.itemModalId The ID of the item modal passed in `children`.
  * @param {(object) => void} props.updateCollectionFunc The function to call when the order of items is changed.
- * @param {} props.updateTrendFunc The function to call to update an item::evidence::trend.
- * @returns {JSX.Element} The rendered widget.
+ * @param {(personaIndex: number, evidenceIndex: number, trendIndex: number, trend: EvidenceTrend) => Promise<Response>} props.updateTrendFunc The function to call to update an item::evidence::trend.
+ * @returns {React.JSX.Element} The rendered widget.
  * @example
  * <Widget data={*} type={*} title="*" addItemFunc={*} deleteItemFunc={*} itemModalId="*" />
  */

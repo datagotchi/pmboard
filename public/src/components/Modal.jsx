@@ -305,7 +305,7 @@ const Modal = ({
   return (
     <>
       <style>{css}</style>
-      <dialog id={dialogId} style={{ width: "800px", height: "900px" }}>
+      <dialog id={dialogId} style={{ width: "90%", height: "90%" }}>
         <div>
           <div>
             <div>

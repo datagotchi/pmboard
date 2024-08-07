@@ -9,7 +9,6 @@ export default [
   jsdoc.configs["flat/recommended-error"],
   {
     files: ["**/*.{js,mjs,cjs,jsx}"],
-    ignores: ["**/bower_components/**/*.js"],
     plugins: {
       jsdoc,
     },
@@ -17,5 +16,10 @@ export default [
       "react/prop-types": "off",
     },
   },
-  { languageOptions: { globals: globals.browser } },
+  {
+    languageOptions: { globals: globals.browser },
+  },
+  {
+    ignores: ["**/node_modules/**", "**/bower_components/**", "**/dist/**"],
+  },
 ];
