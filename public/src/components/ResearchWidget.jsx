@@ -33,6 +33,7 @@ const ResearchWidget = ({ productId }) => {
         updateProductCollection(productId, "personas", collection)
       }
       updateTrendFunc={updateTrend}
+      summaryTitle="Empathy Map"
     />
   );
 };

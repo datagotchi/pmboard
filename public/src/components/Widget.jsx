@@ -17,6 +17,7 @@ import WidgetItemRow from "./WidgetItemRow";
  * @param {string} props.itemModalId The ID of the item modal passed in `children`.
  * @param {(object) => void} props.updateCollectionFunc The function to call when the order of items is changed.
  * @param {(personaIndex: number, evidenceIndex: number, trendIndex: number, trend: EvidenceTrend) => Promise<Response>} props.updateTrendFunc The function to call to update an item::evidence::trend.
+ * @param {string} props.summaryTitle The title of the summary tab on the modal.
  * @returns {React.JSX.Element} The rendered widget.
  * @example
  * <Widget data={*} type={*} title="*" addItemFunc={*} deleteItemFunc={*} itemModalId="*" />
@@ -31,6 +32,7 @@ const Widget = ({
   itemModalId,
   updateCollectionFunc,
   updateTrendFunc,
+  summaryTitle,
 }) => {
   /**
    * @type {[WidgetDataItem[] | undefined, React.Dispatch<any[]>]}
@@ -270,6 +272,7 @@ const Widget = ({
               }
             });
           }}
+          summaryTitle={summaryTitle}
         />
       )}
     </>

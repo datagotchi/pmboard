@@ -10,7 +10,8 @@ import { EvidenceTrend, WidgetDataItem, GoogleFile } from "../types";
  * @param {string} props.dialogId The ID to give the dialog.
  * @param {(itemIndex: number) => void} props.deleteItemFunc The function to call when a new item is deleted.
  * @param {(item: WidgetDataItem) => void} props.updateItemFunc The function to call when a new item is updated.
- * @param {(trendIndex: number, trend: EvidenceTrend) => Promise<void>} props.updateTrendFunc The functino to call when a trend is updated.
+ * @param {(trendIndex: number, trend: EvidenceTrend) => Promise<void>} props.updateTrendFunc The function to call when a trend is updated.
+ * @param {string} props.summaryTitle The title of the summary tab.
  * @returns {React.JSX.Element} The rendered modal.
  * @example
  *  <Modal item={*} dialogId="*" deleteItemFunc={*} updateItemFunc={*} />
@@ -21,6 +22,7 @@ const Modal = ({
   deleteItemFunc,
   updateItemFunc,
   updateTrendFunc,
+  summaryTitle,
 }) => {
   const ADD_FILES_DIALOG_ID = `addFilesModal: ${dialogId}`;
 
@@ -364,7 +366,7 @@ const Modal = ({
                         role="tab"
                         data-toggle="tab"
                       >
-                        Summary
+                        {summaryTitle}
                       </a>
                     </li>
                   </ul>
