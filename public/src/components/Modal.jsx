@@ -63,10 +63,19 @@ const Modal = ({
     return 0;
   };
 
-  const getJsonSortedString = (trends) =>
-    JSON.stringify(trends.map((trend) => trend.name).sort(sortString));
+  const getJsonSortedString = (trends) => {
+    if (trends) {
+      return JSON.stringify(trends.map((trend) => trend.name).sort(sortString));
+    }
+    return "";
+  };
 
+  const getOccurenceNumber = (tagText) =>
+    parseInt(tagText.match(/\(([0-9]+)\)/)[1]);
   const updateAllTagsFromTrendTags = useCallback(() => {
+    /**
+     * @type {ReactTags.Tag[]}
+     */
     const newAllTags = [];
     const tagDataMap = {};
     Object.keys(trendTagsPerFile).forEach((fileUrl) => {
@@ -89,7 +98,11 @@ const Modal = ({
         className: tagData.className,
       });
     });
-    setAllTags(newAllTags);
+    setAllTags(
+      newAllTags
+        .sort(sortString)
+        .sort((a, b) => getOccurenceNumber(b.text) - getOccurenceNumber(a.text))
+    );
   }, [trendTagsPerFile]);
 
   /**
@@ -142,7 +155,7 @@ const Modal = ({
         updateItemFunc(item);
       }
     }
-  }, [trendTagsPerFile]);
+  }, [trendTagsPerFile, item.evidence]);
 
   /**
    * @type {[ReactTags.Tag[] | undefined, React.Dispatch<ReactTags.Tag[] | undefined>]}
@@ -302,6 +315,17 @@ const Modal = ({
     classNameToIndex[className] = index;
   });
 
+  const pluralizeTrendType = (trendType) => {
+    switch (trendType) {
+      case "activity":
+        return "Activities";
+      case "":
+        return "";
+      default:
+        return `${trendType}s`;
+    }
+  };
+
   return (
     <>
       <style>{css}</style>
@@ -369,8 +393,10 @@ const Modal = ({
                                   <tr key={`ReactTags for '${trendType}'`}>
                                     <td>
                                       <strong>
-                                        {trendType.charAt(0).toUpperCase() +
-                                          trendType.slice(1)}
+                                        {pluralizeTrendType(
+                                          trendType.charAt(0).toUpperCase() +
+                                            trendType.slice(1)
+                                        )}
                                       </strong>
                                     </td>
                                     <td>
@@ -449,7 +475,7 @@ const Modal = ({
                                 </a>
                               </td>
                               <td>
-                                {allTags && (
+                                {allTags && trendTagsPerFile && (
                                   <ReactTags
                                     tags={trendTagsPerFile[file.url]}
                                     separators={[SEPARATORS.ENTER]}
@@ -484,7 +510,12 @@ const Modal = ({
                                         ...trendTagsPerFile[file.url],
                                       ];
                                       fileTags[index] = {
-                                        ...tag,
+                                        id:
+                                          tag.id.charAt(0).toUpperCase() +
+                                          tag.id.slice(1),
+                                        text:
+                                          tag.text.charAt(0).toUpperCase() +
+                                          tag.text.slice(1),
                                         className: fileTags[index].className,
                                       };
                                       setTrendTagsPerFile({
