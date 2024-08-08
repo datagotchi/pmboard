@@ -20,6 +20,8 @@
  * @property {string} name The name of the file.
  * @property {string} url The url of the file.
  * @property {any} icon The icon of the file.
+ * @property {string} createdDate The date it was created.
+ * @property {string} modifiedDate The date it was last modified.
  * @property {EvidenceTrend[]} trends The trends found in the file.
  */
 

@@ -14,8 +14,13 @@ import useProductAPI from "../hooks/useProductAPI";
  */
 const ResearchWidget = ({ productId }) => {
   const personas = usePersonas(productId);
-  const { addPersona, updatePersona, deletePersona, updateTrend } =
-    usePersonasAPI(productId);
+  const {
+    addPersona,
+    updatePersona,
+    deletePersona,
+    addEvidenceFile,
+    updateTrend,
+  } = usePersonasAPI(productId);
   const { updateProductCollection } = useProductAPI();
 
   const PERSONA_MODAL_ID = "personaModal";
@@ -34,6 +39,7 @@ const ResearchWidget = ({ productId }) => {
       }
       updateTrendFunc={updateTrend}
       summaryTitle="Empathy Map"
+      addItemEvidenceFunc={addEvidenceFile}
     />
   );
 };

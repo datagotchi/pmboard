@@ -2,7 +2,12 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { WithContext as ReactTags, SEPARATORS } from "react-tag-input";
 
 import useOAuthAPI from "../hooks/useOAuthAPI";
-import { EvidenceTrend, WidgetDataItem, GoogleFile } from "../types";
+import {
+  EvidenceFile,
+  EvidenceTrend,
+  WidgetDataItem,
+  GoogleFile,
+} from "../types";
 
 /**
  * @param {object} props The component properties.
@@ -12,6 +17,7 @@ import { EvidenceTrend, WidgetDataItem, GoogleFile } from "../types";
  * @param {(item: WidgetDataItem) => void} props.updateItemFunc The function to call when a new item is updated.
  * @param {(trendIndex: number, trend: EvidenceTrend) => Promise<void>} props.updateTrendFunc The function to call when a trend is updated.
  * @param {string} props.summaryTitle The title of the summary tab.
+ * @param {(file: EvidenceFile) => Promise<Response>} props.addItemEvidenceFunc The function to call when adding an evidence file.
  * @returns {React.JSX.Element} The rendered modal.
  * @example
  *  <Modal item={*} dialogId="*" deleteItemFunc={*} updateItemFunc={*} />
@@ -23,6 +29,7 @@ const Modal = ({
   updateItemFunc,
   updateTrendFunc,
   summaryTitle,
+  addItemEvidenceFunc,
 }) => {
   const ADD_FILES_DIALOG_ID = `addFilesModal: ${dialogId}`;
 
@@ -231,9 +238,11 @@ const Modal = ({
           name: file.title,
           url: file.alternateLink,
           icon: file.iconLink,
+          createdDate: file.createdDate,
+          modifiedDate: file.modifiedDate,
         };
         item.evidence.push(newFile);
-        updateItemFunc(item);
+        addItemEvidenceFunc(newFile);
 
         const newFiles = googleFiles.filter(
           (f) => f.alternateLink !== file.alternateLink
@@ -464,6 +473,12 @@ const Modal = ({
                                   style={{ cursor: "pointer" }}
                                   onClick={() => removeFile(file)}
                                 ></span>
+                              </td>
+                              <td>
+                                {file.createdDate &&
+                                  new Date(
+                                    file.createdDate
+                                  ).toLocaleDateString()}
                               </td>
                               <td>
                                 <a

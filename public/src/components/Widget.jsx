@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Sortable, Plugins } from "@shopify/draggable";
 
-import { EvidenceTrend, WidgetDataItem } from "../types";
+import { EvidenceFile, EvidenceTrend, WidgetDataItem } from "../types";
 import Modal from "./Modal";
 import WidgetItemRow from "./WidgetItemRow";
 
@@ -18,6 +18,7 @@ import WidgetItemRow from "./WidgetItemRow";
  * @param {(object) => void} props.updateCollectionFunc The function to call when the order of items is changed.
  * @param {(personaIndex: number, evidenceIndex: number, trendIndex: number, trend: EvidenceTrend) => Promise<Response>} props.updateTrendFunc The function to call to update an item::evidence::trend.
  * @param {string} props.summaryTitle The title of the summary tab on the modal.
+ * @param {(itemIndex: number, file: EvidenceFile) => Promise<Response>} props.addItemEvidenceFunc The function to call when an evidence file is added.
  * @returns {React.JSX.Element} The rendered widget.
  * @example
  * <Widget data={*} type={*} title="*" addItemFunc={*} deleteItemFunc={*} itemModalId="*" />
@@ -33,6 +34,7 @@ const Widget = ({
   updateCollectionFunc,
   updateTrendFunc,
   summaryTitle,
+  addItemEvidenceFunc,
 }) => {
   /**
    * @type {[WidgetDataItem[] | undefined, React.Dispatch<any[]>]}
@@ -273,6 +275,9 @@ const Widget = ({
             });
           }}
           summaryTitle={summaryTitle}
+          addItemEvidenceFunc={(file) =>
+            addItemEvidenceFunc(currentItemIndex, file)
+          }
         />
       )}
     </>

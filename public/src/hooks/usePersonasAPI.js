@@ -44,6 +44,17 @@ const usePersonasAPI = (productId) => {
       method: "DELETE",
       // TODO: credentials/headers
     });
+
+  const addEvidenceFile = (personaIndex, file) =>
+    fetch(`/products/${productId}/personas/${personaIndex}/evidence`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(file),
+    });
+
   // const addTrendToEvidence = (personaIndex, evidenceIndex, trend) =>
   //   fetch(`/products/${productId}/personas/${personaIndex}/evidence/${evidenceIndex}/trends`, {
   //     method: "POST",
@@ -71,7 +82,7 @@ const usePersonasAPI = (productId) => {
     addPersona,
     updatePersona,
     deletePersona,
-    // addEvidenceToPersona,
+    addEvidenceFile,
     updateTrend,
   };
 };
