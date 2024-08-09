@@ -148,6 +148,8 @@ function removeUserProduct(user, prodId) {
 
 router.use("/:product_id/personas", require("./personas"));
 
+router.use("/:product_id/companies", require("./companies"));
+
 router.use("/:product_id/stories", require("./stories"));
 
 module.exports = router;

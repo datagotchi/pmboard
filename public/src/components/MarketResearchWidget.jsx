@@ -2,6 +2,8 @@ import React from "react";
 
 import Widget from "./Widget";
 import useCompanies from "../hooks/useCompanies";
+import useCompaniesAPI from "../hooks/useCompaniesAPI";
+import useProductAPI from "../hooks/useProductAPI";
 
 /**
  * A widget to document and visualize companies in related markets
@@ -13,6 +15,14 @@ import useCompanies from "../hooks/useCompanies";
  */
 const MarketResearchWidget = ({ productId }) => {
   const companies = useCompanies(productId);
+  const {
+    addCompany,
+    updateCompany,
+    deleteCompany,
+    addEvidenceFile,
+    updateTrend,
+  } = useCompaniesAPI(productId);
+  const { updateProductCollection } = useProductAPI();
 
   const COMPANY_MODAL_ID = "companyModal";
 
@@ -20,16 +30,16 @@ const MarketResearchWidget = ({ productId }) => {
     <Widget
       data={companies}
       type="Persona"
-      title="Who are the stakeholders?"
-      addItemFunc={addPersona}
-      updateItemFunc={updatePersona}
-      deleteItemFunc={deletePersona}
+      title="Who are the related companies?"
+      addItemFunc={addCompany}
+      updateItemFunc={updateCompany}
+      deleteItemFunc={deleteCompany}
       itemModalId={COMPANY_MODAL_ID}
       updateCollectionFunc={(collection) =>
-        updateProductCollection(productId, "personas", collection)
+        updateProductCollection(productId, "companies", collection)
       }
       updateTrendFunc={updateTrend}
-      summaryTitle="Empathy Map"
+      summaryTitle="Market Map"
       addItemEvidenceFunc={addEvidenceFile}
     />
   );

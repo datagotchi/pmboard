@@ -3,6 +3,7 @@ import { Product } from "../types";
 import StakeholderResearchWidget from "./StakeholderResearchWidget";
 import useProductAPI from "../hooks/useProductAPI";
 import useOAuthAPI from "../hooks/useOAuthAPI";
+import MarketResearchWidget from "./MarketResearchWidget";
 
 /**
  * The container of all widgets
@@ -183,7 +184,10 @@ const Dashboard = () => {
       </nav>
       {!currentProduct && <span>Select a product from the menu.</span>}
       {currentProduct && (
-        <StakeholderResearchWidget productId={currentProduct._id} />
+        <>
+          <StakeholderResearchWidget productId={currentProduct._id} />
+          <MarketResearchWidget productId={currentProduct._id} />
+        </>
       )}
     </>
   );

@@ -23,9 +23,32 @@ var productSchema = new Schema({
           modifiedDate: Date,
           trends: [
             {
-              _id: false,
+              _id: false, // uniquely access evidence by array index
               name: String,
-              type: { type: String },
+              type: String,
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  companies: [
+    {
+      _id: false, // uniquely access evidence by array index
+      name: String,
+      evidence: [
+        {
+          _id: false, // uniquely access evidence by array index
+          name: String,
+          url: String,
+          icon: String,
+          createdDate: Date,
+          modifiedDate: Date,
+          trends: [
+            {
+              _id: false, // uniquely access evidence by array index
+              name: String,
+              type: String,
             },
           ],
         },
@@ -45,7 +68,7 @@ var productSchema = new Schema({
             {
               _id: false,
               name: String,
-              type: { type: String },
+              type: String,
             },
           ],
         },
