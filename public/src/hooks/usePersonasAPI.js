@@ -1,4 +1,4 @@
-import { Persona } from "../types";
+import { EvidenceFile, Persona } from "../types";
 
 /**
  * A hook to modify product personas
@@ -45,6 +45,12 @@ const usePersonasAPI = (productId) => {
       // TODO: credentials/headers
     });
 
+  /**
+   * Add an evidence file to a persona.
+   * @param {number} personaIndex The index of the persona.
+   * @param {EvidenceFile} file The file to add.
+   * @returns {Promise<Response>} The POST request promise.
+   */
   const addEvidenceFile = (personaIndex, file) =>
     fetch(`/products/${productId}/personas/${personaIndex}/evidence`, {
       method: "POST",
