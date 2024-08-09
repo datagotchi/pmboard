@@ -471,7 +471,11 @@ const Modal = ({
                                 <span
                                   className="remove-evidence glyphicon glyphicon-remove"
                                   style={{ cursor: "pointer" }}
-                                  onClick={() => removeFile(file)}
+                                  onClick={() => {
+                                    if (confirm("Are you sure?")) {
+                                      removeFile(file);
+                                    }
+                                  }}
                                 ></span>
                               </td>
                               <td>
