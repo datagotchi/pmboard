@@ -25,7 +25,7 @@ var productSchema = new Schema({
             {
               _id: false, // uniquely access evidence by array index
               name: String,
-              type: String,
+              type: { type: String }, // FIXME: no idea why just String doesn't work
             },
           ],
         },
@@ -48,7 +48,7 @@ var productSchema = new Schema({
             {
               _id: false, // uniquely access evidence by array index
               name: String,
-              type: String,
+              type: { type: String },
             },
           ],
         },
@@ -68,7 +68,7 @@ var productSchema = new Schema({
             {
               _id: false,
               name: String,
-              type: String,
+              type: { type: String },
             },
           ],
         },

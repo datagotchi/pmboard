@@ -144,7 +144,7 @@ const Modal = ({
 
       item.evidence.forEach((file) => {
         const tags = trendTagsPerFile[file.url];
-        if (tags) {
+        if (tags && tags.length > 0) {
           const trends = tags.map((tag) => ({
             name: tag.id,
             type: tag.className,

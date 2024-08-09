@@ -62,7 +62,7 @@ router.delete("/:company_ix", async (req, res, next) => {
   const prod = req.product;
   const ix = req.company_ix;
 
-  prod.personas.splice(ix, 1);
+  prod.companies.splice(ix, 1);
 
   try {
     await prod.save();

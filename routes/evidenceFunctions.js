@@ -1,6 +1,12 @@
 const getEvidenceExpressFunc =
   (itemCollectionName, itemIndexKey) => (req, res, next) => {
     const { product, [itemIndexKey]: ix } = req;
+
+    console.log(
+      "*** returning res.json(product[itemCollectionName][ix].evidence): ",
+      res.json(product[itemCollectionName][ix].evidence)
+    );
+
     return res.json(product[itemCollectionName][ix].evidence);
   };
 

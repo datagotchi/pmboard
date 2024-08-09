@@ -16,7 +16,7 @@ import WidgetItemRow from "./WidgetItemRow";
  * @param {(itemIndex: number) => void} props.deleteItemFunc The function to call when a new item is deleted.
  * @param {string} props.itemModalId The ID of the item modal passed in `children`.
  * @param {(object) => void} props.updateCollectionFunc The function to call when the order of items is changed.
- * @param {(personaIndex: number, evidenceIndex: number, trendIndex: number, trend: EvidenceTrend) => Promise<Response>} props.updateTrendFunc The function to call to update an item::evidence::trend.
+ * @param {(itemIndex: number, evidenceIndex: number, trendIndex: number, trend: EvidenceTrend) => Promise<Response>} props.updateTrendFunc The function to call to update an item::evidence::trend.
  * @param {string} props.summaryTitle The title of the summary tab on the modal.
  * @param {(itemIndex: number, file: EvidenceFile) => Promise<Response>} props.addItemEvidenceFunc The function to call when an evidence file is added.
  * @returns {React.JSX.Element} The rendered widget.
@@ -40,6 +40,9 @@ const Widget = ({
    * @type {[WidgetDataItem[] | undefined, React.Dispatch<any[]>]}
    */
   const [liveData, setLiveData] = useState();
+
+  const CREATE_DIALOG_ID = `createDialog: ${itemModalId}`;
+  const NEW_NAME_FIELD_ID = `newName: ${itemModalId}`;
 
   useEffect(() => {
     if (data) {
@@ -68,7 +71,7 @@ const Widget = ({
     /**
      * @type {HTMLDialogElement}
      */
-    const createDialog = document.getElementById("createDialog");
+    const createDialog = document.getElementById(CREATE_DIALOG_ID);
     setCreateDialog(createDialog);
     // TODO: only add once
     createDialog.addEventListener("click", (event) => {
@@ -229,16 +232,17 @@ const Widget = ({
             <span className="bi bi-person-plus" aria-hidden="true"></span> Add
           </button>
         </div>
-        <dialog id="createDialog">
+        <dialog id={CREATE_DIALOG_ID}>
           <form name="createItemForm">
             <p>
-              New name: <input type="text" id="newName" />
+              New name: <input type="text" id={NEW_NAME_FIELD_ID} />
             </p>
             <p>
               <button
                 type="submit"
                 onClick={() => {
-                  const newNameField = document.getElementById("newName");
+                  const newNameField =
+                    document.getElementById(NEW_NAME_FIELD_ID);
                   const newName = newNameField.value;
                   const newItem = { name: newName, evidence: [] };
                   setLiveData([...liveData, newItem]);
