@@ -4,12 +4,6 @@
  */
 
 /**
- * @typedef WidgetDataItem
- * @property {string} name The name of the item
- * @property {EvidenceFile[]} evidence The documents with evidence
- */
-
-/**
  * @typedef EvidenceTrend
  * @property {string} name The name of the trend.
  * @property {string} type The type of the trend.
@@ -34,9 +28,21 @@
 
 // TODO: figure out inheritence
 /**
+ * @typedef WidgetDataItem
+ * @property {string} name The name of the item
+ * @property {EvidenceFile[]} evidence The files that act as evidence
+ */
+
+/**
  * @typedef Persona
  * @property {string} name The name of the persona
- * @property {EvidenceFile[]} evidence The documents with evidence
+ * @property {EvidenceFile[]} evidence The files that act as evidence
+ */
+
+/**
+ * @typedef Company
+ * @property {string} name The name of the company
+ * @property {EvidenceFile[]} evidence The files that act as evidence
  */
 
 // eslint-disable-next-line no-undef

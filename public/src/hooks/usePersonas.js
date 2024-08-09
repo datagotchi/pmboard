@@ -1,5 +1,5 @@
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+
 import { Persona } from "../types";
 
 /**
@@ -7,7 +7,7 @@ import { Persona } from "../types";
  * @param {number} productId The ID of the current product.
  * @returns {Persona[] | undefined} An array of personas.
  * @example
- * const personas = usePersonas();
+ * const personas = usePersonas(productId);
  */
 const usePersonas = (productId) => {
   /**

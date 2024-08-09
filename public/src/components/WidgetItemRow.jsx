@@ -56,7 +56,7 @@ const WidgetItemRow = ({ item, onDeleteCallback, onClickCallback }) => {
             }
           }}
         >
-          <span className="remove-evidence glyphicon glyphicon-remove" /> Delete
+          <span className="remove-evidence bi bi-trash" /> Delete
         </a>
       </td>
     </tr>

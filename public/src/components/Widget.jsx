@@ -226,11 +226,7 @@ const Widget = ({
         </div>
         <div className="panel-footer">
           <button onClick={showCreateDialog}>
-            <span
-              className="glyphicon glyphicon-plus"
-              aria-hidden="true"
-            ></span>{" "}
-            Add
+            <span className="bi bi-person-plus" aria-hidden="true"></span> Add
           </button>
         </div>
         <dialog id="createDialog">

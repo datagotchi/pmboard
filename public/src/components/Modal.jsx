@@ -13,19 +13,17 @@ import {
  * @param {object} props The component properties.
  * @param {WidgetDataItem} props.item The item to show in the modal.
  * @param {string} props.dialogId The ID to give the dialog.
- * @param {(itemIndex: number) => void} props.deleteItemFunc The function to call when a new item is deleted.
  * @param {(item: WidgetDataItem) => void} props.updateItemFunc The function to call when a new item is updated.
  * @param {(trendIndex: number, trend: EvidenceTrend) => Promise<void>} props.updateTrendFunc The function to call when a trend is updated.
  * @param {string} props.summaryTitle The title of the summary tab.
  * @param {(file: EvidenceFile) => Promise<Response>} props.addItemEvidenceFunc The function to call when adding an evidence file.
  * @returns {React.JSX.Element} The rendered modal.
  * @example
- *  <Modal item={*} dialogId="*" deleteItemFunc={*} updateItemFunc={*} />
+ *  <Modal item={*} dialogId="*" updateItemFunc={*} updateTrendFunc={*} summaryTitle="*" addItemEvidenceFunc={*} />
  */
 const Modal = ({
   item,
   dialogId,
-  deleteItemFunc,
   updateItemFunc,
   updateTrendFunc,
   summaryTitle,
@@ -174,14 +172,9 @@ const Modal = ({
   /**
    * @type {[HTMLDialogElement | undefined, React.Disptch<HTMLDialogElement | undefined>]}
    */
-  const [mainDialog, setMainDialog] = useState();
-  /**
-   * @type {[HTMLDialogElement | undefined, React.Disptch<HTMLDialogElement | undefined>]}
-   */
   const [addFilesModal, setAddFilesModal] = useState();
 
   useEffect(() => {
-    setMainDialog(document.getElementById(dialogId));
     setAddFilesModal(document.getElementById(ADD_FILES_DIALOG_ID));
   }, []);
 
@@ -347,35 +340,31 @@ const Modal = ({
           <div>
             <div>
               <div className="modal-header">
-                <button
-                  type="button"
-                  className="close"
-                  data-dismiss="modal"
-                  aria-label="Close"
-                >
-                  <span>&times;</span>
-                </button>
                 <h4 className="modal-title">{item.name}</h4>
               </div>
               <div className="modal-body">
                 <div role="tabpanel">
                   <ul className="nav nav-tabs" role="tablist">
-                    <li role="presentation" className="active">
+                    <li role="presentation" className="nav-item">
                       <a
-                        href="#modalEvidence"
+                        className="nav-link active"
+                        data-bs-toggle="tab"
+                        data-bs-target="#modalEvidence"
                         aria-controls="evidence"
                         role="tab"
-                        data-toggle="tab"
+                        type="button"
                       >
                         Evidence
                       </a>
                     </li>
-                    <li role="presentation">
+                    <li role="presentation" className="nav-item">
                       <a
-                        href="#modalSummary"
+                        className="nav-link"
+                        data-bs-toggle="tab"
+                        data-bs-target="#modalSummary"
                         aria-controls="summary"
                         role="tab"
-                        data-toggle="tab"
+                        type="button"
                       >
                         {summaryTitle}
                       </a>
@@ -469,7 +458,7 @@ const Modal = ({
                             <tr key={`Item evidence: ${file.url} `}>
                               <td>
                                 <span
-                                  className="remove-evidence glyphicon glyphicon-remove"
+                                  className="remove-evidence bi bi-trash"
                                   style={{ cursor: "pointer" }}
                                   onClick={() => {
                                     if (confirm("Are you sure?")) {
@@ -586,38 +575,14 @@ const Modal = ({
                   </div>
                 </div>
               </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn-danger remove-item glyphicon glyphicon-remove"
-                  aria-label="Delete"
-                  onClick={() => {
-                    if (confirm("Are you sure?")) {
-                      deleteItemFunc(item);
-                      mainDialog.close();
-                    }
-                  }}
-                >
-                  Delete
-                </button>
-                <button
-                  type="button"
-                  className="btn-primary"
-                  aria-label="Close"
-                  onClick={() => {
-                    mainDialog.close();
-                  }}
-                >
-                  Close
-                </button>
-              </div>
+              <div className="modal-footer"></div>
             </div>
           </div>
         </div>
       </dialog>
       <dialog
         id={ADD_FILES_DIALOG_ID}
-        style={{ width: "400px", height: "600px" }}
+        style={{ width: "600px", height: "600px" }}
       >
         <div className="modal-content">
           <div className="modal-header">
