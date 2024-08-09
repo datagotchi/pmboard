@@ -188,7 +188,7 @@ const Widget = ({
     <>
       <div
         className="panel panel-default widget"
-        style={{ position: "relative" }}
+        style={{ position: "relative", border: "1px black dashed" }}
       >
         <hr
           style={{
