@@ -1,14 +1,13 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+
 import { Persona } from "../types";
 
 /**
  * A hook to download product personas
- *
- * @hook
- * @param productId {number} the ID of the current product.
+ * @param {number} productId The ID of the current product.
  * @returns {Persona[] | undefined} An array of personas.
  * @example
- * const personas = usePersonas();
+ * const personas = usePersonas(productId);
  */
 const usePersonas = (productId) => {
   /**

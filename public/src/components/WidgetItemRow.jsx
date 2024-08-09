@@ -3,10 +3,11 @@ import React from "react";
 import { WidgetDataItem } from "../types";
 
 /**
- * @param {Object} props
+ * @param {object} props The component properties.
  * @param {WidgetDataItem | undefined} props.item The item to show in this row
  * @param {(item: WidgetDataItem) => void} props.onDeleteCallback The function to call when deleting this item
  * @param {(item: WidgetDataItem) => void} props.onClickCallback The function to call when the name is clicked
+ * @returns {React.JSX.Element} The resulting widget element.
  */
 const WidgetItemRow = ({ item, onDeleteCallback, onClickCallback }) => {
   const getEvidenceLabelClass = (item) => {
@@ -55,7 +56,7 @@ const WidgetItemRow = ({ item, onDeleteCallback, onClickCallback }) => {
             }
           }}
         >
-          <span className="remove-evidence glyphicon glyphicon-remove" /> Delete
+          <span className="remove-evidence bi bi-trash" /> Delete
         </a>
       </td>
     </tr>
