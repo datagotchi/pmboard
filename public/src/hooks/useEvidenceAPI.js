@@ -1,38 +1,35 @@
-import { EvidenceFile } from "../types";
+import { EvidenceAPI } from "../types";
 
+/**
+ * @type {EvidenceAPI}
+ */
 const useEvidenceAPI = ({ productId, collectionName }) => {
-  /**
-   * Add an evidence file to a persona.
-   * @param {number} itemIndex The index of the widget item.
-   * @param {EvidenceFile} file The file to add.
-   * @returns {Promise<Response>} The POST request promise.
-   */
-  const addEvidenceFile = (itemIndex, file) =>
+  const updateEvidence = (itemIndex, evidence) =>
     fetch(`/products/${productId}/${collectionName}/${itemIndex}/evidence`, {
-      method: "POST",
+      method: "PUT",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(file),
+      body: JSON.stringify(evidence),
     });
 
-  const updateTrend = (itemIndex, evidenceIndex, trendIndex, trend) =>
-    fetch(
-      `/products/${productId}/${collectionName}/${itemIndex}/evidence/${evidenceIndex}/trends/${trendIndex}`,
-      {
-        method: "PUT",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(trend),
-      }
-    );
+  // const updateTrends = (itemIndex, evidenceIndex, trends) =>
+  //   fetch(
+  //     `/products/${productId}/${collectionName}/${itemIndex}/evidence/${evidenceIndex}/trends`,
+  //     {
+  //       method: "PUT",
+  //       headers: {
+  //         Accept: "application/json",
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(trends),
+  //     }
+  //   );
 
   return {
-    addEvidenceFile,
-    updateTrend,
+    updateEvidence,
+    // updateTrends,
   };
 };
 

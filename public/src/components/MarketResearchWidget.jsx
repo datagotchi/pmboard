@@ -18,7 +18,7 @@ const MarketResearchWidget = ({ productId }) => {
       productId={productId}
       collectionName="companies"
       type="Company"
-      evidenceType="Evidence?"
+      evidenceColumnLabel="Claims"
       title="What are the competing companies?"
       itemModalId={COMPANY_MODAL_ID}
       summaryTitle="Market Map"

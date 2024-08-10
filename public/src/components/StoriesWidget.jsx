@@ -18,7 +18,7 @@ const StoriesWidget = ({ productId }) => {
       productId={productId}
       collectionName="stories"
       type="Story"
-      evidenceType="Subtasks"
+      evidenceColumnLabel="Steps"
       title="What are the planned user stories?"
       itemModalId={STORY_MODAL_ID}
       summaryTitle="Story Roadmap"

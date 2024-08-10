@@ -1,6 +1,7 @@
 import React from "react";
 
 import Widget from "./Widget";
+import FileEvidencePane from "./FileEvidencePane";
 
 /**
  * A widget to document and visualize stakeholder problems
@@ -18,10 +19,11 @@ const StakeholderResearchWidget = ({ productId }) => {
       productId={productId}
       collectionName="personas"
       type="Persona"
-      evidenceType="Evidence"
+      evidenceColumnLabel="Research"
       title="Who are the stakeholders?"
-      itemModalId={PERSONA_MODAL_ID}
+      mainModalId={PERSONA_MODAL_ID}
       summaryTitle="Empathy Map"
+      evidencePane={FileEvidencePane}
     />
   );
 };

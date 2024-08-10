@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Sortable, Plugins } from "@shopify/draggable";
 
-import { WidgetDataItem } from "../types";
+import { EvidencePaneProps, WidgetDataItem } from "../types";
+
 import Modal from "./Modal";
 import WidgetItemRow from "./WidgetItemRow";
+
 import useCollectionAPI from "../hooks/useCollectionAPI";
 import useCollectionItems from "../hooks/useCollectionItems";
 import useProductAPI from "../hooks/useProductAPI";
@@ -14,40 +16,45 @@ import useProductAPI from "../hooks/useProductAPI";
  * @param {string} props.productId The ID of the current product.
  * @param {string} props.collectionName The name of the product collection.
  * @param {string} props.type The type of the data rows.
- * @param {string} props.evidenceType The type-name for the evidence.
+ * @param {string} props.evidenceColumnLabel The label for the evidence column.
  * @param {string} props.title The title to show at the top of the widget.
- * @param {string} props.itemModalId The ID of the item modal passed in `children`.
+ * @param {string} props.mainModalId The ID of the item modal passed in `children`.
  * @param {string} props.summaryTitle The title of the summary tab on the modal.
+ * @param {React.FC<EvidencePaneProps>} props.evidencePane The component to mount in the modal evidence pane.
  * @returns {React.JSX.Element} The rendered widget.
  * @example
- * <Widget productId="" collectionName="" type="" title="" itemModalId="" />
+ * <Widget productId="" collectionName="" type="" title="" mainModalId="" />
  */
 const Widget = ({
   productId,
   collectionName,
   type,
-  evidenceType,
+  evidenceColumnLabel,
   title,
-  itemModalId,
+  mainModalId,
   summaryTitle,
+  evidencePane,
 }) => {
   const data = useCollectionItems(productId, collectionName);
-
+  const { addItem, updateItem, deleteItem, updateEvidence } = useCollectionAPI(
+    productId,
+    collectionName
+  );
   const { updateProductCollection } = useProductAPI();
 
   /**
-   * @type {[WidgetDataItem[] | undefined, React.Dispatch<any[]>]}
+   * @type {[WidgetDataItem[] | undefined, React.Dispatch<WidgetDataItem[]>]}
    */
   const [liveData, setLiveData] = useState();
 
-  const CREATE_DIALOG_ID = `createDialog: ${itemModalId}`;
-  const NEW_NAME_FIELD_ID = `newName: ${itemModalId}`;
+  const CREATE_DIALOG_ID = `createDialog: ${mainModalId}`;
+  const NEW_NAME_FIELD_ID = `newName: ${mainModalId}`;
   const LIST_ID = `itemsTbody_${type}`;
 
+  /**
+   * @type {[Sortable | undefined, React.Dispatch<Sortable>]}
+   */
   const [sortable, setSortable] = useState();
-
-  const { addItem, updateItem, deleteItem, addEvidenceFile, updateTrend } =
-    useCollectionAPI(productId, collectionName);
 
   useEffect(() => {
     if (data) {
@@ -58,9 +65,12 @@ const Widget = ({
   /**
    * @type {[WidgetDataItem | undefined, React.Dispatch<WidgetDataItem>]}
    */
-  const [currentItem, setCurrentItem] = useState();
+  const [currentWidgetItem, setCurrentWidgetItem] = useState();
 
-  const [currentItemIndex, setCurrentItemIndex] = useState();
+  /**
+   * @type {[number | undefined, React.Dispatch<number | undefined>]}
+   */
+  const [currentWidgetItemIndex, setCurrentWidgetItemIndex] = useState();
 
   /**
    * @type {[HTMLDialogElement | undefined, React.Dispatch<HTMLDialogElement | undefined>]}
@@ -88,7 +98,7 @@ const Widget = ({
   };
 
   useEffect(() => {
-    if (currentItem) {
+    if (currentWidgetItem) {
       if (itemModal) {
         // TODO: track if these have been added/removed so they don't get added multiple times
         itemModal.addEventListener("click", (event) => {
@@ -98,19 +108,19 @@ const Widget = ({
         });
         itemModal.addEventListener("close", () => {
           setItemModal(undefined);
-          setCurrentItem(undefined);
-          setCurrentItemIndex(undefined);
+          setCurrentWidgetItem(undefined);
+          setCurrentWidgetItemIndex(undefined);
         });
         itemModal.showModal();
       } else {
         /**
          * @type {HTMLDialogElement}
          */
-        const modal = document.getElementById(itemModalId);
+        const modal = document.getElementById(mainModalId);
         setItemModal(modal);
       }
     }
-  }, [currentItem, itemModal]);
+  }, [currentWidgetItem, itemModal]);
 
   const [draggableContainer, setDraggableContainer] = useState();
 
@@ -189,9 +199,9 @@ const Widget = ({
 
   const widgetOnClickCallback = useCallback(
     (item) => {
-      setCurrentItem(item);
+      setCurrentWidgetItem(item);
       const index = liveData.indexOf(item);
-      setCurrentItemIndex(index);
+      setCurrentWidgetItemIndex(index);
     },
     [liveData]
   );
@@ -222,7 +232,7 @@ const Widget = ({
               <tr>
                 <th style={{ width: "20px" }}></th>
                 <th>{type}</th>
-                <th>{evidenceType}</th>
+                <th>{evidenceColumnLabel}</th>
                 <th>Delete</th>
               </tr>
             </thead>
@@ -270,26 +280,16 @@ const Widget = ({
           </form>
         </dialog>
       </div>
-      {currentItem && (
+      {currentWidgetItem && (
         <Modal
-          dialogId={itemModalId}
-          item={currentItem}
-          deleteItemFunc={deleteItemCallback}
-          updateItemFunc={(item) => updateItem(item, currentItemIndex)}
-          updateTrendFunc={(trendIndex, trend) => {
-            currentItem.evidence.forEach((file, fileIndex) => {
-              const trendIndex = file.trends
-                .map((trend) => trend.name)
-                .indexOf(trend.name);
-              if (trendIndex > -1) {
-                updateTrend(currentItemIndex, fileIndex, trendIndex, trend);
-              }
-            });
-          }}
+          dialogId={mainModalId}
+          item={currentWidgetItem}
+          updateItemFunc={(item) => updateItem(item, currentWidgetItemIndex)}
           summaryTitle={summaryTitle}
-          addItemEvidenceFunc={(file) =>
-            addEvidenceFile(currentItemIndex, file)
+          updateEvidenceOnServer={(evidence) =>
+            updateEvidence(currentWidgetItemIndex, evidence)
           }
+          evidencePane={evidencePane}
         />
       )}
     </>
