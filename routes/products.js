@@ -23,6 +23,7 @@ router.post("/", async (req, res, next) => {
     name,
     personas: [],
     stories: [],
+    companies: [],
     permissions: {},
   });
   await Product.create(newprod);

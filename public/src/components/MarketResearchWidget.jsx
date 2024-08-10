@@ -1,9 +1,6 @@
 import React from "react";
 
 import Widget from "./Widget";
-import useCompanies from "../hooks/useCompanies";
-import useCompaniesAPI from "../hooks/useCompaniesAPI";
-import useProductAPI from "../hooks/useProductAPI";
 
 /**
  * A widget to document and visualize companies in related markets
@@ -14,34 +11,17 @@ import useProductAPI from "../hooks/useProductAPI";
  *  <MarketResearchWidget productId={*} />
  */
 const MarketResearchWidget = ({ productId }) => {
-  const companies = useCompanies(productId);
-  const {
-    addCompany,
-    updateCompany,
-    deleteCompany,
-    addEvidenceFile,
-    updateTrend,
-  } = useCompaniesAPI(productId);
-  const { updateProductCollection } = useProductAPI();
-
   const COMPANY_MODAL_ID = "companyModal";
 
   return (
     <Widget
-      data={companies}
+      productId={productId}
+      collectionName="companies"
       type="Company"
       evidenceType="Evidence?"
       title="What are the competing companies?"
-      addItemFunc={addCompany}
-      updateItemFunc={updateCompany}
-      deleteItemFunc={deleteCompany}
       itemModalId={COMPANY_MODAL_ID}
-      updateCollectionFunc={(collection) =>
-        updateProductCollection(productId, "companies", collection)
-      }
-      updateTrendFunc={updateTrend}
       summaryTitle="Market Map"
-      addItemEvidenceFunc={addEvidenceFile}
     />
   );
 };

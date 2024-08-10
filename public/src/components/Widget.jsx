@@ -1,43 +1,40 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Sortable, Plugins } from "@shopify/draggable";
 
-import { EvidenceFile, EvidenceTrend, WidgetDataItem } from "../types";
+import { WidgetDataItem } from "../types";
 import Modal from "./Modal";
 import WidgetItemRow from "./WidgetItemRow";
+import useCollectionAPI from "../hooks/useCollectionAPI";
+import useCollectionItems from "../hooks/useCollectionItems";
+import useProductAPI from "../hooks/useProductAPI";
 
 /**
  * The HTML component for all PMBoard widgets to document and visualize information
  * @param {object} props The component props
- * @param {WidgetDataItem[] | undefined} props.data The data to show in the widget.
+ * @param {string} props.productId The ID of the current product.
+ * @param {string} props.collectionName The name of the product collection.
  * @param {string} props.type The type of the data rows.
  * @param {string} props.evidenceType The type-name for the evidence.
  * @param {string} props.title The title to show at the top of the widget.
- * @param {(item: WidgetDataItem) => void} props.addItemFunc The function to call when a new item is added.
- * @param {(item: WidgetDataItem, itemIndex: number) => void} props.updateItemFunc The function to call when an item is updated.
- * @param {(itemIndex: number) => void} props.deleteItemFunc The function to call when a new item is deleted.
  * @param {string} props.itemModalId The ID of the item modal passed in `children`.
- * @param {(object) => void} props.updateCollectionFunc The function to call when the order of items is changed.
- * @param {(itemIndex: number, evidenceIndex: number, trendIndex: number, trend: EvidenceTrend) => Promise<Response>} props.updateTrendFunc The function to call to update an item::evidence::trend.
  * @param {string} props.summaryTitle The title of the summary tab on the modal.
- * @param {(itemIndex: number, file: EvidenceFile) => Promise<Response>} props.addItemEvidenceFunc The function to call when an evidence file is added.
  * @returns {React.JSX.Element} The rendered widget.
  * @example
- * <Widget data={*} type={*} title="*" addItemFunc={*} deleteItemFunc={*} itemModalId="*" />
+ * <Widget productId="" collectionName="" type="" title="" itemModalId="" />
  */
 const Widget = ({
-  data,
+  productId,
+  collectionName,
   type,
   evidenceType,
   title,
-  addItemFunc,
-  updateItemFunc,
-  deleteItemFunc,
   itemModalId,
-  updateCollectionFunc,
-  updateTrendFunc,
   summaryTitle,
-  addItemEvidenceFunc,
 }) => {
+  const data = useCollectionItems(productId, collectionName);
+
+  const { updateProductCollection } = useProductAPI();
+
   /**
    * @type {[WidgetDataItem[] | undefined, React.Dispatch<any[]>]}
    */
@@ -48,6 +45,9 @@ const Widget = ({
   const LIST_ID = `itemsTbody_${type}`;
 
   const [sortable, setSortable] = useState();
+
+  const { addItem, updateItem, deleteItem, addEvidenceFile, updateTrend } =
+    useCollectionAPI(productId, collectionName);
 
   useEffect(() => {
     if (data) {
@@ -150,7 +150,11 @@ const Widget = ({
         currentDragIndex = trElements.indexOf(event.source);
       });
       sortable.on("drag:stop", (event) => {
-        const trElements = Array.from(draggableContainer.childNodes);
+        const trElements = Array.from(draggableContainer.childNodes).filter(
+          (tr) =>
+            !tr.className.includes("draggable-mirror") &&
+            !tr.className.includes("draggable--original")
+        );
         const newIndex = trElements.indexOf(event.source);
         if (newIndex !== currentDragIndex) {
           const newData = [...liveData];
@@ -158,11 +162,13 @@ const Widget = ({
             newData[currentDragIndex],
             newData[newIndex],
           ];
-          updateCollectionFunc([...newData]).then(() => {
-            // TODO: refreshing the page works, but I'd prefer not to
-            // setLiveData((prevLiveData) => [...newData]); // resets the live data, but renders it the old way (!)
-            window.location.reload();
-          });
+          updateProductCollection(productId, collectionName, newData).then(
+            () => {
+              // TODO: refreshing the page works, but I'd prefer not to
+              // setLiveData((prevLiveData) => [...newData]); // resets the live data, but renders it the old way (!)
+              window.location.reload();
+            }
+          );
         }
         // done: cleanup
         currentDragIndex = -1;
@@ -176,7 +182,7 @@ const Widget = ({
       const itemIndex = liveData.indexOf(item);
       liveData.splice(itemIndex, 1);
       setLiveData([...liveData]);
-      deleteItemFunc(itemIndex);
+      deleteItem(itemIndex);
     },
     [liveData]
   );
@@ -246,13 +252,13 @@ const Widget = ({
             <p>
               <button
                 type="submit"
-                onClick={() => {
+                onClick={async () => {
                   const newNameField =
                     document.getElementById(NEW_NAME_FIELD_ID);
                   const newName = newNameField.value;
                   const newItem = { name: newName, evidence: [] };
                   setLiveData([...liveData, newItem]);
-                  addItemFunc(newItem);
+                  await addItem(newItem);
                   createDialog.close();
                   setCreateDialog(undefined);
                   newNameField.value = "";
@@ -269,20 +275,20 @@ const Widget = ({
           dialogId={itemModalId}
           item={currentItem}
           deleteItemFunc={deleteItemCallback}
-          updateItemFunc={(item) => updateItemFunc(item, currentItemIndex)}
+          updateItemFunc={(item) => updateItem(item, currentItemIndex)}
           updateTrendFunc={(trendIndex, trend) => {
             currentItem.evidence.forEach((file, fileIndex) => {
               const trendIndex = file.trends
                 .map((trend) => trend.name)
                 .indexOf(trend.name);
               if (trendIndex > -1) {
-                updateTrendFunc(currentItemIndex, fileIndex, trendIndex, trend);
+                updateTrend(currentItemIndex, fileIndex, trendIndex, trend);
               }
             });
           }}
           summaryTitle={summaryTitle}
           addItemEvidenceFunc={(file) =>
-            addItemEvidenceFunc(currentItemIndex, file)
+            addEvidenceFile(currentItemIndex, file)
           }
         />
       )}

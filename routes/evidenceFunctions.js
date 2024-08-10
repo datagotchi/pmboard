@@ -15,7 +15,7 @@ const addEvidenceExpressFunc =
     const { product, [itemIndexKey]: ix, body: file } = req;
 
     if (!("evidence" in prod[itemCollectionName][ix])) {
-      prod.personas[ix].evidence = [];
+      prod[itemCollectionName][ix].evidence = [];
     }
     product[itemCollectionName][ix].evidence.push(file);
 
@@ -98,12 +98,10 @@ const changeTrendExpressFunc =
       success: true,
     });
   };
-// delete persona trend
+
 const deleteTrendExpressFunc =
   (itemCollectionName, itemIndexKey) => async (req, res, next) => {
     const { product, [itemIndexKey]: itemIndex } = req;
-    // var prod = req.product;
-    // var personaIx = req.personaIx;
     var evIx = req.evidence_ix;
     var trendIx = req.params.trend_ix;
     product[itemCollectionName][itemIndex].evidence[evIx].trends.splice(

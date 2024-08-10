@@ -2,6 +2,12 @@ const express = require("express");
 const router = express.Router();
 
 const {
+  addItem,
+  updateItem,
+  deleteItem,
+} = require("./collectionItemFunctions");
+
+const {
   getEvidenceExpressFunc,
   addEvidenceExpressFunc,
   trackEvidenceIndexExpressFunc,
@@ -20,18 +26,9 @@ router.get("/", (req, res, next) => {
   return res.json(req.product.companies);
 });
 
-router.post("/", async (req, res, next) => {
-  const prod = req.product;
-  const newCompany = req.body;
-
-  prod.companies.push(newCompany);
-  await prod.save();
-
-  return res.json(prod.companies[prod.companies.length - 1]);
-});
+router.post("/", addItem("companies"));
 
 router.param("company_ix", function (req, res, next) {
-  // TODO: assert ix is a normal int
   const ix = req.params.company_ix;
   const prod = req.product;
   if (ix && ix < prod.companies.length) {
@@ -43,36 +40,9 @@ router.param("company_ix", function (req, res, next) {
   return next(err);
 });
 
-router.put("/:company_ix", async (req, res, next) => {
-  const prod = req.product;
-  const ix = req.company_ix;
+router.put("/:company_ix", updateItem("companies", "company_ix"));
 
-  prod.companies[ix] = {
-    ...prod.companies[ix],
-    ...req.body,
-  };
-
-  await prod.save();
-  return res.json({
-    success: true,
-  });
-});
-
-router.delete("/:company_ix", async (req, res, next) => {
-  const prod = req.product;
-  const ix = req.company_ix;
-
-  prod.companies.splice(ix, 1);
-
-  try {
-    await prod.save();
-    return res.json({
-      success: true,
-    });
-  } catch (err) {
-    return next(err);
-  }
-});
+router.delete("/:company_ix", deleteItem("companies", "company_ix"));
 
 // evidence & trends from evidenceFunctions.js
 

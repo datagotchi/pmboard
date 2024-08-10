@@ -2,6 +2,12 @@ const express = require("express");
 const router = express.Router();
 
 const {
+  addItem,
+  updateItem,
+  deleteItem,
+} = require("./collectionItemFunctions");
+
+const {
   getEvidenceExpressFunc,
   addEvidenceExpressFunc,
   trackEvidenceIndexExpressFunc,
@@ -20,22 +26,14 @@ router.get("/", (req, res, next) => {
   return res.json(req.product.stories);
 });
 
-router.post("/", async (req, res, next) => {
-  const prod = req.product;
-  const newStory = req.body;
-
-  prod.stories.push(newStory);
-  await prod.save();
-
-  return res.json(prod.stories[prod.stories.length - 1]);
-});
+router.post("/", addItem("stories"));
 
 router.param("story_ix", function (req, res, next) {
   // TODO: assert ix is a normal int
   const ix = req.params.story_ix;
   const prod = req.product;
   if (ix && ix < prod.stories.length) {
-    req.company_ix = ix; // need to save just the index because we're saving the entire product document to the db
+    req.story_ix = ix; // need to save just the index because we're saving the entire product document to the db
     return next();
   }
   const err = new Error("No such user story");
@@ -43,36 +41,9 @@ router.param("story_ix", function (req, res, next) {
   return next(err);
 });
 
-router.put("/:story_ix", async (req, res, next) => {
-  const prod = req.product;
-  const ix = req.company_ix;
+router.put("/:story_ix", updateItem("stories", "story+ix"));
 
-  prod.stories[ix] = {
-    ...prod.stories[ix],
-    ...req.body,
-  };
-
-  await prod.save();
-  return res.json({
-    success: true,
-  });
-});
-
-router.delete("/:story_ix", async (req, res, next) => {
-  const prod = req.product;
-  const ix = req.company_ix;
-
-  prod.stories.splice(ix, 1);
-
-  try {
-    await prod.save();
-    return res.json({
-      success: true,
-    });
-  } catch (err) {
-    return next(err);
-  }
-});
+router.delete("/:story_ix", deleteItem("stories", "story_ix"));
 
 // evidence & trends from evidenceFunctions.js
 

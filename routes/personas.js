@@ -1,4 +1,12 @@
 var express = require("express");
+var router = express.Router();
+
+const {
+  addItem,
+  updateItem,
+  deleteItem,
+} = require("./collectionItemFunctions");
+
 const {
   getEvidenceExpressFunc,
   addEvidenceExpressFunc,
@@ -9,20 +17,6 @@ const {
   changeTrendExpressFunc,
   deleteTrendExpressFunc,
 } = require("./evidenceFunctions");
-var router = express.Router();
-//var mongoose = require('mongoose');
-//var ObjectId = mongoose.Types.ObjectId;
-
-/*
-function checkUserAccess(req, req_level) {
-  var userid = JSON.parse(req.cookies.userid);
-  if (!(userid in req.product.permLookup) || req.product.permLookup[userid] < req_level) {
-    var err = new Error("Unauthorized");
-    err.status = 403;
-    return err;
-  }
-}
-*/
 
 // get user personas
 router.get("/", (req, res, next) => {
@@ -33,21 +27,7 @@ router.get("/", (req, res, next) => {
   return res.json(req.product.personas);
 });
 
-// add user persona
-router.post("/", async (req, res, next) => {
-  /*
-  var err = checkUserAccess(req, 2);
-  if (err) return next(err);
-*/
-
-  var prod = req.product;
-  var newpersona = req.body;
-
-  prod.personas.push(newpersona);
-  await prod.save();
-
-  return res.json(prod.personas[prod.personas.length - 1]);
-});
+router.post("/", addItem("personas"));
 
 router.param("persona_ix", function (req, res, next) {
   // TODO: assert ix is a normal int
@@ -62,46 +42,9 @@ router.param("persona_ix", function (req, res, next) {
   return next(err);
 });
 
-router.put("/:persona_ix", async (req, res, next) => {
-  /*
-  var err = checkUserAccess(req, 2);
-  if (err) return next(err);
-*/
+router.put("/:persona_ix", updateItem("personas", "persona_ix"));
 
-  var prod = req.product;
-  var ix = req.persona_ix;
-
-  prod.personas[ix] = {
-    ...prod.personas[ix],
-    ...req.body,
-  };
-
-  await prod.save();
-  return res.json({
-    success: true,
-  });
-});
-
-// delete user persona
-router.delete("/:persona_ix", async (req, res, next) => {
-  /*
-  var err = checkUserAccess(req, 2);
-  if (err) return next(err);
-*/
-
-  var prod = req.product;
-  var ix = req.persona_ix;
-  prod.personas.splice(ix, 1);
-
-  try {
-    await prod.save();
-    return res.json({
-      success: true,
-    });
-  } catch (err) {
-    return next(err);
-  }
-});
+router.delete("/:persona_ix", deleteItem("personas", "persona_ix"));
 
 // ****** persona evidence *****
 
