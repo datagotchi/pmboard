@@ -114,7 +114,7 @@ router.delete("/:product_id", async (req, res, next) => {
   }
 */
   var prodId = req.product._id;
-  var prodUsers = Object.keys(req.product.permLookup);
+  // var prodUsers = Object.keys(req.product.permLookup);
   await req.product.deleteOne();
 
   // const users = await req.app.get("User").find({ _id: { $in: prodUsers } });
