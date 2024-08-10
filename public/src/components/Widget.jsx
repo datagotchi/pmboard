@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Sortable, Plugins } from "@shopify/draggable";
 
-import { EvidencePaneProps, WidgetDataItem } from "../types";
+import { WidgetDataItem } from "../types";
 
 import Modal from "./Modal";
 import WidgetItemRow from "./WidgetItemRow";
@@ -9,6 +9,8 @@ import WidgetItemRow from "./WidgetItemRow";
 import useCollectionAPI from "../hooks/useCollectionAPI";
 import useCollectionItems from "../hooks/useCollectionItems";
 import useProductAPI from "../hooks/useProductAPI";
+import { EvidencePaneContext } from "../contexts/EvidencePaneContext";
+import FileEvidencePane from "./FileEvidencePane";
 
 /**
  * The HTML component for all PMBoard widgets to document and visualize information
@@ -20,7 +22,6 @@ import useProductAPI from "../hooks/useProductAPI";
  * @param {string} props.title The title to show at the top of the widget.
  * @param {string} props.mainModalId The ID of the item modal passed in `children`.
  * @param {string} props.summaryTitle The title of the summary tab on the modal.
- * @param {React.FC<EvidencePaneProps>} props.evidencePane The component to mount in the modal evidence pane.
  * @returns {React.JSX.Element} The rendered widget.
  * @example
  * <Widget productId="" collectionName="" type="" title="" mainModalId="" />
@@ -33,7 +34,6 @@ const Widget = ({
   title,
   mainModalId,
   summaryTitle,
-  evidencePane,
 }) => {
   const data = useCollectionItems(productId, collectionName);
   const { addItem, updateItem, deleteItem, updateEvidence } = useCollectionAPI(
@@ -281,16 +281,17 @@ const Widget = ({
         </dialog>
       </div>
       {currentWidgetItem && (
-        <Modal
-          dialogId={mainModalId}
-          item={currentWidgetItem}
-          updateItemFunc={(item) => updateItem(item, currentWidgetItemIndex)}
-          summaryTitle={summaryTitle}
-          updateEvidenceOnServer={(evidence) =>
-            updateEvidence(currentWidgetItemIndex, evidence)
-          }
-          evidencePane={evidencePane}
-        />
+        <EvidencePaneContext.Provider value={FileEvidencePane}>
+          <Modal
+            dialogId={mainModalId}
+            item={currentWidgetItem}
+            updateItemFunc={(item) => updateItem(item, currentWidgetItemIndex)}
+            summaryTitle={summaryTitle}
+            updateEvidenceOnServer={(evidence) =>
+              updateEvidence(currentWidgetItemIndex, evidence)
+            }
+          />
+        </EvidencePaneContext.Provider>
       )}
     </>
   );

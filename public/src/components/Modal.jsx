@@ -1,8 +1,9 @@
-import React, { cloneElement, useState } from "react";
+import React, { useContext, useState } from "react";
 import { WithContext as ReactTags } from "react-tag-input";
 
-import { EvidenceRecord, EvidencePaneProps, WidgetDataItem } from "../types";
+import { EvidenceRecord, WidgetDataItem } from "../types";
 import { AllTagsContext } from "../contexts/AllTagsContext";
+import { EvidencePaneContext } from "../contexts/EvidencePaneContext";
 
 /**
  * @param {object} props The component properties.
@@ -10,18 +11,11 @@ import { AllTagsContext } from "../contexts/AllTagsContext";
  * @param {string} props.dialogId The ID to give the dialog.
  * @param {(evidence: EvidenceRecord[]) => void} props.updateEvidenceOnServer The function to call when evidence is updated in this modal.
  * @param {string} props.summaryTitle The title of the summary tab.
- * @param {React.FC<EvidencePaneProps>} props.evidencePane The JSX component to mount in the evidence pane.
  * @returns {React.JSX.Element} The rendered modal.
  * @example
  *  <Modal item={*} dialogId="*" updateItemFunc={*} updateTrendFunc={*} summaryTitle="*" addItemEvidenceFunc={*} />
  */
-const Modal = ({
-  item,
-  dialogId,
-  updateEvidenceOnServer,
-  summaryTitle,
-  evidencePane,
-}) => {
+const Modal = ({ item, dialogId, updateEvidenceOnServer, summaryTitle }) => {
   /**
    * @type {[ReactTags.Tag[] | undefined, React.Dispatch<ReactTags.Tag[] | undefined>]}
    */
@@ -101,11 +95,13 @@ const Modal = ({
     }
   };
 
-  const ClonedEvidencePane = cloneElement(evidencePane, {
-    evidence: item.evidence,
-    containerModalId: dialogId,
-    updateEvidenceFunc: () => {},
-  });
+  // const ClonedEvidencePane = cloneElement(evidencePane, {
+  //   evidence: item.evidence,
+  //   containerModalId: dialogId,
+  //   updateEvidenceFunc: () => {},
+  // });
+
+  const EvidencePaneComponent = useContext(EvidencePaneContext);
 
   return (
     <>
@@ -213,7 +209,8 @@ const Modal = ({
                       id="modalEvidence"
                     >
                       <AllTagsContext.Provider value={allTags}>
-                        <ClonedEvidencePane
+                        <EvidencePaneComponent
+                          evidence={item.evidence}
                           allTagsUpdated={(tags) => setAllTags(tags)}
                           updateEvidenceOnServer={updateEvidenceOnServer}
                         />

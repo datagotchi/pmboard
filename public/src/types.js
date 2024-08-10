@@ -97,6 +97,3 @@ import { WithContext as ReactTags } from "react-tag-input";
 /**
  * @typedef {{[key: string]: ReactTags.Tag[]}} TagsPerFile
  */
-
-// eslint-disable-next-line no-undef
-module.exports = {};
