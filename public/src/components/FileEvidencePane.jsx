@@ -24,6 +24,16 @@ const FileEvidencePane = ({
 }) => {
   const ADD_FILES_DIALOG_ID = `addFilesModal: ${containerModalId}`;
 
+  const sortString = (a, b) => {
+    if (a < b) {
+      return 1;
+    }
+    if (b < a) {
+      return -1;
+    }
+    return 0;
+  };
+
   /**
    * @type {[TagsPerFile | undefined, React.Dispatch<TagsPerFile | undefined>]}
    */
@@ -54,7 +64,7 @@ const FileEvidencePane = ({
   const allTags = useContext(AllTagsContext);
 
   useEffect(() => {
-    if (allTags) {
+    if (allTags && tagsPerFile) {
       Object.keys(tagsPerFile).forEach((fileUrl) => {
         tagsPerFile[fileUrl].forEach((tag) => {
           const allTagsTag = allTags.find((t) => t.id === tag.id);
@@ -63,7 +73,7 @@ const FileEvidencePane = ({
       });
       setTagsPerFile({ ...tagsPerFile });
     }
-  }, [allTags]);
+  }, [allTags, tagsPerFile]);
 
   useEffect(() => {
     if (accessToken) {
@@ -129,16 +139,6 @@ const FileEvidencePane = ({
       }
     }
   }, [tagsPerFile, evidence]);
-
-  const sortString = (a, b) => {
-    if (a < b) {
-      return 1;
-    }
-    if (b < a) {
-      return -1;
-    }
-    return 0;
-  };
 
   const getJsonSortedString = (trends) => {
     if (trends) {
@@ -207,6 +207,9 @@ const FileEvidencePane = ({
      * @type {ReactTags.Tag[]}
      */
     const newAllTags = [];
+    /**
+     * @type {{[key: string]: {count: number, className: string}}}
+     */
     const tagDataMap = {};
     Object.keys(tagsPerFile).forEach((fileUrl) => {
       const fileTags = JSON.parse(JSON.stringify(tagsPerFile[fileUrl]));

@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { WithContext as ReactTags } from "react-tag-input";
 
-import { EvidenceRecord, WidgetDataItem } from "../types";
+import { EvidenceRecord, EvidenceTrend, WidgetDataItem } from "../types";
 import { AllTagsContext } from "../contexts/AllTagsContext";
 import { EvidencePaneContext } from "../contexts/EvidencePaneContext";
 
@@ -16,10 +16,59 @@ import { EvidencePaneContext } from "../contexts/EvidencePaneContext";
  *  <Modal item={*} dialogId="*" updateItemFunc={*} updateTrendFunc={*} summaryTitle="*" addItemEvidenceFunc={*} />
  */
 const Modal = ({ item, dialogId, updateEvidenceOnServer, summaryTitle }) => {
+  const sortString = (a, b) => {
+    if (a < b) {
+      return 1;
+    }
+    if (b < a) {
+      return -1;
+    }
+    return 0;
+  };
+  const getOccurenceNumber = (tagText) =>
+    parseInt(tagText.match(/\(([0-9]+)\)/)[1]);
+
+  const getFlatTagsWithCountsFromEvidence = () => {
+    /**
+     * @type {ReactTags.Tag[]}
+     */
+    const newAllTags = [];
+    /**
+     * @type {{[key: string]: {count: number, className: string}}}
+     */
+    const trendCountMap = {};
+    item.evidence.forEach((record) => {
+      /**
+       * @type {EvidenceTrend[]}
+       */
+      const recordTrends = JSON.parse(JSON.stringify(record.trends)); // to avoid referencing the same trend objects
+      recordTrends.forEach((trend) => {
+        if (!trendCountMap[trend.name]) {
+          trendCountMap[trend.name] = {
+            count: 0,
+            className: trend.type,
+          };
+        }
+        trendCountMap[trend.name].count += 1;
+      });
+    });
+    Object.keys(trendCountMap).forEach((trendName) => {
+      const trendInfoObject = trendCountMap[trendName];
+      newAllTags.push({
+        id: trendName,
+        text: `${trendName} (${trendInfoObject.count})`,
+        className: trendInfoObject.className,
+      });
+    });
+    return newAllTags
+      .sort(sortString)
+      .sort((a, b) => getOccurenceNumber(b.text) - getOccurenceNumber(a.text));
+  };
+
   /**
    * @type {[ReactTags.Tag[] | undefined, React.Dispatch<ReactTags.Tag[] | undefined>]}
    */
-  const [allTags, setAllTags] = useState();
+  const [allTags, setAllTags] = useState(getFlatTagsWithCountsFromEvidence());
 
   const css = `
     .trendItem {
@@ -211,8 +260,9 @@ const Modal = ({ item, dialogId, updateEvidenceOnServer, summaryTitle }) => {
                       <AllTagsContext.Provider value={allTags}>
                         <EvidencePaneComponent
                           evidence={item.evidence}
-                          allTagsUpdated={(tags) => setAllTags(tags)}
+                          containerModalId={dialogId}
                           updateEvidenceOnServer={updateEvidenceOnServer}
+                          allTagsUpdated={(tags) => setAllTags(tags)}
                         />
                       </AllTagsContext.Provider>
                     </div>
