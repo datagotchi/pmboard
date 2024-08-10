@@ -30,6 +30,7 @@ const StakeholderResearchWidget = ({ productId }) => {
     <Widget
       data={personas}
       type="Persona"
+      evidenceType="Evidence"
       title="Who are the stakeholders?"
       addItemFunc={addPersona}
       updateItemFunc={updatePersona}

@@ -13,11 +13,11 @@ const WidgetItemRow = ({ item, onDeleteCallback, onClickCallback }) => {
   const getEvidenceLabelClass = (item) => {
     switch (item.evidence.length) {
       case item.evidence.length > 0 && item.evidence.length < 10:
-        return "label-warning";
+        return "bg-warning";
       case item.evidence.length >= 10:
-        return "label-success";
+        return "bg-success";
       default:
-        return "label-danger";
+        return "bg-danger";
     }
   };
   return (
@@ -43,7 +43,7 @@ const WidgetItemRow = ({ item, onDeleteCallback, onClickCallback }) => {
         </a>
       </td>
       <td>
-        <span className={`evidence label ${getEvidenceLabelClass(item)}`}>
+        <span className={`evidence badge ${getEvidenceLabelClass(item)}`}>
           {item.evidence.length}
         </span>
       </td>

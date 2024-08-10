@@ -11,7 +11,7 @@ import { Persona } from "../types";
  */
 const usePersonas = (productId) => {
   /**
-   * @type {[Persona[] | undefined, React.Dispatch<Persona>]}
+   * @type {[Persona[] | undefined, React.Dispatch<Persona[]>]}
    */
   const [personas, setPersonas] = useState();
 

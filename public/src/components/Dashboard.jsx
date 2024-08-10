@@ -3,6 +3,8 @@ import { Product } from "../types";
 import StakeholderResearchWidget from "./StakeholderResearchWidget";
 import useProductAPI from "../hooks/useProductAPI";
 import useOAuthAPI from "../hooks/useOAuthAPI";
+import MarketResearchWidget from "./MarketResearchWidget";
+import StoriesWidget from "./StoriesWidget";
 
 /**
  * The container of all widgets
@@ -183,7 +185,61 @@ const Dashboard = () => {
       </nav>
       {!currentProduct && <span>Select a product from the menu.</span>}
       {currentProduct && (
-        <StakeholderResearchWidget productId={currentProduct._id} />
+        <div role="tabpanel">
+          <ul className="nav nav-tabs" role="tablist">
+            <li role="presentation" className="nav-item">
+              <a
+                className="nav-link active"
+                data-bs-toggle="tab"
+                data-bs-target="#stakeholderWidget"
+                aria-controls="evidence"
+                role="tab"
+                type="button"
+              >
+                Stakeholder Research
+              </a>
+            </li>
+            <li role="presentation" className="nav-item">
+              <a
+                className="nav-link"
+                data-bs-toggle="tab"
+                data-bs-target="#marketWidget"
+                aria-controls="evidence"
+                role="tab"
+                type="button"
+              >
+                Market Research
+              </a>
+            </li>
+            <li role="presentation" className="nav-item">
+              <a
+                className="nav-link"
+                data-bs-toggle="tab"
+                data-bs-target="#storiesWidget"
+                aria-controls="evidence"
+                role="tab"
+                type="button"
+              >
+                User Stories
+              </a>
+            </li>
+          </ul>
+          <div className="tab-content">
+            <div
+              role="tabpanel"
+              className="tab-pane active"
+              id="stakeholderWidget"
+            >
+              <StakeholderResearchWidget productId={currentProduct._id} />
+            </div>
+            <div role="tabpanel" className="tab-pane" id="marketWidget">
+              <MarketResearchWidget productId={currentProduct._id} />
+            </div>
+            <div role="tabpanel" className="tab-pane" id="storiesWidget">
+              <StoriesWidget productId={currentProduct._id} />
+            </div>
+          </div>
+        </div>
       )}
     </>
   );

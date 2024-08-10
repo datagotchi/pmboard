@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Sortable, Plugins } from "@shopify/draggable";
 
 import { EvidenceFile, EvidenceTrend, WidgetDataItem } from "../types";
@@ -10,13 +10,14 @@ import WidgetItemRow from "./WidgetItemRow";
  * @param {object} props The component props
  * @param {WidgetDataItem[] | undefined} props.data The data to show in the widget.
  * @param {string} props.type The type of the data rows.
+ * @param {string} props.evidenceType The type-name for the evidence.
  * @param {string} props.title The title to show at the top of the widget.
  * @param {(item: WidgetDataItem) => void} props.addItemFunc The function to call when a new item is added.
  * @param {(item: WidgetDataItem, itemIndex: number) => void} props.updateItemFunc The function to call when an item is updated.
  * @param {(itemIndex: number) => void} props.deleteItemFunc The function to call when a new item is deleted.
  * @param {string} props.itemModalId The ID of the item modal passed in `children`.
  * @param {(object) => void} props.updateCollectionFunc The function to call when the order of items is changed.
- * @param {(personaIndex: number, evidenceIndex: number, trendIndex: number, trend: EvidenceTrend) => Promise<Response>} props.updateTrendFunc The function to call to update an item::evidence::trend.
+ * @param {(itemIndex: number, evidenceIndex: number, trendIndex: number, trend: EvidenceTrend) => Promise<Response>} props.updateTrendFunc The function to call to update an item::evidence::trend.
  * @param {string} props.summaryTitle The title of the summary tab on the modal.
  * @param {(itemIndex: number, file: EvidenceFile) => Promise<Response>} props.addItemEvidenceFunc The function to call when an evidence file is added.
  * @returns {React.JSX.Element} The rendered widget.
@@ -26,6 +27,7 @@ import WidgetItemRow from "./WidgetItemRow";
 const Widget = ({
   data,
   type,
+  evidenceType,
   title,
   addItemFunc,
   updateItemFunc,
@@ -40,6 +42,12 @@ const Widget = ({
    * @type {[WidgetDataItem[] | undefined, React.Dispatch<any[]>]}
    */
   const [liveData, setLiveData] = useState();
+
+  const CREATE_DIALOG_ID = `createDialog: ${itemModalId}`;
+  const NEW_NAME_FIELD_ID = `newName: ${itemModalId}`;
+  const LIST_ID = `itemsTbody_${type}`;
+
+  const [sortable, setSortable] = useState();
 
   useEffect(() => {
     if (data) {
@@ -68,7 +76,7 @@ const Widget = ({
     /**
      * @type {HTMLDialogElement}
      */
-    const createDialog = document.getElementById("createDialog");
+    const createDialog = document.getElementById(CREATE_DIALOG_ID);
     setCreateDialog(createDialog);
     // TODO: only add once
     createDialog.addEventListener("click", (event) => {
@@ -104,40 +112,44 @@ const Widget = ({
     }
   }, [currentItem, itemModal]);
 
-  const draggableContainer = document.getElementById("itemsTbody");
-  const draggable = useMemo(() => {
-    if (draggableContainer) {
-      return new Sortable(draggableContainer, {
-        draggable: "tr",
-        collidables: "tr",
-        distance: 0,
-        handle: ".dragHandle",
-        plugins: [Plugins.SortAnimation],
-        swapAnimation: {
-          duration: 200,
-          easingFunction: "ease-in-out",
-        },
-        mirror: {
-          constrainDimensions: true,
-        },
-      });
+  const [draggableContainer, setDraggableContainer] = useState();
+
+  useEffect(() => {
+    if (document.getElementById(LIST_ID) && !draggableContainer) {
+      setDraggableContainer(document.getElementById(LIST_ID));
     }
-  }, [draggableContainer]);
+  });
+
+  useEffect(() => {
+    if (draggableContainer && !sortable) {
+      setSortable(
+        new Sortable(draggableContainer, {
+          draggable: "tr",
+          handle: ".dragHandle",
+          mirror: {
+            appendTo: `#${LIST_ID}`,
+            constrainDimensions: true,
+          },
+          collidables: "tr",
+          distance: 0,
+          plugins: [Plugins.SortAnimation],
+          swapAnimation: {
+            duration: 200,
+            easingFunction: "ease-in-out",
+          },
+        })
+      );
+    }
+  }, [draggableContainer, sortable]);
 
   let currentDragIndex = -1;
-  const hr = document.getElementsByTagName("hr")[0];
-  // let [draggableListenersAdded, setDraggableListenersAdded] = useState(false);
   useEffect(() => {
-    if (draggable && liveData) {
-      draggable.on("drag:start", (event) => {
+    if (sortable && liveData) {
+      sortable.on("drag:start", (event) => {
         const trElements = Array.from(draggableContainer.childNodes);
         currentDragIndex = trElements.indexOf(event.source);
       });
-      draggable.on("drag:move", (event) => {
-        hr.style.display = "block";
-        hr.style.top = `${event.sensorEvent.clientY - 100}px`;
-      });
-      draggable.on("drag:stop", (event) => {
+      sortable.on("drag:stop", (event) => {
         const trElements = Array.from(draggableContainer.childNodes);
         const newIndex = trElements.indexOf(event.source);
         if (newIndex !== currentDragIndex) {
@@ -152,14 +164,11 @@ const Widget = ({
             window.location.reload();
           });
         }
-
         // done: cleanup
-        hr.style.display = "none";
         currentDragIndex = -1;
       });
-      // setDraggableListenersAdded(true);
     }
-  }, [draggable, liveData]);
+  }, [sortable, liveData]);
 
   // TODO: (above TODO) vs: this uses old `liveData` after drag reordering
   const deleteItemCallback = useCallback(
@@ -185,7 +194,7 @@ const Widget = ({
     <>
       <div
         className="panel panel-default widget"
-        style={{ position: "relative" }}
+        style={{ position: "relative", border: "1px black dashed" }}
       >
         <hr
           style={{
@@ -207,11 +216,11 @@ const Widget = ({
               <tr>
                 <th style={{ width: "20px" }}></th>
                 <th>{type}</th>
-                <th>Evidence</th>
+                <th>{evidenceType}</th>
                 <th>Delete</th>
               </tr>
             </thead>
-            <tbody id="itemsTbody">
+            <tbody id={LIST_ID}>
               {liveData &&
                 liveData.map((item, index) => (
                   <WidgetItemRow
@@ -229,16 +238,17 @@ const Widget = ({
             <span className="bi bi-person-plus" aria-hidden="true"></span> Add
           </button>
         </div>
-        <dialog id="createDialog">
+        <dialog id={CREATE_DIALOG_ID}>
           <form name="createItemForm">
             <p>
-              New name: <input type="text" id="newName" />
+              New name: <input type="text" id={NEW_NAME_FIELD_ID} />
             </p>
             <p>
               <button
                 type="submit"
                 onClick={() => {
-                  const newNameField = document.getElementById("newName");
+                  const newNameField =
+                    document.getElementById(NEW_NAME_FIELD_ID);
                   const newName = newNameField.value;
                   const newItem = { name: newName, evidence: [] };
                   setLiveData([...liveData, newItem]);
