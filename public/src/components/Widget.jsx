@@ -1,9 +1,11 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Sortable, Plugins } from "@shopify/draggable";
 
 import { EvidenceFile, EvidenceTrend, WidgetDataItem } from "../types";
 import Modal from "./Modal";
 import WidgetItemRow from "./WidgetItemRow";
+
+// let sortable;
 
 /**
  * The HTML component for all PMBoard widgets to document and visualize information
@@ -45,6 +47,9 @@ const Widget = ({
 
   const CREATE_DIALOG_ID = `createDialog: ${itemModalId}`;
   const NEW_NAME_FIELD_ID = `newName: ${itemModalId}`;
+  const LIST_ID = `itemsTbody_${type}`;
+
+  const [sortable, setSortable] = useState();
 
   useEffect(() => {
     if (data) {
@@ -109,40 +114,50 @@ const Widget = ({
     }
   }, [currentItem, itemModal]);
 
-  const draggableContainer = document.getElementById("itemsTbody");
-  const draggable = useMemo(() => {
-    if (draggableContainer) {
-      return new Sortable(draggableContainer, {
-        draggable: "tr",
-        collidables: "tr",
-        distance: 0,
-        handle: ".dragHandle",
-        plugins: [Plugins.SortAnimation],
-        swapAnimation: {
-          duration: 200,
-          easingFunction: "ease-in-out",
-        },
-        mirror: {
-          constrainDimensions: true,
-        },
-      });
+  const [draggableContainer, setDraggableContainer] = useState();
+
+  useEffect(() => {
+    if (document.getElementById(LIST_ID) && !draggableContainer) {
+      setDraggableContainer(document.getElementById(LIST_ID));
     }
-  }, [draggableContainer]);
+  });
+
+  useEffect(() => {
+    if (draggableContainer && !sortable) {
+      setSortable(
+        new Sortable(draggableContainer, {
+          draggable: "tr",
+          handle: ".dragHandle",
+          mirror: {
+            appendTo: `#${LIST_ID}`,
+            constrainDimensions: true,
+          },
+          collidables: "tr",
+          distance: 0,
+          plugins: [Plugins.SortAnimation],
+          swapAnimation: {
+            duration: 200,
+            easingFunction: "ease-in-out",
+          },
+        })
+      );
+    }
+  }, [draggableContainer, sortable]);
 
   let currentDragIndex = -1;
-  const hr = document.getElementsByTagName("hr")[0];
+  // const hr = document.getElementsByTagName("hr")[0];
   // let [draggableListenersAdded, setDraggableListenersAdded] = useState(false);
   useEffect(() => {
-    if (draggable && liveData) {
-      draggable.on("drag:start", (event) => {
+    if (sortable && liveData) {
+      sortable.on("drag:start", (event) => {
         const trElements = Array.from(draggableContainer.childNodes);
         currentDragIndex = trElements.indexOf(event.source);
       });
-      draggable.on("drag:move", (event) => {
-        hr.style.display = "block";
-        hr.style.top = `${event.sensorEvent.clientY - 100}px`;
-      });
-      draggable.on("drag:stop", (event) => {
+      // draggable.on("drag:move", () => {
+      // hr.style.display = "block";
+      // hr.style.top = `${event.sensorEvent.clientY - 100}px`;
+      // });
+      sortable.on("drag:stop", (event) => {
         const trElements = Array.from(draggableContainer.childNodes);
         const newIndex = trElements.indexOf(event.source);
         if (newIndex !== currentDragIndex) {
@@ -157,14 +172,13 @@ const Widget = ({
             window.location.reload();
           });
         }
-
         // done: cleanup
-        hr.style.display = "none";
+        // hr.style.display = "none";
         currentDragIndex = -1;
       });
       // setDraggableListenersAdded(true);
     }
-  }, [draggable, liveData]);
+  }, [sortable, liveData]);
 
   // TODO: (above TODO) vs: this uses old `liveData` after drag reordering
   const deleteItemCallback = useCallback(
@@ -216,7 +230,7 @@ const Widget = ({
                 <th>Delete</th>
               </tr>
             </thead>
-            <tbody id="itemsTbody">
+            <tbody id={LIST_ID}>
               {liveData &&
                 liveData.map((item, index) => (
                   <WidgetItemRow
