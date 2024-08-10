@@ -75,6 +75,21 @@ const Dashboard = () => {
     }
   };
 
+  const SESSION_TAB_KEY = "currentDashboardTab";
+
+  const currentTab = sessionStorage.getItem(SESSION_TAB_KEY);
+
+  useEffect(() => {
+    if (document.querySelectorAll('a[data-bs-toggle="tab"]').length === 3) {
+      const tabs = document.querySelectorAll('a[data-bs-toggle="tab"]');
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          sessionStorage.setItem(SESSION_TAB_KEY, tab.dataset.bsTarget);
+        });
+      });
+    }
+  });
+
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -189,7 +204,9 @@ const Dashboard = () => {
           <ul className="nav nav-tabs" role="tablist">
             <li role="presentation" className="nav-item">
               <a
-                className="nav-link active"
+                className={`nav-link ${
+                  currentTab === "#stakeholderWidget" ? "active" : ""
+                }`}
                 data-bs-toggle="tab"
                 data-bs-target="#stakeholderWidget"
                 aria-controls="evidence"
@@ -201,7 +218,9 @@ const Dashboard = () => {
             </li>
             <li role="presentation" className="nav-item">
               <a
-                className="nav-link"
+                className={`nav-link ${
+                  currentTab === "#marketWidget" ? "active" : ""
+                }`}
                 data-bs-toggle="tab"
                 data-bs-target="#marketWidget"
                 aria-controls="evidence"
@@ -213,7 +232,9 @@ const Dashboard = () => {
             </li>
             <li role="presentation" className="nav-item">
               <a
-                className="nav-link"
+                className={`nav-link ${
+                  currentTab === "#storiesWidget" ? "active" : ""
+                }`}
                 data-bs-toggle="tab"
                 data-bs-target="#storiesWidget"
                 aria-controls="evidence"
@@ -227,15 +248,29 @@ const Dashboard = () => {
           <div className="tab-content">
             <div
               role="tabpanel"
-              className="tab-pane active"
+              className={`tab-pane ${
+                currentTab === "#stakeholderWidget" ? "active" : ""
+              }`}
               id="stakeholderWidget"
             >
               <StakeholderResearchWidget productId={currentProduct._id} />
             </div>
-            <div role="tabpanel" className="tab-pane" id="marketWidget">
+            <div
+              role="tabpanel"
+              className={`tab-pane ${
+                currentTab === "#marketWidget" ? "active" : ""
+              }`}
+              id="marketWidget"
+            >
               <MarketResearchWidget productId={currentProduct._id} />
             </div>
-            <div role="tabpanel" className="tab-pane" id="storiesWidget">
+            <div
+              role="tabpanel"
+              className={`tab-pane ${
+                currentTab === "#storiesWidget" ? "active" : ""
+              }`}
+              id="storiesWidget"
+            >
               <StoriesWidget productId={currentProduct._id} />
             </div>
           </div>
