@@ -5,6 +5,7 @@ import useProductAPI from "../hooks/useProductAPI";
 import useOAuthAPI from "../hooks/useOAuthAPI";
 import MarketResearchWidget from "./MarketResearchWidget";
 import StoriesWidget from "./StoriesWidget";
+import TodoWidget from "./TodoWidget";
 
 /**
  * The container of all widgets
@@ -80,7 +81,7 @@ const Dashboard = () => {
   const currentTab = sessionStorage.getItem(SESSION_TAB_KEY);
 
   useEffect(() => {
-    if (document.querySelectorAll('a[data-bs-toggle="tab"]').length === 3) {
+    if (document.querySelectorAll('a[data-bs-toggle="tab"]').length === 4) {
       const tabs = document.querySelectorAll('a[data-bs-toggle="tab"]');
       tabs.forEach((tab) => {
         tab.addEventListener("click", () => {
@@ -244,6 +245,20 @@ const Dashboard = () => {
                 User Stories
               </a>
             </li>
+            <li role="presentation" className="nav-item">
+              <a
+                className={`nav-link ${
+                  currentTab === "#todowidget" ? "active" : ""
+                }`}
+                data-bs-toggle="tab"
+                data-bs-target="#todoWidget"
+                aria-controls="evidence"
+                role="tab"
+                type="button"
+              >
+                TODO Items
+              </a>
+            </li>
           </ul>
           <div className="tab-content">
             <div
@@ -272,6 +287,15 @@ const Dashboard = () => {
               id="storiesWidget"
             >
               <StoriesWidget productId={currentProduct._id} />
+            </div>
+            <div
+              role="tabpanel"
+              className={`tab-pane ${
+                currentTab === "#todoWidget" ? "active" : ""
+              }`}
+              id="todoWidget"
+            >
+              <TodoWidget productId={currentProduct._id} />
             </div>
           </div>
         </div>
