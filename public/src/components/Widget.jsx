@@ -10,6 +10,7 @@ import WidgetItemRow from "./WidgetItemRow";
  * @param {object} props The component props
  * @param {WidgetDataItem[] | undefined} props.data The data to show in the widget.
  * @param {string} props.type The type of the data rows.
+ * @param {string} props.evidenceType The type-name for the evidence.
  * @param {string} props.title The title to show at the top of the widget.
  * @param {(item: WidgetDataItem) => void} props.addItemFunc The function to call when a new item is added.
  * @param {(item: WidgetDataItem, itemIndex: number) => void} props.updateItemFunc The function to call when an item is updated.
@@ -26,6 +27,7 @@ import WidgetItemRow from "./WidgetItemRow";
 const Widget = ({
   data,
   type,
+  evidenceType,
   title,
   addItemFunc,
   updateItemFunc,
@@ -210,7 +212,7 @@ const Widget = ({
               <tr>
                 <th style={{ width: "20px" }}></th>
                 <th>{type}</th>
-                <th>Evidence</th>
+                <th>{evidenceType}</th>
                 <th>Delete</th>
               </tr>
             </thead>

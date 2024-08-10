@@ -14,7 +14,7 @@ import useProductAPI from "../hooks/useProductAPI";
  *  <StoriesWidget productId={*} />
  */
 const StoriesWidget = ({ productId }) => {
-  const companies = useStories(productId);
+  const stories = useStories(productId);
   const { addStory, updateStory, deleteStory, addEvidenceFile, updateTrend } =
     useStoriesAPI(productId);
   const { updateProductCollection } = useProductAPI();
@@ -23,8 +23,9 @@ const StoriesWidget = ({ productId }) => {
 
   return (
     <Widget
-      data={companies}
-      type="Company"
+      data={stories}
+      type="Story"
+      evidenceType="Subtasks"
       title="What are the planned user stories?"
       addItemFunc={addStory}
       updateItemFunc={updateStory}

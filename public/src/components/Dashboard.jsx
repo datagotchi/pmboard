@@ -4,6 +4,7 @@ import StakeholderResearchWidget from "./StakeholderResearchWidget";
 import useProductAPI from "../hooks/useProductAPI";
 import useOAuthAPI from "../hooks/useOAuthAPI";
 import MarketResearchWidget from "./MarketResearchWidget";
+import StoriesWidget from "./StoriesWidget";
 
 /**
  * The container of all widgets
@@ -187,6 +188,7 @@ const Dashboard = () => {
         <>
           <StakeholderResearchWidget productId={currentProduct._id} />
           <MarketResearchWidget productId={currentProduct._id} />
+          <StoriesWidget productId={currentProduct._id} />
         </>
       )}
     </>

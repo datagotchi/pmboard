@@ -30,7 +30,8 @@ const MarketResearchWidget = ({ productId }) => {
     <Widget
       data={companies}
       type="Company"
-      title="What are the related companies?"
+      evidenceType="Evidence?"
+      title="What are the competing companies?"
       addItemFunc={addCompany}
       updateItemFunc={updateCompany}
       deleteItemFunc={deleteCompany}
