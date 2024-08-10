@@ -27,8 +27,8 @@ const useCompaniesAPI = (productId) => {
 
   /**
    * Update a company object on the server.
-   * @param {Company} company The persona object with fields to replace the existing one with.
-   * @param {number} companyIndex The index of the persona.
+   * @param {Company} company The company object with fields to replace the existing one with.
+   * @param {number} companyIndex The index of the company.
    * @returns {Promise<Response>} The PUT fetch promise.
    */
   const updateCompany = (company, companyIndex) =>
@@ -42,6 +42,11 @@ const useCompaniesAPI = (productId) => {
       body: JSON.stringify(company),
     });
 
+  /**
+   * Delete a company from the server via index
+   * @param {number} companyIndex The index of the company in its collection.
+   * @returns {Promise<Response>} The DELETE fetch request promise.
+   */
   const deleteCompany = (companyIndex) =>
     fetch(`/products/${productId}/companies/${companyIndex}`, {
       method: "DELETE",

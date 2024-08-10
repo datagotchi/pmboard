@@ -42,7 +42,7 @@ const usePersonasAPI = (productId) => {
     });
 
   /**
-   * Delete a persona from the server via ID
+   * Delete a persona from the server via index
    * @param {number} personaIndex The index of the persona in its collection.
    * @returns {Promise<Response>} The DELETE fetch request promise.
    */

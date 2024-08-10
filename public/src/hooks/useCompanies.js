@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Company } from "../types";
 
 /**
- * A hook to download product personas
+ * A hook to download product companies
  * @param {number} productId The ID of the current product.
  * @returns {Company[] | undefined} An array of companies.
  * @example
@@ -11,7 +11,7 @@ import { Company } from "../types";
  */
 const useCompanies = (productId) => {
   /**
-   * @type {[Company[] | undefined, React.Dispatch<Company>]}
+   * @type {[Company[] | undefined, React.Dispatch<Company[]>]}
    */
   const [companies, setCompanies] = useState();
 

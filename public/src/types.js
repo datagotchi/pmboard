@@ -45,5 +45,11 @@
  * @property {EvidenceFile[]} evidence The files that act as evidence
  */
 
+/**
+ * @typedef Story
+ * @property {string} name The name of the user story
+ * @property {EvidenceFile[]} evidence The files that act as evidence
+ */
+
 // eslint-disable-next-line no-undef
 module.exports = {};
