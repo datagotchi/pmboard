@@ -40,9 +40,9 @@ router.param("company_ix", function (req, res, next) {
   return next(err);
 });
 
-router.put("/:company_ix", updateItem("personas", "company_ix"));
+router.put("/:company_ix", updateItem("companies", "company_ix"));
 
-router.delete("/:company_ix", deleteItem("personas", "company_ix"));
+router.delete("/:company_ix", deleteItem("companies", "company_ix"));
 
 // evidence & trends from evidenceFunctions.js
 
