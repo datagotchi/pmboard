@@ -5,8 +5,6 @@ import { EvidenceFile, EvidenceTrend, WidgetDataItem } from "../types";
 import Modal from "./Modal";
 import WidgetItemRow from "./WidgetItemRow";
 
-// let sortable;
-
 /**
  * The HTML component for all PMBoard widgets to document and visualize information
  * @param {object} props The component props
@@ -145,18 +143,12 @@ const Widget = ({
   }, [draggableContainer, sortable]);
 
   let currentDragIndex = -1;
-  // const hr = document.getElementsByTagName("hr")[0];
-  // let [draggableListenersAdded, setDraggableListenersAdded] = useState(false);
   useEffect(() => {
     if (sortable && liveData) {
       sortable.on("drag:start", (event) => {
         const trElements = Array.from(draggableContainer.childNodes);
         currentDragIndex = trElements.indexOf(event.source);
       });
-      // draggable.on("drag:move", () => {
-      // hr.style.display = "block";
-      // hr.style.top = `${event.sensorEvent.clientY - 100}px`;
-      // });
       sortable.on("drag:stop", (event) => {
         const trElements = Array.from(draggableContainer.childNodes);
         const newIndex = trElements.indexOf(event.source);
@@ -173,10 +165,8 @@ const Widget = ({
           });
         }
         // done: cleanup
-        // hr.style.display = "none";
         currentDragIndex = -1;
       });
-      // setDraggableListenersAdded(true);
     }
   }, [sortable, liveData]);
 
