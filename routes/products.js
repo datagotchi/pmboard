@@ -24,6 +24,7 @@ router.post("/", async (req, res, next) => {
     personas: [],
     stories: [],
     companies: [],
+    tasks: [],
     permissions: {},
   });
   await Product.create(newprod);
@@ -152,5 +153,7 @@ router.use("/:product_id/personas", require("./personas"));
 router.use("/:product_id/companies", require("./companies"));
 
 router.use("/:product_id/stories", require("./stories"));
+
+router.use("/:product_id/tasks", require("./tasks"));
 
 module.exports = router;

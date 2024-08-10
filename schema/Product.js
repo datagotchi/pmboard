@@ -75,6 +75,26 @@ var productSchema = new Schema({
       ],
     },
   ],
+  tasks: [
+    {
+      _id: false,
+      name: String,
+      evidence: [
+        {
+          _id: false,
+          name: String,
+          path: String,
+          trends: [
+            {
+              _id: false,
+              name: String,
+              type: { type: String },
+            },
+          ],
+        },
+      ],
+    },
+  ],
 });
 
 module.exports = productSchema;
