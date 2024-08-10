@@ -8,7 +8,7 @@ import { WidgetDataItem } from "../types";
  * @param {string} collectionName The name of the product collection.
  * @returns {WidgetDataItem[] | undefined} An array of items.
  * @example
- * const companies = useCollectionItems(productId);
+ * const data = useCollectionItems(productId, collectionName);
  */
 const useCollectionItems = (productId, collectionName) => {
   /**
