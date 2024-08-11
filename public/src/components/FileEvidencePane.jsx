@@ -49,6 +49,7 @@ const FileEvidencePane = ({
    */
   const [addFilesModal, setAddFilesModal] = useState();
 
+  // set addFilesModal once it exists
   useEffect(() => {
     if (document.getElementById(ADD_FILES_DIALOG_ID) && !addFilesModal) {
       setAddFilesModal(document.getElementById(ADD_FILES_DIALOG_ID));
@@ -66,20 +67,27 @@ const FileEvidencePane = ({
 
   const allTags = useContext(AllTagsContext);
 
-  // update tagsPerFile based on className changes on the summary pane
+  // update tagsPerFile based on className changes on the summary pane (in allTags)
   useEffect(() => {
     if (allTags && tagsPerFile) {
       let thereAreChanges = false;
       evidence.forEach((file) => {
         tagsPerFile[file.url].forEach((tag) => {
           const allTagsTag = allTags.find((t) => t.id === tag.id);
-          if (tag.className !== allTagsTag.className) {
+          if (allTagsTag && tag.className !== allTagsTag.className) {
             tag.className = allTagsTag.className;
+            const trend = file.trends.find((t) => t.name === tag.id);
+            if (trend) {
+              trend.type = tag.className;
+            } else {
+              console.error("*** trend not found in evidence: ", tag.id);
+            }
             thereAreChanges = true;
           }
         });
       });
       if (thereAreChanges) {
+        updateEvidenceOnServer(evidence);
         // TODO: try to avoid one more re-render/re-evaluation of this effect after making this change
         setTagsPerFile({ ...tagsPerFile });
       }

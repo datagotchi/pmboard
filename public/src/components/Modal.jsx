@@ -151,12 +151,6 @@ const Modal = ({
     }
   };
 
-  // const ClonedEvidencePane = cloneElement(evidencePane, {
-  //   evidence: item.evidence,
-  //   containerModalId: dialogId,
-  //   updateEvidenceFunc: () => {},
-  // });
-
   const EvidencePaneComponent = useContext(EvidencePaneContext);
 
   return (
