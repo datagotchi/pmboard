@@ -53,9 +53,11 @@ const StakeholderEvidencePane = ({
       evidence.forEach((record) => {
         tagsPerPersona[record.name].forEach((tag) => {
           const allTagsTag = allTags.find((t) => t.id === tag.id);
-          if (tag.className !== allTagsTag.className) {
-            tag.className = allTagsTag.className;
-            thereAreChanges = true;
+          if (allTagsTag) {
+            if (tag.className !== allTagsTag.className) {
+              tag.className = allTagsTag.className;
+              thereAreChanges = true;
+            }
           }
         });
       });
