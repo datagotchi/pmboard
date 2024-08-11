@@ -61,20 +61,28 @@ const FileEvidencePane = ({
 
   const accessToken = useMemo(() => sessionStorage.getItem("access_token"), []);
 
-  // FIXME: update tags on the evidence pane when the classes are updated on the summary pane
-  // const allTags = useContext(AllTagsContext);
+  const allTags = useContext(AllTagsContext);
 
-  // useEffect(() => {
-  //   if (allTags && tagsPerFile) {
-  //     Object.keys(tagsPerFile).forEach((fileUrl) => {
-  //       tagsPerFile[fileUrl].forEach((tag) => {
-  //         const allTagsTag = allTags.find((t) => t.id === tag.id);
-  //         tag.className = allTagsTag.className;
-  //       });
-  //     });
-  //     setTagsPerFile({ ...tagsPerFile });
-  //   }
-  // }, [allTags, tagsPerFile]);
+  // update tagsPerFile based on className changes on the summary pane
+  useEffect(() => {
+    if (allTags && tagsPerFile) {
+      let thereAreChanges = false;
+      evidence.forEach((file) => {
+        tagsPerFile[file.url].forEach((tag) => {
+          const allTagsTag = allTags.find((t) => t.id === tag.id);
+          if (tag.className !== allTagsTag.className) {
+            tag.className = allTagsTag.className;
+            thereAreChanges = true;
+          }
+        });
+      });
+      if (thereAreChanges) {
+        // careful about infinite renders
+        // TODO: try to avoid one more re-render/re-evaluation of this effect after making this change
+        setTagsPerFile({ ...tagsPerFile });
+      }
+    }
+  }, [allTags, tagsPerFile]);
 
   useEffect(() => {
     if (accessToken && !googleFiles) {

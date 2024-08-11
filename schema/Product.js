@@ -25,7 +25,7 @@ var productSchema = new Schema({
             {
               _id: false, // uniquely access evidence by array index
               name: String,
-              type: { type: String }, // FIXME: no idea why just String doesn't work
+              type: { type: String }, // TODO: no idea why just String doesn't work
             },
           ],
         },
