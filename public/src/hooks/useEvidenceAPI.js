@@ -3,7 +3,7 @@ import { EvidenceAPI } from "../types";
 /**
  * @type {EvidenceAPI}
  */
-const useEvidenceAPI = ({ productId, collectionName }) => {
+const useEvidenceAPI = (productId, collectionName) => {
   const updateEvidence = (itemIndex, evidence) =>
     fetch(`/products/${productId}/${collectionName}/${itemIndex}/evidence`, {
       method: "PUT",

@@ -12,6 +12,7 @@ const {
   addEvidenceExpressFunc,
   getTrendsExpressFunc,
   trackEvidenceIndexExpressFunc,
+  updateEvidenceExpressFunc,
   deleteEvidenceExpressFunc,
   addTrendExpressFunc,
   changeTrendExpressFunc,
@@ -58,6 +59,11 @@ router.get(
 router.post(
   "/:persona_ix/evidence",
   addEvidenceExpressFunc("personas", "persona_ix")
+);
+
+router.put(
+  "/:persona_ix/evidence",
+  updateEvidenceExpressFunc("personas", "persona_ix")
 );
 
 router.param(

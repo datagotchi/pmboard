@@ -2,11 +2,6 @@ const getEvidenceExpressFunc =
   (itemCollectionName, itemIndexKey) => (req, res, next) => {
     const { product, [itemIndexKey]: ix } = req;
 
-    console.log(
-      "*** returning res.json(product[itemCollectionName][ix].evidence): ",
-      res.json(product[itemCollectionName][ix].evidence)
-    );
-
     return res.json(product[itemCollectionName][ix].evidence);
   };
 
@@ -20,6 +15,19 @@ const addEvidenceExpressFunc =
     product[itemCollectionName][ix].evidence.push(file);
 
     await prod.save();
+
+    return res.json({
+      success: true,
+    });
+  };
+
+const updateEvidenceExpressFunc =
+  (itemCollectionName, itemIndexKey) => async (req, res, next) => {
+    const { product, [itemIndexKey]: ix, body: records } = req;
+
+    product[itemCollectionName][ix].evidence = records;
+
+    await product.save();
 
     return res.json({
       success: true,
@@ -120,6 +128,7 @@ module.exports = {
   getEvidenceExpressFunc,
   addEvidenceExpressFunc,
   trackEvidenceIndexExpressFunc,
+  updateEvidenceExpressFunc,
   deleteEvidenceExpressFunc,
   getTrendsExpressFunc,
   addTrendExpressFunc,

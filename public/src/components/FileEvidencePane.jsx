@@ -61,22 +61,23 @@ const FileEvidencePane = ({
 
   const accessToken = useMemo(() => sessionStorage.getItem("access_token"), []);
 
-  const allTags = useContext(AllTagsContext);
+  // FIXME: update tags on the evidence pane when the classes are updated on the summary pane
+  // const allTags = useContext(AllTagsContext);
+
+  // useEffect(() => {
+  //   if (allTags && tagsPerFile) {
+  //     Object.keys(tagsPerFile).forEach((fileUrl) => {
+  //       tagsPerFile[fileUrl].forEach((tag) => {
+  //         const allTagsTag = allTags.find((t) => t.id === tag.id);
+  //         tag.className = allTagsTag.className;
+  //       });
+  //     });
+  //     setTagsPerFile({ ...tagsPerFile });
+  //   }
+  // }, [allTags, tagsPerFile]);
 
   useEffect(() => {
-    if (allTags && tagsPerFile) {
-      Object.keys(tagsPerFile).forEach((fileUrl) => {
-        tagsPerFile[fileUrl].forEach((tag) => {
-          const allTagsTag = allTags.find((t) => t.id === tag.id);
-          tag.className = allTagsTag.className;
-        });
-      });
-      setTagsPerFile({ ...tagsPerFile });
-    }
-  }, [allTags, tagsPerFile]);
-
-  useEffect(() => {
-    if (accessToken) {
+    if (accessToken && !googleFiles) {
       const encodedToken = encodeURI(accessToken);
       getGoogleDriveFiles(encodedToken).then((files) => {
         const filteredFiles = files.filter(
@@ -138,7 +139,7 @@ const FileEvidencePane = ({
         updateEvidenceOnServer(evidence);
       }
     }
-  }, [tagsPerFile, evidence]);
+  }, [tagsPerFile]);
 
   const getJsonSortedString = (trends) => {
     if (trends) {
@@ -176,12 +177,15 @@ const FileEvidencePane = ({
           modifiedDate: file.modifiedDate,
         };
         evidence.push(newFile);
-        updateEvidenceOnServer(evidence);
+        await updateEvidenceOnServer(evidence);
+        tagsPerFile[newFile.url] = [];
+        setTagsPerFile({ ...tagsPerFile });
 
         const newFiles = googleFiles.filter(
           (f) => f.alternateLink !== file.alternateLink
         );
         setGoogleFiles(newFiles);
+
         document.getElementById("fileFilter").value = "";
         setFilteredFiles(newFiles);
         addFilesModal.close();
@@ -190,9 +194,10 @@ const FileEvidencePane = ({
     [googleFiles]
   );
 
-  const removeFile = (file) => {
-    const newEvidence = evidence.filter((file2) => file2.url !== file.url);
-    updateEvidenceOnServer(newEvidence);
+  const removeFile = async (file) => {
+    const fileIndex = evidence.map((f) => f.url).indexOf(file.url);
+    evidence.splice(fileIndex, 1);
+    await updateEvidenceOnServer(evidence);
     const newGoogleFiles = [...googleFiles, file];
     setGoogleFiles(newGoogleFiles);
     document.getElementById("fileFilter").value = "";
