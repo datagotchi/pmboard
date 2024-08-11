@@ -18,7 +18,7 @@ const TodoWidget = ({ productId }) => {
       productId={productId}
       collectionName="tasks"
       type="Task"
-      evidenceColumnLabel="User Stories Cited"
+      evidenceColumnLabel="User Stories"
       title="What are your TODO items?"
       mainModalId={TODO_MODAL_ID}
       summaryTitle="Activity"

@@ -1,6 +1,8 @@
 import React from "react";
 
 import Widget from "./Widget";
+import FileEvidencePane from "./FileEvidencePane";
+import { EvidencePaneContext } from "../contexts/EvidencePaneContext";
 
 /**
  * A widget to document and visualize companies in related markets
@@ -14,15 +16,17 @@ const MarketResearchWidget = ({ productId }) => {
   const COMPANY_MODAL_ID = "companyModal";
 
   return (
-    <Widget
-      productId={productId}
-      collectionName="companies"
-      type="Company"
-      evidenceColumnLabel="Claims"
-      title="What are the competing companies?"
-      mainModalId={COMPANY_MODAL_ID}
-      summaryTitle="Market Map"
-    />
+    <EvidencePaneContext.Provider value={FileEvidencePane}>
+      <Widget
+        productId={productId}
+        collectionName="companies"
+        type="Company"
+        evidenceColumnLabel="Claims"
+        title="What are the competing companies?"
+        mainModalId={COMPANY_MODAL_ID}
+        summaryTitle="Market Map"
+      />
+    </EvidencePaneContext.Provider>
   );
 };
 

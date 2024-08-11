@@ -220,20 +220,6 @@ const Dashboard = () => {
             <li role="presentation" className="nav-item">
               <a
                 className={`nav-link ${
-                  currentTab === "#marketWidget" ? "active" : ""
-                }`}
-                data-bs-toggle="tab"
-                data-bs-target="#marketWidget"
-                aria-controls="evidence"
-                role="tab"
-                type="button"
-              >
-                Market Research
-              </a>
-            </li>
-            <li role="presentation" className="nav-item">
-              <a
-                className={`nav-link ${
                   currentTab === "#storiesWidget" ? "active" : ""
                 }`}
                 data-bs-toggle="tab"
@@ -243,6 +229,20 @@ const Dashboard = () => {
                 type="button"
               >
                 User Stories
+              </a>
+            </li>
+            <li role="presentation" className="nav-item">
+              <a
+                className={`nav-link ${
+                  currentTab === "#marketWidget" ? "active" : ""
+                }`}
+                data-bs-toggle="tab"
+                data-bs-target="#marketWidget"
+                aria-controls="evidence"
+                role="tab"
+                type="button"
+              >
+                Market Research
               </a>
             </li>
             <li role="presentation" className="nav-item">
@@ -273,20 +273,20 @@ const Dashboard = () => {
             <div
               role="tabpanel"
               className={`tab-pane ${
-                currentTab === "#marketWidget" ? "active" : ""
-              }`}
-              id="marketWidget"
-            >
-              <MarketResearchWidget productId={currentProduct._id} />
-            </div>
-            <div
-              role="tabpanel"
-              className={`tab-pane ${
                 currentTab === "#storiesWidget" ? "active" : ""
               }`}
               id="storiesWidget"
             >
               <StoriesWidget productId={currentProduct._id} />
+            </div>
+            <div
+              role="tabpanel"
+              className={`tab-pane ${
+                currentTab === "#marketWidget" ? "active" : ""
+              }`}
+              id="marketWidget"
+            >
+              <MarketResearchWidget productId={currentProduct._id} />
             </div>
             <div
               role="tabpanel"

@@ -21,7 +21,7 @@ const StoriesWidget = ({ productId }) => {
         productId={productId}
         collectionName="stories"
         type="Story"
-        evidenceColumnLabel="Stakeholder Personas"
+        evidenceColumnLabel="Personas"
         title="What are the planned user stories?"
         mainModalId={STORY_MODAL_ID}
         summaryTitle="Story Roadmap"

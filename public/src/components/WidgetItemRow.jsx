@@ -1,6 +1,6 @@
 import React from "react";
 
-import { WidgetDataItem } from "../types";
+import { EvidenceRecord, WidgetDataItem } from "../types";
 
 /**
  * @param {object} props The component properties.
@@ -20,6 +20,28 @@ const WidgetItemRow = ({ item, onDeleteCallback, onClickCallback }) => {
         return "bg-danger";
     }
   };
+
+  const trendTypes = ["objective", "goal", "activity", "task", "resource"];
+
+  /**
+   * @param {EvidenceRecord} record The record to evaluate whether it has all trend types
+   * @returns {boolean} whether or not the record has trends of all types
+   */
+  const hasAllTrendTypes = (record) => {
+    const typeMap = record.trends.reduce((map, trend) => {
+      if (trend.type && !map[trend.type]) {
+        map[trend.type] = true;
+      }
+      return map;
+    }, {});
+    return trendTypes.filter((tt) => typeMap[tt]).length === trendTypes.length;
+  };
+
+  const numberOfEvidenceCompleted = item.evidence.filter(
+    (record) =>
+      record.trends && record.trends.length > 0 && hasAllTrendTypes(record)
+  ).length;
+
   return (
     <tr>
       <td
@@ -44,7 +66,7 @@ const WidgetItemRow = ({ item, onDeleteCallback, onClickCallback }) => {
       </td>
       <td>
         <span className={`evidence badge ${getEvidenceLabelClass(item)}`}>
-          {item.evidence.length}
+          {numberOfEvidenceCompleted}/{item.evidence.length}
         </span>
       </td>
       <td>
