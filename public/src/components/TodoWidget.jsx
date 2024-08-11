@@ -1,7 +1,6 @@
 import React from "react";
 
 import Widget from "./Widget";
-import TaskEvidencePane from "./TaskEvidencePane";
 
 /**
  * A widget to document and visualize to-do items.
@@ -23,7 +22,6 @@ const TodoWidget = ({ productId }) => {
       title="What are your TODO items?"
       mainModalId={TODO_MODAL_ID}
       summaryTitle="Activity"
-      evidencePane={TaskEvidencePane}
     />
   );
 };

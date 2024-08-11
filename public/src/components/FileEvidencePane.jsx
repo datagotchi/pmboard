@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { WithContext as ReactTags, SEPARATORS } from "react-tag-input";
 
-import { EvidencePaneProps, GoogleFile, TagsPerFile } from "../types";
+import { EvidencePaneProps, GoogleFile, TagsPerEvidenceRecord } from "../types";
 
 import useOAuthAPI from "../hooks/useOAuthAPI";
 import { AllTagsContext } from "../contexts/AllTagsContext";
@@ -35,7 +35,7 @@ const FileEvidencePane = ({
   };
 
   /**
-   * @type {[TagsPerFile | undefined, React.Dispatch<TagsPerFile | undefined>]}
+   * @type {[TagsPerEvidenceRecord | undefined, React.Dispatch<TagsPerEvidenceRecord | undefined>]}
    */
   const [tagsPerFile, setTagsPerFile] = useState();
 
@@ -55,7 +55,10 @@ const FileEvidencePane = ({
     }
   });
 
-  const [filteredFiles, setFilteredFiles] = useState();
+  /**
+   * @type {[GoogleFile[] | undefined, React.Dispatch<GoogleFile[] | undefined>]}
+   */
+  const [filteredGoogleFiles, setFilteredGoogleFiles] = useState();
 
   const { getGoogleDriveFiles } = useOAuthAPI();
 
@@ -77,7 +80,6 @@ const FileEvidencePane = ({
         });
       });
       if (thereAreChanges) {
-        // careful about infinite renders
         // TODO: try to avoid one more re-render/re-evaluation of this effect after making this change
         setTagsPerFile({ ...tagsPerFile });
       }
@@ -97,13 +99,13 @@ const FileEvidencePane = ({
               .indexOf(file.alternateLink) === -1
         );
         setGoogleFiles([...filteredFiles]);
-        setFilteredFiles([...filteredFiles]);
+        setFilteredGoogleFiles([...filteredFiles]);
       });
     }
-  }, [accessToken]);
+  }, [accessToken, googleFiles]);
 
   useEffect(() => {
-    const initialTrendTags = evidence.reduce((trendsMap, file) => {
+    const initialTags = evidence.reduce((trendsMap, file) => {
       if (!trendsMap[file.url]) {
         if (file.trends) {
           trendsMap[file.url] = file.trends.map((trend) => ({
@@ -117,9 +119,10 @@ const FileEvidencePane = ({
       }
       return trendsMap;
     }, {});
-    setTagsPerFile(initialTrendTags);
+    setTagsPerFile(initialTags);
   }, []);
 
+  // update allTags and evidence on the server if there are changes: edited tags, deleted tags
   useEffect(() => {
     if (tagsPerFile) {
       let thereAreChangesToTrends = false;
@@ -195,7 +198,7 @@ const FileEvidencePane = ({
         setGoogleFiles(newFiles);
 
         document.getElementById("fileFilter").value = "";
-        setFilteredFiles(newFiles);
+        setFilteredGoogleFiles(newFiles);
         addFilesModal.close();
       }
     },
@@ -371,7 +374,7 @@ const FileEvidencePane = ({
                 placeholder="Search files..."
                 style={{ width: "100%" }}
                 onChange={(event) => {
-                  setFilteredFiles(
+                  setFilteredGoogleFiles(
                     googleFiles.filter((file) =>
                       file.title
                         .toLocaleLowerCase()
@@ -384,8 +387,8 @@ const FileEvidencePane = ({
             <div id="files">
               <table className="table">
                 <tbody>
-                  {filteredFiles &&
-                    filteredFiles.map((file) => (
+                  {filteredGoogleFiles &&
+                    filteredGoogleFiles.map((file) => (
                       <tr key={`file #${file.alternateLink}`}>
                         <td style={{ width: "100px" }}>
                           <input

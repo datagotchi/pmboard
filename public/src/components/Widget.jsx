@@ -9,8 +9,6 @@ import WidgetItemRow from "./WidgetItemRow";
 import useCollectionAPI from "../hooks/useCollectionAPI";
 import useCollectionItems from "../hooks/useCollectionItems";
 import useProductAPI from "../hooks/useProductAPI";
-import { EvidencePaneContext } from "../contexts/EvidencePaneContext";
-import FileEvidencePane from "./FileEvidencePane";
 
 /**
  * The HTML component for all PMBoard widgets to document and visualize information
@@ -281,17 +279,16 @@ const Widget = ({
         </dialog>
       </div>
       {currentWidgetItem && (
-        <EvidencePaneContext.Provider value={FileEvidencePane}>
-          <Modal
-            dialogId={mainModalId}
-            item={currentWidgetItem}
-            updateItemFunc={(item) => updateItem(item, currentWidgetItemIndex)}
-            summaryTitle={summaryTitle}
-            updateEvidenceOnServer={(evidence) =>
-              updateEvidence(currentWidgetItemIndex, evidence)
-            }
-          />
-        </EvidencePaneContext.Provider>
+        <Modal
+          productId={productId}
+          dialogId={mainModalId}
+          item={currentWidgetItem}
+          updateItemFunc={(item) => updateItem(item, currentWidgetItemIndex)}
+          summaryTitle={summaryTitle}
+          updateEvidenceOnServer={(evidence) =>
+            updateEvidence(currentWidgetItemIndex, evidence)
+          }
+        />
       )}
     </>
   );

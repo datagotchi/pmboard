@@ -88,6 +88,7 @@ import { WithContext as ReactTags } from "react-tag-input";
 
 /**
  * @typedef EvidencePaneProps
+ * @property {string} productId The ID of the currnent product.
  * @property {EvidenceRecord[]} evidence The evidence to show in the pane.
  * @property {string} containerModalId The ID of the containing modal dialog.
  * @property {(evidence: EvidenceRecord[]) => Promise<Response>} updateEvidenceOnServer The function to call when the evidence collection changes.
@@ -95,5 +96,5 @@ import { WithContext as ReactTags } from "react-tag-input";
  */
 
 /**
- * @typedef {{[key: string]: ReactTags.Tag[]}} TagsPerFile
+ * @typedef {{[key: string]: ReactTags.Tag[]}} TagsPerEvidenceRecord
  */

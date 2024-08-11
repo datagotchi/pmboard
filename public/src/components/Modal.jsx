@@ -7,6 +7,7 @@ import { EvidencePaneContext } from "../contexts/EvidencePaneContext";
 
 /**
  * @param {object} props The component properties.
+ * @param {string} props.productId The ID of the current product.
  * @param {WidgetDataItem} props.item The item to show in the modal.
  * @param {string} props.dialogId The ID to give the dialog.
  * @param {(evidence: EvidenceRecord[]) => void} props.updateEvidenceOnServer The function to call when evidence is updated in this modal.
@@ -15,7 +16,13 @@ import { EvidencePaneContext } from "../contexts/EvidencePaneContext";
  * @example
  *  <Modal item={*} dialogId="*" updateItemFunc={*} updateTrendFunc={*} summaryTitle="*" addItemEvidenceFunc={*} />
  */
-const Modal = ({ item, dialogId, updateEvidenceOnServer, summaryTitle }) => {
+const Modal = ({
+  item,
+  dialogId,
+  productId,
+  updateEvidenceOnServer,
+  summaryTitle,
+}) => {
   const sortString = (a, b) => {
     if (a < b) {
       return 1;
@@ -259,6 +266,7 @@ const Modal = ({ item, dialogId, updateEvidenceOnServer, summaryTitle }) => {
                     >
                       <AllTagsContext.Provider value={allTags}>
                         <EvidencePaneComponent
+                          productId={productId}
                           evidence={item.evidence}
                           containerModalId={dialogId}
                           updateEvidenceOnServer={updateEvidenceOnServer}

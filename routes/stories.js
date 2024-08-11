@@ -10,6 +10,7 @@ const {
 const {
   getEvidenceExpressFunc,
   addEvidenceExpressFunc,
+  updateEvidenceExpressFunc,
   trackEvidenceIndexExpressFunc,
   deleteEvidenceExpressFunc,
   getTrendsExpressFunc,
@@ -55,6 +56,11 @@ router.get(
 router.post(
   "/:story_ix/evidence",
   addEvidenceExpressFunc("stories", "story_ix")
+);
+
+router.put(
+  "/:story_ix/evidence",
+  updateEvidenceExpressFunc("stories", "story_ix")
 );
 
 router.param(

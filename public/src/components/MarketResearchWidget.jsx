@@ -20,7 +20,7 @@ const MarketResearchWidget = ({ productId }) => {
       type="Company"
       evidenceColumnLabel="Claims"
       title="What are the competing companies?"
-      itemModalId={COMPANY_MODAL_ID}
+      mainModalId={COMPANY_MODAL_ID}
       summaryTitle="Market Map"
     />
   );
