@@ -21,7 +21,8 @@ var productSchema = require("./schema/Product.js");
 var Product = db.model("Product", productSchema);
 app.set("Product", Product);
 
-app.use(express.static("public/dist"));
+app.use("/", express.static("public/dist"));
+app.use("/node_modules", express.static("public/node_modules"));
 //app.use(cors());
 // app.use(bodyParser.json());
 // app.use(bodyParser.urlencoded({ extended: false }));

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "mkdir dist; ln -s ./node_modules ./dist/node_modules; webpack --mode development"
+    "build": "webpack --mode development"
   },
   "dependencies": {
     "@babel/core": "^7.24.9",
