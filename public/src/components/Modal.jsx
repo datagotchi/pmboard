@@ -48,7 +48,7 @@ const Modal = ({
       /**
        * @type {EvidenceTrend[]}
        */
-      const recordTrends = JSON.parse(JSON.stringify(record.trends)); // to avoid referencing the same trend objects
+      const recordTrends = JSON.parse(JSON.stringify(record.trends ?? [])); // to avoid referencing the same trend objects
       recordTrends.forEach((trend) => {
         if (!trendCountMap[trend.name]) {
           trendCountMap[trend.name] = {
