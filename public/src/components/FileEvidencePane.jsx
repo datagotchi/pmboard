@@ -7,7 +7,12 @@ import React, {
 } from "react";
 import { WithContext as ReactTags, SEPARATORS } from "react-tag-input";
 
-import { EvidencePaneProps, GoogleFile, TagsPerEvidenceRecord } from "../types";
+import {
+  EvidenceFile,
+  EvidencePaneProps,
+  GoogleFile,
+  TagsPerEvidenceRecord,
+} from "../types";
 
 import useOAuthAPI from "../hooks/useOAuthAPI";
 import { AllTagsContext } from "../contexts/AllTagsContext";
@@ -38,6 +43,11 @@ const FileEvidencePane = ({
    * @type {[TagsPerEvidenceRecord | undefined, React.Dispatch<TagsPerEvidenceRecord | undefined>]}
    */
   const [tagsPerFile, setTagsPerFile] = useState();
+
+  /**
+   * @type {[EvidenceFile[] | undefined, React.Dispatch<EvidenceFile[]>]}
+   */
+  const [files, setFiles] = useState(evidence);
 
   /**
    * @type {[GoogleFile[] | undefined, React.Dispatch<GoogleFile[] | undefined>]}
@@ -214,13 +224,11 @@ const FileEvidencePane = ({
   );
 
   const removeFile = async (file) => {
-    const fileIndex = evidence.map((f) => f.url).indexOf(file.url);
-    evidence.splice(fileIndex, 1);
-    await updateEvidenceOnServer(evidence);
+    await updateEvidenceOnServer(evidence.filter((f) => f.url !== file.url));
+    setFiles(files.filter((f) => f.url !== file.url));
     const newGoogleFiles = [...googleFiles, file];
     setGoogleFiles(newGoogleFiles);
     document.getElementById("fileFilter").value = "";
-    // setFilteredFiles(newFiles);
   };
 
   const getOccurenceNumber = (tagText) =>
@@ -269,98 +277,100 @@ const FileEvidencePane = ({
       </h2>
       <table className="table">
         <tbody>
-          {evidence.map((file) => (
-            <tr key={`Item evidence: ${file.url} `}>
-              <td>
-                <span
-                  className="remove-evidence bi bi-trash"
-                  style={{ cursor: "pointer" }}
-                  onClick={() => {
-                    if (confirm("Are you sure?")) {
-                      removeFile(file);
-                    }
-                  }}
-                ></span>
-              </td>
-              <td>
-                {file.createdDate &&
-                  new Date(file.createdDate).toLocaleDateString()}
-              </td>
-              <td>
-                <a href={file.url} target="_blank" rel="noreferrer">
-                  <img src={file.icon} />
-                  {file.name}
-                </a>
-              </td>
-              <td>
-                {tagsPerFile && tagsPerFile[file.url] && (
-                  <ReactTags
-                    tags={tagsPerFile[file.url]}
-                    separators={[SEPARATORS.ENTER]}
-                    allowAdditionFromPaste={false}
-                    handleAddition={(tag) => {
-                      const fileTags = [...tagsPerFile[file.url]];
-                      fileTags.push(tag);
-                      setTagsPerFile({
-                        ...tagsPerFile,
-                        [file.url]: fileTags,
-                      });
+          {files &&
+            files.map((file) => (
+              <tr key={`Item evidence: ${file.url} `}>
+                <td>
+                  <span
+                    className="remove-evidence bi bi-trash"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      if (confirm("Are you sure?")) {
+                        removeFile(file);
+                      }
                     }}
-                    // suggestions={allTags
-                    //   .filter(
-                    //     (tag) =>
-                    //       trendTagsPerFile[file.url] &&
-                    //       !trendTagsPerFile[file.url]
-                    //         .map((t) => t.id)
-                    //         .includes(tag.id)
-                    //   )
-                    //   .map((allTag) => ({
-                    //     id: allTag.id,
-                    //     text: allTag.id,
-                    //     className: allTag.className,
-                    //   }))}
-                    // renderSuggestion={(item, query) => {}}
-                    editable={true}
-                    onTagUpdate={(index, tag) => {
-                      const fileTags = [...tagsPerFile[file.url]];
-                      fileTags[index] = {
-                        id: tag.id.charAt(0).toUpperCase() + tag.id.slice(1),
-                        text:
-                          tag.text.charAt(0).toUpperCase() + tag.text.slice(1),
-                        className: fileTags[index].className,
-                      };
-                      setTagsPerFile({
-                        ...tagsPerFile,
-                        [file.url]: fileTags,
-                      });
-                    }}
-                    placeholder="Add a trend"
-                    classNames={{
-                      tag: "trendItem",
-                      remove: "removeButton",
-                    }}
-                    allowUnique={true}
-                    inputFieldPosition="top"
-                    removeComponent={({ className, onRemove }) => {
-                      return (
-                        <button onClick={onRemove} className={className}>
-                          X
-                        </button>
-                      );
-                    }}
-                    handleDelete={(index) => {
-                      const thisFileTrends = tagsPerFile[file.url];
-                      thisFileTrends.splice(index, 1);
-                      setTagsPerFile({
-                        ...tagsPerFile,
-                        [file.url]: tagsPerFile[file.url],
-                      });
-                    }}
-                  />
-                )}
-              </td>
-            </tr>
-          ))}
+                  ></span>
+                </td>
+                <td>
+                  {file.modifiedDate &&
+                    new Date(file.modifiedDate).toLocaleDateString()}
+                </td>
+                <td>
+                  <a href={file.url} target="_blank" rel="noreferrer">
+                    <img src={file.icon} />
+                    {file.name}
+                  </a>
+                </td>
+                <td>
+                  {tagsPerFile && tagsPerFile[file.url] && (
+                    <ReactTags
+                      tags={tagsPerFile[file.url]}
+                      separators={[SEPARATORS.ENTER]}
+                      allowAdditionFromPaste={false}
+                      handleAddition={(tag) => {
+                        const fileTags = [...tagsPerFile[file.url]];
+                        fileTags.push(tag);
+                        setTagsPerFile({
+                          ...tagsPerFile,
+                          [file.url]: fileTags,
+                        });
+                      }}
+                      // suggestions={allTags
+                      //   .filter(
+                      //     (tag) =>
+                      //       trendTagsPerFile[file.url] &&
+                      //       !trendTagsPerFile[file.url]
+                      //         .map((t) => t.id)
+                      //         .includes(tag.id)
+                      //   )
+                      //   .map((allTag) => ({
+                      //     id: allTag.id,
+                      //     text: allTag.id,
+                      //     className: allTag.className,
+                      //   }))}
+                      // renderSuggestion={(item, query) => {}}
+                      editable={true}
+                      onTagUpdate={(index, tag) => {
+                        const fileTags = [...tagsPerFile[file.url]];
+                        fileTags[index] = {
+                          id: tag.id.charAt(0).toUpperCase() + tag.id.slice(1),
+                          text:
+                            tag.text.charAt(0).toUpperCase() +
+                            tag.text.slice(1),
+                          className: fileTags[index].className,
+                        };
+                        setTagsPerFile({
+                          ...tagsPerFile,
+                          [file.url]: fileTags,
+                        });
+                      }}
+                      placeholder="Add a trend"
+                      classNames={{
+                        tag: "trendItem",
+                        remove: "removeButton",
+                      }}
+                      allowUnique={true}
+                      inputFieldPosition="top"
+                      removeComponent={({ className, onRemove }) => {
+                        return (
+                          <button onClick={onRemove} className={className}>
+                            X
+                          </button>
+                        );
+                      }}
+                      handleDelete={(index) => {
+                        const thisFileTrends = tagsPerFile[file.url];
+                        thisFileTrends.splice(index, 1);
+                        setTagsPerFile({
+                          ...tagsPerFile,
+                          [file.url]: tagsPerFile[file.url],
+                        });
+                      }}
+                    />
+                  )}
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
       <dialog

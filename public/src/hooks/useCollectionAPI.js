@@ -10,16 +10,21 @@ import useEvidenceAPI from "./useEvidenceAPI";
  * const { addItem, updateItem, deleteItem } = useCollectionAPI({productId, collectionName});
  */
 const useCollectionAPI = (productId, collectionName) => {
-  const addItem = (item) =>
-    fetch(`/products/${productId}/${collectionName}`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      // TODO: credentials
-      body: JSON.stringify(item),
-    });
+  const addItem = (item) => {
+    if (item) {
+      return fetch(`/products/${productId}/${collectionName}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        // TODO: credentials
+        body: JSON.stringify(item),
+      });
+    } else {
+      throw new Error("Item is undefined");
+    }
+  };
 
   const updateItem = (item, index) =>
     fetch(`/products/${productId}/${collectionName}/${index}`, {

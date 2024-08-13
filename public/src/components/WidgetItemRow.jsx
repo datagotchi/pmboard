@@ -11,14 +11,17 @@ import { EvidenceRecord, WidgetDataItem } from "../types";
  */
 const WidgetItemRow = ({ item, onDeleteCallback, onClickCallback }) => {
   const getEvidenceLabelClass = (item) => {
-    switch (item.evidence.length) {
-      case item.evidence.length > 0 && item.evidence.length < 10:
-        return "bg-warning";
-      case item.evidence.length >= 10:
-        return "bg-success";
-      default:
-        return "bg-danger";
+    if (item && item.evidence) {
+      switch (item.evidence.length) {
+        case item.evidence.length > 0 && item.evidence.length < 10:
+          return "bg-warning";
+        case item.evidence.length >= 10:
+          return "bg-success";
+        default:
+          return "bg-danger";
+      }
     }
+    return "";
   };
 
   const trendTypes = ["objective", "goal", "activity", "task", "resource"];
@@ -37,10 +40,15 @@ const WidgetItemRow = ({ item, onDeleteCallback, onClickCallback }) => {
     return trendTypes.filter((tt) => typeMap[tt]).length === trendTypes.length;
   };
 
-  const numberOfEvidenceCompleted = item.evidence.filter(
-    (record) =>
-      record.trends && record.trends.length > 0 && hasAllTrendTypes(record)
-  ).length;
+  const numberOfEvidenceCompleted =
+    item && item.evidence
+      ? item.evidence.filter(
+          (record) =>
+            record.trends &&
+            record.trends.length > 0 &&
+            hasAllTrendTypes(record)
+        ).length
+      : 0;
 
   return (
     <tr>
@@ -61,7 +69,7 @@ const WidgetItemRow = ({ item, onDeleteCallback, onClickCallback }) => {
             onClickCallback(item);
           }}
         >
-          {item.name}
+          {item && item.name}
         </a>
       </td>
       <td>
