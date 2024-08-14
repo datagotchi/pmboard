@@ -1,7 +1,10 @@
 import React, { useContext } from "react";
 import { WithContext as ReactTags } from "react-tag-input";
 
+import { SummaryPaneProps } from "../../types";
+
 import { AllTagsContext } from "../../contexts/AllTagsContext";
+
 import {
   formatTrendTypeText,
   indexToClassName,
@@ -9,8 +12,7 @@ import {
 
 /**
  * A modal pane to show a persona's empathy map.
- * @param {object} props React component properties.
- * @param {(tagIndex: number, reactTags: ReactTags.Tag[]) => void} props.handleTagClick The ReactTags function to call when a tag is clicked.
+ * @param {SummaryPaneProps} props The properties for all summary panes.
  * @returns {React.JSX.Element} The renedered pane.
  */
 const EmpathyMapPane = ({ handleTagClick }) => {
@@ -21,9 +23,15 @@ const EmpathyMapPane = ({ handleTagClick }) => {
       <table className="table" id="empathyMapTable" style={{ width: "90%" }}>
         <tbody>
           {[...indexToClassName, ""].map((trendType) => {
-            const typedTags = allTagsForThisPersona.filter(
-              (tag) => tag.className === trendType
-            );
+            const typedTags = allTagsForThisPersona.filter((tag) => {
+              if (trendType === "") {
+                return (
+                  tag.className === trendType || tag.className === "selected"
+                );
+              } else {
+                return tag.className.includes(trendType);
+              }
+            });
             return (
               <tr key={`ReactTags for '${trendType}'`}>
                 <td>

@@ -2,9 +2,11 @@ import React, { useContext, useState } from "react";
 import { WithContext as ReactTags } from "react-tag-input";
 
 import { EvidenceRecord, EvidenceTrend, WidgetDataItem } from "../types";
+
 import { AllTagsContext } from "../contexts/AllTagsContext";
 import { EvidencePaneContext } from "../contexts/EvidencePaneContext";
-import EmpathyMapPane from "./panes/EmpathyMapPane";
+import { SummaryPaneContext } from "../contexts/SummaryPaneContext";
+
 import {
   classNameToIndex,
   indexToClassName,
@@ -131,6 +133,7 @@ const Modal = ({
   `;
 
   const EvidencePaneComponent = useContext(EvidencePaneContext);
+  const SummaryPaneComponent = useContext(SummaryPaneContext);
 
   return (
     <>
@@ -185,7 +188,7 @@ const Modal = ({
                             </span>
                           ))}
                         {allTags && allTags.length > 0 && (
-                          <EmpathyMapPane
+                          <SummaryPaneComponent
                             handleTagClick={(tagIndex, reactTags) => {
                               const tag = reactTags[tagIndex];
                               const currentClassIndex = tag.className

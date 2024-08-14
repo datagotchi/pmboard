@@ -96,5 +96,10 @@ import { WithContext as ReactTags } from "react-tag-input";
  */
 
 /**
+ * @typedef SummaryPaneProps
+ * @param {(tagIndex: number, reactTags: ReactTags.Tag[]) => void} handleTagClick The ReactTags function to call when a tag is clicked.
+ */
+
+/**
  * @typedef {{[key: string]: ReactTags.Tag[]}} TagsPerEvidenceRecord
  */

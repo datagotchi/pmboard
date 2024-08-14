@@ -94,11 +94,17 @@ const StakeholderEvidencePane = ({
         const existingTrendNames = personaAsEvidence.trends.map(
           (trend) => trend.name
         );
-        setAllTagsForEmpathyMapDialog(
-          selectedPersonaAllTags.filter(
-            (tag) => !existingTrendNames.includes(tag.id)
+        selectedPersonaAllTags.forEach((tag) => {
+          if (existingTrendNames.includes(tag.id)) {
+            tag.className += " selected";
+          }
+        });
+        setSelectedTags(
+          selectedPersonaAllTags.filter((tag) =>
+            tag.className.includes("selected")
           )
         );
+        setAllTagsForEmpathyMapDialog(selectedPersonaAllTags);
         setCurrentPersonaAsEvidence(personaAsEvidence);
         empathyMapDialog.addEventListener("click", (event) => {
           if (event.target === event.currentTarget) {
@@ -106,7 +112,7 @@ const StakeholderEvidencePane = ({
           }
         });
         empathyMapDialog.addEventListener("close", async () => {
-          setSelectedTags([]);
+          // setSelectedTags([]);
           setAllTagsForEmpathyMapDialog(undefined);
         });
         empathyMapDialog.showModal();
@@ -119,10 +125,7 @@ const StakeholderEvidencePane = ({
     if (currentPersonaAsEvidence) {
       setTagsPerPersona({
         ...tagsPerPersona,
-        [currentPersonaAsEvidence.name]: [
-          ...tagsPerPersona[currentPersonaAsEvidence.name],
-          ...selectedTags,
-        ],
+        [currentPersonaAsEvidence.name]: [...selectedTags],
       });
     }
   }, [currentPersonaAsEvidence, selectedTags]);
@@ -318,36 +321,16 @@ const StakeholderEvidencePane = ({
               </td>
               <td>
                 {tagsPerPersona && tagsPerPersona[personaAsEvidence.name] && (
-                  <ReactTags
-                    tags={tagsPerPersona[personaAsEvidence.name]}
-                    // separators={[SEPARATORS.ENTER]}
-                    // allowAdditionFromPaste={false}
-                    editable={false}
-                    readOnly={true}
-                    classNames={{
-                      tag: "trendItem readOnly",
-                      remove: "removeButton",
-                    }}
-                    // allowUnique={true}
-                    inputFieldPosition="top"
-                    removeComponent={({ className, onRemove }) => {
-                      return (
-                        <button onClick={onRemove} className={className}>
-                          X
-                        </button>
-                      );
-                    }}
-                    handleDelete={(index) => {
-                      const thisFileTrends =
-                        tagsPerPersona[personaAsEvidence.name];
-                      thisFileTrends.splice(index, 1); // FIXME: splice might not work
-                      setTagsPerPersona({
-                        ...tagsPerPersona,
-                        [personaAsEvidence.name]:
-                          tagsPerPersona[personaAsEvidence.name],
-                      });
-                    }}
-                  />
+                  <AllTagsContext.Provider
+                    value={tagsPerPersona[personaAsEvidence.name]}
+                  >
+                    <EmpathyMapPane
+                      handleTagClick={() => {
+                        // do nothing on tag click
+                        // but, TODO: do allow tag delete (and re-add)
+                      }}
+                    />
+                  </AllTagsContext.Provider>
                 )}
               </td>
             </tr>

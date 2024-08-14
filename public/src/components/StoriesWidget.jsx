@@ -1,8 +1,12 @@
 import React from "react";
 
-import Widget from "./Widget";
 import { EvidencePaneContext } from "../contexts/EvidencePaneContext";
 import StakeholderEvidencePane from "./panes/StakeholderEvidencePane";
+
+import { SummaryPaneContext } from "../contexts/SummaryPaneContext";
+import JourneMapPane from "./panes/JourneyMapPane";
+
+import Widget from "./Widget";
 
 /**
  * A widget to document and visualize user stories.
@@ -17,15 +21,17 @@ const StoriesWidget = ({ productId }) => {
 
   return (
     <EvidencePaneContext.Provider value={StakeholderEvidencePane}>
-      <Widget
-        productId={productId}
-        collectionName="stories"
-        type="Story"
-        evidenceColumnLabel="Personas"
-        title="What are the planned user stories?"
-        mainModalId={STORY_MODAL_ID}
-        summaryTitle="Story Roadmap"
-      />
+      <SummaryPaneContext.Provider value={JourneMapPane}>
+        <Widget
+          productId={productId}
+          collectionName="stories"
+          type="Story"
+          evidenceColumnLabel="Personas"
+          title="What are the planned user stories?"
+          mainModalId={STORY_MODAL_ID}
+          summaryTitle="Story Journey"
+        />
+      </SummaryPaneContext.Provider>
     </EvidencePaneContext.Provider>
   );
 };
