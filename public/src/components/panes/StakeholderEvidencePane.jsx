@@ -8,6 +8,7 @@ import { EvidencePaneProps, Persona, TagsPerEvidenceRecord } from "../../types";
 import EmpathyMapPane from "./EmpathyMapPane";
 import { AllTagsContext } from "../../contexts/AllTagsContext";
 import AddPersonaPane from "./AddPersonaPane";
+import useCollectionItems from "../../hooks/useCollectionItems";
 
 /**
  * @param {EvidencePaneProps} props The object containing the props.
@@ -22,6 +23,8 @@ const StakeholderEvidencePane = ({
 }) => {
   const ADD_PERSONA_DIALOG_ID = `addPersona: ${containerModalId}`;
   const EMPATHY_MAP_DIALOG_ID = `empathyMap: ${containerModalId}`;
+
+  const allPersonas = useCollectionItems(productId, "personas");
 
   const [personasAsEvidence, setPersonasAsEvidence] = useState(evidence);
 
@@ -62,13 +65,16 @@ const StakeholderEvidencePane = ({
    */
   const [selectedTags, setSelectedTags] = useState([]);
 
+  const [currentPersonaAsEvidence, setCurrentPersonaAsEvidence] = useState();
+
   const showPersonaTrendModal = useCallback(
-    /**
-     * @param {Persona} persona The persona to show an empathy map for.
-     */
-    (persona) => {
-      if (empathyMapDialog && persona) {
-        const selectedPersonaAllTags = persona.evidence.reduce(
+    (personaAsEvidence) => {
+      if (empathyMapDialog && allPersonas) {
+        // FIXME: personasAsEvidence don't have .evidence
+        const fullPersona = allPersonas.find(
+          (p) => p.name === personaAsEvidence.name
+        );
+        const selectedPersonaAllTags = fullPersona.evidence.reduce(
           (reactTags, file) => {
             if (file.trends) {
               file.trends.forEach((trend) => {
@@ -85,25 +91,41 @@ const StakeholderEvidencePane = ({
           },
           []
         );
-        setAllTagsForEmpathyMapDialog(selectedPersonaAllTags);
+        const existingTrendNames = personaAsEvidence.trends.map(
+          (trend) => trend.name
+        );
+        setAllTagsForEmpathyMapDialog(
+          selectedPersonaAllTags.filter(
+            (tag) => !existingTrendNames.includes(tag.id)
+          )
+        );
+        setCurrentPersonaAsEvidence(personaAsEvidence);
         empathyMapDialog.addEventListener("click", (event) => {
           if (event.target === event.currentTarget) {
             empathyMapDialog.close();
           }
         });
-        empathyMapDialog.addEventListener("close", () => {
-          setTagsPerPersona({
-            ...tagsPerPersona,
-            [persona.name]: [...selectedTags],
-          });
+        empathyMapDialog.addEventListener("close", async () => {
           setSelectedTags([]);
           setAllTagsForEmpathyMapDialog(undefined);
         });
         empathyMapDialog.showModal();
       }
     },
-    [empathyMapDialog]
+    [empathyMapDialog, allPersonas, selectedTags]
   );
+
+  useEffect(() => {
+    if (currentPersonaAsEvidence) {
+      setTagsPerPersona({
+        ...tagsPerPersona,
+        [currentPersonaAsEvidence.name]: [
+          ...tagsPerPersona[currentPersonaAsEvidence.name],
+          ...selectedTags,
+        ],
+      });
+    }
+  }, [currentPersonaAsEvidence, selectedTags]);
 
   // set tagsPerPersona initially from evidence
   useEffect(() => {
@@ -175,7 +197,7 @@ const StakeholderEvidencePane = ({
       await updateEvidenceOnServer(newPersonasAsEvidence);
 
       document.getElementById("personaFilter").value = "";
-      addPersonaDialog.close();
+      // addPersonaDialog.close();
     },
     [personasAsEvidence]
   );
@@ -254,12 +276,7 @@ const StakeholderEvidencePane = ({
         const flatTags =
           getFlatTagsWithCountsFromTagsPerPersona(tagsPerPersona);
         allTagsUpdated(flatTags);
-        updateEvidenceOnServer(
-          personasAsEvidence.map((p) => ({
-            name: p.name,
-            evidence: tagsPerPersona[p.name],
-          }))
-        );
+        updateEvidenceOnServer(personasAsEvidence);
       }
     }
   }, [tagsPerPersona]);
@@ -349,7 +366,7 @@ const StakeholderEvidencePane = ({
       </dialog>
       <dialog
         id={EMPATHY_MAP_DIALOG_ID}
-        style={{ width: "600px", height: "600px" }}
+        style={{ width: "800px", height: "600px" }}
       >
         <AllTagsContext.Provider value={allTagsForEmpathyMapDialog}>
           <EmpathyMapPane

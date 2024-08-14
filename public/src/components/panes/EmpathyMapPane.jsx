@@ -14,14 +14,14 @@ import {
  * @returns {React.JSX.Element} The renedered pane.
  */
 const EmpathyMapPane = ({ handleTagClick }) => {
-  const allTags = useContext(AllTagsContext);
+  const allTagsForThisPersona = useContext(AllTagsContext);
 
-  if (allTags) {
+  if (allTagsForThisPersona) {
     return (
       <table className="table" id="empathyMapTable" style={{ width: "90%" }}>
         <tbody>
           {[...indexToClassName, ""].map((trendType) => {
-            const typedTags = allTags.filter(
+            const typedTags = allTagsForThisPersona.filter(
               (tag) => tag.className === trendType
             );
             return (
@@ -39,9 +39,17 @@ const EmpathyMapPane = ({ handleTagClick }) => {
                       // because readOnly={true} makes `handleTagClick` do nothing
                       return "";
                     }}
-                    handleTagClick={(tagIndex) =>
-                      handleTagClick(tagIndex, typedTags)
-                    }
+                    handleTagClick={(tagIndex, event) => {
+                      const tagWrapper = event.target;
+                      if (tagWrapper.className.includes("selected")) {
+                        tagWrapper.className = tagWrapper.className
+                          .split(" ")
+                          .filter((cn) => cn !== "selected");
+                      } else {
+                        tagWrapper.className += " selected";
+                      }
+                      handleTagClick(tagIndex, typedTags);
+                    }}
                   />
                 </td>
               </tr>

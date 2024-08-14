@@ -124,3 +124,6 @@ ul.trend-types li:hover {
 #empathyMapTable .ReactTags__tagInput {
   display: none;
 }
+#empathyMapTable .tag-wrapper.selected {
+  border: 3px black solid;
+}

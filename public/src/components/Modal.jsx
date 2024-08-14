@@ -209,19 +209,7 @@ const Modal = ({
                       >
                         <EvidencePaneComponent
                           productId={productId}
-                          evidence={
-                            item.evidence
-                              ? item.evidence.sort((a, b) => {
-                                  if (b.modifiedDate > a.modifiedDate) {
-                                    return 1;
-                                  }
-                                  if (a.modifiedDate > b.modifiedDate) {
-                                    return -1;
-                                  }
-                                  return 0;
-                                })
-                              : []
-                          }
+                          evidence={item.evidence}
                           containerModalId={dialogId}
                           updateEvidenceOnServer={updateEvidenceOnServer}
                           allTagsUpdated={(tags) => setAllTags(tags)}
