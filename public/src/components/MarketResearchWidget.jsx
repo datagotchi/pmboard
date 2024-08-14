@@ -1,7 +1,7 @@
 import React from "react";
 
 import Widget from "./Widget";
-import FileEvidencePane from "./FileEvidencePane";
+import FileEvidencePane from "./panes/FileEvidencePane";
 import { EvidencePaneContext } from "../contexts/EvidencePaneContext";
 
 /**

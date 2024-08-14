@@ -23,9 +23,24 @@ const addEvidenceExpressFunc =
 
 const updateEvidenceExpressFunc =
   (itemCollectionName, itemIndexKey) => async (req, res, next) => {
+    console.log("*** in updateEvidenceExpressFunc()");
+    console.log("*** itemCollectionName: ", itemCollectionName);
+    console.log("*** itemIndexKey: ", itemIndexKey);
     const { product, [itemIndexKey]: ix, body: records } = req;
+    console.log("*** ix: ", ix);
+    console.log("*** records: ", records);
+
+    console.log(
+      "*** product[itemCollectionName][ix]: ",
+      product[itemCollectionName][ix]
+    );
 
     product[itemCollectionName][ix].evidence = records;
+
+    console.log(
+      "*** product[itemCollectionName][ix].evidence: ",
+      product[itemCollectionName][ix].evidence
+    );
 
     await product.save();
 

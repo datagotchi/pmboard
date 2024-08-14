@@ -12,10 +12,10 @@ import {
   EvidencePaneProps,
   GoogleFile,
   TagsPerEvidenceRecord,
-} from "../types";
+} from "../../types";
 
-import useOAuthAPI from "../hooks/useOAuthAPI";
-import { AllTagsContext } from "../contexts/AllTagsContext";
+import useOAuthAPI from "../../hooks/useOAuthAPI";
+import { AllTagsContext } from "../../contexts/AllTagsContext";
 
 /**
  * @param {EvidencePaneProps} props The object containing the props.

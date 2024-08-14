@@ -2,7 +2,7 @@ import React from "react";
 
 import Widget from "./Widget";
 import { EvidencePaneContext } from "../contexts/EvidencePaneContext";
-import FileEvidencePane from "./FileEvidencePane";
+import FileEvidencePane from "./panes/FileEvidencePane";
 
 /**
  * A widget to document and visualize stakeholder problems

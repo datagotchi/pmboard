@@ -4,6 +4,11 @@ import { WithContext as ReactTags } from "react-tag-input";
 import { EvidenceRecord, EvidenceTrend, WidgetDataItem } from "../types";
 import { AllTagsContext } from "../contexts/AllTagsContext";
 import { EvidencePaneContext } from "../contexts/EvidencePaneContext";
+import EmpathyMapPane from "./panes/EmpathyMapPane";
+import {
+  classNameToIndex,
+  indexToClassName,
+} from "./panes/EmpathyMapPaneFunctions";
 
 /**
  * @param {object} props The component properties.
@@ -35,7 +40,7 @@ const Modal = ({
   const getOccurenceNumber = (tagText) =>
     parseInt(tagText.match(/\(([0-9]+)\)/)[1]);
 
-  const getFlatTagsWithCountsFromEvidence = () => {
+  const getFlatTagsWithCountsFromEvidence = (evidence) => {
     /**
      * @type {ReactTags.Tag[]}
      */
@@ -44,7 +49,7 @@ const Modal = ({
      * @type {{[key: string]: {count: number, className: string}}}
      */
     const trendCountMap = {};
-    item.evidence.forEach((record) => {
+    evidence.forEach((record) => {
       /**
        * @type {EvidenceTrend[]}
        */
@@ -75,7 +80,9 @@ const Modal = ({
   /**
    * @type {[ReactTags.Tag[] | undefined, React.Dispatch<ReactTags.Tag[] | undefined>]}
    */
-  const [allTags, setAllTags] = useState(getFlatTagsWithCountsFromEvidence());
+  const [allTags, setAllTags] = useState(
+    getFlatTagsWithCountsFromEvidence(item.evidence)
+  );
 
   const css = `
     .trendItem {
@@ -121,35 +128,7 @@ const Modal = ({
     .removeButton:hover {
       background-color: rgba(204, 204, 204, 0.5);
     }
-    #modalSummary .ReactTags__tagInput {
-      display: none;
-    }
   `;
-
-  const indexToClassName = [
-    "objective",
-    "goal",
-    "activity",
-    "task",
-    "resource",
-  ];
-  const classNameToIndex = {};
-  indexToClassName.forEach((className, index) => {
-    classNameToIndex[className] = index;
-  });
-
-  const formatTrendTypeText = (trendType) => {
-    switch (trendType.toLocaleLowerCase()) {
-      case "activity":
-        return "Activities";
-      case "resource":
-        return "Resources & Constraints";
-      case "":
-        return "";
-      default:
-        return `${trendType.charAt(0).toUpperCase() + trendType.slice(1)}s`;
-    }
-  };
 
   const EvidencePaneComponent = useContext(EvidencePaneContext);
 
@@ -192,73 +171,42 @@ const Modal = ({
                     </li>
                   </ul>
                   <div className="tab-content">
-                    {/* TODO: use d3.js instead of ReactTags */}
-                    <div role="tabpanel" className="tab-pane" id="modalSummary">
-                      {!allTags ||
-                        (allTags.length === 0 && (
-                          <span>
-                            There is no evidence. Start by adding a file!
-                          </span>
-                        ))}
-                      {allTags && allTags.length > 0 && (
-                        <>
-                          {/* <div style={{ float: "left", fontSize: "25px" }}>
-                            <p>⬆️</p>
-                            <p>Why?</p>
-                          </div> */}
-                          <table className="table" style={{ width: "90%" }}>
-                            <tbody>
-                              {[...indexToClassName, ""].map((trendType) => {
-                                const typedTags = allTags.filter(
-                                  (tag) => tag.className === trendType
-                                );
-                                return (
-                                  <tr key={`ReactTags for '${trendType}'`}>
-                                    <td>
-                                      <strong>
-                                        {formatTrendTypeText(trendType)}
-                                      </strong>
-                                    </td>
-                                    <td>
-                                      <ReactTags
-                                        tags={typedTags}
-                                        classNames={{
-                                          tag: "trendItem readOnly",
-                                        }}
-                                        removeComponent={() => {
-                                          // because readOnly={true} makes `handleTagClick` do nothing
-                                          return "";
-                                        }}
-                                        handleTagClick={(tagIndex) => {
-                                          const tag = typedTags[tagIndex];
-                                          const currentClassIndex =
-                                            tag.className
-                                              ? classNameToIndex[tag.className]
-                                              : -1;
-                                          const newClassName =
-                                            indexToClassName[
-                                              (currentClassIndex + 1) %
-                                                indexToClassName.length
-                                            ];
-                                          tag.className = newClassName;
-                                          setAllTags([...allTags]); // to refresh their className displays
-                                        }}
-                                      />
-                                    </td>
-                                  </tr>
-                                );
-                              })}
-                            </tbody>
-                          </table>
-                        </>
-                      )}
-                    </div>
-                    <div
-                      role="tabpanel"
-                      className="tab-pane active"
-                      id="modalEvidence"
-                    >
-                      <AllTagsContext.Provider value={allTags}>
+                    <AllTagsContext.Provider value={allTags}>
+                      {/* TODO: use d3.js instead of ReactTags */}
+                      <div
+                        role="tabpanel"
+                        className="tab-pane"
+                        id="modalSummary"
+                      >
+                        {!allTags ||
+                          (allTags.length === 0 && (
+                            <span>
+                              There is no evidence. Start by adding a file!
+                            </span>
+                          ))}
+                        {allTags && allTags.length > 0 && (
+                          <EmpathyMapPane
+                            handleTagClick={(tagIndex, reactTags) => {
+                              const tag = reactTags[tagIndex];
+                              const currentClassIndex = tag.className
+                                ? classNameToIndex[tag.className]
+                                : -1;
+                              const newClassName =
+                                indexToClassName[
+                                  (currentClassIndex + 1) %
+                                    indexToClassName.length
+                                ];
+                              tag.className = newClassName;
+                              setAllTags([...allTags]); // to refresh their className displays
+                            }}
+                          />
+                        )}
+                      </div>
+                      <div
+                        role="tabpanel"
+                        className="tab-pane active"
+                        id="modalEvidence"
+                      >
                         <EvidencePaneComponent
                           productId={productId}
                           evidence={
@@ -278,8 +226,8 @@ const Modal = ({
                           updateEvidenceOnServer={updateEvidenceOnServer}
                           allTagsUpdated={(tags) => setAllTags(tags)}
                         />
-                      </AllTagsContext.Provider>
-                    </div>
+                      </div>
+                    </AllTagsContext.Provider>
                   </div>
                 </div>
               </div>

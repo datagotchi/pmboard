@@ -113,8 +113,7 @@ const Dashboard = () => {
                     products.map((product) => (
                       <li key={`Product #${product._id}`}>
                         <a
-                          className="dropdown-item"
-                          style={{ cursor: "pointer" }}
+                          className="dropdown-item pointer"
                           onClick={() => handleSetCurrentProduct(product._id)}
                         >
                           {product.name}
@@ -126,8 +125,7 @@ const Dashboard = () => {
                   </li>
                   <li>
                     <a
-                      className="dropdown-item"
-                      style={{ cursor: "pointer" }}
+                      className="dropdown-item pointer"
                       onClick={async () => {
                         const name = prompt("Give the new product a name:");
                         if (name) {

@@ -2,7 +2,7 @@ import React from "react";
 
 import Widget from "./Widget";
 import { EvidencePaneContext } from "../contexts/EvidencePaneContext";
-import StakeholderEvidencePane from "./StakeholderEvidencePane";
+import StakeholderEvidencePane from "./panes/StakeholderEvidencePane";
 
 /**
  * A widget to document and visualize user stories.
