@@ -98,6 +98,8 @@ import { WithContext as ReactTags } from "react-tag-input";
 /**
  * @typedef SummaryPaneProps
  * @param {(tagIndex: number, reactTags: ReactTags.Tag[]) => void} handleTagClick The ReactTags function to call when a tag is clicked.
+ * @param {boolean} allowDrag Whether or not to allow drag-n-drop.
+ * @param {(tag: ReactTags.Tag, currPos: number, newPos: number) => void} handleDrag A callback to handle drag-n-drop.
  */
 
 /**

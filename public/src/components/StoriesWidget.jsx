@@ -4,7 +4,7 @@ import { EvidencePaneContext } from "../contexts/EvidencePaneContext";
 import StakeholderEvidencePane from "./panes/StakeholderEvidencePane";
 
 import { SummaryPaneContext } from "../contexts/SummaryPaneContext";
-import JourneMapPane from "./panes/JourneyMapPane";
+import JourneyMapPane from "./panes/JourneyMapPane";
 
 import Widget from "./Widget";
 
@@ -21,7 +21,7 @@ const StoriesWidget = ({ productId }) => {
 
   return (
     <EvidencePaneContext.Provider value={StakeholderEvidencePane}>
-      <SummaryPaneContext.Provider value={JourneMapPane}>
+      <SummaryPaneContext.Provider value={JourneyMapPane}>
         <Widget
           productId={productId}
           collectionName="stories"

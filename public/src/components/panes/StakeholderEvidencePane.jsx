@@ -112,7 +112,6 @@ const StakeholderEvidencePane = ({
           }
         });
         empathyMapDialog.addEventListener("close", async () => {
-          // setSelectedTags([]);
           setAllTagsForEmpathyMapDialog(undefined);
         });
         empathyMapDialog.showModal();
@@ -325,10 +324,7 @@ const StakeholderEvidencePane = ({
                     value={tagsPerPersona[personaAsEvidence.name]}
                   >
                     <EmpathyMapPane
-                      handleTagClick={() => {
-                        // do nothing on tag click
-                        // but, TODO: do allow tag delete (and re-add)
-                      }}
+                    // TODO: do allow tag delete (and re-add)
                     />
                   </AllTagsContext.Provider>
                 )}

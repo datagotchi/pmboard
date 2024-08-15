@@ -15,7 +15,7 @@ import {
  * @param {SummaryPaneProps} props The properties for all summary panes.
  * @returns {React.JSX.Element} The renedered pane.
  */
-const EmpathyMapPane = ({ handleTagClick }) => {
+const EmpathyMapPane = ({ handleTagClick, allowDragDrop, handleDrag }) => {
   const allTagsForThisPersona = useContext(AllTagsContext);
 
   if (allTagsForThisPersona) {
@@ -47,6 +47,8 @@ const EmpathyMapPane = ({ handleTagClick }) => {
                       // because readOnly={true} makes `handleTagClick` do nothing
                       return "";
                     }}
+                    allowDragDrop={allowDragDrop}
+                    handleDrag={handleDrag}
                     handleTagClick={(tagIndex, event) => {
                       const tagWrapper = event.target;
                       if (tagWrapper.className.includes("selected")) {

@@ -120,22 +120,21 @@ const Widget = ({
     }
   }, [currentWidgetItem, itemModal]);
 
-  const [draggableContainer, setDraggableContainer] = useState();
+  const [sortableContainer, setDraggableContainer] = useState();
 
   useEffect(() => {
-    if (document.getElementById(LIST_ID) && !draggableContainer) {
+    if (document.getElementById(LIST_ID) && !sortableContainer) {
       setDraggableContainer(document.getElementById(LIST_ID));
     }
   });
 
   useEffect(() => {
-    if (draggableContainer && !sortable) {
+    if (sortableContainer && !sortable) {
       setSortable(
-        new Sortable(draggableContainer, {
+        new Sortable(sortableContainer, {
           draggable: "tr",
           handle: ".dragHandle",
           mirror: {
-            appendTo: `#${LIST_ID}`,
             constrainDimensions: true,
           },
           collidables: "tr",
@@ -148,17 +147,17 @@ const Widget = ({
         })
       );
     }
-  }, [draggableContainer, sortable]);
+  }, [sortableContainer, sortable]);
 
   let currentDragIndex = -1;
   useEffect(() => {
     if (sortable && liveData) {
       sortable.on("drag:start", (event) => {
-        const trElements = Array.from(draggableContainer.childNodes);
+        const trElements = Array.from(sortableContainer.childNodes);
         currentDragIndex = trElements.indexOf(event.source);
       });
       sortable.on("drag:stop", (event) => {
-        const trElements = Array.from(draggableContainer.childNodes).filter(
+        const trElements = Array.from(sortableContainer.childNodes).filter(
           (tr) =>
             !tr.className.includes("draggable-mirror") &&
             !tr.className.includes("draggable--original")

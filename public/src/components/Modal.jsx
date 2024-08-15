@@ -86,58 +86,11 @@ const Modal = ({
     getFlatTagsWithCountsFromEvidence(item.evidence)
   );
 
-  const css = `
-    .trendItem {
-      margin: 2px;
-      padding: 0 0 0 5px;
-      display: inline-block;
-      font: 12px "Helvetica Neue", Helvetica, Arial, sans-serif;
-      height: 26px;
-      line-height: 25px;
-      border-radius: 3px;
-      background-color: #337ab7;
-      color: #fff;
-      font-weight: 700;
-      cursor: pointer !important;
-    }
-    .objective {
-      background-color: red;
-    }
-    .goal {
-      background-color: purple;
-    }
-    .activity { 
-      background-color: blue;
-    }
-    .task {
-      background-color: green;
-    }
-    .resource {
-      background-color: gray;
-    }
-    .readOnly {
-      padding: 0 5px;
-    }
-    .removeButton {
-      background-color: transparent;
-      height: 22px;
-      border-radius: 5px;
-      float: right;
-      margin: 2px 0 0 5px;
-      font-size: 12px;
-      line-height: 12px;
-    }
-    .removeButton:hover {
-      background-color: rgba(204, 204, 204, 0.5);
-    }
-  `;
-
   const EvidencePaneComponent = useContext(EvidencePaneContext);
   const SummaryPaneComponent = useContext(SummaryPaneContext);
 
   return (
     <>
-      <style>{css}</style>
       <dialog id={dialogId} style={{ width: "90%", height: "90%" }}>
         <div>
           <div>
@@ -175,7 +128,6 @@ const Modal = ({
                   </ul>
                   <div className="tab-content">
                     <AllTagsContext.Provider value={allTags}>
-                      {/* TODO: use d3.js instead of ReactTags */}
                       <div
                         role="tabpanel"
                         className="tab-pane"

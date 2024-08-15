@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 
-// https://stackoverflow.com/questions/7616461/generate-a-hash-from-string-in-javascript
+// https://stackoverflow.com/a/7616484
 const hashCode = function (str) {
   var hash = 0,
     i,
