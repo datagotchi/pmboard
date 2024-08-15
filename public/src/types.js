@@ -100,6 +100,8 @@ import { WithContext as ReactTags } from "react-tag-input";
  * @param {(tagIndex: number, reactTags: ReactTags.Tag[]) => void} handleTagClick The ReactTags function to call when a tag is clicked.
  * @param {boolean} allowDrag Whether or not to allow drag-n-drop.
  * @param {(tag: ReactTags.Tag, currPos: number, newPos: number) => void} handleDrag A callback to handle drag-n-drop.
+ * @param {(className: string, onRemove: React.Component<any>) => React.JSX.Element} removeComponent A component (e.g., X button) to remove a tag.
+ * @param {(index: number, event: React.MouseEvent) => void} handleDelete The function to call when deleting a tag.
  */
 
 /**

@@ -70,7 +70,6 @@ const StakeholderEvidencePane = ({
   const showPersonaTrendModal = useCallback(
     (personaAsEvidence) => {
       if (empathyMapDialog && allPersonas) {
-        // FIXME: personasAsEvidence don't have .evidence
         const fullPersona = allPersonas.find(
           (p) => p.name === personaAsEvidence.name
         );
@@ -324,7 +323,23 @@ const StakeholderEvidencePane = ({
                     value={tagsPerPersona[personaAsEvidence.name]}
                   >
                     <EmpathyMapPane
-                    // TODO: do allow tag delete (and re-add)
+                      removeComponent={({ className, onRemove }) => {
+                        return (
+                          <button onClick={onRemove} className={className}>
+                            X
+                          </button>
+                        );
+                      }}
+                      handleDelete={(index) => {
+                        const thisPersonaTrends =
+                          tagsPerPersona[personaAsEvidence.name];
+                        thisPersonaTrends.splice(index, 1);
+                        setTagsPerPersona({
+                          ...tagsPerPersona,
+                          [personaAsEvidence.name]:
+                            tagsPerPersona[personaAsEvidence.name],
+                        });
+                      }}
                     />
                   </AllTagsContext.Provider>
                 )}
