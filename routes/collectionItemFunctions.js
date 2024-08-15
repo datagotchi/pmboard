@@ -40,6 +40,9 @@ const updateItem = (collectionName, indexName) => async (req, res, next) => {
     ...prod[collectionName][ix],
     ...req.body,
   };
+
+  prod.markModified(`${collectionName}.summary.steps`);
+
   try {
     await prod.save();
     return res.json({

@@ -3,7 +3,7 @@ import { Draggable, Droppable } from "@shopify/draggable";
 
 import { AllTagsContext } from "../../contexts/AllTagsContext";
 
-const JourneyMapPane = () => {
+const JourneyMapPane = ({ summaryChanged }) => {
   const allTagsForThisStory = useContext(AllTagsContext);
 
   /**
@@ -100,6 +100,7 @@ const JourneyMapPane = () => {
             <div
               className={`tag trendItem ${tag.className}`}
               key={`tag named ${tag.id}`}
+              data-tag={JSON.stringify(tag)}
             >
               {tag.text}
             </div>
@@ -122,6 +123,26 @@ const JourneyMapPane = () => {
           >
             Add Step
           </button>
+          <button
+            onClick={() => {
+              const dropzones = Array.from(
+                document.querySelectorAll("[data-dropzone]")
+              ).sort(
+                (a, b) =>
+                  Number(b.dataset.dropzone) - Number(a.dataset.dropzone)
+              );
+              const steps = dropzones.map((dropzoneDiv) => ({
+                tag: JSON.parse(dropzoneDiv.childNodes.item(0).dataset.tag),
+                coordinates: [dropzoneDiv.style.left, dropzoneDiv.style.top],
+              }));
+              summaryChanged({
+                steps,
+              });
+            }}
+            style={{ float: "right" }}
+          >
+            Save
+          </button>
           {dropzones.map((zone, i) => (
             <div
               key={`dropzone #${i}`}
@@ -132,9 +153,7 @@ const JourneyMapPane = () => {
                 minWidth: "200px",
                 position: "absolute",
               }}
-            >
-              {zone.name}
-            </div>
+            ></div>
           ))}
         </div>
       </>

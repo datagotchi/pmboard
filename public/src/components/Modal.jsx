@@ -19,6 +19,7 @@ import {
  * @param {string} props.dialogId The ID to give the dialog.
  * @param {(evidence: EvidenceRecord[]) => void} props.updateEvidenceOnServer The function to call when evidence is updated in this modal.
  * @param {string} props.summaryTitle The title of the summary tab.
+ * @param {(item: WidgetDataItem) => Promise<Response>} props.updateItemFunc The function to call to update an entire item.
  * @returns {React.JSX.Element} The rendered modal.
  * @example
  *  <Modal item={*} dialogId="*" updateItemFunc={*} updateTrendFunc={*} summaryTitle="*" addItemEvidenceFunc={*} />
@@ -29,6 +30,7 @@ const Modal = ({
   productId,
   updateEvidenceOnServer,
   summaryTitle,
+  updateItemFunc,
 }) => {
   const sortString = (a, b) => {
     if (a < b) {
@@ -153,6 +155,10 @@ const Modal = ({
                                 ];
                               tag.className = newClassName;
                               setAllTags([...allTags]); // to refresh their className displays
+                            }}
+                            summaryChanged={(summary) => {
+                              item.summary = summary;
+                              updateItemFunc(item);
                             }}
                           />
                         )}

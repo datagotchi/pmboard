@@ -73,6 +73,21 @@ var productSchema = new Schema({
           ],
         },
       ],
+      summary: {
+        _id: false, // uniquely access evidence by array index
+        steps: [
+          {
+            _id: false, // uniquely access evidence by array index
+            tag: {
+              _id: false, // uniquely access evidence by array index
+              id: String,
+              text: String,
+              className: String,
+            },
+            coordinates: [String, String],
+          },
+        ],
+      },
     },
   ],
   tasks: [
