@@ -54,72 +54,72 @@ router.get("/", async (req, res, next) => {
   return res.json(personas);
 });
 
-// router.post("/", addItem("personas"));
+router.post("/", addItem("personas"));
 
-// router.param("persona_ix", function (req, res, next) {
-//   // TODO: assert ix is a normal int
-//   var ix = req.params.persona_ix;
-//   var prod = req.product;
-//   if (ix && ix < prod.personas.length) {
-//     req.persona_ix = ix; // need to save just the index because we're saving the entire product document to the db
-//     return next();
-//   }
-//   var err = new Error("No such stakeholder type");
-//   err.status = 404;
-//   return next(err);
-// });
+router.param("persona_id", function (req, res, next) {
+  // TODO: assert ix is a normal int
+  var ix = req.params.persona_id;
+  var prod = req.product;
+  if (ix && ix < prod.personas.length) {
+    req.persona_id = ix; // need to save just the index because we're saving the entire product document to the db
+    return next();
+  }
+  var err = new Error("No such stakeholder type");
+  err.status = 404;
+  return next(err);
+});
 
-// router.put("/:persona_ix", updateItem("personas", "persona_ix"));
+router.put("/:persona_id", updateItem("personas", "persona_id"));
 
-// router.delete("/:persona_ix", deleteItem("personas", "persona_ix"));
+router.delete("/:persona_id", deleteItem("personas", "persona_id"));
 
-// // ****** persona evidence *****
+// ****** persona evidence *****
 
-// // get persona evidence
-// router.get(
-//   "/:persona_ix/evidence",
-//   getEvidenceExpressFunc("personas", "persona_ix")
-// );
+// get persona evidence
+router.get(
+  "/:persona_id/evidence",
+  getEvidenceExpressFunc("personas", "persona_id")
+);
 
-// // add persona evidence
-// router.post(
-//   "/:persona_ix/evidence",
-//   addEvidenceExpressFunc("personas", "persona_ix")
-// );
+// add persona evidence
+router.post(
+  "/:persona_id/evidence",
+  addEvidenceExpressFunc("personas", "persona_id")
+);
 
-// router.put(
-//   "/:persona_ix/evidence",
-//   updateEvidenceExpressFunc("personas", "persona_ix")
-// );
+router.put(
+  "/:persona_id/evidence",
+  updateEvidenceExpressFunc("personas", "persona_id")
+);
 
-// router.param(
-//   "evidence_ix",
-//   trackEvidenceIndexExpressFunc("personas", "persona_ix")
-// );
+router.param(
+  "evidence_ix",
+  trackEvidenceIndexExpressFunc("personas", "persona_id")
+);
 
-// router.delete(
-//   "/:company_ix/evidence/:evidence_ix",
-//   deleteEvidenceExpressFunc("personas", "persona_ix")
-// );
+router.delete(
+  "/:company_ix/evidence/:evidence_ix",
+  deleteEvidenceExpressFunc("personas", "persona_id")
+);
 
-// router.get(
-//   "/:persona_ix/evidence/:evidence_ix/trends",
-//   getTrendsExpressFunc("personas", "persona_ix")
-// );
+router.get(
+  "/:persona_id/evidence/:evidence_ix/trends",
+  getTrendsExpressFunc("personas", "persona_id")
+);
 
-// router.post(
-//   "/:persona_ix/evidence/:evidence_ix/trends",
-//   addTrendExpressFunc("personas", "persona_ix")
-// );
+router.post(
+  "/:persona_id/evidence/:evidence_ix/trends",
+  addTrendExpressFunc("personas", "persona_id")
+);
 
-// router.put(
-//   "/:persona_ix/evidence/:evidence_ix/trends/:trend_ix",
-//   changeTrendExpressFunc("personas", "persona_ix")
-// );
+router.put(
+  "/:persona_id/evidence/:evidence_ix/trends/:trend_ix",
+  changeTrendExpressFunc("personas", "persona_id")
+);
 
-// router.delete(
-//   "/:persona_ix/evidence/:evidence_ix/trends/:trend_ix",
-//   deleteTrendExpressFunc("personas", "persona_ix")
-// );
+router.delete(
+  "/:persona_id/evidence/:evidence_ix/trends/:trend_ix",
+  deleteTrendExpressFunc("personas", "persona_id")
+);
 
 module.exports = router;

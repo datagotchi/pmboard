@@ -27,23 +27,24 @@ const addItem = (collectionName) => async (req, res, next) => {
   }
 };
 
-const updateItem = (collectionName, indexName) => async (req, res, next) => {
+const updateItem = (collectionName, idName) => async (req, res, next) => {
   /*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
 */
 
-  var prod = req.product;
-  var ix = req[indexName];
+  const { [idName]: id } = req;
 
   prod[collectionName][ix] = {
     ...prod[collectionName][ix],
     ...req.body,
   };
 
-  prod.markModified(`${collectionName}.summary.steps`);
-
   try {
+    // await req.client.query({
+    //   text: `update ${collectionName} set * = * where id = $1::integer`,
+    //   values: [id]
+    // });
     await prod.save();
     return res.json({
       success: true,

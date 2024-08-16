@@ -31,8 +31,17 @@ var products = require("./routes/products");
 var app = express();
 
 app.use(async (req, res, next) => {
-  req.client = await pool.connect();
-  next();
+  try {
+    req.client = await pool.connect();
+    next();
+  } catch (err) {
+    console.error(err);
+    console.error("*** totalCount", pool.totalCount);
+    console.error("*** idleCount", pool.idleCount);
+    console.error("*** waitingCount", pool.waitingCount);
+    console.error("*** so, restarting server...");
+    process.exit();
+  }
 });
 
 // var db = mongoose.createConnection("mongodb://localhost/pmboard");

@@ -6,6 +6,9 @@ import { AllTagsContext } from "../../contexts/AllTagsContext";
 const JourneyMapPane = ({ summaryChanged }) => {
   const allTagsForThisStory = useContext(AllTagsContext);
 
+  // TODO: get existing journey if there is one
+  // then get the steps from it's ID
+
   /**
    * @type {[Droppable | undefined, React.Dispatch<Droppable>]}
    */
@@ -131,12 +134,20 @@ const JourneyMapPane = ({ summaryChanged }) => {
                 (a, b) =>
                   Number(b.dataset.dropzone) - Number(a.dataset.dropzone)
               );
-              const steps = dropzones.map((dropzoneDiv) => ({
-                tag: JSON.parse(dropzoneDiv.childNodes.item(0).dataset.tag),
-                coordinates: [dropzoneDiv.style.left, dropzoneDiv.style.top],
-              }));
+              const steps = dropzones.map((dropzoneDiv) => {
+                const tag = JSON.parse(
+                  dropzoneDiv.childNodes.item(0).dataset.tag
+                );
+                return {
+                  tagId: tag.id,
+                  tagClassName: tag.className,
+                  x: dropzoneDiv.style.left,
+                  y: dropzoneDiv.style.top,
+                };
+              });
               summaryChanged({
                 steps,
+                // connections
               });
             }}
             style={{ float: "right" }}
