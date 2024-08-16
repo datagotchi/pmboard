@@ -18,20 +18,20 @@ import TodoWidget from "./TodoWidget";
  *  </Dashboard>
  */
 const Dashboard = () => {
-  const CURRENT_PRODUCT_ID_SESSION_KEY = "currentProductId";
+  const CURRENT_PRODUCTid_SESSION_KEY = "currentProductId";
   /**
    * @type {[Product[] | undefined, React.Dispatch<Product[]>]}
    */
   const [products, setProducts] = useState();
 
   const currentProjectIdFromStorage = sessionStorage.getItem(
-    CURRENT_PRODUCT_ID_SESSION_KEY
+    CURRENT_PRODUCTid_SESSION_KEY
   );
   /**
-   * @type {[string, React.Dispatch<string>]}
+   * @type {[number, React.Dispatch<string>]}
    */
   const [currentProductId, setCurrentProductId] = useState(
-    currentProjectIdFromStorage
+    Number(currentProjectIdFromStorage)
   );
   /**
    * @type {[Product | undefined, React.Dispatch<Product>]}
@@ -59,7 +59,7 @@ const Dashboard = () => {
   useEffect(() => {
     if (currentProductId && products) {
       const product = products.find(
-        (product) => product._id === currentProductId
+        (product) => product.id === currentProductId
       );
       setCurrentProduct(product);
     }
@@ -68,11 +68,11 @@ const Dashboard = () => {
   const { getProducts, createProduct, deleteProduct } = useProductAPI();
 
   const handleSetCurrentProduct = (productId) => {
-    const product = products.find((product) => product._id === productId);
+    const product = products.find((product) => product.id === productId);
     if (product) {
-      sessionStorage.setItem(CURRENT_PRODUCT_ID_SESSION_KEY, productId);
+      sessionStorage.setItem(CURRENT_PRODUCTid_SESSION_KEY, productId);
       setCurrentProduct(product);
-      setCurrentProductId(product._id);
+      setCurrentProductId(product.id);
     }
   };
 
@@ -111,10 +111,10 @@ const Dashboard = () => {
                 <ul className="dropdown-menu" role="menu">
                   {products &&
                     products.map((product) => (
-                      <li key={`Product #${product._id}`}>
+                      <li key={`Product #${product.id}`}>
                         <a
                           className="dropdown-item pointer"
-                          onClick={() => handleSetCurrentProduct(product._id)}
+                          onClick={() => handleSetCurrentProduct(product.id)}
                         >
                           {product.name}
                         </a>
@@ -131,7 +131,7 @@ const Dashboard = () => {
                         if (name) {
                           const newProduct = await createProduct({ name });
                           setProducts([...products, newProduct]);
-                          setCurrentProductId(newProduct._id);
+                          setCurrentProductId(newProduct.id);
                         }
                       }}
                     >
@@ -152,10 +152,10 @@ const Dashboard = () => {
                   style={{ cursor: "pointer" }}
                   onClick={async () => {
                     if (confirm("Are you sure?")) {
-                      await deleteProduct(currentProduct._id);
+                      await deleteProduct(currentProduct.id);
                       setProducts(
                         products.filter(
-                          (product) => product._id !== currentProduct._id
+                          (product) => product.id !== currentProduct.id
                         )
                       );
                       setCurrentProduct(undefined);
@@ -266,7 +266,7 @@ const Dashboard = () => {
               }`}
               id="stakeholderWidget"
             >
-              <StakeholderResearchWidget productId={currentProduct._id} />
+              <StakeholderResearchWidget productId={currentProduct.id} />
             </div>
             <div
               role="tabpanel"
@@ -275,7 +275,7 @@ const Dashboard = () => {
               }`}
               id="storiesWidget"
             >
-              <StoriesWidget productId={currentProduct._id} />
+              <StoriesWidget productId={currentProduct.id} />
             </div>
             <div
               role="tabpanel"
@@ -284,7 +284,7 @@ const Dashboard = () => {
               }`}
               id="marketWidget"
             >
-              <MarketResearchWidget productId={currentProduct._id} />
+              <MarketResearchWidget productId={currentProduct.id} />
             </div>
             <div
               role="tabpanel"
@@ -293,7 +293,7 @@ const Dashboard = () => {
               }`}
               id="todoWidget"
             >
-              <TodoWidget productId={currentProduct._id} />
+              <TodoWidget productId={currentProduct.id} />
             </div>
           </div>
         </div>

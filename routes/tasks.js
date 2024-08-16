@@ -19,12 +19,21 @@ const {
 } = require("./evidenceFunctions");
 
 // get user personas
-router.get("/", (req, res, next) => {
+router.get("/", async (req, res, next) => {
   /*
   var err = checkUserAccess(req, 1);
   if (err) return next(err);
 */
-  return res.json(req.product.tasks);
+  const tasks = await req.client
+    .query({
+      text: "select * from tasks where product_id = $1::integer",
+      values: [req.product_id],
+    })
+    .then((result) => result.rows);
+  // DEBUG until they get evidence
+  tasks.forEach((task) => (task.evidence = []));
+  // TODO: get and assign trends, too
+  return res.json(tasks);
 });
 
 router.post("/", addItem("tasks"));

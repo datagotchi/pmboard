@@ -19,12 +19,38 @@ const {
   deleteTrendExpressFunc,
 } = require("./evidenceFunctions");
 
-router.get("/", (req, res, next) => {
+router.get("/", async (req, res, next) => {
   /*
   const err = checkUserAccess(req, 1);
   if (err) return next(err);
 */
-  return res.json(req.product.stories);
+  const stories = await req.client
+    .query({
+      text: "select * from stories where product_id = $1::integer",
+      values: [req.product_id],
+    })
+    .then((result) => result.rows);
+  await Promise.all(
+    stories.map(async (story) => {
+      story.evidence = await req.client
+        .query({
+          text: "select * from evidence where story_id = $1::integer",
+          values: [story.id],
+        })
+        .then((result) => result.rows);
+      await Promise.all(
+        story.evidence.map(async (personaAsEvidence) => {
+          personaAsEvidence.trends = await req.client
+            .query({
+              text: "select * from trends where evidence_id = $1::integer",
+              values: [personaAsEvidence.id],
+            })
+            .then((result) => result.rows);
+        })
+      );
+    })
+  );
+  return res.json(stories);
 });
 
 router.post("/", addItem("stories"));

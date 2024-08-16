@@ -18,12 +18,31 @@ const {
   deleteTrendExpressFunc,
 } = require("./evidenceFunctions");
 
-router.get("/", (req, res, next) => {
+router.get("/", async (req, res, next) => {
   /*
   const err = checkUserAccess(req, 1);
   if (err) return next(err);
 */
-  return res.json(req.product.companies);
+  const companies = await req.client
+    .query({
+      text: "select * from companies where product_id = $1::integer",
+      values: [req.product_id],
+    })
+    .then((result) => result.rows);
+  // await Promise.all(
+  //   companies.map(async (company) => {
+  //     company.evidence = await req.client
+  //       .query({
+  //         text: "select * from evidence where story_id = $1::integer",
+  //         values: [company.id],
+  //       })
+  //       .then((result) => result.rows);
+  //   })
+  // );
+  // DEBUG until they get evidence
+  companies.forEach((company) => (company.evidence = []));
+  // TODO: get and assign trends, too
+  return res.json(companies);
 });
 
 router.post("/", addItem("companies"));
