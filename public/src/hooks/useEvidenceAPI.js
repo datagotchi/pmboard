@@ -4,8 +4,8 @@ import { EvidenceAPI } from "../types";
  * @type {EvidenceAPI}
  */
 const useEvidenceAPI = (productId, collectionName) => {
-  const updateEvidence = (itemIndex, evidence) =>
-    fetch(`/products/${productId}/${collectionName}/${itemIndex}/evidence`, {
+  const updateEvidence = (itemId, evidence) =>
+    fetch(`/products/${productId}/${collectionName}/${itemId}/evidence`, {
       method: "PUT",
       headers: {
         Accept: "application/json",

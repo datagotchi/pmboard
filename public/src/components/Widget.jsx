@@ -66,11 +66,6 @@ const Widget = ({
   const [currentWidgetItem, setCurrentWidgetItem] = useState();
 
   /**
-   * @type {[number | undefined, React.Dispatch<number | undefined>]}
-   */
-  const [currentWidgetItemIndex, setCurrentWidgetItemIndex] = useState();
-
-  /**
    * @type {[HTMLDialogElement | undefined, React.Dispatch<HTMLDialogElement | undefined>]}
    */
   const [itemModal, setItemModal] = useState();
@@ -107,7 +102,6 @@ const Widget = ({
         itemModal.addEventListener("close", () => {
           setItemModal(undefined);
           setCurrentWidgetItem(undefined);
-          setCurrentWidgetItemIndex(undefined);
         });
         itemModal.showModal();
       } else {
@@ -197,8 +191,6 @@ const Widget = ({
   const widgetOnClickCallback = useCallback(
     (item) => {
       setCurrentWidgetItem(item);
-      const index = liveData.indexOf(item);
-      setCurrentWidgetItemIndex(index);
     },
     [liveData]
   );
@@ -282,10 +274,10 @@ const Widget = ({
           productId={productId}
           dialogId={mainModalId}
           item={currentWidgetItem}
-          updateItemFunc={(item) => updateItem(item, currentWidgetItemIndex)}
+          updateItemFunc={(item) => updateItem(item)}
           summaryTitle={summaryTitle}
           updateEvidenceOnServer={(evidence) =>
-            updateEvidence(currentWidgetItemIndex, evidence)
+            updateEvidence(currentWidgetItem.id, evidence)
           }
         />
       )}

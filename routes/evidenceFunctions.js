@@ -23,6 +23,8 @@ const addEvidenceExpressFunc = (itemIdKey) => async (req, res, next) => {
 const updateEvidenceExpressFunc = (itemIdKey) => async (req, res, next) => {
   const { [itemIdKey]: itemId, body: records } = req;
 
+  console.log("*** updating evidence[] on: ", itemIdKey, itemId, records);
+
   await Promise.all(
     records.map((record) => {
       if (record.id) {
