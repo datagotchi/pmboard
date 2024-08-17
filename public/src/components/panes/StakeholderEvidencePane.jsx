@@ -191,7 +191,6 @@ const StakeholderEvidencePane = ({
         ...personasAsEvidence,
         {
           name: persona.name,
-          trends: [],
         },
       ];
       setPersonasAsEvidence(newPersonasAsEvidence);

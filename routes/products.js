@@ -42,8 +42,6 @@ router.get("/", async (req, res, next) => {
 // });
 
 router.param("product_id", async (req, res, next, product_id) => {
-  // TODO: assert product_id is an integer
-
   //oauth.auth('google', req.session)
   //.then(function (request_object) {
   // const product = await Product.findById(product_id);

@@ -5,34 +5,51 @@ const getEvidenceExpressFunc =
     return res.json(product[itemCollectionName][ix].evidence);
   };
 
-const addEvidenceExpressFunc =
-  (itemCollectionName, itemIndexKey) => async (req, res, next) => {
-    const { product, [itemIndexKey]: ix, body: file } = req;
+const addEvidenceExpressFunc = (itemIdKey) => async (req, res, next) => {
+  const { [itemIdKey]: id, body: record } = req;
 
-    if (!("evidence" in prod[itemCollectionName][ix])) {
-      prod[itemCollectionName][ix].evidence = [];
-    }
-    product[itemCollectionName][ix].evidence.push(file);
+  await req.client.query({
+    text: `insert into evidence 
+          (name, url, icon, ${itemIdKey}, created_date, modified_date) 
+          values ($1::text, $2::text, $3::text, $4::integer, current_timestamp, current_timestamp)`,
+    values: [record.name, record.url, record.icon, id],
+  });
 
-    await prod.save();
+  return res.json({
+    success: true,
+  });
+};
 
-    return res.json({
-      success: true,
-    });
-  };
+const updateEvidenceExpressFunc = (itemIdKey) => async (req, res, next) => {
+  const { [itemIdKey]: itemId, body: records } = req;
 
-const updateEvidenceExpressFunc =
-  (itemCollectionName, itemIndexKey) => async (req, res, next) => {
-    const { product, [itemIndexKey]: ix, body: records } = req;
+  await Promise.all(
+    records.map((record) => {
+      if (record.id) {
+        const setClauseItems = Object.keys(record).map(
+          (recordKey) => `${recordKey} = ${JSON.stringify(record[recordKey])}`
+        );
+        setClauseItems.push(`${itemIdKey} = ${itemId}`);
+        const setClause = setClauseItems.join(", ");
+        return req.client.query({
+          text: `update evidence set ${setClause} where id = $1::integer`,
+          values: [record.id],
+        });
+      } else {
+        return req.client.query({
+          text: `insert into evidence 
+              (name, url, icon, ${itemIdKey}, created_date, modified_date) 
+              values ($1::text, $2::text, $3::text, $4::integer, current_timestamp, current_timestamp)`,
+          values: [record.name, record.url, record.icon, itemId],
+        });
+      }
+    })
+  );
 
-    product[itemCollectionName][ix].evidence = records;
-
-    await product.save();
-
-    return res.json({
-      success: true,
-    });
-  };
+  return res.json({
+    success: true,
+  });
+};
 
 const trackEvidenceIndexExpressFunc =
   (itemCollectionName, itemIndexKey) => (req, res, next) => {

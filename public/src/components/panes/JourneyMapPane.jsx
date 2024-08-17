@@ -6,7 +6,7 @@ import { AllTagsContext } from "../../contexts/AllTagsContext";
 const JourneyMapPane = ({ summaryChanged }) => {
   const allTagsForThisStory = useContext(AllTagsContext);
 
-  // TODO: get existing journey if there is one
+  // FIXME: get existing journey if there is one
   // then get the steps from it's ID
 
   /**
