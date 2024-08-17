@@ -66,7 +66,6 @@ const deleteItem = (collectionName, idName) => async (req, res, next) => {
       text: `delete from ${collectionName} where id = $1::integer`,
       values: [id],
     });
-    // await prod.save();
     return res.json({
       success: true,
     });

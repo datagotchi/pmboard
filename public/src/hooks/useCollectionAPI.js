@@ -37,8 +37,8 @@ const useCollectionAPI = (productId, collectionName) => {
       body: JSON.stringify(item),
     });
 
-  const deleteItem = (index) =>
-    fetch(`/products/${productId}/${collectionName}/${index}`, {
+  const deleteItem = (id) =>
+    fetch(`/products/${productId}/${collectionName}/${id}`, {
       method: "DELETE",
       // TODO: credentials
     });

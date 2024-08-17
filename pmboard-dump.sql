@@ -508,6 +508,7 @@ COPY public.evidence (id, name, url, icon, persona_id, created_date, modified_da
 72	Techie	\N	\N	\N	\N	\N	21
 73	Unemployed Techie	\N	\N	\N	\N	\N	21
 74	Employed Techie	\N	\N	\N	\N	\N	21
+78	Product Manager	\N	\N	\N	2024-08-17	2024-08-17	22
 \.
 
 
@@ -582,7 +583,6 @@ COPY public.products (id, name) FROM stdin;
 COPY public.stories (id, name, product_id) FROM stdin;
 1	Help Entrepreneurs create new startups by understanding stakeholders	1
 2	Reduce investor risk aversion by being able to empathize with all stakeholders	1
-3	Make it easier to do light-weight entrepreneurship	1
 4	Make new products useful to yourself first	1
 5	Then rely on word-of-mouth marketing	1
 6	Improve Michigan's startup scenes	1
@@ -601,6 +601,7 @@ COPY public.stories (id, name, product_id) FROM stdin;
 19	s2	4
 20	Enable all kinds of Techies to quickly apply to gigs based on specific skills	6
 21	Enable Techies to use CO as a career dashboard their entire lives	6
+22	Integrated product teams will retain employees better, make them less upset/burned out/etc.	2
 \.
 
 
@@ -1172,7 +1173,7 @@ SELECT pg_catalog.setval('public.companies_id_seq', 16, true);
 -- Name: evidence_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.evidence_id_seq', 74, true);
+SELECT pg_catalog.setval('public.evidence_id_seq', 78, true);
 
 
 --
@@ -1207,7 +1208,7 @@ SELECT pg_catalog.setval('public.products_id_seq', 6, true);
 -- Name: stories_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.stories_id_seq', 21, true);
+SELECT pg_catalog.setval('public.stories_id_seq', 22, true);
 
 
 --
@@ -1317,7 +1318,7 @@ ALTER TABLE ONLY public.journeys
 --
 
 ALTER TABLE ONLY public.trends
-    ADD CONSTRAINT fk_eid FOREIGN KEY (evidence_id) REFERENCES public.evidence(id) NOT VALID;
+    ADD CONSTRAINT fk_eid FOREIGN KEY (evidence_id) REFERENCES public.evidence(id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
 
 
 --
@@ -1341,7 +1342,7 @@ ALTER TABLE ONLY public.tasks
 --
 
 ALTER TABLE ONLY public.evidence
-    ADD CONSTRAINT fk_pid_personas FOREIGN KEY (persona_id) REFERENCES public.personas(id) NOT VALID;
+    ADD CONSTRAINT fk_pid_personas FOREIGN KEY (persona_id) REFERENCES public.personas(id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
 
 
 --
@@ -1365,7 +1366,7 @@ ALTER TABLE ONLY public.journeys
 --
 
 ALTER TABLE ONLY public.evidence
-    ADD CONSTRAINT fk_sid_stories FOREIGN KEY (story_id) REFERENCES public.stories(id) NOT VALID;
+    ADD CONSTRAINT fk_sid_stories FOREIGN KEY (story_id) REFERENCES public.stories(id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
 
 
 --

@@ -180,10 +180,8 @@ const Widget = ({
   // TODO: (above TODO) vs: this uses old `liveData` after drag reordering
   const deleteItemCallback = useCallback(
     (item) => {
-      const itemIndex = liveData.indexOf(item);
-      liveData.splice(itemIndex, 1);
-      setLiveData([...liveData]);
-      deleteItem(itemIndex);
+      setLiveData(liveData.filter((i) => i.id !== item.id));
+      deleteItem(item.id);
     },
     [liveData]
   );
