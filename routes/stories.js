@@ -50,14 +50,31 @@ router.get("/", async (req, res, next) => {
       );
     })
   );
+  req.client.release();
   return res.json(stories);
+});
+
+router.put("/", async (req, res, next) => {
+  const stories = req.body;
+  await Promise.all(
+    stories.map((story) => {
+      const setClause = Object.keys(story)
+        .filter((key) => key !== "id")
+        .map((key) => `${key} = '${story[key]}'`);
+      return req.client.query({
+        text: `update stories set ${setClause} where id = $1::integer`,
+        values: [story.id],
+      });
+    })
+  );
+  req.client.release();
+  return res.sendStatus(200);
 });
 
 router.post("/", addItem("stories"));
 
 router.param("story_id", function (req, res, next) {
   req.story_id = req.params.story_id;
-  const prod = req.product;
   next();
 });
 
@@ -87,7 +104,7 @@ router.put("/:story_id", async (req, res, next) => {
         });
       })
     );
-
+    req.client.release();
     return res.sendStatus(200);
   }
   return res.sendStatus(400);

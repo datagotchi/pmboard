@@ -16,6 +16,7 @@ router.get("/", async (req, res, next) => {
   const products = await req.client
     .query("select * from products")
     .then((result) => result.rows);
+  req.client.release();
   return res.json(products);
 });
 

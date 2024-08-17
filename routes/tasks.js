@@ -32,62 +32,55 @@ router.get("/", async (req, res, next) => {
     .then((result) => result.rows);
   // DEBUG until they get evidence
   tasks.forEach((task) => (task.evidence = []));
+  req.client.release();
   // TODO: get and assign trends, too
   return res.json(tasks);
 });
 
 router.post("/", addItem("tasks"));
 
-router.param("task_ix", function (req, res, next) {
-  // TODO: assert ix is a normal int
-  var ix = req.params.task_ix;
-  var prod = req.product;
-  if (ix && ix < prod.tasks.length) {
-    req.task_ix = ix; // need to save just the index because we're saving the entire product document to the db
-    return next();
-  }
-  var err = new Error("No such task");
-  err.status = 404;
-  return next(err);
+router.param("task_id", function (req, res, next) {
+  req.task_id = req.params.task_id;
+  return next();
 });
 
-router.put("/:task_ix", updateItem("tasks", "task_ix"));
+router.put("/:task_id", updateItem("tasks", "task_id"));
 
-router.delete("/:task_ix", deleteItem("tasks", "task_ix"));
+router.delete("/:task_id", deleteItem("tasks", "task_id"));
 
 // ****** persona evidence *****
 
 // get persona evidence
-router.get("/:task_ix/evidence", getEvidenceExpressFunc("taks", "task_ix"));
+router.get("/:task_id/evidence", getEvidenceExpressFunc("taks", "task_id"));
 
 // add persona evidence
-router.post("/:task_ix/evidence", addEvidenceExpressFunc("tasks", "task_ix"));
+router.post("/:task_id/evidence", addEvidenceExpressFunc("tasks", "task_id"));
 
-router.param("evidence_ix", trackEvidenceIndexExpressFunc("tasks", "task_ix"));
+router.param("evidence_ix", trackEvidenceIndexExpressFunc("tasks", "task_id"));
 
 router.delete(
-  "/:task_ix/evidence/:evidence_ix",
-  deleteEvidenceExpressFunc("tasks", "task_ix")
+  "/:task_id/evidence/:evidence_ix",
+  deleteEvidenceExpressFunc("tasks", "task_id")
 );
 
 router.get(
-  "/:task_ix/evidence/:evidence_ix/trends",
-  getTrendsExpressFunc("tasks", "task_ix")
+  "/:task_id/evidence/:evidence_ix/trends",
+  getTrendsExpressFunc("tasks", "task_id")
 );
 
 router.post(
-  "/:task_ix/evidence/:evidence_ix/trends",
-  addTrendExpressFunc("tasks", "task_ix")
+  "/:task_id/evidence/:evidence_ix/trends",
+  addTrendExpressFunc("tasks", "task_id")
 );
 
 router.put(
-  "/:task_ix/evidence/:evidence_ix/trends/:trend_ix",
-  changeTrendExpressFunc("tasks", "task_ix")
+  "/:task_id/evidence/:evidence_ix/trends/:trend_ix",
+  changeTrendExpressFunc("tasks", "task_id")
 );
 
 router.delete(
-  "/:task_ix/evidence/:evidence_ix/trends/:trend_ix",
-  deleteTrendExpressFunc("tasks", "task_ix")
+  "/:task_id/evidence/:evidence_ix/trends/:trend_ix",
+  deleteTrendExpressFunc("tasks", "task_id")
 );
 
 module.exports = router;

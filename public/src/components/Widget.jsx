@@ -163,13 +163,26 @@ const Widget = ({
             newData[currentDragIndex],
             newData[newIndex],
           ];
-          updateProductCollection(productId, collectionName, newData).then(
-            () => {
+          newData.forEach((item, index) => (item.index = index));
+          updateProductCollection(
+            productId,
+            collectionName,
+            newData.map((item) => ({
+              // to avoid including evidence & trends in the call
+              id: item.id,
+              index: item.index,
+              name: item.name,
+              product_id: item.product_id,
+            }))
+          )
+            .then(() => {
               // TODO: refreshing the page works, but I'd prefer not to
               // setLiveData((prevLiveData) => [...newData]); // resets the live data, but renders it the old way (!)
               window.location.reload();
-            }
-          );
+            })
+            .catch((err) => {
+              console.error(err);
+            });
         }
         // done: cleanup
         currentDragIndex = -1;
@@ -225,14 +238,16 @@ const Widget = ({
             </thead>
             <tbody id={LIST_ID}>
               {liveData &&
-                liveData.map((item, index) => (
-                  <WidgetItemRow
-                    item={item}
-                    key={`WidgetItemRow #${index}`}
-                    onDeleteCallback={deleteItemCallback}
-                    onClickCallback={widgetOnClickCallback}
-                  />
-                ))}
+                liveData
+                  .sort((a, b) => a.index - b.index)
+                  .map((item, index) => (
+                    <WidgetItemRow
+                      item={item}
+                      key={`WidgetItemRow #${index}`}
+                      onDeleteCallback={deleteItemCallback}
+                      onClickCallback={widgetOnClickCallback}
+                    />
+                  ))}
             </tbody>
           </table>
         </div>

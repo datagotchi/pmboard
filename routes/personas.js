@@ -51,22 +51,15 @@ router.get("/", async (req, res, next) => {
       );
     })
   );
+  req.client.release();
   return res.json(personas);
 });
 
 router.post("/", addItem("personas"));
 
 router.param("persona_id", function (req, res, next) {
-  // TODO: assert ix is a normal int
-  var ix = req.params.persona_id;
-  var prod = req.product;
-  if (ix && ix < prod.personas.length) {
-    req.persona_id = ix; // need to save just the index because we're saving the entire product document to the db
-    return next();
-  }
-  var err = new Error("No such stakeholder type");
-  err.status = 404;
-  return next(err);
+  req.persona_id = req.params.persona_id;
+  return next();
 });
 
 router.put("/:persona_id", updateItem("personas", "persona_id"));

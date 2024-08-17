@@ -15,6 +15,7 @@ const addEvidenceExpressFunc = (itemIdKey) => async (req, res, next) => {
     values: [record.name, record.url, record.icon, id],
   });
 
+  req.client.release();
   return res.json({
     success: true,
   });
@@ -45,7 +46,7 @@ const updateEvidenceExpressFunc = (itemIdKey) => async (req, res, next) => {
       }
     })
   );
-
+  req.client.release();
   return res.json({
     success: true,
   });

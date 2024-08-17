@@ -39,6 +39,7 @@ router.get("/", async (req, res, next) => {
   //       .then((result) => result.rows);
   //   })
   // );
+  req.client.release();
   // DEBUG until they get evidence
   companies.forEach((company) => (company.evidence = []));
   // TODO: get and assign trends, too
@@ -47,62 +48,55 @@ router.get("/", async (req, res, next) => {
 
 router.post("/", addItem("companies"));
 
-router.param("company_ix", function (req, res, next) {
-  const ix = req.params.company_ix;
-  const prod = req.product;
-  if (ix && ix < prod.companies.length) {
-    req.company_ix = ix; // need to save just the index because we're saving the entire product document to the db
-    return next();
-  }
-  const err = new Error("No such company type");
-  err.status = 404;
-  return next(err);
+router.param("company_id", function (req, res, next) {
+  req.company_id = req.params.company_id;
+  return next();
 });
 
-router.put("/:company_ix", updateItem("companies", "company_ix"));
+router.put("/:company_id", updateItem("companies", "company_id"));
 
-router.delete("/:company_ix", deleteItem("companies", "company_ix"));
+router.delete("/:company_id", deleteItem("companies", "company_id"));
 
 // evidence & trends from evidenceFunctions.js
 
 router.get(
-  "/:company_ix/evidence",
-  getEvidenceExpressFunc("companies", "company_ix")
+  "/:company_id/evidence",
+  getEvidenceExpressFunc("companies", "company_id")
 );
 
 router.post(
-  "/:company_ix/evidence",
-  addEvidenceExpressFunc("companies", "company_ix")
+  "/:company_id/evidence",
+  addEvidenceExpressFunc("companies", "company_id")
 );
 
 router.param(
   "evidence_ix",
-  trackEvidenceIndexExpressFunc("companies", "company_ix")
+  trackEvidenceIndexExpressFunc("companies", "company_id")
 );
 
 router.delete(
-  "/:company_ix/evidence/:evidence_ix",
-  deleteEvidenceExpressFunc("companies", "company_ix")
+  "/:company_id/evidence/:evidence_ix",
+  deleteEvidenceExpressFunc("companies", "company_id")
 );
 
 router.get(
-  "/:company_ix/evidence/:evidence_ix/trends",
-  getTrendsExpressFunc("companies", "company_ix")
+  "/:company_id/evidence/:evidence_ix/trends",
+  getTrendsExpressFunc("companies", "company_id")
 );
 
 router.post(
-  "/:company_ix/evidence/:evidence_ix/trends",
-  addTrendExpressFunc("companies", "company_ix")
+  "/:company_id/evidence/:evidence_ix/trends",
+  addTrendExpressFunc("companies", "company_id")
 );
 
 router.put(
-  "/:company_ix/evidence/:evidence_ix/trends/:trend_ix",
-  changeTrendExpressFunc("companies", "company_ix")
+  "/:company_id/evidence/:evidence_ix/trends/:trend_ix",
+  changeTrendExpressFunc("companies", "company_id")
 );
 
 router.delete(
-  "/:company_ix/evidence/:evidence_ix/trends/:trend_ix",
-  deleteTrendExpressFunc("companies", "company_ix")
+  "/:company_id/evidence/:evidence_ix/trends/:trend_ix",
+  deleteTrendExpressFunc("companies", "company_id")
 );
 
 module.exports = router;

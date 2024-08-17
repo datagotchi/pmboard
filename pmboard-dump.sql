@@ -27,7 +27,8 @@ SET default_table_access_method = heap;
 CREATE TABLE public.companies (
     id integer NOT NULL,
     name text NOT NULL,
-    product_id bigint NOT NULL
+    product_id bigint NOT NULL,
+    index integer
 );
 
 
@@ -174,7 +175,8 @@ ALTER SEQUENCE public.journeys_id_seq OWNED BY public.journeys.id;
 CREATE TABLE public.personas (
     id integer NOT NULL,
     name text NOT NULL,
-    product_id bigint NOT NULL
+    product_id bigint NOT NULL,
+    index integer
 );
 
 
@@ -243,7 +245,8 @@ ALTER SEQUENCE public.products_id_seq OWNED BY public.products.id;
 CREATE TABLE public.stories (
     id integer NOT NULL,
     name text NOT NULL,
-    product_id bigint NOT NULL
+    product_id bigint NOT NULL,
+    index integer
 );
 
 
@@ -278,7 +281,8 @@ ALTER SEQUENCE public.stories_id_seq OWNED BY public.stories.id;
 CREATE TABLE public.tasks (
     id integer NOT NULL,
     name text NOT NULL,
-    product_id bigint NOT NULL
+    product_id bigint NOT NULL,
+    index integer
 );
 
 
@@ -409,23 +413,23 @@ ALTER TABLE ONLY public.trends ALTER COLUMN id SET DEFAULT nextval('public.trend
 -- Data for Name: companies; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.companies (id, name, product_id) FROM stdin;
-1	CRA	1
-2	SRI	1
-3	Y-Combinator	1
-4	Start Garden	1
-5	Productboard	2
-6	New technologies (e.g., on Product Hunt)	5
-7	Digg	3
-8	Slashdot	3
-9	Apple News(+)	3
-10	Twitter	3
-11	Twitch	3
-12	c1	4
-13	c2	4
-14	All Job Boards	6
-15	Fiverr	6
-16	Upwork	6
+COPY public.companies (id, name, product_id, index) FROM stdin;
+1	CRA	1	\N
+2	SRI	1	\N
+3	Y-Combinator	1	\N
+4	Start Garden	1	\N
+5	Productboard	2	\N
+6	New technologies (e.g., on Product Hunt)	5	\N
+7	Digg	3	\N
+8	Slashdot	3	\N
+9	Apple News(+)	3	\N
+10	Twitter	3	\N
+11	Twitch	3	\N
+12	c1	4	\N
+13	c2	4	\N
+14	All Job Boards	6	\N
+15	Fiverr	6	\N
+16	Upwork	6	\N
 \.
 
 
@@ -436,7 +440,6 @@ COPY public.companies (id, name, product_id) FROM stdin;
 COPY public.evidence (id, name, url, icon, persona_id, created_date, modified_date, story_id) FROM stdin;
 1	Datagotchi Proposal	https://docs.google.com/document/d/1RPeGXVGPUrk8QH6lbqhpY_5ir7IHRzseGDIGhnr5KhM/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	1	\N	\N	\N
 2	Self user research notes - DG Labs	https://docs.google.com/document/d/1hynxBUqOSq8o_0Y2zAkbNHeUVQ36f_U1cNZTwKhubp4/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	2	\N	\N	\N
-22	R&D Scientist	\N	\N	\N	\N	\N	7
 3	Neuroscience Says This Quality Is Key for Entrepreneurial Success, and It Has Nothing to Do With Intelligence or Grit _ Inc.com.pdf	https://drive.google.com/file/d/1U-rbRJb5nwqx7XE32id_ghTYPaaQ6FCE/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	2	2024-08-13	2024-08-13	\N
 4	Dear Founders, Before Pitching to an Investor, Prepare an Investment Memo _ by Wayne Wee _ Jun, 2024 _ Startup Stash.pdf	https://drive.google.com/file/d/1KSqZXEJqZVhAQEKEWUJxnIEvfuHyHyQP/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	3	2024-08-11	2024-08-11	\N
 5	Strategies For Getting VCs To Compete For Your Startup _ Medium.pdf	https://drive.google.com/file/d/1SRnaY-gf8m2Z8Ihw0_U-0862ZI7WUI1v/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	3	2024-08-11	2024-08-11	\N
@@ -449,7 +452,6 @@ COPY public.evidence (id, name, url, icon, persona_id, created_date, modified_da
 12	Entrepreneur	\N	\N	\N	\N	\N	1
 13	Investor	\N	\N	\N	\N	\N	2
 14	PMBoard proposal	https://docs.google.com/document/d/1KzD6QLuWW0qv7SJreMW0G3Piw96x7zBmUgdLC-vCIoE/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	5	\N	\N	\N
-23	R&D Scientist	\N	\N	\N	\N	\N	8
 15	PMboard Self user research notes - R&D scientist	https://docs.google.com/document/d/1fDUyMO5GRTokJn5khMWPAhJCsuFUmQp62m-lYmhfDGo/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	5	2024-08-08	2024-08-08	\N
 16	Self user research notes - DG Labs	https://docs.google.com/document/d/1hynxBUqOSq8o_0Y2zAkbNHeUVQ36f_U1cNZTwKhubp4/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	5	2024-08-07	2024-08-07	\N
 17	We Need to Raise the Bar for AI Product Managers _ by Julia Winn _ Aug, 2024 _ Towards Data Science.pdf	https://drive.google.com/file/d/1EpBkloFburQh-EC1n_1wSM8rKd1tQIsS/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	6	2024-08-12	2024-08-12	\N
@@ -457,8 +459,6 @@ COPY public.evidence (id, name, url, icon, persona_id, created_date, modified_da
 19	Counteroffer self user research notes -- Driven	https://docs.google.com/document/d/1Z0NPKFz1AshUPttLePROeVEgmbQgujyVwR8IFfzmQ1c/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	7	\N	\N	\N
 20	Counteroffer self user research notes -- Collusion	https://docs.google.com/document/d/1zPEtCLeSYJCT_3iLFYuR4U3NqAY8-ZoptGnN0RiR3XI/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	7	2024-08-06	2024-08-06	\N
 21	Counteroffer self user research notes -- Exaptive	https://docs.google.com/document/d/1I-kxJBTBNjiuUEgaYEW0dYNDFy98sWc1CnqPJ3KJfbc/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	7	2024-08-06	2024-08-06	\N
-24	Product Manager	\N	\N	\N	\N	\N	8
-25	Entrepreneurs/Startups	\N	\N	\N	\N	\N	8
 26	Entrepreneurs/Startups	\N	\N	\N	\N	\N	11
 27	Interview - Megan	https://docs.google.com/document/d/1udeKLySXsdG4VQp_OO8QGR4LhI6Q6fqHz4SPZpziDTg/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	8	\N	\N	\N
 28	Interview - Molly	https://docs.google.com/document/d/1WjmDXTRvzQ_G1n80Yb3MrJqjU9XUd4q4LsAYWmifL-4/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	8	\N	\N	\N
@@ -534,31 +534,31 @@ COPY public.journeys (id, story_id) FROM stdin;
 -- Data for Name: personas; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.personas (id, name, product_id) FROM stdin;
-1	All People	1
-2	Me	1
-3	Entrepreneur	1
-4	Investor	1
-5	R&D Scientist	2
-6	Product Manager	2
-7	Entrepreneurs/Startups	2
-8	All People	3
-9	Social Thought Leader	3
-10	Journalist	3
-11	News Employee	3
-12	p1	4
-13	p2	4
-14	All People	5
-15	Software Engineer	5
-16	Researchers	5
-17	Product Manager	5
-18	CIO	5
-19	Techie	6
-20	Unemployed Techie	6
-21	Employed Techie	6
-22	Hiring Manager	6
-23	Recruiter	6
-24	Wage Workers	6
+COPY public.personas (id, name, product_id, index) FROM stdin;
+1	All People	1	\N
+2	Me	1	\N
+3	Entrepreneur	1	\N
+4	Investor	1	\N
+5	R&D Scientist	2	\N
+6	Product Manager	2	\N
+7	Entrepreneurs/Startups	2	\N
+8	All People	3	\N
+9	Social Thought Leader	3	\N
+10	Journalist	3	\N
+11	News Employee	3	\N
+12	p1	4	\N
+13	p2	4	\N
+14	All People	5	\N
+15	Software Engineer	5	\N
+16	Researchers	5	\N
+17	Product Manager	5	\N
+18	CIO	5	\N
+19	Techie	6	\N
+20	Unemployed Techie	6	\N
+21	Employed Techie	6	\N
+22	Hiring Manager	6	\N
+23	Recruiter	6	\N
+24	Wage Workers	6	\N
 \.
 
 
@@ -580,28 +580,26 @@ COPY public.products (id, name) FROM stdin;
 -- Data for Name: stories; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.stories (id, name, product_id) FROM stdin;
-1	Help Entrepreneurs create new startups by understanding stakeholders	1
-2	Reduce investor risk aversion by being able to empathize with all stakeholders	1
-4	Make new products useful to yourself first	1
-5	Then rely on word-of-mouth marketing	1
-6	Improve Michigan's startup scenes	1
-7	Enable R&D Scientists to cite stakeholder needs in the stories widget	2
-8	After entering trends, they should be typed, then combined across evidence files	2
-9	Enable users to link trends at different levels/types	2
-10	Integrated product teams will retain employees better, make them less upset/burned put/etc.	2
-11	Assist Entrepreneurs/Startups empathizing with stakeholders using PMBoard	2
-12	Enable R&D Scientists, Entrepreneurs, and Product Managers to quickly & effectively pivot when markets/stakeholder needs change	2
-13	For MVP iteration, users need a timeline view of lessons learned	2
-14	Enable R&D Scientists to compare several revenue streams	2
-15	Make sharing important news on social media easier for Thought Leaders	3
-16	Enable Thought Leaders to synthesize news articles into new insights	3
-17	Enable People to consume news according to its reliability	3
-18	s1	4
-19	s2	4
-20	Enable all kinds of Techies to quickly apply to gigs based on specific skills	6
-21	Enable Techies to use CO as a career dashboard their entire lives	6
-22	Integrated product teams will retain employees better, make them less upset/burned out/etc.	2
+COPY public.stories (id, name, product_id, index) FROM stdin;
+1	Help Entrepreneurs create new startups by understanding stakeholders	1	\N
+2	Reduce investor risk aversion by being able to empathize with all stakeholders	1	\N
+4	Make new products useful to yourself first	1	\N
+5	Then rely on word-of-mouth marketing	1	\N
+6	Improve Michigan's startup scenes	1	\N
+15	Make sharing important news on social media easier for Thought Leaders	3	\N
+16	Enable Thought Leaders to synthesize news articles into new insights	3	\N
+17	Enable People to consume news according to its reliability	3	\N
+18	s1	4	\N
+19	s2	4	\N
+20	Enable all kinds of Techies to quickly apply to gigs based on specific skills	6	\N
+21	Enable Techies to use CO as a career dashboard their entire lives	6	\N
+23	Enable R&D Scientists to explore user journeys to decide on a solution	2	0
+12	Enable R&D Scientists, Entrepreneurs, and Product Managers to quickly & effectively pivot when markets/stakeholder needs change	2	1
+13	For MVP iteration, users need a timeline view of lessons learned	2	2
+22	Integrated product teams will retain employees better, make them less upset/burned out/etc.	2	3
+14	Enable R&D Scientists to compare several revenue streams	2	4
+11	Assist Entrepreneurs/Startups empathizing with stakeholders using PMBoard	2	5
+9	Enable users to link trends at different levels/types	2	6
 \.
 
 
@@ -609,50 +607,50 @@ COPY public.stories (id, name, product_id) FROM stdin;
 -- Data for Name: tasks; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.tasks (id, name, product_id) FROM stdin;
-1	My jobs are broad about and at early stage startups	1
-2	Come up with a DG labs pitch for accelerators	1
-3	Michigan Founder's Fund meets at Start Garden once a month -- \\"founder's first friday\\"	1
-4	MSU organization is *not* just for MSU people -- it's called Conquer	1
-5	I'm very good at identifying problem trends in news, analyzing root causes, and analyzing possible solutions	1
-6	Mention my information science education/training and introduction to concepts like information asymmetries and information overload	1
-7	I'm incubating Datagotchi Labs to be about addressing these issues (in underserved markets/communities?) and finding novel business models to support them	1
-8	Mention interdisciplinary vs multidisciplinary: my backgrounds + DG's multiple focuses	1
-9	The key is documenting things (information)	1
-10	For MI-centric messaging, maybe focus on local hires rather than remote gig workers	1
-11	Either way, become an expert at building teams (with Counteroffer?)	1
-12	Maybe pitch startup incubation based on stakeholder empathy	1
-13	But unless I get donations up front, perhaps with equity promises (profit dividends), this will take forever and not make much money	1
-14	I'd have to brand myself as very good at early & ongoing research, mvp testing, problem-solving, etc...	1
-15	Also my experience in R&D, startups in SF, and early DG Labs (wearing many hats)	1
-16	Don't forget about consulting and coaching about these lessons -- after documenting them and *organizing* them	1
-17	I worked for startups to learn how they commercialize their technologies. So my heart is really in new technology R&D	1
-18	DG, Inspect, and CO initial ideas are low profit margin and slow growth, so investors won't be interested	1
-19	Could pitch the interpretable analytics now	1
-20	With my skills, EIR @ SG would be great (focused on nearly stage opportunity discovery &  validation) -- ask Laurie or her contact?	1
-21	Come up with an argument that empathy improves R&D/startups/or something	1
-22	Empathy makes your startup more resilient in the face of changing markets because you can more easily hypothesize what stakeholders need even if they didn't tell you directly	1
-23	Create a proxy, so I can use one easy to instance for all three projects	1
-24	Reduce ec2 size while it's just me	1
-25	Show product name \\u003E item type \\u003E item name on modal	2
-26	Enable custom trend types	2
-27	t1	4
-28	t2	4
-29	Add web links to dg.net/inspect	3
-30	Fix Android app	3
-31	Reach out to thought leaders	3
-32	Base source reliability on # of shares / #of article summaries	3
-33	Implement user analytics	3
-34	Interesting because of the compartmentalization of discussions (and to some extent the knowledge base stuff)	3
-35	People mostly are not interested in creating summaries or spending time finding people to follow	3
-36	Use favorite flag to show summaries/meta-summaries on your profile	3
-37	Apply to gigs based on React, Express, Webpack, databases, etc.	6
-38	Put CO live on AWS & invite Alex	6
-39	MVP lesson: just visualizing skills, even ones from the job listing, is not sufficient to get a job	6
-40	Fiverr/client-searchable gigs are risky because it’s likely no one will ever find us	6
-41	No one will ever find us Partly because I don’t do hype-y things like generative AI	6
-42	And partly because I’m great at things no one thinks they need	6
-43	\tGet basic resume creation from LinkedIn CVS working again	6
+COPY public.tasks (id, name, product_id, index) FROM stdin;
+1	My jobs are broad about and at early stage startups	1	\N
+2	Come up with a DG labs pitch for accelerators	1	\N
+3	Michigan Founder's Fund meets at Start Garden once a month -- \\"founder's first friday\\"	1	\N
+4	MSU organization is *not* just for MSU people -- it's called Conquer	1	\N
+5	I'm very good at identifying problem trends in news, analyzing root causes, and analyzing possible solutions	1	\N
+6	Mention my information science education/training and introduction to concepts like information asymmetries and information overload	1	\N
+7	I'm incubating Datagotchi Labs to be about addressing these issues (in underserved markets/communities?) and finding novel business models to support them	1	\N
+8	Mention interdisciplinary vs multidisciplinary: my backgrounds + DG's multiple focuses	1	\N
+9	The key is documenting things (information)	1	\N
+10	For MI-centric messaging, maybe focus on local hires rather than remote gig workers	1	\N
+11	Either way, become an expert at building teams (with Counteroffer?)	1	\N
+12	Maybe pitch startup incubation based on stakeholder empathy	1	\N
+13	But unless I get donations up front, perhaps with equity promises (profit dividends), this will take forever and not make much money	1	\N
+14	I'd have to brand myself as very good at early & ongoing research, mvp testing, problem-solving, etc...	1	\N
+15	Also my experience in R&D, startups in SF, and early DG Labs (wearing many hats)	1	\N
+16	Don't forget about consulting and coaching about these lessons -- after documenting them and *organizing* them	1	\N
+17	I worked for startups to learn how they commercialize their technologies. So my heart is really in new technology R&D	1	\N
+18	DG, Inspect, and CO initial ideas are low profit margin and slow growth, so investors won't be interested	1	\N
+19	Could pitch the interpretable analytics now	1	\N
+20	With my skills, EIR @ SG would be great (focused on nearly stage opportunity discovery &  validation) -- ask Laurie or her contact?	1	\N
+21	Come up with an argument that empathy improves R&D/startups/or something	1	\N
+22	Empathy makes your startup more resilient in the face of changing markets because you can more easily hypothesize what stakeholders need even if they didn't tell you directly	1	\N
+23	Create a proxy, so I can use one easy to instance for all three projects	1	\N
+24	Reduce ec2 size while it's just me	1	\N
+25	Show product name \\u003E item type \\u003E item name on modal	2	\N
+26	Enable custom trend types	2	\N
+27	t1	4	\N
+28	t2	4	\N
+29	Add web links to dg.net/inspect	3	\N
+30	Fix Android app	3	\N
+31	Reach out to thought leaders	3	\N
+32	Base source reliability on # of shares / #of article summaries	3	\N
+33	Implement user analytics	3	\N
+34	Interesting because of the compartmentalization of discussions (and to some extent the knowledge base stuff)	3	\N
+35	People mostly are not interested in creating summaries or spending time finding people to follow	3	\N
+36	Use favorite flag to show summaries/meta-summaries on your profile	3	\N
+37	Apply to gigs based on React, Express, Webpack, databases, etc.	6	\N
+38	Put CO live on AWS & invite Alex	6	\N
+39	MVP lesson: just visualizing skills, even ones from the job listing, is not sufficient to get a job	6	\N
+40	Fiverr/client-searchable gigs are risky because it’s likely no one will ever find us	6	\N
+41	No one will ever find us Partly because I don’t do hype-y things like generative AI	6	\N
+42	And partly because I’m great at things no one thinks they need	6	\N
+43	\tGet basic resume creation from LinkedIn CVS working again	6	\N
 \.
 
 
@@ -831,12 +829,6 @@ COPY public.trends (id, name, type, evidence_id) FROM stdin;
 168	To be a productive engineer	objective	21
 169	To apply my recently-gained human-systems integration (HSI)/government R&D knowledge to startups	objective	21
 170	To be a productive assistant product lead	objective	21
-171	Need to get trends from the other widget		22
-172	I find myself tagging subtasks on stories, so maybe that's the other "direction" vs personas?		22
-173	There is so much information involved in the creation of new products	objective	23
-174	To document my learnings so I can get better/make others better over time	objective	23
-175	There is a lot of information with through MVP iteration	objective	25
-176	There is a lot of information through growth	objective	25
 177	Need to improve the empathy map visualization		26
 178	Finds news in social media	activity	27
 179	Gets news from talking to friends	task	27
@@ -1208,7 +1200,7 @@ SELECT pg_catalog.setval('public.products_id_seq', 6, true);
 -- Name: stories_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.stories_id_seq', 22, true);
+SELECT pg_catalog.setval('public.stories_id_seq', 23, true);
 
 
 --
