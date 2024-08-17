@@ -71,7 +71,7 @@ const StakeholderEvidencePane = ({
     (personaAsEvidence) => {
       if (empathyMapDialog && allPersonas) {
         const fullPersona = allPersonas.find(
-          (p) => p.name === personaAsEvidence.name
+          (p) => p.id == personaAsEvidence.persona_id
         );
         const selectedPersonaAllTags = fullPersona.evidence.reduce(
           (reactTags, file) => {
@@ -169,7 +169,7 @@ const StakeholderEvidencePane = ({
     return "";
   };
 
-  const openFilesModal = () => {
+  const openAddPersonaModal = () => {
     if (addPersonaDialog) {
       addPersonaDialog.addEventListener("click", (event) => {
         if (event.target === event.currentTarget) {
@@ -191,6 +191,7 @@ const StakeholderEvidencePane = ({
         ...personasAsEvidence,
         {
           name: persona.name,
+          persona_id: persona.id,
         },
       ];
       setPersonasAsEvidence(newPersonasAsEvidence);
@@ -284,7 +285,7 @@ const StakeholderEvidencePane = ({
   return (
     <>
       <h2>
-        <a style={{ cursor: "pointer" }} onClick={() => openFilesModal()}>
+        <a style={{ cursor: "pointer" }} onClick={() => openAddPersonaModal()}>
           Add Persona
         </a>
       </h2>

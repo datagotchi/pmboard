@@ -4,15 +4,20 @@ import { EvidenceAPI } from "../types";
  * @type {EvidenceAPI}
  */
 const useEvidenceAPI = (productId, collectionName) => {
-  const updateEvidence = (itemId, evidence) =>
-    fetch(`/products/${productId}/${collectionName}/${itemId}/evidence`, {
-      method: "PUT",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(evidence),
-    });
+  const updateEvidence = (itemId, evidence) => {
+    evidence.updated_date = new Date();
+    return fetch(
+      `/products/${productId}/${collectionName}/${itemId}/evidence`,
+      {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(evidence),
+      }
+    );
+  };
 
   // const updateTrends = (itemIndex, evidenceIndex, trends) =>
   //   fetch(

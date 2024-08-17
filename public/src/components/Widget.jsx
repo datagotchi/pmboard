@@ -289,9 +289,10 @@ const Widget = ({
           item={currentWidgetItem}
           updateItemFunc={(item) => updateItem(item)}
           summaryTitle={summaryTitle}
-          updateEvidenceOnServer={(evidence) =>
-            updateEvidence(currentWidgetItem.id, evidence)
-          }
+          updateEvidenceOnServer={(evidence) => {
+            currentWidgetItem.evidence = evidence;
+            updateEvidence(currentWidgetItem.id, evidence);
+          }}
         />
       )}
     </>

@@ -61,6 +61,7 @@ router.put("/", async (req, res, next) => {
       const setClause = Object.keys(story)
         .filter((key) => key !== "id")
         .map((key) => `${key} = '${story[key]}'`);
+      console.log("*** setClause: ", setClause);
       return req.client.query({
         text: `update stories set ${setClause} where id = $1::integer`,
         values: [story.id],
@@ -93,6 +94,7 @@ router.put("/:story_id", async (req, res, next) => {
         })
         .then((result) => result.rows[0].id);
     }
+    console.log("*** about to insert journey_steps...");
     await Promise.all(
       steps.map((step) => {
         req.client.query({
