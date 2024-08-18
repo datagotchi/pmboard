@@ -509,6 +509,7 @@ COPY public.evidence (id, name, url, icon, persona_id, created_date, modified_da
 73	Unemployed Techie	\N	\N	\N	\N	\N	21
 74	Employed Techie	\N	\N	\N	\N	\N	21
 78	Product Manager	\N	\N	\N	2024-08-17	2024-08-17	22
+85	R&D Scientist	null	null	5	2024-08-17	2024-08-17	23
 \.
 
 
@@ -517,7 +518,6 @@ COPY public.evidence (id, name, url, icon, persona_id, created_date, modified_da
 --
 
 COPY public.journey_steps (id, x, y, journey_id, tag_id, tag_class_name) FROM stdin;
-1	350px	70px	6	There is so much information involved in the creation of new products	objective
 \.
 
 
@@ -526,7 +526,6 @@ COPY public.journey_steps (id, x, y, journey_id, tag_id, tag_class_name) FROM st
 --
 
 COPY public.journeys (id, story_id) FROM stdin;
-6	1
 \.
 
 
@@ -1151,6 +1150,7 @@ COPY public.trends (id, name, type, evidence_id) FROM stdin;
 496	There are many roles because of Unrealistic Expectations	objective	71
 497	There are many roles because of Manipulative Practices	objective	71
 498	There are many roles because of Overdigitalization of our lives	objective	71
+499	There is so much information involved in the creation of new products	objective	85
 \.
 
 
@@ -1165,21 +1165,21 @@ SELECT pg_catalog.setval('public.companies_id_seq', 16, true);
 -- Name: evidence_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.evidence_id_seq', 78, true);
+SELECT pg_catalog.setval('public.evidence_id_seq', 85, true);
 
 
 --
 -- Name: journeySteps_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."journeySteps_id_seq"', 1, true);
+SELECT pg_catalog.setval('public."journeySteps_id_seq"', 2, true);
 
 
 --
 -- Name: journeys_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.journeys_id_seq', 6, true);
+SELECT pg_catalog.setval('public.journeys_id_seq', 10, true);
 
 
 --
@@ -1214,7 +1214,7 @@ SELECT pg_catalog.setval('public.tasks_id_seq', 43, true);
 -- Name: trends_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.trends_id_seq', 498, true);
+SELECT pg_catalog.setval('public.trends_id_seq', 499, true);
 
 
 --
@@ -1338,19 +1338,19 @@ ALTER TABLE ONLY public.evidence
 
 
 --
--- Name: journey_steps fk_sid; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.journey_steps
-    ADD CONSTRAINT fk_sid FOREIGN KEY (journey_id) REFERENCES public.journeys(id) NOT VALID;
-
-
---
 -- Name: journeys fk_sid; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.journeys
     ADD CONSTRAINT fk_sid FOREIGN KEY (story_id) REFERENCES public.stories(id) NOT VALID;
+
+
+--
+-- Name: journey_steps fk_sid; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.journey_steps
+    ADD CONSTRAINT fk_sid FOREIGN KEY (journey_id) REFERENCES public.journeys(id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
 
 
 --
