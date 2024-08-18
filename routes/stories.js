@@ -48,6 +48,22 @@ router.get("/", async (req, res, next) => {
             .then((result) => result.rows);
         })
       );
+      const journey = await req.client
+        .query({
+          text: "select * from journeys where story_id = $1::integer",
+          values: [story.id],
+        })
+        .then((result) => result.rows[0]);
+      if (journey) {
+        story.summary = {
+          steps: await req.client
+            .query({
+              text: "select * from journey_steps where journey_id = $1::integer",
+              values: [journey.id],
+            })
+            .then((result) => result.rows),
+        };
+      }
     })
   );
   req.client.release();
@@ -89,7 +105,7 @@ router.put("/:story_id", async (req, res, next) => {
     if (!summary.id) {
       journeyId = await req.client
         .query({
-          text: "insert into journeys (story_id) values ($1::integer) returning *",
+          text: "insert into journeys (story_id) values ($1::integer) on conflict (story_id) do nothing returning *",
           values: [story_id],
         })
         .then((result) => result.rows[0].id);

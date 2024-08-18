@@ -3,11 +3,14 @@ import { Draggable, Droppable } from "@shopify/draggable";
 
 import { AllTagsContext } from "../../contexts/AllTagsContext";
 
-const JourneyMapPane = ({ summaryChanged }) => {
+const JourneyMapPane = ({ data, summaryChanged }) => {
   const allTagsForThisStory = useContext(AllTagsContext);
 
   // FIXME: get existing journey if there is one
   // then get the steps from it's ID
+  const [summary, setSummary] = useState(data);
+
+  // useEffect(() => {}, []);
 
   /**
    * @type {[Droppable | undefined, React.Dispatch<Droppable>]}
@@ -27,6 +30,21 @@ const JourneyMapPane = ({ summaryChanged }) => {
   }, [droppable]);
 
   const [dropzones, setDropzones] = useState([]);
+
+  useEffect(() => {
+    if (summary && summary.steps) {
+      setDropzones(
+        summary.steps.map((step, i) => ({
+          dropzone: i + 1,
+          // className: step.tagClassName,
+          x: step.x,
+          y: step.y,
+          tag_id: step.tag_id,
+          tag_class_name: step.tag_class_name,
+        }))
+      );
+    }
+  }, [summary]);
 
   const [dropzoneNumber, setDropzoneNumber] = useState(1);
 
@@ -99,15 +117,21 @@ const JourneyMapPane = ({ summaryChanged }) => {
     return (
       <>
         <div id="tagsToUse" className="dropzone">
-          {allTagsForThisStory.map((tag) => (
-            <div
-              className={`tag trendItem ${tag.className}`}
-              key={`tag named ${tag.id}`}
-              data-tag={JSON.stringify(tag)}
-            >
-              {tag.text}
-            </div>
-          ))}
+          {allTagsForThisStory
+            .filter(
+              (tag) =>
+                !summary ||
+                !summary.steps.map((step) => step.tag_id).includes(tag.id)
+            )
+            .map((tag) => (
+              <div
+                className={`tag trendItem ${tag.className}`}
+                key={`tag named ${tag.id}`}
+                data-tag={JSON.stringify(tag)}
+              >
+                {tag.text}
+              </div>
+            ))}
         </div>
         <div
           id="flowchartArea"
@@ -145,10 +169,12 @@ const JourneyMapPane = ({ summaryChanged }) => {
                   y: dropzoneDiv.style.top,
                 };
               });
-              summaryChanged({
+              const summary = {
                 steps,
                 // connections
-              });
+              };
+              setSummary(summary);
+              summaryChanged(summary);
             }}
             style={{ float: "right" }}
           >
@@ -157,14 +183,18 @@ const JourneyMapPane = ({ summaryChanged }) => {
           {dropzones.map((zone, i) => (
             <div
               key={`dropzone #${i}`}
-              className={zone.className}
+              className={zone.tag_class_name}
               data-dropzone={zone.dropzone}
               style={{
                 height: "30px",
                 minWidth: "200px",
                 position: "absolute",
+                left: zone.x,
+                top: zone.y,
               }}
-            ></div>
+            >
+              {zone.tag_id}
+            </div>
           ))}
         </div>
       </>

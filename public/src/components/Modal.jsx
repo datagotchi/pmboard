@@ -160,6 +160,7 @@ const Modal = ({
                               item.summary = summary;
                               updateItemFunc(item);
                             }}
+                            data={item.summary}
                           />
                         )}
                       </div>

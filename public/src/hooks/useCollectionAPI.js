@@ -26,8 +26,8 @@ const useCollectionAPI = (productId, collectionName) => {
     }
   };
 
-  const updateItem = (item, index) =>
-    fetch(`/products/${productId}/${collectionName}/${index}`, {
+  const updateItem = (item) =>
+    fetch(`/products/${productId}/${collectionName}/${item.id}`, {
       method: "PUT",
       headers: {
         Accept: "application/json",
