@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import useCollectionItems from "../../hooks/useCollectionItems";
 
 /**
- *
+ * A pane to show in a modal dialog to choose a persona (e.g., as evidence for a user story).
  * @param {object} props The React component properties object.
  * @param {string} props.productId The ID of the current product;
  * @param {string[]} props.existingPersonaNames The names of personas currently on the StakeholderEvidencePane.
  * @param {() => void} props.personaSelectedCallback The function to call when a persona is selected.
  * @returns {React.JSX.Element} The rendered pane.
+ * @example <AddPersonaPane productId={2} existingPersonaNames={[...]} personaSelectedCallback={() => {}}
  */
 const AddPersonaPane = ({
   productId,

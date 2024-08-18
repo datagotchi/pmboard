@@ -7,7 +7,7 @@ import { SummaryPaneContext } from "../contexts/SummaryPaneContext";
 import EmpathyMapPane from "./panes/EmpathyMapPane";
 
 /**
- * A widget to document and visualize stakeholder problems
+ * A widget to document and visualize stakeholder problems.
  * @param {object} props The component properties.
  * @param {number | undefined} props.productId the ID of the current product.
  * @returns {React.JSX.Element} The rendered widget.

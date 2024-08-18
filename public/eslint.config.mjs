@@ -11,15 +11,54 @@ export default [
     files: ["**/*.{js,mjs,cjs,jsx}"],
     plugins: {
       jsdoc,
+      pluginReact,
     },
     rules: {
       "react/prop-types": "off",
+      "jsdoc/check-syntax": "error",
+      "jsdoc/check-indentation": "warn",
+      "jsdoc/check-line-alignment": "warn",
+      "jsdoc/imports-as-dependencies": "error",
+      "jsdoc/informative-docs": "warn",
+      "jsdoc/match-description": "warn",
+      // "jsdoc/match-name": "error",
+      "jsdoc/no-bad-blocks": "warn",
+      "jsdoc/no-blank-block-descriptions": "warn",
+      "jsdoc/no-blank-blocks": "error",
+      // "jsdoc/no-missing-syntax": "warn",
+      "jsdoc/require-description": "error",
+      "jsdoc/require-example": "warn",
+
+      "jsdoc/require-jsdoc": [
+        "error",
+        {
+          require: {
+            FunctionDeclaration: true,
+            // "MethodDefinition": false,
+            // "ClassDeclaration": false,
+            ArrowFunctionExpression: true,
+            // "FunctionExpression": false
+          },
+        },
+      ],
+    },
+    settings: {
+      react: {
+        version: "detect",
+      },
     },
   },
   {
-    languageOptions: { globals: globals.browser },
+    languageOptions: {
+      globals: globals.browser,
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+    },
   },
   {
-    ignores: ["**/node_modules/**", "**/bower_components/**", "**/dist/**"],
+    ignores: ["**/node_modules/**", "**/dist/**"],
   },
 ];

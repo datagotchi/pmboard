@@ -3,6 +3,14 @@ import { Draggable, Droppable } from "@shopify/draggable";
 
 import { AllTagsContext } from "../../contexts/AllTagsContext";
 
+/**
+ * A modal pane to show and enable editing of a user journey from research trends/tags.
+ * @param {object} props The React component properties.
+ * @param {object} props.data The summary data to show on load.
+ * @param {() => void} props.summaryChanged The function to call when the summary is changed (and saved).
+ * @returns {React.JSX.Element} The rendered pane.
+ * @example <JourneyMapPane data={*} summaryChanged={() => {}} />
+ */
 const JourneyMapPane = ({ data, summaryChanged }) => {
   const allTagsForThisStory = useContext(AllTagsContext);
 
@@ -64,6 +72,13 @@ const JourneyMapPane = ({ data, summaryChanged }) => {
    */
   const [draggable, setDraggable] = useState();
 
+  /**
+   * Update an HTMLElement's left/top absolute position.
+   * @param {number} dropzoneNumber The data-dropzone value to add to the HTMLElement.
+   * @param {number} dx The x coordinate to modify from its current position.
+   * @param {number} dy The y coordinate to modify from its current position.
+   * @example updateTagXY(1, 5, 5)
+   */
   const updateTagXY = (dropzoneNumber, dx, dy) => {
     setTimeout(() => {
       const div = document.querySelector(`[data-dropzone='${dropzoneNumber}'`);
@@ -183,7 +198,7 @@ const JourneyMapPane = ({ data, summaryChanged }) => {
           {dropzones.map((zone, i) => (
             <div
               key={`dropzone #${i}`}
-              className={zone.tag_class_name}
+              className={`${zone.className} ${zone.tag_class_name}`}
               data-dropzone={zone.dropzone}
               style={{
                 height: "30px",
@@ -200,6 +215,7 @@ const JourneyMapPane = ({ data, summaryChanged }) => {
       </>
     );
   }
+  return <></>;
 };
 
 export default JourneyMapPane;

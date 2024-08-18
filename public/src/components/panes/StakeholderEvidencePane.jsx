@@ -1,7 +1,17 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { WithContext as ReactTags } from "react-tag-input";
 
-import { EvidencePaneProps, Persona, TagsPerEvidenceRecord } from "../../types";
+import {
+  EvidencePaneProps,
+  Persona,
+  PersonaAsEvidence,
+  TagsPerEvidenceRecord,
+} from "../../types";
+import {
+  getJsonSortedString,
+  getOccurenceNumber,
+  sortString,
+} from "../../util";
 
 // import { EvidencePaneContext } from "../../contexts/EvidencePaneContext";
 
@@ -11,8 +21,10 @@ import AddPersonaPane from "./AddPersonaPane";
 import useCollectionItems from "../../hooks/useCollectionItems";
 
 /**
+ * A React component pane to organize stakeholders used as evidence for something else (e.g., a user story).
  * @param {EvidencePaneProps} props The object containing the props.
  * @returns {React.JSX.Element} The rendered pane.
+ * @example <StakeholderEvidencePane productId="" evidence={[...]} containerModalId="" updateEvidenceOnServer={() => {}} allTagsUpdated={() => {}}
  */
 const StakeholderEvidencePane = ({
   productId,
@@ -24,8 +36,14 @@ const StakeholderEvidencePane = ({
   const ADD_PERSONA_DIALOG_ID = `addPersona: ${containerModalId}`;
   const EMPATHY_MAP_DIALOG_ID = `empathyMap: ${containerModalId}`;
 
+  /**
+   * @type {[Persona[] | undefined, React.Dispatch<Persona[]>]}
+   */
   const allPersonas = useCollectionItems(productId, "personas");
 
+  /**
+   * @type {[PersonaAsEvidence[] | undefined, React.Dispatch<PersonaAsEvidence[]>]}
+   */
   const [personasAsEvidence, setPersonasAsEvidence] = useState(evidence);
 
   /**
@@ -152,23 +170,10 @@ const StakeholderEvidencePane = ({
     setTagsPerPersona(initialTags);
   }, []);
 
-  const sortString = (a, b) => {
-    if (a < b) {
-      return 1;
-    }
-    if (b < a) {
-      return -1;
-    }
-    return 0;
-  };
-
-  const getJsonSortedString = (trends) => {
-    if (trends) {
-      return JSON.stringify(trends.map((trend) => trend.name).sort(sortString));
-    }
-    return "";
-  };
-
+  /**
+   * A function to open a modal dialog on top of a base modal to add a stakehodler persona as evidence.
+   * @example <Component onClick={() => openAddPersonaModal()} />
+   */
   const openAddPersonaModal = () => {
     if (addPersonaDialog) {
       addPersonaDialog.addEventListener("click", (event) => {
@@ -182,9 +187,10 @@ const StakeholderEvidencePane = ({
 
   const addPersonaAsEvidence = useCallback(
     /**
-     * Add a Persona object to personasAsEvidence
+     * Add a Persona object to personasAsEvidence.
      * @param {Persona} persona The persona to add as evidence.
      * @returns {void}
+     * @example <AddPersonaPane personaSelectedCallback={(persona) => addPersonaAsEvidence(persona)} />
      */
     async (persona) => {
       const newPersonasAsEvidence = [
@@ -203,6 +209,11 @@ const StakeholderEvidencePane = ({
     [personasAsEvidence]
   );
 
+  /**
+   * A function to remove a persona as evidence from this pane.
+   * @param {PersonaAsEvidence} persona The person to remove.
+   * @example <Component onClick={() => removePersona(...)} />
+   */
   const removePersona = async (persona) => {
     const newPersonasAsEvidence = personasAsEvidence.filter(
       (p) => p.name !== persona.name
@@ -211,9 +222,6 @@ const StakeholderEvidencePane = ({
     await updateEvidenceOnServer(newPersonasAsEvidence);
     document.getElementById("personaFilter").value = "";
   };
-
-  const getOccurenceNumber = (tagText) =>
-    parseInt(tagText.match(/\(([0-9]+)\)/)[1]);
 
   const getFlatTagsWithCountsFromTagsPerPersona = useCallback(() => {
     /**

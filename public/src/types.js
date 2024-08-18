@@ -52,6 +52,11 @@ import { WithContext as ReactTags } from "react-tag-input";
  */
 
 /**
+ * @typedef personaAsEvidence
+ * @property {string} name The name of the persona
+ */
+
+/**
  * @typedef Company
  * @property {string} name The name of the company
  * @property {EvidenceFile[]} evidence The files that act as evidence
@@ -70,7 +75,7 @@ import { WithContext as ReactTags } from "react-tag-input";
  */
 
 /**
- * @typedef EvidenceAPI
+ * @typedef EvidenceAPIProps
  * @property {(itemIndex: number, evidence: EvidenceRecord[]) => Promise<Response>} updateEvidence The function to call to update a widget item's evidence.
  * @property {(itemIndex: number, evidenceIndex: number, trends: EvidenceTrend[]) => Promise<Response>} updateTrends The function to call to update an evidence object's trends.
  */
@@ -83,7 +88,21 @@ import { WithContext as ReactTags } from "react-tag-input";
  */
 
 /**
- * @typedef {BaseCollectionAPI & EvidenceAPI} CollectionAPI
+ * @typedef {BaseCollectionAPI & EvidenceAPIProps} CollectionAPI
+ */
+
+/**
+ * @typedef OAuthAPIFunctions
+ * @property {() => Promise<string | null | undefined>} getAccessToken Obtain a Google OAuth access token from storage or their server.
+ * @property {(access_token: string) => Promise<GoogleFile[]>} getGoogleDriveFiles A function to call to get a list of Google Drive files.
+ */
+
+/**
+ * @typedef ProductAPIFunctions
+ * @property {() => Promise<Response>} getProducts A function to get all products from the server.
+ * @property {(bodyObject: any) => Promise<Response>} createProduct A function to create a new product on the server.
+ * @property {(productId: number) => Promise<Response>} deleteProduct A function to delete a product from the server
+ * @property {(collection: WidgetDataItem[]) => Promise<Response>} updateProductCollection A function to update an entire collection (personas, stories, companies, tasks, etc).
  */
 
 /**

@@ -13,13 +13,16 @@ import {
   GoogleFile,
   TagsPerEvidenceRecord,
 } from "../../types";
+import { getJsonSortedString, getOccurenceNumber } from "../../util";
 
 import useOAuthAPI from "../../hooks/useOAuthAPI";
 import { AllTagsContext } from "../../contexts/AllTagsContext";
 
 /**
+ * A pane to show in a modal dialog to add files from Google Drive as evidence to a widget item.
  * @param {EvidencePaneProps} props The object containing the props.
  * @returns {React.JSX.Element} The rendered pane.
+ * @example <FileEvidencePane evidence={[...]} containerModalId="" updateEvidenceOnServer={() => {}} allTagsUpdated={() => {}}
  */
 const FileEvidencePane = ({
   evidence,
@@ -29,6 +32,13 @@ const FileEvidencePane = ({
 }) => {
   const ADD_FILES_DIALOG_ID = `addFilesModal: ${containerModalId}`;
 
+  /**
+   * A convenience function to sort strings in an array.
+   * @param {string} a The first item to compare to the second.
+   * @param {string} b The second item to compare to the first.
+   * @returns {number} Positive if a should come first, negative if b, and 0 if they are the same.
+   * @example sortString("asdf", "basdf") === 1
+   */
   const sortString = (a, b) => {
     if (a < b) {
       return 1;
@@ -170,13 +180,10 @@ const FileEvidencePane = ({
     }
   }, [tagsPerFile]);
 
-  const getJsonSortedString = (trends) => {
-    if (trends) {
-      return JSON.stringify(trends.map((trend) => trend.name).sort(sortString));
-    }
-    return "";
-  };
-
+  /**
+   * A function to open a modal dialog on top of the base modal to select files from Google Drive.
+   * @example <Component onClick={() => openFilesModal()} />
+   */
   const openFilesModal = () => {
     if (addFilesModal) {
       addFilesModal.addEventListener("click", (event) => {
@@ -190,10 +197,10 @@ const FileEvidencePane = ({
 
   const addFile = useCallback(
     /**
-     *
+     * A function to add a specified file to a widget item's evidence.
      * @param {GoogleFile} file The gdrive file to add as evidence.
      * @param {React.ChangeEvent<HTMLInputElement>} event The event called on <input> change
-     * @returns {void}
+     * @example <Component onClick={() => addFile(...)} />
      */
     async (file, event) => {
       const checkbox = event.target;
@@ -223,6 +230,11 @@ const FileEvidencePane = ({
     [googleFiles]
   );
 
+  /**
+   * A function to remove a file from a widget item's evidence.
+   * @param {EvidenceFile} file The file to remove.
+   * @example <DeleteButton onClick={() => removeFile(...)} />
+   */
   const removeFile = async (file) => {
     await updateEvidenceOnServer(evidence.filter((f) => f.url !== file.url));
     setFiles(files.filter((f) => f.url !== file.url));
@@ -230,9 +242,6 @@ const FileEvidencePane = ({
     setGoogleFiles(newGoogleFiles);
     document.getElementById("fileFilter").value = "";
   };
-
-  const getOccurenceNumber = (tagText) =>
-    parseInt(tagText.match(/\(([0-9]+)\)/)[1]);
 
   const getFlatTagsWithCountsFromTagsPerFile = useCallback(() => {
     /**

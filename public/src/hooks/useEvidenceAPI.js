@@ -1,9 +1,18 @@
-import { EvidenceAPI } from "../types";
+import { EvidenceAPIProps, WidgetDataItem } from "../types";
 
 /**
- * @type {EvidenceAPI}
+ * A React hook to access API calls related to widget item evidence.
+ * @type {EvidenceAPIProps}
+ * @example const { updateEvidence } = useEvidenceAPI(productId, collectionName);
  */
 const useEvidenceAPI = (productId, collectionName) => {
+  /**
+   * A function to update all evidence of a widget item.
+   * @param {number} itemId The ID of the item to update.
+   * @param {WidgetDataItem[]} evidence The entire evidence array to send to the server.
+   * @returns {Promise<Response>} The fetch promise.
+   * @example <Component onClick={() => updateEvidence(...)} />
+   */
   const updateEvidence = (itemId, evidence) => {
     evidence.updated_date = new Date();
     return fetch(

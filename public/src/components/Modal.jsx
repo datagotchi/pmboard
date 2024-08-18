@@ -3,6 +3,8 @@ import { WithContext as ReactTags } from "react-tag-input";
 
 import { EvidenceRecord, EvidenceTrend, WidgetDataItem } from "../types";
 
+import { getOccurenceNumber, sortString } from "../util";
+
 import { AllTagsContext } from "../contexts/AllTagsContext";
 import { EvidencePaneContext } from "../contexts/EvidencePaneContext";
 import { SummaryPaneContext } from "../contexts/SummaryPaneContext";
@@ -13,6 +15,7 @@ import {
 } from "./panes/EmpathyMapPaneFunctions";
 
 /**
+ * The React component to show the base dialog.
  * @param {object} props The component properties.
  * @param {string} props.productId The ID of the current product.
  * @param {WidgetDataItem} props.item The item to show in the modal.
@@ -32,18 +35,12 @@ const Modal = ({
   summaryTitle,
   updateItemFunc,
 }) => {
-  const sortString = (a, b) => {
-    if (a < b) {
-      return 1;
-    }
-    if (b < a) {
-      return -1;
-    }
-    return 0;
-  };
-  const getOccurenceNumber = (tagText) =>
-    parseInt(tagText.match(/\(([0-9]+)\)/)[1]);
-
+  /**
+   * Convert the per-record evidence data into a flat tag array.
+   * @param {EvidenceRecord} evidence The evidence records on a widget item.
+   * @example getFlatTagsWithCountFromEvience(item.evidence) ~ ["a", "b", "c", etc.]
+   * @returns {ReactTags.Tag[]} A flat array of tags.
+   */
   const getFlatTagsWithCountsFromEvidence = (evidence) => {
     /**
      * @type {ReactTags.Tag[]}

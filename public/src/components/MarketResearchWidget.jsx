@@ -5,7 +5,7 @@ import FileEvidencePane from "./panes/FileEvidencePane";
 import { EvidencePaneContext } from "../contexts/EvidencePaneContext";
 
 /**
- * A widget to document and visualize companies in related markets
+ * A widget to document and visualize companies in related markets.
  * @param {object} props The component properties.
  * @param {number | undefined} props.productId the ID of the current product.
  * @returns {React.JSX.Element} The rendered widget.

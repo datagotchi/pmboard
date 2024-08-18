@@ -10,6 +10,12 @@ indexToClassName.forEach((className, index) => {
   classNameToIndex[className] = index;
 });
 
+/**
+ * Make a trend type string plural.
+ * @param {string} trendType The type of change, ~ in (objective, goal, activity, task, resource).
+ * @returns {string} The plural version of the trendType input.
+ * @example <strong>{formatTrendTypeText(trendType)}</strong>
+ */
 export const formatTrendTypeText = (trendType) => {
   switch (trendType.toLocaleLowerCase()) {
     case "activity":

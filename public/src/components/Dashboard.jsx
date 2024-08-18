@@ -8,7 +8,7 @@ import StoriesWidget from "./StoriesWidget";
 import TodoWidget from "./TodoWidget";
 
 /**
- * The container of all widgets
+ * The container of all widgets.
  * @returns {React.JSX.Element} The rendered dashboard.
  * @example
  *  <Dashboard>
@@ -67,6 +67,11 @@ const Dashboard = () => {
 
   const { getProducts, createProduct, deleteProduct } = useProductAPI();
 
+  /**
+   * Find the product by ID, then save it in sessionStorage and in state variables.
+   * @param {number} productId The ID of the product to set as current.
+   * @example handleSetCurrentProduct(1)
+   */
   const handleSetCurrentProduct = (productId) => {
     const product = products.find((product) => product.id === productId);
     if (product) {

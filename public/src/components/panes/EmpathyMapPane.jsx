@@ -14,6 +14,7 @@ import {
  * A modal pane to show a persona's empathy map.
  * @param {SummaryPaneProps} props The properties for all summary panes.
  * @returns {React.JSX.Element} The renedered pane.
+ * @example <EmpathyMapPane handleTagClick={() => {}} allowDragDrop={true | false} handleDrag={() => {}} removeComponent={() => {}} handleDelete={() => {}} />
  */
 const EmpathyMapPane = ({
   handleTagClick,

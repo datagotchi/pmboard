@@ -11,7 +11,7 @@ import useCollectionItems from "../hooks/useCollectionItems";
 import useProductAPI from "../hooks/useProductAPI";
 
 /**
- * The HTML component for all PMBoard widgets to document and visualize information
+ * The HTML component for all PMBoard widgets to document and visualize information.
  * @param {object} props The component props
  * @param {string} props.productId The ID of the current product.
  * @param {string} props.collectionName The name of the product collection.
@@ -75,6 +75,10 @@ const Widget = ({
    */
   const [createDialog, setCreateDialog] = useState();
 
+  /**
+   * Show a dialog toward the bottom of the page to create a new widget item by name.
+   * @example <Component onClic={() => showCreateDialog()}
+   */
   const showCreateDialog = () => {
     /**
      * @type {HTMLDialogElement}
