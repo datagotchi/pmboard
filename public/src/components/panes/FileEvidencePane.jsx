@@ -13,7 +13,7 @@ import {
   GoogleFile,
   TagsPerEvidenceRecord,
 } from "../../types";
-import { getJsonSortedString, getOccurenceNumber } from "../../util";
+import { getJsonSortedString, getOccurenceNumber } from "../../../../util";
 
 import useOAuthAPI from "../../hooks/useOAuthAPI";
 import { AllTagsContext } from "../../contexts/AllTagsContext";

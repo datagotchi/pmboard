@@ -3,7 +3,7 @@ import { WithContext as ReactTags } from "react-tag-input";
 
 import { EvidenceRecord, EvidenceTrend, WidgetDataItem } from "../types";
 
-import { getOccurenceNumber, sortString } from "../util";
+import { getOccurenceNumber, sortString } from "../../../util";
 
 import { AllTagsContext } from "../contexts/AllTagsContext";
 import { EvidencePaneContext } from "../contexts/EvidencePaneContext";

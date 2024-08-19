@@ -17,6 +17,7 @@ const {
   changeTrendExpressFunc,
   deleteTrendExpressFunc,
 } = require("./evidenceFunctions");
+const { formatSetClauseValue } = require("../util");
 
 // get user personas
 router.get("/", async (req, res, next) => {
@@ -35,6 +36,24 @@ router.get("/", async (req, res, next) => {
   req.client.release();
   // TODO: get and assign trends, too
   return res.json(tasks);
+});
+
+router.put("/", async (req, res, next) => {
+  const tasks = req.body;
+  await Promise.all(
+    tasks.map((task) => {
+      const setClause = Object.keys(task)
+        .filter((key) => key !== "id")
+        .map((key) => `${key} = ${formatSetClauseValue(task[key])}`)
+        .join(", ");
+      return req.client.query({
+        text: `update tasks set ${setClause} where id = $1::integer`,
+        values: [task.id],
+      });
+    })
+  );
+  req.client.release();
+  return res.sendStatus(200);
 });
 
 router.post("/", addItem("tasks"));

@@ -1,4 +1,4 @@
-import { EvidenceTrend } from "./types";
+import { EvidenceTrend } from "./public/src/types";
 
 /**
  * A convenience function to sort a string array with.
@@ -38,3 +38,22 @@ export const getJsonSortedString = (trends) => {
  */
 export const getOccurenceNumber = (tagText) =>
   parseInt(tagText.match(/\(([0-9]+)\)/)[1]);
+
+/**
+ * Format string with subquotes, replacing subquotes with double subquotes for PostgreSQL, and keep numbers as-is.
+ * @param {string | number} value The value to be formatted.
+ * @returns {string | number} The formatted string or number.
+ * @example  const setClause = Object.keys(task)
+        .filter((key) => key !== "id")
+        .map((key) => `${key} = ${formatSetClauseValue(task[key])}`)
+        .join(", ");
+ */
+export const formatSetClauseValue = (value) => {
+  switch (typeof value) {
+    case "number":
+      return value;
+    case "string":
+    default:
+      return `'${value.replace("'", "''")}'`;
+  }
+};

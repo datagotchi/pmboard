@@ -11,7 +11,7 @@ import {
   getJsonSortedString,
   getOccurenceNumber,
   sortString,
-} from "../../util";
+} from "../../../../util";
 
 // import { EvidencePaneContext } from "../../contexts/EvidencePaneContext";
 
