@@ -1,4 +1,4 @@
-import { EvidenceTrend } from "./public/src/types";
+const { EvidenceTrend } = require("./public/src/types");
 
 /**
  * A convenience function to sort a string array with.
@@ -7,7 +7,7 @@ import { EvidenceTrend } from "./public/src/types";
  * @returns {number} Positive if `a` goes before `b`, -1 for the opposite, and 0 if they are the same.
  * @example sortString("asdf", "basdf") = ["asdf", "basdf"]
  */
-export const sortString = (a, b) => {
+const sortString = (a, b) => {
   if (a < b) {
     return 1;
   }
@@ -23,7 +23,7 @@ export const sortString = (a, b) => {
  * @returns {EvidenceTrend[]} A sorted array of the trends.
  * @example getJsonSortedString([{b}, {a}, {c}, ...]) = [{a}, {b}, {c}]
  */
-export const getJsonSortedString = (trends) => {
+const getJsonSortedString = (trends) => {
   if (trends) {
     return JSON.stringify(trends.map((trend) => trend.name).sort(sortString));
   }
@@ -36,7 +36,7 @@ export const getJsonSortedString = (trends) => {
  * @returns {number} The number in the parentheses.
  * @example getOccurenceNumber("test string (5)") === 5
  */
-export const getOccurenceNumber = (tagText) =>
+const getOccurenceNumber = (tagText) =>
   parseInt(tagText.match(/\(([0-9]+)\)/)[1]);
 
 /**
@@ -48,7 +48,7 @@ export const getOccurenceNumber = (tagText) =>
         .map((key) => `${key} = ${formatSetClauseValue(task[key])}`)
         .join(", ");
  */
-export const formatSetClauseValue = (value) => {
+const formatSetClauseValue = (value) => {
   switch (typeof value) {
     case "number":
       return value;
@@ -56,4 +56,11 @@ export const formatSetClauseValue = (value) => {
     default:
       return `'${value.replace("'", "''")}'`;
   }
+};
+
+module.exports = {
+  sortString,
+  getJsonSortedString,
+  getOccurenceNumber,
+  formatSetClauseValue,
 };

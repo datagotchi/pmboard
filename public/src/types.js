@@ -1,8 +1,4 @@
-// eslint-disable-next-line no-unused-vars
-import React from "react";
-// eslint-disable-next-line no-unused-vars
-import { WithContext as ReactTags } from "react-tag-input";
-
+/* eslint-disable jsdoc/no-undefined-types */
 /**
  * @typedef Product
  * @property {string} name The name of the product

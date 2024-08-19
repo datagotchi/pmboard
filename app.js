@@ -1,10 +1,6 @@
-var express = require("express");
-var session = require("express-session");
-var bodyParser = require("body-parser");
-// var cookieParser = require("cookie-parser");
-// var csurf = require("csurf");
-//var cors = require('cors');
-// var mongoose = require("mongoose");
+const express = require("express");
+const session = require("express-session");
+const bodyParser = require("body-parser");
 const { Pool } = require("pg");
 
 const pool = new Pool({
@@ -17,18 +13,14 @@ const pool = new Pool({
   idleTimeoutMillis: 10000, // 10000 is default
   connectionTimeoutMillis: 2000, // 0 (no timeout!) is default
 });
-
 pool.on("error", (err) => {
   console.error("pg pool error: ", err);
   process.exit();
 });
 
-//var routes = require('./routes/index');
-var products = require("./routes/products");
-// var auth_route = require("./routes/auth");
-// var oauth_route = require("./routes/oauth");
+const products = require("./routes/products");
 
-var app = express();
+const app = express();
 
 app.use(async (req, res, next) => {
   try {
@@ -44,45 +36,17 @@ app.use(async (req, res, next) => {
   }
 });
 
-// var db = mongoose.createConnection("mongodb://localhost/pmboard");
-// var userSchema = require("./schema/User.js");
-// var User = db.model("User", userSchema);
-// app.set("User", User);
-// var productSchema = require("./schema/Product.js");
-// var Product = db.model("Product", productSchema);
-// app.set("Product", Product);
-
 app.use("/", express.static("public/dist"));
 app.use("/node_modules", express.static("public/node_modules"));
-//app.use(cors());
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
-// app.use(cookieParser());
-// app.use(
-//   session({
-//     secret: "keyboard cat",
-//     resave: true,
-//     saveUninitialized: false,
-//   })
-// );
-// app.use(csurf());
-// app.use(function (req, res, next) {
-//   res.cookie("XSRF-TOKEN", req.csrfToken());
-//   res.locals.csrftoken = req.csrfToken();
-//   next();
-// });
 
-// app.use("/auth", auth_route);
-// app.use("/oauth", oauth_route);
-// app.use("/users", require("./routes/users"));
 app.use("/products", products);
 
 /* Error Handlers */
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-  var err = new Error("Not Found");
+  const err = new Error("Not Found");
   err.status = 404;
   next(err);
 });
@@ -98,8 +62,6 @@ app.use(function (err, req, res, next) {
   });
 });
 // }
-
-// console.log("*** app.stack: ", app._router.stack);
 
 const port = process.env.PORT || 8000;
 app.listen(port, () => {

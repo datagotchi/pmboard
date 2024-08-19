@@ -1,3 +1,5 @@
+const { formatSetClauseValue } = require("../util");
+
 const getEvidenceExpressFunc =
   (itemCollectionName, itemIndexKey) => (req, res, next) => {
     const { product, [itemIndexKey]: ix } = req;
@@ -28,69 +30,76 @@ const addEvidenceExpressFunc = (itemIdKey) => async (req, res, next) => {
 const updateEvidenceExpressFunc = (itemIdKey) => async (req, res, next) => {
   const { [itemIdKey]: itemId, body: records } = req;
   let evidence;
-  await Promise.all(
-    records.map(async (record) => {
-      if (record.id) {
-        evidence = record;
-        const setClauseItems = Object.keys(record)
-          .filter(
-            (key) => key !== "id" && key !== "trends" && key !== "story_id"
-          )
-          .map((recordKey) => `${recordKey} = '${record[recordKey]}'`);
-        setClauseItems.push(`${itemIdKey} = ${itemId}`);
-        const setClause = setClauseItems.join(", ");
-        return req.client.query({
-          text: `update evidence set ${setClause} where id = $1::integer`,
-          values: [record.id],
-        });
-      } else {
-        const fields = Object.keys(record).filter((key) => key !== "trends");
-        const query = `insert into evidence 
+  if (records.length === 0) {
+    await req.client.query({
+      text: "delete from evidence where story_id = $1::integer",
+      values: [itemId],
+    });
+  } else {
+    await Promise.all(
+      records.map(async (record) => {
+        if (record.id) {
+          evidence = record;
+          const setClauseItems = Object.keys(record)
+            .filter(
+              (key) => key !== "id" && key !== "trends" && key !== "story_id"
+            )
+            .map((recordKey) => `${recordKey} = '${record[recordKey]}'`);
+          setClauseItems.push(`${itemIdKey} = ${itemId}`);
+          const setClause = setClauseItems.join(", ");
+          return req.client.query({
+            text: `update evidence set ${setClause} where id = $1::integer`,
+            values: [record.id],
+          });
+        } else {
+          const fields = Object.keys(record).filter((key) => key !== "trends");
+          const query = `insert into evidence 
                   (${fields.join(
                     ", "
                   )}, ${itemIdKey}, created_date, modified_date) 
-                  values (${fields.map(
-                    (field) => record[field]
+                  values (${fields.map((field) =>
+                    formatSetClauseValue(record[field])
                   )}, $1::integer, current_timestamp, current_timestamp)
-                  on conflict set ${fields
-                    .map((field) => `${field} = '${record[field]}'`)
-                    .join(", ")}`;
-        evidence = await req.client
-          .query({
-            text: query,
-            values: [itemId],
-          })
-          .then((result) => result.rows[0]);
-      }
-    })
-  );
-  const trends = evidence.trends ?? [];
-  const existingTrends = await req.client
-    .query({
-      text: "select * from trends where evidence_id = $1::integer",
-      values: [evidence.id],
-    })
-    .then((result) => result.rows);
-  console.log("*** existingTrends: ", JSON.stringify(existingTrends));
-  await Promise.all(
-    trends.map(async (trend) => {
-      const etrend = existingTrends.find((t) => t.name === trend.name);
-      console.log("*** etrend: ", etrend);
-      if (etrend) {
-        await req.client.query({
-          text: `update trends set type = $1::text where id = $2::integer`,
-          values: [trend.type, etrend.id],
-        });
-        console.log("*** updated existing trend: ", etrend.id, trend.type);
-      } else {
-        await req.client.query({
-          text: "insert into trends (name, type, evidence_id) values ($1::text, $2::text, $3::integer)",
-          values: [trend.name, trend.type, evidence.id],
-        });
-        console.log("*** inserted new trend: ", trend.name, trend.type);
-      }
-    })
-  );
+                  returning *`;
+          console.log("*** query: ", query);
+          evidence = await req.client
+            .query({
+              text: query,
+              values: [itemId],
+            })
+            .then((result) => result.rows[0]);
+        }
+      })
+    );
+    console.log("*** evidence: ", evidence);
+    const trends = evidence.trends ?? [];
+    const existingTrends = await req.client
+      .query({
+        text: "select * from trends where evidence_id = $1::integer",
+        values: [evidence.id],
+      })
+      .then((result) => result.rows);
+    console.log("*** existingTrends: ", JSON.stringify(existingTrends));
+    await Promise.all(
+      trends.map(async (trend) => {
+        const etrend = existingTrends.find((t) => t.name === trend.name);
+        console.log("*** etrend: ", etrend);
+        if (etrend) {
+          await req.client.query({
+            text: `update trends set type = $1::text where id = $2::integer`,
+            values: [trend.type, etrend.id],
+          });
+          console.log("*** updated existing trend: ", etrend.id, trend.type);
+        } else {
+          await req.client.query({
+            text: "insert into trends (name, type, evidence_id) values ($1::text, $2::text, $3::integer)",
+            values: [trend.name, trend.type, evidence.id],
+          });
+          console.log("*** inserted new trend: ", trend.name, trend.type);
+        }
+      })
+    );
+  }
   req.client.release();
   return res.json({
     success: true,
