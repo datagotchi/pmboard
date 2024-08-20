@@ -81,12 +81,7 @@ export const updateEvidenceExpressFunc =
               };
             }
 
-            console.log("*** evidence: ", evidence);
             if (evidence.trends) {
-              console.log(
-                "*** starting into work with trends: ",
-                evidence.trends
-              );
               const existingTrends =
                 (await req.client
                   .query({
@@ -94,7 +89,6 @@ export const updateEvidenceExpressFunc =
                     values: [evidence.id],
                   })
                   .then((result) => result.rows)) || [];
-              console.log("*** existingTrends: ", existingTrends);
               await Promise.all(
                 evidence.trends.map(async (trend) => {
                   const etrend = existingTrends.find(

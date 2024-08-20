@@ -109,11 +109,18 @@ router.put("/:story_id", async (req, res, next) => {
     await Promise.all(
       steps.map((step) => {
         req.client.query({
-          text: `insert into journey_steps (journey_id, tag_id, tag_class_name, x, y) 
-          values ($1::integer, $2::text, $3::text, $4::text, $5::text) 
+          text: `insert into journey_steps (journey_id, tag_id, tag_class_name, tag_text, x, y) 
+          values ($1::integer, $2::text, $3::text, $4::text, $5::text, $6::text) 
           on conflict (journey_id, tag_id) do update 
             set tag_class_name = $3::text, x = $4::text, y = $5::text`,
-          values: [journeyId, step.tagId, step.tagClassName, step.x, step.y],
+          values: [
+            journeyId,
+            step.tagId,
+            step.tagClassName,
+            step.tagText,
+            step.x,
+            step.y,
+          ],
         });
       })
     );

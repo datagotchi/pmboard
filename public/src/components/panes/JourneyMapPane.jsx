@@ -33,28 +33,37 @@ const JourneyMapPane = ({ data, summaryChanged }) => {
         dropzone: ".dropzone",
         distance: 0,
       });
+      let currentDropzone;
+      d.on("droppable:dropped", (event) => {
+        currentDropzone = event.dropzone;
+      });
+      d.on("drag:stop", () => {
+        if (currentDropzone) {
+          currentDropzone.style.minWidth = "";
+        }
+      });
       setDroppable(d);
     }
   }, [droppable]);
 
   const [dropzones, setDropzones] = useState([]);
+  const [dropzoneNumber, setDropzoneNumber] = useState(1);
 
   useEffect(() => {
-    if (summary && summary.steps) {
+    if (summary && summary.steps && summary.steps.length > dropzones.length) {
       setDropzones(
-        summary.steps.map((step, i) => ({
-          dropzone: i + 1,
-          // className: step.tagClassName,
+        summary.steps.map((step) => ({
+          dropzone: dropzoneNumber,
           x: step.x,
           y: step.y,
           tag_id: step.tag_id,
           tag_class_name: step.tag_class_name,
+          tag_text: step.tag_text,
         }))
       );
+      setDropzoneNumber(dropzoneNumber + 1);
     }
-  }, [summary]);
-
-  const [dropzoneNumber, setDropzoneNumber] = useState(1);
+  }, [summary, dropzoneNumber]);
 
   const addFlowChartItem = useCallback(() => {
     setDropzones([
@@ -62,6 +71,7 @@ const JourneyMapPane = ({ data, summaryChanged }) => {
       {
         dropzone: dropzoneNumber,
         className: "dropzone",
+        minWidth: "100px",
       },
     ]);
     setDropzoneNumber(dropzoneNumber + 1);
@@ -180,6 +190,7 @@ const JourneyMapPane = ({ data, summaryChanged }) => {
                 return {
                   tagId: tag.id,
                   tagClassName: tag.className,
+                  tagText: tag.text,
                   x: dropzoneDiv.style.left,
                   y: dropzoneDiv.style.top,
                 };
@@ -198,17 +209,30 @@ const JourneyMapPane = ({ data, summaryChanged }) => {
           {dropzones.map((zone, i) => (
             <div
               key={`dropzone #${i}`}
-              className={`${zone.className} ${zone.tag_class_name}`}
+              className={`dropzone ${
+                zone.x && zone.y ? "draggable-dropzone--occupied" : ""
+              }`}
               data-dropzone={zone.dropzone}
               style={{
-                height: "30px",
-                minWidth: "200px",
+                minheight: "30px",
+                maxWidth: "200px",
+                minWidth: zone.minWidth,
                 position: "absolute",
                 left: zone.x,
                 top: zone.y,
               }}
             >
-              {zone.tag_id}
+              {zone.x && zone.y && (
+                <div
+                  className={`tag trendItem ${zone.tag_class_name}`}
+                  data-tag={JSON.stringify({
+                    id: zone.tag_id,
+                    text: zone.tag_text,
+                  })}
+                >
+                  {zone.tag_text}
+                </div>
+              )}
             </div>
           ))}
         </div>
