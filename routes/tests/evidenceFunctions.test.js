@@ -11,7 +11,6 @@ import { after } from "mocha";
 
 const mockClient = {
   query: async ({ text, values }) => {
-    console.log("*** match: ", text.match("insert into evidence"));
     console.log("*** mockClient.query called with: ", text, values);
     switch (text) {
       case "delete from evidence where story_id = $1::integer":
@@ -19,7 +18,7 @@ const mockClient = {
       case text.match("update evidence set .* where id = $1::integer"):
         return {};
       case text.match("insert into evidence").input:
-        return {};
+        throw new Error("Invalid columns");
       // case "select value from tags where experience_id = $1::integer":
       //   return { rows: [] };
       default:
@@ -107,10 +106,14 @@ describe("evidenceFunctions.js", () => {
               obj[field] = Math.floor(Math.random() * 10);
               return obj;
             }, {});
-            await route({
-              ...reqWithValidItemKey,
-              body: [invalidRecord],
-            });
+            await route(
+              {
+                ...reqWithValidItemKey,
+                body: [invalidRecord],
+              },
+              mockRes,
+              mockNextObject.next
+            );
             sinon.assert.calledOnce(mockClientQuerySpy);
             sinon.assert.calledOnce(mockClientReleaseSpy);
             sinon.assert.notCalled(mockResJsonSpy);

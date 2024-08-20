@@ -45,29 +45,31 @@ export const updateEvidenceExpressFunc =
         values: [itemId],
       });
     } else {
-      await Promise.all(
-        records.map(async (record) => {
-          if (record.id) {
-            console.log("*** there is a record.id: ", record);
-            evidence = record;
-            const setClauseItems = Object.keys(record)
-              .filter(
-                (key) => key !== "id" && key !== "trends" && key !== "story_id"
-              )
-              .map((recordKey) => `${recordKey} = '${record[recordKey]}'`);
-            setClauseItems.push(`${itemIdKey} = ${itemId}`);
-            const setClause = setClauseItems.join(", ");
-            return req.client.query({
-              text: `update evidence set ${setClause} where id = $1::integer`,
-              values: [record.id],
-            });
-          } else {
-            console.log("*** there is NOT a record.id: ", record);
-            const fields = Object.keys(record).filter(
-              (key) => key !== "trends"
-            );
-            console.log("*** fields: ", fields);
-            const query = `insert into evidence
+      try {
+        await Promise.all(
+          records.map(async (record) => {
+            if (record.id) {
+              console.log("*** there is a record.id: ", record);
+              evidence = record;
+              const setClauseItems = Object.keys(record)
+                .filter(
+                  (key) =>
+                    key !== "id" && key !== "trends" && key !== "story_id"
+                )
+                .map((recordKey) => `${recordKey} = '${record[recordKey]}'`);
+              setClauseItems.push(`${itemIdKey} = ${itemId}`);
+              const setClause = setClauseItems.join(", ");
+              return req.client.query({
+                text: `update evidence set ${setClause} where id = $1::integer`,
+                values: [record.id],
+              });
+            } else {
+              console.log("*** there is NOT a record.id: ", record);
+              const fields = Object.keys(record).filter(
+                (key) => key !== "trends"
+              );
+              console.log("*** fields: ", fields);
+              const query = `insert into evidence
                   (${fields.join(
                     ", "
                   )}, ${itemIdKey}, created_date, modified_date)
@@ -75,15 +77,21 @@ export const updateEvidenceExpressFunc =
                     formatSetClauseValue(record[field])
                   )}, $1::integer, current_timestamp, current_timestamp)
                   returning *`;
-            evidence = await req.client
-              .query({
-                text: query,
-                values: [itemId],
-              })
-              .then((result) => result.rows[0]);
-          }
-        })
-      );
+              evidence = await req.client
+                .query({
+                  text: query,
+                  values: [itemId],
+                })
+                .then((result) => result.rows[0]);
+            }
+          })
+        );
+      } catch (err) {
+        req.client.release();
+        return next(err);
+      }
+
+      console.log("*** evidence: ", evidence);
       if (evidence.trends) {
         const trends = evidence.trends;
         const existingTrends = await req.client
@@ -111,6 +119,7 @@ export const updateEvidenceExpressFunc =
       }
     }
     req.client.release();
+    console.log("*** res: ", res);
     return res.json({
       success: true,
     });
