@@ -1,5 +1,5 @@
-var express = require("express");
-var router = express.Router();
+import express from "express";
+const router = express.Router();
 // var mongoose = require("mongoose");
 // var ObjectId = mongoose.Types.ObjectId;
 
@@ -150,15 +150,20 @@ router.param("product_id", async (req, res, next, product_id) => {
 //   return user;
 // }
 
-router.use("/:product_id/personas", require("./personas"));
+import personasRoute from "./personas.js";
+router.use("/:product_id/personas", personasRoute);
 
-router.use("/:product_id/stories", require("./stories"));
+import storiesRoute from "./stories.js";
+router.use("/:product_id/stories", storiesRoute);
 
-router.use("/:product_id/companies", require("./companies"));
+import companiesRoute from "./companies.js";
+router.use("/:product_id/companies", companiesRoute);
 
-router.use("/:product_id/tasks", require("./tasks"));
+import tasksRoute from "./tasks.js";
+router.use("/:product_id/tasks", tasksRoute);
 
 //   return router;
 // };
 
-module.exports = router;
+// module.exports = router;
+export default router;

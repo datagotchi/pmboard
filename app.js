@@ -1,7 +1,10 @@
-const express = require("express");
-const session = require("express-session");
-const bodyParser = require("body-parser");
-const { Pool } = require("pg");
+import express from "express";
+import session from "express-session";
+import bodyParser from "body-parser";
+import pg from "pg";
+const { Pool } = pg;
+
+import products from "./routes/products.js";
 
 const pool = new Pool({
   user: "postgres",
@@ -17,8 +20,6 @@ pool.on("error", (err) => {
   console.error("pg pool error: ", err);
   process.exit();
 });
-
-const products = require("./routes/products");
 
 const app = express();
 
@@ -79,4 +80,4 @@ app.use(function(err, req, res, next) {
 });
 */
 
-module.exports = app;
+export default app;

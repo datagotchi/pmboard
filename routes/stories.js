@@ -1,13 +1,9 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-const {
-  addItem,
-  updateItem,
-  deleteItem,
-} = require("./collectionItemFunctions");
+import { addItem, updateItem, deleteItem } from "./collectionItemFunctions.js";
 
-const {
+import {
   getEvidenceExpressFunc,
   addEvidenceExpressFunc,
   updateEvidenceExpressFunc,
@@ -17,8 +13,8 @@ const {
   addTrendExpressFunc,
   changeTrendExpressFunc,
   deleteTrendExpressFunc,
-} = require("./evidenceFunctions");
-const { formatSetClauseValue } = require("../util");
+} from "./evidenceFunctions.js";
+import { formatSetClauseValue } from "../util.js";
 
 router.get("/", async (req, res, next) => {
   /*
@@ -173,4 +169,5 @@ router.delete(
   deleteTrendExpressFunc("stories", "story_id")
 );
 
-module.exports = router;
+// module.exports = router;
+export default router;

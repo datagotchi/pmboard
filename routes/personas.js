@@ -1,13 +1,9 @@
-var express = require("express");
-var router = express.Router();
+import express from "express";
+const router = express.Router();
 
-const {
-  addItem,
-  updateItem,
-  deleteItem,
-} = require("./collectionItemFunctions");
+import { addItem, updateItem, deleteItem } from "./collectionItemFunctions.js";
 
-const {
+import {
   getEvidenceExpressFunc,
   addEvidenceExpressFunc,
   getTrendsExpressFunc,
@@ -17,7 +13,7 @@ const {
   addTrendExpressFunc,
   changeTrendExpressFunc,
   deleteTrendExpressFunc,
-} = require("./evidenceFunctions");
+} from "./evidenceFunctions.js";
 
 // get user personas
 router.get("/", async (req, res, next) => {
@@ -112,4 +108,4 @@ router.delete(
   deleteTrendExpressFunc("personas", "persona_id")
 );
 
-module.exports = router;
+export default router;

@@ -9,7 +9,7 @@ function checkUserAccess(req, req_level) {
 }
 */
 
-const addItem = (collectionName) => async (req, res, next) => {
+export const addItem = (collectionName) => async (req, res, next) => {
   /*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
@@ -29,52 +29,54 @@ const addItem = (collectionName) => async (req, res, next) => {
   }
 };
 
-const updateItem = (collectionName, idName) => async (req, res, next) => {
-  /*
+export const updateItem =
+  (collectionName, idName) => async (req, res, next) => {
+    /*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
 */
 
-  const { [idName]: id, body } = req;
+    const { [idName]: id, body } = req;
 
-  const setClause = Object.keys(body)
-    .map((objectKey) => `${key} = ${body[objectKey]}`)
-    .join(" and ");
+    const setClause = Object.keys(body)
+      .map((objectKey) => `${key} = ${body[objectKey]}`)
+      .join(" and ");
 
-  try {
-    await req.client.query({
-      text: `update ${collectionName} set ${setClause} where id = $1::integer`,
-      values: [id],
-    });
-    req.client.release();
-    return res.json({
-      success: true,
-    });
-  } catch (err) {
-    return next(err);
-  }
-};
+    try {
+      await req.client.query({
+        text: `update ${collectionName} set ${setClause} where id = $1::integer`,
+        values: [id],
+      });
+      req.client.release();
+      return res.json({
+        success: true,
+      });
+    } catch (err) {
+      return next(err);
+    }
+  };
 
-const deleteItem = (collectionName, idName) => async (req, res, next) => {
-  /*
+export const deleteItem =
+  (collectionName, idName) => async (req, res, next) => {
+    /*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
 */
 
-  const { [idName]: id } = req;
+    const { [idName]: id } = req;
 
-  try {
-    await req.client.query({
-      text: `delete from ${collectionName} where id = $1::integer`,
-      values: [id],
-    });
-    req.client.release();
-    return res.json({
-      success: true,
-    });
-  } catch (err) {
-    return next(err);
-  }
-};
+    try {
+      await req.client.query({
+        text: `delete from ${collectionName} where id = $1::integer`,
+        values: [id],
+      });
+      req.client.release();
+      return res.json({
+        success: true,
+      });
+    } catch (err) {
+      return next(err);
+    }
+  };
 
-module.exports = { addItem, updateItem, deleteItem };
+// module.exports = { addItem, updateItem, deleteItem };
