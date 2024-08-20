@@ -29,27 +29,22 @@ export const addEvidenceExpressFunc = (itemIdKey) => async (req, res, next) => {
 
 export const updateEvidenceExpressFunc =
   (itemIdKey) => async (req, res, next) => {
-    console.log("*** in updateEvidenceExpressFunc(): ", itemIdKey);
     const { [itemIdKey]: itemId, body: records } = req;
-    console.log("*** got itemId & records: ", itemId, records);
     if (!itemId || !records) {
       req.client.release();
       return next("Missing arguments");
     }
-    console.log("*** moving on to sql statements with records...");
-    let evidence;
-    if (records.length === 0) {
-      console.log("*** records.length === 0");
-      await req.client.query({
-        text: "delete from evidence where story_id = $1::integer",
-        values: [itemId],
-      });
-    } else {
-      try {
+    try {
+      if (records.length === 0) {
+        await req.client.query({
+          text: "delete from evidence where story_id = $1::integer",
+          values: [itemId],
+        });
+      } else {
         await Promise.all(
           records.map(async (record) => {
+            let evidence;
             if (record.id) {
-              console.log("*** there is a record.id: ", record);
               evidence = record;
               const setClauseItems = Object.keys(record)
                 .filter(
@@ -59,16 +54,14 @@ export const updateEvidenceExpressFunc =
                 .map((recordKey) => `${recordKey} = '${record[recordKey]}'`);
               setClauseItems.push(`${itemIdKey} = ${itemId}`);
               const setClause = setClauseItems.join(", ");
-              return req.client.query({
+              await req.client.query({
                 text: `update evidence set ${setClause} where id = $1::integer`,
                 values: [record.id],
               });
             } else {
-              console.log("*** there is NOT a record.id: ", record);
               const fields = Object.keys(record).filter(
                 (key) => key !== "trends"
               );
-              console.log("*** fields: ", fields);
               const query = `insert into evidence
                   (${fields.join(
                     ", "
@@ -77,49 +70,58 @@ export const updateEvidenceExpressFunc =
                     formatSetClauseValue(record[field])
                   )}, $1::integer, current_timestamp, current_timestamp)
                   returning *`;
-              evidence = await req.client
-                .query({
-                  text: query,
-                  values: [itemId],
-                })
-                .then((result) => result.rows[0]);
+              evidence = {
+                ...record,
+                ...(await req.client
+                  .query({
+                    text: query,
+                    values: [itemId],
+                  })
+                  .then((result) => result.rows[0])),
+              };
             }
-          })
-        );
-      } catch (err) {
-        req.client.release();
-        return next(err);
-      }
 
-      console.log("*** evidence: ", evidence);
-      if (evidence.trends) {
-        const trends = evidence.trends;
-        const existingTrends = await req.client
-          .query({
-            text: "select * from trends where evidence_id = $1::integer",
-            values: [evidence.id],
-          })
-          .then((result) => result.rows);
-        await Promise.all(
-          trends.map(async (trend) => {
-            const etrend = existingTrends.find((t) => t.name === trend.name);
-            if (etrend) {
-              await req.client.query({
-                text: `update trends set type = $1::text where id = $2::integer`,
-                values: [trend.type, etrend.id],
-              });
-            } else {
-              await req.client.query({
-                text: "insert into trends (name, type, evidence_id) values ($1::text, $2::text, $3::integer)",
-                values: [trend.name, trend.type, evidence.id],
-              });
+            console.log("*** evidence: ", evidence);
+            if (evidence.trends) {
+              console.log(
+                "*** starting into work with trends: ",
+                evidence.trends
+              );
+              const existingTrends =
+                (await req.client
+                  .query({
+                    text: "select * from trends where evidence_id = $1::integer",
+                    values: [evidence.id],
+                  })
+                  .then((result) => result.rows)) || [];
+              console.log("*** existingTrends: ", existingTrends);
+              await Promise.all(
+                evidence.trends.map(async (trend) => {
+                  const etrend = existingTrends.find(
+                    (t) => t.name === trend.name
+                  );
+                  if (etrend) {
+                    await req.client.query({
+                      text: `update trends set type = $1::text where id = $2::integer`,
+                      values: [trend.type, etrend.id],
+                    });
+                  } else {
+                    await req.client.query({
+                      text: "insert into trends (name, type, evidence_id) values ($1::text, $2::text, $3::integer)",
+                      values: [trend.name, trend.type, evidence.id],
+                    });
+                  }
+                })
+              );
             }
           })
         );
       }
+    } catch (err) {
+      req.client.release();
+      return next(err);
     }
     req.client.release();
-    console.log("*** res: ", res);
     return res.json({
       success: true,
     });

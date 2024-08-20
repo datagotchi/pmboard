@@ -9,20 +9,51 @@ const { Pool, Client } = pg;
 import { updateEvidenceExpressFunc } from "../evidenceFunctions.js";
 import { after } from "mocha";
 
+const VALID_FIELDS = [
+  "name",
+  "url",
+  "icon",
+  "persona_id",
+  "story_id",
+  "created_date",
+  "modified_date",
+];
+const INVALID_COLUMNS_MESSAGE = "Invalid column(s)";
 const mockClient = {
   query: async ({ text, values }) => {
     console.log("*** mockClient.query called with: ", text, values);
     switch (text) {
       case "delete from evidence where story_id = $1::integer":
         return {};
-      case text.match("update evidence set .* where id = $1::integer"):
+      case text.match("update evidence set")?.input:
         return {};
-      case text.match("insert into evidence").input:
-        throw new Error("Invalid columns");
-      // case "select value from tags where experience_id = $1::integer":
-      //   return { rows: [] };
+      case text.match("insert into evidence")?.input:
+        const match = text.match(
+          /insert into evidence\W+\((.*)\)\W+values \((.*)\)\W+returning */
+        );
+        const columns = match[1].split(",");
+        if (
+          columns
+            .map((column) => column.trim().trimStart())
+            .some((column) => !VALID_FIELDS.includes(column))
+        ) {
+          throw new Error(INVALID_COLUMNS_MESSAGE);
+        }
+        const retObj = {};
+        const values = match[2].split(",");
+        columns.forEach((column, i) => {
+          retObj[column.trim().trimStart()] = values[i].trim().trimStart();
+        });
+        retObj.id = 1;
+        return {
+          rows: [retObj],
+        };
+      case text.match("from trends")?.input:
+        return [];
+      case text.match("insert into trends")?.input:
+        return {};
       default:
-        throw new Error("Unrecognized query"); // TODO: does now show up from mocha; just fails
+        throw new Error("Unrecognized query");
     }
   },
   release: () => {
@@ -70,18 +101,10 @@ describe("evidenceFunctions.js", () => {
       const VALID_ITEM_KEY_VALUE = 2;
       let route;
       beforeEach(() => {
-        console.log(
-          "*** recreating reqWithValidItemKey with",
-          REQ_BASE,
-          VALID_ITEM_KEY,
-          VALID_ITEM_KEY_VALUE
-        );
         reqWithValidItemKey = {
           ...REQ_BASE,
           [VALID_ITEM_KEY]: VALID_ITEM_KEY_VALUE,
         };
-      });
-      beforeEach(() => {
         route = updateEvidenceExpressFunc(VALID_ITEM_KEY);
       });
       it("deletes records when the new evidence is an empty array", async () => {
@@ -93,7 +116,7 @@ describe("evidenceFunctions.js", () => {
           mockRes,
           mockNextObject.next
         );
-        sinon.assert.calledOnce(mockClientQuerySpy); // FAILS
+        sinon.assert.calledOnce(mockClientQuerySpy); // TODO: withMatch regex not working
         sinon.assert.calledOnce(mockClientReleaseSpy);
         sinon.assert.calledOnce(mockResJsonSpy);
         sinon.assert.notCalled(mockNextSpy);
@@ -117,18 +140,123 @@ describe("evidenceFunctions.js", () => {
             sinon.assert.calledOnce(mockClientQuerySpy);
             sinon.assert.calledOnce(mockClientReleaseSpy);
             sinon.assert.notCalled(mockResJsonSpy);
-            sinon.assert.calledOnce(mockNextSpy);
+            sinon.assert.calledOnce(mockNextSpy); // TODO: withMatch regex not working
           });
-          //       valid fields
-          //     insert new record(s)
-          //       invalid fields
-          //       valid fields
-          //     insert new trend(s)
-          //       invalid fields
-          //       valid fields
-          //     update existing trend(s)
-          //       invalid fields
-          //       valid fields
+          describe("working correctly with valid fields", () => {
+            it("successfully inserts new records", async () => {
+              await route(
+                {
+                  ...reqWithValidItemKey,
+                  body: [{ name: "asdf" }, { name: "asdf2" }],
+                  story_id: 2,
+                },
+                mockRes,
+                mockNextObject.next
+              );
+              sinon.assert.calledTwice(mockClientQuerySpy);
+              expect(await mockClientQuerySpy.returnValues[0]).to.deep.equal({
+                rows: [
+                  {
+                    id: 1,
+                    name: "'asdf'",
+                    story_id: "$1::integer",
+                    created_date: "current_timestamp",
+                    modified_date: "current_timestamp",
+                  },
+                ],
+              });
+              expect(await mockClientQuerySpy.returnValues[1]).to.deep.equal({
+                rows: [
+                  {
+                    id: 1,
+                    name: "'asdf2'",
+                    story_id: "$1::integer",
+                    created_date: "current_timestamp",
+                    modified_date: "current_timestamp",
+                  },
+                ],
+              });
+              sinon.assert.calledOnce(mockClientReleaseSpy);
+              sinon.assert.calledOnce(mockResJsonSpy);
+              sinon.assert.notCalled(mockNextSpy);
+            });
+            it("successfully updates existing records", async () => {
+              await route(
+                {
+                  ...reqWithValidItemKey,
+                  body: [{ name: "asdf", id: 1 }],
+                  story_id: 2,
+                },
+                mockRes,
+                mockNextObject.next
+              );
+              sinon.assert.calledOnce(mockClientQuerySpy);
+              sinon.assert.calledOnce(mockClientReleaseSpy);
+              sinon.assert.calledOnce(mockResJsonSpy);
+              sinon.assert.notCalled(mockNextSpy);
+            });
+            describe("successfully inserts new trends", () => {
+              it("successfully inserts new trends after inserting new evidence", async () => {
+                await route(
+                  {
+                    ...reqWithValidItemKey,
+                    body: [{ name: "asdf", trends: [{ name: "asdf2" }] }],
+                    story_id: 2,
+                  },
+                  mockRes,
+                  mockNextObject.next
+                );
+                sinon.assert.called(mockClientQuerySpy);
+                expect(await mockClientQuerySpy.returnValues[0]).to.deep.equal({
+                  rows: [
+                    {
+                      id: 1,
+                      name: "'asdf'",
+                      story_id: "$1::integer",
+                      created_date: "current_timestamp",
+                      modified_date: "current_timestamp",
+                    },
+                  ],
+                });
+                sinon.assert.calledThrice(mockClientQuerySpy);
+                sinon.assert.calledOnce(mockClientReleaseSpy);
+                sinon.assert.calledOnce(mockResJsonSpy);
+                sinon.assert.notCalled(mockNextSpy);
+              });
+              it("successfully inserts new trends after updating existing evidence", async () => {
+                await route(
+                  {
+                    ...reqWithValidItemKey,
+                    body: [
+                      { id: 1, name: "asdf", trends: [{ name: "asdf2" }] },
+                    ],
+                    story_id: 2,
+                  },
+                  mockRes,
+                  mockNextObject.next
+                );
+                sinon.assert.calledThrice(mockClientQuerySpy);
+                sinon.assert.calledOnce(mockClientReleaseSpy);
+                sinon.assert.calledOnce(mockResJsonSpy);
+                sinon.assert.notCalled(mockNextSpy);
+              });
+            });
+            it("successfully updates existing trends", async () => {
+              await route(
+                {
+                  ...reqWithValidItemKey,
+                  body: [{ name: "asdf", trends: [{ name: "asdf2", id: 1 }] }],
+                  story_id: 2,
+                },
+                mockRes,
+                mockNextObject.next
+              );
+              sinon.assert.calledThrice(mockClientQuerySpy);
+              sinon.assert.calledOnce(mockClientReleaseSpy);
+              sinon.assert.calledOnce(mockResJsonSpy);
+              sinon.assert.notCalled(mockNextSpy);
+            });
+          });
         });
       });
     });
