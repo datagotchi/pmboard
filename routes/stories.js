@@ -53,6 +53,7 @@ router.get("/", async (req, res, next) => {
         .then((result) => result.rows[0]);
       if (journey) {
         story.summary = {
+          id: journey.id,
           steps: await req.client
             .query({
               text: "select * from journey_steps where journey_id = $1::integer",
@@ -98,10 +99,10 @@ router.put("/:story_id", async (req, res, next) => {
     const { summary } = req.body;
     let journeyId = summary.id;
     let steps = summary.steps;
-    if (!summary.id) {
+    if (!journeyId) {
       journeyId = await req.client
         .query({
-          text: "insert into journeys (story_id) values ($1::integer) on conflict (story_id) do nothing returning *",
+          text: "insert into journeys (story_id) values ($1::integer) returning *",
           values: [story_id],
         })
         .then((result) => result.rows[0].id);

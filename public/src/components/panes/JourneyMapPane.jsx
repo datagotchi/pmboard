@@ -59,6 +59,7 @@ const JourneyMapPane = ({ data, summaryChanged }) => {
           tag_id: step.tag_id,
           tag_class_name: step.tag_class_name,
           tag_text: step.tag_text,
+          type: step.type,
         }))
       );
       setDropzoneNumber(dropzoneNumber + 1);
@@ -72,6 +73,7 @@ const JourneyMapPane = ({ data, summaryChanged }) => {
         dropzone: dropzoneNumber,
         className: "dropzone",
         minWidth: "100px",
+        type: mode,
       },
     ]);
     setDropzoneNumber(dropzoneNumber + 1);
@@ -138,105 +140,169 @@ const JourneyMapPane = ({ data, summaryChanged }) => {
     }
   }, [draggable]);
 
+  /**
+   * @type {["terminus" | "step" | "decision " | "io" | undefined, React.Dispatch<string | undefined>]}
+   */
+  const [mode, setMode] = useState("terminus");
+
+  /**
+   * When a mode button is clicked, setMode() to the mode, make that button active,
+   * and make the other buttons inactive.
+   * @param {React.MouseEvent<HTMLButtonElement, MouseEvent>} event The mouse event.
+   * @param {string} mode The mode to set.
+   * @example <button onClick={(event) => handleModeButtonClick(event, "mode")
+   */
+  const handleModeButtonClick = (event, mode) => {
+    setMode(mode);
+    const buttons = Array.from(document.getElementsByClassName("modeButton"));
+    buttons.forEach((button) => {
+      if (button === event.target) {
+        button.classList.add("active");
+      } else {
+        button.classList.remove("active");
+      }
+    });
+  };
+
   if (allTagsForThisStory) {
     return (
-      <>
-        <div id="tagsToUse" className="dropzone">
-          {allTagsForThisStory
-            .filter(
-              (tag) =>
-                !summary ||
-                !summary.steps.map((step) => step.tag_id).includes(tag.id)
-            )
-            .map((tag) => (
-              <div
-                className={`tag trendItem ${tag.className}`}
-                key={`tag named ${tag.id}`}
-                data-tag={JSON.stringify(tag)}
-              >
-                {tag.text}
-              </div>
-            ))}
-        </div>
-        <div
-          id="flowchartArea"
-          style={{
-            border: "1px black solid",
-            width: "90%",
-            height: "300px",
-            position: "relative",
-          }}
-        >
-          <button
-            id="addButton"
-            onClick={() => {
-              addFlowChartItem(document.createElement("div"));
-            }}
-          >
-            Add Step
-          </button>
-          <button
-            onClick={() => {
-              const dropzones = Array.from(
-                document.querySelectorAll("[data-dropzone]")
-              ).sort(
-                (a, b) =>
-                  Number(b.dataset.dropzone) - Number(a.dataset.dropzone)
-              );
-              const steps = dropzones.map((dropzoneDiv) => {
-                const tag = JSON.parse(
-                  dropzoneDiv.childNodes.item(0).dataset.tag
-                );
-                return {
-                  tagId: tag.id,
-                  tagClassName: tag.className,
-                  tagText: tag.text,
-                  x: dropzoneDiv.style.left,
-                  y: dropzoneDiv.style.top,
-                };
-              });
-              const summary = {
-                steps,
-                // connections
-              };
-              setSummary(summary);
-              summaryChanged(summary);
-            }}
-            style={{ float: "right" }}
-          >
-            Save
-          </button>
-          {dropzones.map((zone, i) => (
-            <div
-              key={`dropzone #${i}`}
-              className={`dropzone ${
-                zone.x && zone.y ? "draggable-dropzone--occupied" : ""
-              }`}
-              data-dropzone={zone.dropzone}
-              style={{
-                minheight: "30px",
-                maxWidth: "200px",
-                minWidth: zone.minWidth,
-                position: "absolute",
-                left: zone.x,
-                top: zone.y,
+      <div id="journeyMap">
+        <nav>
+          <div id="tagsToUse" className="dropzone">
+            {allTagsForThisStory
+              .filter(
+                (tag) =>
+                  !summary ||
+                  !summary.steps.map((step) => step.tag_id).includes(tag.id)
+              )
+              .map((tag) => (
+                <div
+                  className={`tag trendItem ${tag.className}`}
+                  key={`tag named ${tag.id}`}
+                  data-tag={JSON.stringify(tag)}
+                >
+                  {tag.text}
+                </div>
+              ))}
+          </div>
+        </nav>
+        <div id="body">
+          <div>
+            <button
+              className="modeButton active"
+              onClick={(event) => handleModeButtonClick(event, "terminus")}
+            >
+              ⬭
+            </button>
+            <button
+              className="modeButton"
+              onClick={(event) => handleModeButtonClick(event, "step")}
+            >
+              ▢
+            </button>
+            <button
+              className="modeButton"
+              onClick={(event) => handleModeButtonClick(event, "decision")}
+            >
+              ♢
+            </button>
+            <button
+              className="modeButton"
+              onClick={(event) => handleModeButtonClick(event, "io")}
+            >
+              ▱
+            </button>
+            <button
+              id="addButton"
+              onClick={() => {
+                addFlowChartItem(document.createElement("div"));
               }}
             >
-              {zone.x && zone.y && (
-                <div
-                  className={`tag trendItem ${zone.tag_class_name}`}
-                  data-tag={JSON.stringify({
-                    id: zone.tag_id,
-                    text: zone.tag_text,
-                  })}
-                >
-                  {zone.tag_text}
-                </div>
-              )}
-            </div>
-          ))}
+              Add Step
+            </button>
+            <button
+              onClick={() => {
+                const dropzones = Array.from(
+                  document.querySelectorAll("[data-dropzone]")
+                ).sort(
+                  (a, b) =>
+                    Number(b.dataset.dropzone) - Number(a.dataset.dropzone)
+                );
+                const steps = dropzones.map((dropzoneDiv) => {
+                  const tag = JSON.parse(
+                    dropzoneDiv.childNodes.item(0).dataset.tag
+                  );
+                  return {
+                    tagId: tag.id,
+                    tagClassName: tag.className,
+                    tagText: tag.text,
+                    x: dropzoneDiv.style.left,
+                    y: dropzoneDiv.style.top,
+                  };
+                });
+                setSummary({
+                  ...summary,
+                  steps,
+                  // connections
+                });
+                summaryChanged(summary);
+              }}
+              style={{ float: "right" }}
+            >
+              Save
+            </button>
+          </div>
+          <div
+            id="flowchartArea"
+            style={{
+              border: "1px black solid",
+              width: "90%",
+              minHeight: "300px",
+              position: "relative",
+            }}
+          >
+            {dropzones.map((zone, i) => (
+              <div
+                key={`dropzone #${i}`}
+                className={`dropzone ${
+                  zone.x && zone.y ? "draggable-dropzone--occupied" : ""
+                }`}
+                data-dropzone={zone.dropzone}
+                style={{
+                  minHeight: "30px",
+                  maxWidth: "200px",
+                  minWidth: zone.minWidth,
+                  position: "absolute",
+                  left: zone.x,
+                  top: zone.y,
+                }}
+              >
+                {zone.tag_id && (
+                  <div
+                    className={`tag trendItem ${zone.tag_class_name}`}
+                    style={{
+                      textShadow: "2px 3px black",
+                      borderRadius: zone.type === "terminus" ? "50%" : "",
+                      transform: zone.type === "io" ? "skew(20deg)" : "",
+                      border:
+                        zone.type === "decision"
+                          ? "50px solid transparent"
+                          : "",
+                    }}
+                    data-tag={JSON.stringify({
+                      id: zone.tag_id,
+                      text: zone.tag_text,
+                      className: zone.tag_class_name,
+                    })}
+                  >
+                    {zone.tag_text}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
-      </>
+      </div>
     );
   }
   return <></>;

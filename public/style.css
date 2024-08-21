@@ -178,3 +178,28 @@ ul.trend-types li:hover {
 .dropzone {
   border: 1px black dotted;
 }
+
+#journeyMap nav {
+  position: fixed;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: 100%;
+  width: 400px;
+}
+
+#journeyMap #body {
+  margin-left: 400px;
+}
+
+.modeButton {
+  background-color: #efefef;
+  font-size: 80;
+}
+
+.modeButton.active {
+  background-color: #bbbbbb;
+}
+
+#journeyMap #body #flowchartArea {
+  height: 100%;
+}
