@@ -6,7 +6,7 @@ import pg from "pg";
 const { Pool, Client } = pg;
 
 // import app from "../../app";
-import { updateEvidenceExpressFunc } from "../evidenceFunctions.js";
+import { updateEvidenceExpressFunc } from "../routes/evidenceFunctions.js";
 import { after } from "mocha";
 
 const VALID_FIELDS = [
