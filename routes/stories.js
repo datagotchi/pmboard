@@ -113,7 +113,7 @@ router.put("/:story_id", async (req, res, next) => {
           text: `insert into journey_steps (journey_id, tag_id, tag_class_name, tag_text, x, y) 
           values ($1::integer, $2::text, $3::text, $4::text, $5::text, $6::text) 
           on conflict (journey_id, tag_id) do update 
-            set tag_class_name = $3::text, x = $4::text, y = $5::text`,
+            set tag_class_name = $3::text, x = $5::text, y = $6::text`,
           values: [
             journeyId,
             step.tagId,

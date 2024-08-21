@@ -18,8 +18,6 @@ const JourneyMapPane = ({ data, summaryChanged }) => {
   // then get the steps from it's ID
   const [summary, setSummary] = useState(data);
 
-  // useEffect(() => {}, []);
-
   /**
    * @type {[Droppable | undefined, React.Dispatch<Droppable>]}
    */
@@ -240,12 +238,13 @@ const JourneyMapPane = ({ data, summaryChanged }) => {
                     y: dropzoneDiv.style.top,
                   };
                 });
-                setSummary({
+                const newSummary = {
                   ...summary,
                   steps,
                   // connections
-                });
-                summaryChanged(summary);
+                };
+                summaryChanged(newSummary);
+                setSummary(newSummary);
               }}
               style={{ float: "right" }}
             >
