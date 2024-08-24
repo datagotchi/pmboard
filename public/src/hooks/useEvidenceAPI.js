@@ -41,9 +41,26 @@ const useEvidenceAPI = (productId, collectionName) => {
   //     }
   //   );
 
+  /**
+   * Delete a trend by its ID.
+   * @param {number} itemId The ID of the item containing evidence containing the trend.
+   * @param {number} evidenceId The ID of the evidence containing the trend.
+   * @param {number} trendId The ID of the trend being deleted.
+   * @returns {Promise<Response>} The fetch promise.
+   * @example <Component onClick={() => deleteTrend(..)} />
+   */
+  const deleteTrend = (itemId, evidenceId, trendId) =>
+    fetch(
+      `/products/${productId}/${collectionName}/${itemId}/evidence/${evidenceId}/trends/${trendId}`,
+      {
+        method: "DELETE",
+      }
+    );
+
   return {
     updateEvidence,
     // updateTrends,
+    deleteTrend,
   };
 };
 

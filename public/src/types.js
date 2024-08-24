@@ -74,6 +74,7 @@
  * @typedef EvidenceAPIProps
  * @property {(itemIndex: number, evidence: EvidenceRecord[]) => Promise<Response>} updateEvidence The function to call to update a widget item's evidence.
  * @property {(itemIndex: number, evidenceIndex: number, trends: EvidenceTrend[]) => Promise<Response>} updateTrends The function to call to update an evidence object's trends.
+ * @property {(evidenceRecordId: number, trendId: number) => Promise<Response>} deleteTrendFunc The function to call to delete a single trend.
  */
 
 /**

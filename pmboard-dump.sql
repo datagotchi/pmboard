@@ -106,7 +106,9 @@ CREATE TABLE public.journey_steps (
     y text NOT NULL,
     journey_id bigint,
     tag_id text NOT NULL,
-    tag_class_name text
+    tag_class_name text,
+    tag_text text,
+    type text
 );
 
 
@@ -449,7 +451,6 @@ COPY public.evidence (id, name, url, icon, persona_id, created_date, modified_da
 9	How To Stay Motivated When Your Dreams Keep Drifting Into The Future _ by Alberto Cabas Vidani _ Aug, 2024 _ Entrepreneurship Handbook.pdf	https://drive.google.com/file/d/1xDjgq3UmlgGiGKoh-eK08MVUZo2WCx62/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	3	2024-08-13	2024-08-13	\N
 10	Neuroscience Says This Quality Is Key for Entrepreneurial Success, and It Has Nothing to Do With Intelligence or Grit _ Inc.com.pdf	https://drive.google.com/file/d/1U-rbRJb5nwqx7XE32id_ghTYPaaQ6FCE/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	3	2024-08-13	2024-08-13	\N
 11	Venture capitalists move toward _pay to play_.pdf	https://drive.google.com/file/d/1PnyAVHteY4quNPbWGmO8n-bKH2i5Wq_Y/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	4	2024-08-13	2024-08-13	\N
-12	Entrepreneur	\N	\N	\N	\N	\N	1
 13	Investor	\N	\N	\N	\N	\N	2
 14	PMBoard proposal	https://docs.google.com/document/d/1KzD6QLuWW0qv7SJreMW0G3Piw96x7zBmUgdLC-vCIoE/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	5	\N	\N	\N
 15	PMboard Self user research notes - R&D scientist	https://docs.google.com/document/d/1fDUyMO5GRTokJn5khMWPAhJCsuFUmQp62m-lYmhfDGo/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	5	2024-08-08	2024-08-08	\N
@@ -468,8 +469,6 @@ COPY public.evidence (id, name, url, icon, persona_id, created_date, modified_da
 32	Trump bizarrely blames Harris for turned-Black remark_ _She said it. I didn't say it_ (video) - Boing Boing.pdf	https://drive.google.com/file/d/1xFDIjHTSpLPZ_D5TVff92nfJz-i-YZFQ/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	8	2024-08-11	2024-08-11	\N
 33	Inspect proposal for information tracking	https://docs.google.com/document/d/1UI8zBNhSGD31j6YuBpH3rFm0wrJwLeyXt7iaZR-M1yU/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	9	\N	\N	\N
 34	$$$ Plans	https://docs.google.com/spreadsheets/d/1Kr8kb82eSsRiRC09rPkbbII6nom8-yWMmFp9JObk0EY/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.spreadsheet	12	2023-02-14	2024-08-10	\N
-35	Is Your Rent an Antitrust Violation_ - The Atlantic.pdf	https://drive.google.com/file/d/1Y-XQbq-dnVOde9GjSjjQ4lPzDaXU6de1/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	14	2024-08-11	2024-08-11	\N
-36	New Google Pixel 9 voice assistant Gemini is a trainwreck - Fast Company.pdf	https://drive.google.com/file/d/1v1fwScg0uJz2Q1gUCNnMnrd9Skm9JkKB/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	14	2024-08-15	2024-08-15	\N
 37	We All Know AI Can’t Code, Right_ _ by Joe Procopio _ Aug, 2024 _ Entrepreneurship Handbook.pdf	https://drive.google.com/file/d/1Q2SncKXRLoNMBpdIOZF9HD5-8oV7aeJU/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	15	2024-08-11	2024-08-11	\N
 38	The Braindead Senior Dev Hypothesis _ by Andrew Zuo _ Aug, 2024 _ Medium.pdf	https://drive.google.com/file/d/1WlOWFq7uFUpUACaEaheSWvl_HThR6f5Z/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	15	2024-08-12	2024-08-12	\N
 39	Flood of 'junk'_ How AI is changing scientific publishing.pdf	https://drive.google.com/file/d/1oq8fJ7ur33fnvkVWij2onoHu6sN4yCJj/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	16	2024-08-11	2024-08-11	\N
@@ -495,6 +494,7 @@ COPY public.evidence (id, name, url, icon, persona_id, created_date, modified_da
 59	My New Tech Job Strategy is Doing Nothing _ by The Secret Developer _ Jun, 2024 _ Medium.pdf	https://drive.google.com/file/d/13KKCg7nQh1PU8tH2O5dQtqydP4dK3MNW/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	21	2024-08-11	2024-08-11	\N
 60	There is no Developer Shortage. None of this crap really needs to exist _ by Kenneth Reilly _ Medium.pdf	https://drive.google.com/file/d/1GKgAON8U43XwIWaXr23YLQvIhLHxbj9K/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	22	2024-08-13	2024-08-13	\N
 61	Hard Core Programming is Dead. Software developers voted with their… _ by The Secret Developer _ Jun, 2024 _ Medium.pdf	https://drive.google.com/file/d/1f_8Hlk5zttqi_NrUrnT-GsqOCmz5st9o/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	22	2024-08-12	2024-08-12	\N
+36	New Google Pixel 9 voice assistant Gemini is a trainwreck - Fast Company.pdf	https://drive.google.com/file/d/1v1fwScg0uJz2Q1gUCNnMnrd9Skm9JkKB/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	14	2024-08-15	2024-08-15	\N
 62	Tech Companies Can’t Find Good Employees and It’s Their Own Fault _ by Joe Procopio _ Aug, 2024 _ Entrepreneurship Handbook.pdf	https://drive.google.com/file/d/1IWBIk1pTXS7Szc-LTa32CrlZbusU1u7e/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	22	2024-08-13	2024-08-13	\N
 63	Recruiter research: Barry Kwok	https://docs.google.com/document/d/1XyIbba5H05ckeBVqADJ3iG5PeUeX5IcQaTIoIdQWihc/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	23	\N	\N	\N
 64	Career Nebula	https://docs.google.com/document/d/1NhY2KogMo0ik8bqYwH1KPu6qTXv2ngeOgwGcpY44qlY/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	23	\N	\N	\N
@@ -509,6 +509,7 @@ COPY public.evidence (id, name, url, icon, persona_id, created_date, modified_da
 73	Unemployed Techie	\N	\N	\N	\N	\N	21
 74	Employed Techie	\N	\N	\N	\N	\N	21
 78	Product Manager	\N	\N	\N	2024-08-17	2024-08-17	22
+35	Is Your Rent an Antitrust Violation_ - The Atlantic.pdf	https://drive.google.com/file/d/1Y-XQbq-dnVOde9GjSjjQ4lPzDaXU6de1/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	14	2024-08-11	2024-08-11	\N
 85	R&D Scientist	null	null	5	2024-08-17	2024-08-17	23
 \.
 
@@ -517,7 +518,10 @@ COPY public.evidence (id, name, url, icon, persona_id, created_date, modified_da
 -- Data for Name: journey_steps; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.journey_steps (id, x, y, journey_id, tag_id, tag_class_name) FROM stdin;
+COPY public.journey_steps (id, x, y, journey_id, tag_id, tag_class_name, tag_text, type) FROM stdin;
+6	400px	50px	14	There is so much information involved in the creation of new products	objective selected	There is so much information involved in the creation of new products (1)	terminus
+9	700px	170px	14	Make money	goal	Make money (1)	\N
+10	50px	150px	14	Research & document stakeholder needs	goal	Research & document stakeholder needs (1)	\N
 \.
 
 
@@ -526,6 +530,7 @@ COPY public.journey_steps (id, x, y, journey_id, tag_id, tag_class_name) FROM st
 --
 
 COPY public.journeys (id, story_id) FROM stdin;
+14	23
 \.
 
 
@@ -592,13 +597,16 @@ COPY public.stories (id, name, product_id, index) FROM stdin;
 19	s2	4	\N
 20	Enable all kinds of Techies to quickly apply to gigs based on specific skills	6	\N
 21	Enable Techies to use CO as a career dashboard their entire lives	6	\N
-23	Enable R&D Scientists to explore user journeys to decide on a solution	2	0
-12	Enable R&D Scientists, Entrepreneurs, and Product Managers to quickly & effectively pivot when markets/stakeholder needs change	2	1
-13	For MVP iteration, users need a timeline view of lessons learned	2	2
-22	Integrated product teams will retain employees better, make them less upset/burned out/etc.	2	3
-14	Enable R&D Scientists to compare several revenue streams	2	4
-11	Assist Entrepreneurs/Startups empathizing with stakeholders using PMBoard	2	5
-9	Enable users to link trends at different levels/types	2	6
+24	Enable R&D Scientists, Entrepreneurs, & Product Managers to manage risks across business areas	2	0
+25	Enable Entrepreneurs to document MVP test lessons	2	1
+23	Enable R&D Scientists to explore user journeys to decide on a solution	2	2
+12	Enable R&D Scientists, Entrepreneurs, and Product Managers to quickly & effectively pivot when markets/stakeholder needs change	2	3
+26	Enable Entrepreneurs & Product Managers to document business objectives and link them to stakeholder needs	2	4
+13	For MVP iteration, users need a timeline view of lessons learned	2	5
+22	Integrated product teams will retain employees better, make them less upset/burned out/etc.	2	6
+14	Enable R&D Scientists to compare several revenue streams	2	7
+11	Assist Entrepreneurs/Startups empathizing with stakeholders using PMBoard	2	8
+9	Enable users to link trends at different levels/types	2	9
 \.
 
 
@@ -607,31 +615,6 @@ COPY public.stories (id, name, product_id, index) FROM stdin;
 --
 
 COPY public.tasks (id, name, product_id, index) FROM stdin;
-1	My jobs are broad about and at early stage startups	1	\N
-2	Come up with a DG labs pitch for accelerators	1	\N
-3	Michigan Founder's Fund meets at Start Garden once a month -- \\"founder's first friday\\"	1	\N
-4	MSU organization is *not* just for MSU people -- it's called Conquer	1	\N
-5	I'm very good at identifying problem trends in news, analyzing root causes, and analyzing possible solutions	1	\N
-6	Mention my information science education/training and introduction to concepts like information asymmetries and information overload	1	\N
-7	I'm incubating Datagotchi Labs to be about addressing these issues (in underserved markets/communities?) and finding novel business models to support them	1	\N
-8	Mention interdisciplinary vs multidisciplinary: my backgrounds + DG's multiple focuses	1	\N
-9	The key is documenting things (information)	1	\N
-10	For MI-centric messaging, maybe focus on local hires rather than remote gig workers	1	\N
-11	Either way, become an expert at building teams (with Counteroffer?)	1	\N
-12	Maybe pitch startup incubation based on stakeholder empathy	1	\N
-13	But unless I get donations up front, perhaps with equity promises (profit dividends), this will take forever and not make much money	1	\N
-14	I'd have to brand myself as very good at early & ongoing research, mvp testing, problem-solving, etc...	1	\N
-15	Also my experience in R&D, startups in SF, and early DG Labs (wearing many hats)	1	\N
-16	Don't forget about consulting and coaching about these lessons -- after documenting them and *organizing* them	1	\N
-17	I worked for startups to learn how they commercialize their technologies. So my heart is really in new technology R&D	1	\N
-18	DG, Inspect, and CO initial ideas are low profit margin and slow growth, so investors won't be interested	1	\N
-19	Could pitch the interpretable analytics now	1	\N
-20	With my skills, EIR @ SG would be great (focused on nearly stage opportunity discovery &  validation) -- ask Laurie or her contact?	1	\N
-21	Come up with an argument that empathy improves R&D/startups/or something	1	\N
-22	Empathy makes your startup more resilient in the face of changing markets because you can more easily hypothesize what stakeholders need even if they didn't tell you directly	1	\N
-23	Create a proxy, so I can use one easy to instance for all three projects	1	\N
-24	Reduce ec2 size while it's just me	1	\N
-25	Show product name \\u003E item type \\u003E item name on modal	2	\N
 26	Enable custom trend types	2	\N
 27	t1	4	\N
 28	t2	4	\N
@@ -650,6 +633,17 @@ COPY public.tasks (id, name, product_id, index) FROM stdin;
 41	No one will ever find us Partly because I don’t do hype-y things like generative AI	6	\N
 42	And partly because I’m great at things no one thinks they need	6	\N
 43	\tGet basic resume creation from LinkedIn CVS working again	6	\N
+12	Maybe pitch startup incubation based on stakeholder empathy	1	5
+23	Create a proxy, so I can use one easy to instance for all three projects	1	6
+24	Reduce ec2 size while it's just me	1	7
+4	MSU organization is *not* just for MSU people -- it's called Conquer	1	8
+44	Look into Redux & GraphQL & backend caching	2	\N
+45	Show product name > item type > item name on modal	2	\N
+20	With my skills, EIR @ SG would be great (focused on nearly stage opportunity discovery &  validation) -- ask Laurie or her contact?	1	0
+7	I'm incubating Datagotchi Labs to be about addressing these issues (in underserved markets/communities?) and finding novel business models to support them	1	1
+10	For MI-centric messaging, maybe focus on local hires rather than remote gig workers	1	2
+11	Either way, become an expert at building teams (with Counteroffer?)	1	3
+13	But unless I get donations up front, perhaps with equity promises (profit dividends), this will take forever and not make much money	1	4
 \.
 
 
@@ -688,7 +682,6 @@ COPY public.trends (id, name, type, evidence_id) FROM stdin;
 28	Sharing my knowledge and skills	goal	2
 29	To empower myself & other people with information	objective	2
 30	To use my knowledge and skills	objective	2
-31	The UX for creating empathy maps & citing those tags in the StoriesWidget needs to be MUCH better		12
 32	Probably through generation of pitches		13
 33	There is so much information involved in the creation of new products	objective	14
 34	Also a lot of information in MVP iteration	objective	14
@@ -1150,7 +1143,47 @@ COPY public.trends (id, name, type, evidence_id) FROM stdin;
 496	There are many roles because of Unrealistic Expectations	objective	71
 497	There are many roles because of Manipulative Practices	objective	71
 498	There are many roles because of Overdigitalization of our lives	objective	71
-499	There is so much information involved in the creation of new products	objective	85
+499	There is so much information involved in the creation of new products	objective selected	85
+501	To document my learnings so I can get better/make others better over time	objective selected	85
+502	Afford to live by myself	objective selected	85
+503	Research & document stakeholder needs	goal	85
+504	To frame information so it can be used	goal	85
+505	To expose hidden information	goal	85
+506	To reduce information overload	goal	85
+507	Make money	goal	85
+508	Talk to people who might be associated to a problem space	activity	85
+509	Document insights from talking to people	activity	85
+510	Stay aware of news in my feeds	activity	85
+511	Document important articles/posts	activity	85
+512	Develop & test prototypes locally	activity	85
+513	Commit code to GitHub to document it"	activity	85
+514	Try crowdfunding, investors, subscriptions, transaction fees, etc…	activity	85
+515	Provide services to companies	activity	85
+516	Any solution must link stakeholder needs to value propositions, then value propositions to features and their roadmap	task	85
+517	Any solution must any solution must track and link stakeholder research (original and with your product), market research, and product development/launches over time	task	85
+518	Talk to friends and family	task	85
+519	Email myself insights from talking to friends and family	task	85
+520	Network to gain professional connections	task	85
+521	Email myself insights from professional connections	task	85
+522	Read Feedly, Google News, Twitter	task	85
+523	Share articles/posts to myself via email	task	85
+524	Prototype in React & Node.js in Visual Studio Code	task	85
+525	Analyze, approve, & push code reviews on GitHub	task	85
+526	Software development	task	85
+527	Incrementally-Formalized Stakeholder Empathy Visualizations	resource	85
+528	Feedly	resource	85
+529	Google News	resource	85
+530	Twitter	resource	85
+531	Email	resource	85
+532	GitHub	resource	85
+533	Visual Studio Code	resource	85
+534	Reacat	resource	85
+535	Node.js	resource	85
+536	PMBoard	resource	85
+537	Test		35
+500	To explore social problem spaces, potential solutions, & novel revenue streams	objective selected	85
+538	Test2		35
+539	Test3		35
 \.
 
 
@@ -1165,21 +1198,21 @@ SELECT pg_catalog.setval('public.companies_id_seq', 16, true);
 -- Name: evidence_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.evidence_id_seq', 85, true);
+SELECT pg_catalog.setval('public.evidence_id_seq', 86, true);
 
 
 --
 -- Name: journeySteps_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."journeySteps_id_seq"', 2, true);
+SELECT pg_catalog.setval('public."journeySteps_id_seq"', 23, true);
 
 
 --
 -- Name: journeys_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.journeys_id_seq', 10, true);
+SELECT pg_catalog.setval('public.journeys_id_seq', 15, true);
 
 
 --
@@ -1200,21 +1233,21 @@ SELECT pg_catalog.setval('public.products_id_seq', 6, true);
 -- Name: stories_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.stories_id_seq', 23, true);
+SELECT pg_catalog.setval('public.stories_id_seq', 26, true);
 
 
 --
 -- Name: tasks_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.tasks_id_seq', 43, true);
+SELECT pg_catalog.setval('public.tasks_id_seq', 45, true);
 
 
 --
 -- Name: trends_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.trends_id_seq', 499, true);
+SELECT pg_catalog.setval('public.trends_id_seq', 539, true);
 
 
 --

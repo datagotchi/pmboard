@@ -51,8 +51,13 @@ export const updateEvidenceExpressFunc =
                   (key) =>
                     key !== "id" && key !== "trends" && key !== "story_id"
                 )
-                .map((recordKey) => `${recordKey} = '${record[recordKey]}'`);
-              setClauseItems.push(`${itemIdKey} = ${itemId}`);
+                .map(
+                  (recordKey) =>
+                    `${recordKey} = ${formatSetClauseValue(record[recordKey])}`
+                );
+              if (!Object.keys(record).includes(itemIdKey)) {
+                setClauseItems.push(`${itemIdKey} = ${itemId}`);
+              }
               const setClause = setClauseItems.join(", ");
               await req.client.query({
                 text: `update evidence set ${setClause} where id = $1::integer`,
@@ -123,18 +128,11 @@ export const updateEvidenceExpressFunc =
 
 export const trackEvidenceIndexExpressFunc =
   (itemCollectionName, itemIndexKey) => (req, res, next) => {
-    const { evidence_ix } = req.params;
-    const { product, [itemIndexKey]: itemIx } = req;
-    if (
-      evidence_ix &&
-      evidence_ix < product[itemCollectionName][itemIx].evidence.length
-    ) {
-      req.evidence_ix = evidence_ix;
-      return next();
-    }
-    var err = new Error("No such evidence file");
-    err.status = 404;
-    return next(err);
+    const { evidence_id } = req.params;
+
+    req.evidence_id = evidence_id;
+
+    next();
   };
 
 export const deleteEvidenceExpressFunc =
@@ -194,22 +192,25 @@ export const changeTrendExpressFunc =
     });
   };
 
-export const deleteTrendExpressFunc =
-  (itemCollectionName, itemIndexKey) => async (req, res, next) => {
-    const { product, [itemIndexKey]: itemIndex } = req;
-    var evIx = req.evidence_ix;
-    var trendIx = req.params.trend_ix;
-    product[itemCollectionName][itemIndex].evidence[evIx].trends.splice(
-      trendIx,
-      1
-    );
+export const deleteTrendExpressFunc = () => async (req, res, next) => {
+  var trendId = req.params.trend_id;
 
-    await prod.save();
+  if (trendId) {
+    await req.client.query({
+      text: "delete from trends where id = $1::integer",
+      values: [trendId],
+    });
 
+    req.client.release();
     return res.json({
       success: true,
     });
-  };
+  } else {
+    const err = new Error("Invalid request: no trend_id");
+    err.status = 400;
+    next(err);
+  }
+};
 
 // module.exports = {
 //   getEvidenceExpressFunc,

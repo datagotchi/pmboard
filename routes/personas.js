@@ -55,6 +55,7 @@ router.post("/", addItem("personas"));
 
 router.param("persona_id", function (req, res, next) {
   req.persona_id = req.params.persona_id;
+  console.log("*** setting persona_id: ", req.persona_id);
   return next();
 });
 
@@ -79,33 +80,33 @@ router.post(
 router.put("/:persona_id/evidence", updateEvidenceExpressFunc("persona_id"));
 
 router.param(
-  "evidence_ix",
+  "evidence_id",
   trackEvidenceIndexExpressFunc("personas", "persona_id")
 );
 
 router.delete(
-  "/:company_ix/evidence/:evidence_ix",
+  "/:company_ix/evidence/:evidence_id",
   deleteEvidenceExpressFunc("personas", "persona_id")
 );
 
 router.get(
-  "/:persona_id/evidence/:evidence_ix/trends",
+  "/:persona_id/evidence/:evidence_id/trends",
   getTrendsExpressFunc("personas", "persona_id")
 );
 
 router.post(
-  "/:persona_id/evidence/:evidence_ix/trends",
+  "/:persona_id/evidence/:evidence_id/trends",
   addTrendExpressFunc("personas", "persona_id")
 );
 
 router.put(
-  "/:persona_id/evidence/:evidence_ix/trends/:trend_ix",
+  "/:persona_id/evidence/:evidence_id/trends/:trend_id",
   changeTrendExpressFunc("personas", "persona_id")
 );
 
 router.delete(
-  "/:persona_id/evidence/:evidence_ix/trends/:trend_ix",
-  deleteTrendExpressFunc("personas", "persona_id")
+  "/:persona_id/evidence/:evidence_id/trends/:trend_id",
+  deleteTrendExpressFunc()
 );
 
 export default router;

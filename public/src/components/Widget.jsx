@@ -34,10 +34,8 @@ const Widget = ({
   summaryTitle,
 }) => {
   const data = useCollectionItems(productId, collectionName);
-  const { addItem, updateItem, deleteItem, updateEvidence } = useCollectionAPI(
-    productId,
-    collectionName
-  );
+  const { addItem, updateItem, deleteItem, updateEvidence, deleteTrend } =
+    useCollectionAPI(productId, collectionName);
   const { updateProductCollection } = useProductAPI();
 
   /**
@@ -297,6 +295,7 @@ const Widget = ({
             currentWidgetItem.evidence = evidence;
             updateEvidence(currentWidgetItem.id, evidence);
           }}
+          deleteTrendFunc={deleteTrend}
         />
       )}
     </>

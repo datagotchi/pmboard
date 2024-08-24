@@ -23,6 +23,7 @@ import {
  * @param {(evidence: EvidenceRecord[]) => void} props.updateEvidenceOnServer The function to call when evidence is updated in this modal.
  * @param {string} props.summaryTitle The title of the summary tab.
  * @param {(item: WidgetDataItem) => Promise<Response>} props.updateItemFunc The function to call to update an entire item.
+ * @param {(itemId: number, evidenceRecordId: number, trendId: number) => Promise<Response>} props.deleteTrendFunc The function to call to update a single trend.
  * @returns {React.JSX.Element} The rendered modal.
  * @example
  *  <Modal item={*} dialogId="*" updateItemFunc={*} updateTrendFunc={*} summaryTitle="*" addItemEvidenceFunc={*} />
@@ -34,6 +35,7 @@ const Modal = ({
   updateEvidenceOnServer,
   summaryTitle,
   updateItemFunc,
+  deleteTrendFunc,
 }) => {
   /**
    * Convert the per-record evidence data into a flat tag array.
@@ -172,6 +174,9 @@ const Modal = ({
                           containerModalId={dialogId}
                           updateEvidenceOnServer={updateEvidenceOnServer}
                           allTagsUpdated={(tags) => setAllTags(tags)}
+                          deleteTrendFunc={(recordId, trendId) =>
+                            deleteTrendFunc(item.id, recordId, trendId)
+                          }
                         />
                       </div>
                     </AllTagsContext.Provider>

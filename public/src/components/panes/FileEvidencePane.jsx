@@ -29,6 +29,7 @@ const FileEvidencePane = ({
   containerModalId,
   updateEvidenceOnServer,
   allTagsUpdated,
+  deleteTrendFunc,
 }) => {
   const ADD_FILES_DIALOG_ID = `addFilesModal: ${containerModalId}`;
 
@@ -107,7 +108,7 @@ const FileEvidencePane = ({
         });
       });
       if (thereAreChanges) {
-        updateEvidenceOnServer(evidence);
+        // updateEvidenceOnServer(evidence); // FIXME: remove this in favor of specific calls
         // TODO: try to avoid one more re-render/re-evaluation of this effect after making this change
         setTagsPerFile({ ...tagsPerFile });
       }
@@ -368,6 +369,8 @@ const FileEvidencePane = ({
                         );
                       }}
                       handleDelete={(index) => {
+                        const trend = file.trends[index];
+                        deleteTrendFunc(file.id, trend.id);
                         const thisFileTrends = tagsPerFile[file.url];
                         thisFileTrends.splice(index, 1);
                         setTagsPerFile({

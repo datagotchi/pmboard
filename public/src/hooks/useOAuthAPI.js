@@ -63,8 +63,8 @@ const useOAuthAPI = () => {
       authorizationUrl.searchParams.set("state", state);
     }
 
-    // now redirect the user to authorizationUrl.href
-    open(authorizationUrl, "_self");
+    // FIXME: 401 invalid client: "The OAuth client was not found."
+    // open(authorizationUrl, "_self");
   };
 
   /**
