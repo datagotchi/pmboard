@@ -6,11 +6,10 @@ import { addItem, updateItem, deleteItem } from "./collectionItemFunctions.js";
 import {
   getEvidenceExpressFunc,
   addEvidenceExpressFunc,
-  getTrendsExpressFunc,
-  trackEvidenceIndexExpressFunc,
+  trackEvidenceIdExpressFunc,
   deleteEvidenceExpressFunc,
   addTrendExpressFunc,
-  changeTrendExpressFunc,
+  updateTrendExpressFunc,
   deleteTrendExpressFunc,
 } from "./evidenceFunctions.js";
 import { formatSetClauseValue } from "../util.js";
@@ -71,16 +70,11 @@ router.get("/:task_id/evidence", getEvidenceExpressFunc("taks", "task_id"));
 // add persona evidence
 router.post("/:task_id/evidence", addEvidenceExpressFunc("tasks", "task_id"));
 
-router.param("evidence_ix", trackEvidenceIndexExpressFunc("tasks", "task_id"));
+router.param("evidence_ix", trackEvidenceIdExpressFunc("tasks", "task_id"));
 
 router.delete(
   "/:task_id/evidence/:evidence_ix",
   deleteEvidenceExpressFunc("tasks", "task_id")
-);
-
-router.get(
-  "/:task_id/evidence/:evidence_ix/trends",
-  getTrendsExpressFunc("tasks", "task_id")
 );
 
 router.post(
@@ -90,7 +84,7 @@ router.post(
 
 router.put(
   "/:task_id/evidence/:evidence_ix/trends/:trend_ix",
-  changeTrendExpressFunc("tasks", "task_id")
+  updateTrendExpressFunc("tasks", "task_id")
 );
 
 router.delete(

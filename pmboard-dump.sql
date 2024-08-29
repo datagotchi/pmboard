@@ -467,7 +467,6 @@ COPY public.evidence (id, name, url, icon, persona_id, created_date, modified_da
 33	Inspect proposal for information tracking	https://docs.google.com/document/d/1UI8zBNhSGD31j6YuBpH3rFm0wrJwLeyXt7iaZR-M1yU/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	9	\N	\N	\N
 20	Counteroffer self user research notes -- Collusion	https://docs.google.com/document/d/1zPEtCLeSYJCT_3iLFYuR4U3NqAY8-ZoptGnN0RiR3XI/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	7	2024-08-06	2024-08-06	\N
 18	PMBoard proposal	https://docs.google.com/document/d/1KzD6QLuWW0qv7SJreMW0G3Piw96x7zBmUgdLC-vCIoE/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	7	\N	\N	\N
-34	$$$ Plans	https://docs.google.com/spreadsheets/d/1Kr8kb82eSsRiRC09rPkbbII6nom8-yWMmFp9JObk0EY/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.spreadsheet	12	2023-02-14	2024-08-10	\N
 37	We All Know AI Can’t Code, Right_ _ by Joe Procopio _ Aug, 2024 _ Entrepreneurship Handbook.pdf	https://drive.google.com/file/d/1Q2SncKXRLoNMBpdIOZF9HD5-8oV7aeJU/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	15	2024-08-11	2024-08-11	\N
 38	The Braindead Senior Dev Hypothesis _ by Andrew Zuo _ Aug, 2024 _ Medium.pdf	https://drive.google.com/file/d/1WlOWFq7uFUpUACaEaheSWvl_HThR6f5Z/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	15	2024-08-12	2024-08-12	\N
 39	Flood of 'junk'_ How AI is changing scientific publishing.pdf	https://drive.google.com/file/d/1oq8fJ7ur33fnvkVWij2onoHu6sN4yCJj/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	16	2024-08-11	2024-08-11	\N
@@ -887,11 +886,6 @@ COPY public.trends (id, name, type, evidence_id) FROM stdin;
 240	Want to get the word out about important issues	objective	33
 241	The Thorough, Multimodal Summary Reposter	resource	33
 242	Adaptable Reliability & Context Visualizations	resource	33
-243	Resource	resource	34
-244	Task	task	34
-245	Activity	activity	34
-246	Goal	goal	34
-247	Objective	objective	34
 248	Remote work is bad for you	task	42
 249	Remote work can kill a junior's career	activity	42
 250	Techies won't grow if they stay at one company in one domain	objective	42
@@ -1165,7 +1159,6 @@ COPY public.trends (id, name, type, evidence_id) FROM stdin;
 519	Email myself insights from talking to friends and family	task	85
 520	Network to gain professional connections	task	85
 521	Email myself insights from professional connections	task	85
-541	Linked Widget Timelines		18
 522	Read Feedly, Google News, Twitter	task	85
 523	Share articles/posts to myself via email	task	85
 524	Prototype in React & Node.js in Visual Studio Code	task	85
@@ -1182,6 +1175,9 @@ COPY public.trends (id, name, type, evidence_id) FROM stdin;
 535	Node.js	resource	85
 536	PMBoard	resource	85
 500	To explore social problem spaces, potential solutions, & novel revenue streams	objective selected	85
+541	Linked Widget Timelines	resource	18
+542	Semantic Widget Citations	resource	18
+543	Incrementally-Formalized Stakeholder Empathy Visualizations	resource	18
 \.
 
 
@@ -1245,7 +1241,7 @@ SELECT pg_catalog.setval('public.tasks_id_seq', 45, true);
 -- Name: trends_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.trends_id_seq', 541, true);
+SELECT pg_catalog.setval('public.trends_id_seq', 543, true);
 
 
 --

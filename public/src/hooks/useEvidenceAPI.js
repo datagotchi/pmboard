@@ -28,19 +28,6 @@ const useEvidenceAPI = (productId, collectionName) => {
     );
   };
 
-  // const updateTrends = (itemIndex, evidenceIndex, trends) =>
-  //   fetch(
-  //     `/products/${productId}/${collectionName}/${itemIndex}/evidence/${evidenceIndex}/trends`,
-  //     {
-  //       method: "PUT",
-  //       headers: {
-  //         Accept: "application/json",
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(trends),
-  //     }
-  //   );
-
   /**
    * Delete a trend by its ID.
    * @param {number} itemId The ID of the item containing evidence containing the trend.
@@ -78,11 +65,32 @@ const useEvidenceAPI = (productId, collectionName) => {
       }
     );
 
+  /**
+   * Replace the name or type of a trend.
+   * @param {number} itemId The ID of the item containing evidence containing the trend.
+   * @param {number} evidenceId The ID of the evidence containing the trend.
+   * @param {EvidenceTrend} trend The trend to update on the server.
+   * @returns {Promise<Response>} The fetch promise.
+   * @example <ReactTags handleTagClick={() => updateTrend()} />
+   */
+  const updateTrend = (itemId, evidenceId, trend) =>
+    fetch(
+      `/products/${productId}/${collectionName}/${itemId}/evidence/${evidenceId}/trends/${trend.id}`,
+      {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(trend),
+      }
+    );
+
   return {
     updateEvidence,
-    // updateTrends,
     deleteTrend,
     addTrend,
+    updateTrend,
   };
 };
 

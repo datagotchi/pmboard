@@ -31,6 +31,7 @@ const FileEvidencePane = ({
   allTagsUpdated,
   deleteTrendFunc,
   addTrendFunc,
+  updateTrendNameFunc,
 }) => {
   const ADD_FILES_DIALOG_ID = `addFilesModal: ${containerModalId}`;
 
@@ -192,6 +193,7 @@ const FileEvidencePane = ({
           addFilesModal.close();
         }
       });
+      // FIXME: does not list files
       addFilesModal.showModal();
     }
   };
@@ -237,7 +239,10 @@ const FileEvidencePane = ({
    * @example <DeleteButton onClick={() => removeFile(...)} />
    */
   const removeFile = async (file) => {
-    await updateEvidenceOnServer(evidence.filter((f) => f.url !== file.url));
+    const fileIndex = evidence.indexOf((f) => f.url === file.url);
+    evidence.splice(fileIndex, 1);
+    // await updateEvidenceOnServer(evidence.filter((f) => f.url !== file.url));
+    await updateEvidenceOnServer(evidence);
     setFiles(files.filter((f) => f.url !== file.url));
     const newGoogleFiles = [...googleFiles, file];
     setGoogleFiles(newGoogleFiles);
@@ -326,7 +331,6 @@ const FileEvidencePane = ({
                         });
                         addTrendFunc(file.id, {
                           name: tag.id,
-                          type: tag.className,
                         });
                       }}
                       // suggestions={allTags
@@ -353,6 +357,11 @@ const FileEvidencePane = ({
                             tag.text.slice(1),
                           className: fileTags[index].className,
                         };
+                        const trend = file.trends[index];
+                        updateTrendNameFunc(file.id, {
+                          id: trend.id,
+                          name: tag.id,
+                        });
                         setTagsPerFile({
                           ...tagsPerFile,
                           [file.url]: fileTags,

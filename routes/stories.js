@@ -7,11 +7,10 @@ import {
   getEvidenceExpressFunc,
   addEvidenceExpressFunc,
   updateEvidenceExpressFunc,
-  trackEvidenceIndexExpressFunc,
+  trackEvidenceIdExpressFunc,
   deleteEvidenceExpressFunc,
-  getTrendsExpressFunc,
   addTrendExpressFunc,
-  changeTrendExpressFunc,
+  updateTrendExpressFunc,
   deleteTrendExpressFunc,
 } from "./evidenceFunctions.js";
 import { formatSetClauseValue } from "../util.js";
@@ -147,19 +146,11 @@ router.post(
 
 router.put("/:story_id/evidence", updateEvidenceExpressFunc("story_id"));
 
-router.param(
-  "evidence_ix",
-  trackEvidenceIndexExpressFunc("stories", "story_id")
-);
+router.param("evidence_ix", trackEvidenceIdExpressFunc("stories", "story_id"));
 
 router.delete(
   "/:story_id/evidence/:evidence_ix",
   deleteEvidenceExpressFunc("stories", "story_id")
-);
-
-router.get(
-  "/:story_id/evidence/:evidence_ix/trends",
-  getTrendsExpressFunc("stories", "story_id")
 );
 
 router.post(
@@ -169,7 +160,7 @@ router.post(
 
 router.put(
   "/:story_id/evidence/:evidence_ix/trends/:trend_ix",
-  changeTrendExpressFunc("stories", "story_id")
+  updateTrendExpressFunc("stories", "story_id")
 );
 
 router.delete(

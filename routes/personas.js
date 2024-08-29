@@ -6,12 +6,11 @@ import { addItem, updateItem, deleteItem } from "./collectionItemFunctions.js";
 import {
   getEvidenceExpressFunc,
   addEvidenceExpressFunc,
-  getTrendsExpressFunc,
-  trackEvidenceIndexExpressFunc,
+  trackEvidenceIdExpressFunc,
   updateEvidenceExpressFunc,
   deleteEvidenceExpressFunc,
   addTrendExpressFunc,
-  changeTrendExpressFunc,
+  updateTrendExpressFunc,
   deleteTrendExpressFunc,
 } from "./evidenceFunctions.js";
 import { formatSetClauseValue } from "../util.js";
@@ -96,26 +95,23 @@ router.post(
 
 router.put("/:persona_id/evidence", updateEvidenceExpressFunc("persona_id"));
 
-router.param(
-  "evidence_id",
-  trackEvidenceIndexExpressFunc("personas", "persona_id")
-);
+router.param("evidence_id", trackEvidenceIdExpressFunc());
 
 router.delete(
   "/:company_ix/evidence/:evidence_id",
   deleteEvidenceExpressFunc("personas", "persona_id")
 );
 
-router.get(
-  "/:persona_id/evidence/:evidence_id/trends",
-  getTrendsExpressFunc("personas", "persona_id")
-);
+// router.get(
+//   "/:persona_id/evidence/:evidence_id/trends",
+//   getTrendsExpressFunc("personas", "persona_id")
+// );
 
 router.post("/:persona_id/evidence/:evidence_id/trends", addTrendExpressFunc());
 
 router.put(
   "/:persona_id/evidence/:evidence_id/trends/:trend_id",
-  changeTrendExpressFunc()
+  updateTrendExpressFunc()
 );
 
 router.delete(

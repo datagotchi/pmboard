@@ -41,6 +41,7 @@ const Widget = ({
     updateEvidence,
     deleteTrend,
     addTrend,
+    updateTrend,
   } = useCollectionAPI(productId, collectionName);
   const { updateProductCollection } = useProductAPI();
 
@@ -303,6 +304,7 @@ const Widget = ({
           }}
           deleteTrendFunc={deleteTrend}
           addTrendFunc={addTrend}
+          updateTrendFunc={updateTrend}
         />
       )}
     </>

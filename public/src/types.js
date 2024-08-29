@@ -108,7 +108,10 @@
  * @property {EvidenceRecord[]} evidence The evidence to show in the pane.
  * @property {string} containerModalId The ID of the containing modal dialog.
  * @property {(evidence: EvidenceRecord[]) => Promise<Response>} updateEvidenceOnServer The function to call when the evidence collection changes.
- * @property {(tags: ReactTags.Tag[]) => void} tagsUpdatedFunc The function to call when tags are updated in the evidence pane.
+ * @property {(tags: ReactTags.Tag[]) => void} allTagsUpdated The function to call when tags are updated in the evidence pane.
+ * @property {(fileId: number, trendId: number) => Promise<Response>} deleteTrendFunc The function to call to delete a trend from the server.
+ * @property {(fileId: number, trend: EvidenceTrend) => Promise<Response>} addTrendFunc The function to call to add a trend to the server.
+ * @property {(fileId: number, trend: EvidenceTrend) => Promise<Response>} updateTrendNameFunc The function to call to update a trend's name or type on the server.
  */
 
 /**

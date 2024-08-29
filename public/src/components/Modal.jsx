@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { WithContext as ReactTags } from "react-tag-input";
 
 import { EvidenceRecord, EvidenceTrend, WidgetDataItem } from "../types";
@@ -23,8 +23,9 @@ import {
  * @param {(evidence: EvidenceRecord[]) => void} props.updateEvidenceOnServer The function to call when evidence is updated in this modal.
  * @param {string} props.summaryTitle The title of the summary tab.
  * @param {(item: WidgetDataItem) => Promise<Response>} props.updateItemFunc The function to call to update an entire item.
- * @param {(itemId: number, evidenceRecordId: number, trendId: number) => Promise<Response>} props.deleteTrendFunc The function to call to delete a single trend.
+ * @param {(itemId: number, evidenceRecordId: number, trendId: number) => Promise<Response>} props.deleteTrendFunc The function to call to delete a trend.
  * @param {(itemId: number, evidenceRecordId: number, trend: EvidenceTrend) => Promise<Response>} props.addTrendFunc The function to call to add a new trend.
+ * @param {(itemId: number, evidenceRecordId: number, trend: EvidenceTrend) => Promise<Response>} props.updateTrendFunc The function to call to update a trend.
  * @returns {React.JSX.Element} The rendered modal.
  * @example
  *  <Modal item={*} dialogId="*" updateItemFunc={*} updateTrendFunc={*} summaryTitle="*" addItemEvidenceFunc={*} />
@@ -38,6 +39,7 @@ const Modal = ({
   updateItemFunc,
   deleteTrendFunc,
   addTrendFunc,
+  updateTrendFunc,
 }) => {
   /**
    * Convert the per-record evidence data into a flat tag array.
@@ -87,6 +89,27 @@ const Modal = ({
    */
   const [allTags, setAllTags] = useState(
     getFlatTagsWithCountsFromEvidence(item.evidence)
+  );
+
+  const findTrendInEvidence = useCallback(
+    (tagId) => {
+      let foundTrend;
+      const evidence = item.evidence.find((ev) => {
+        if (!foundTrend) {
+          const trend = ev.trends.find((t) => t.name === tagId);
+          if (trend) {
+            foundTrend = trend;
+            return true;
+          }
+        }
+        return false;
+      });
+      return {
+        evidenceId: evidence.id,
+        trend: foundTrend,
+      };
+    },
+    [item.evidence]
   );
 
   const EvidencePaneComponent = useContext(EvidencePaneContext);
@@ -156,7 +179,13 @@ const Modal = ({
                                 ];
                               tag.className = newClassName;
                               setAllTags([...allTags]); // to refresh their className displays
+                              const { evidenceId, trend } = findTrendInEvidence(
+                                tag.id
+                              );
+                              trend.type = newClassName;
+                              updateTrendFunc(item.id, evidenceId, trend);
                             }}
+                            // TODO: come up with a better data schema for journeys
                             summaryChanged={(summary) => {
                               item.summary = summary;
                               updateItemFunc(item);
@@ -176,11 +205,14 @@ const Modal = ({
                           containerModalId={dialogId}
                           updateEvidenceOnServer={updateEvidenceOnServer}
                           allTagsUpdated={(tags) => setAllTags(tags)}
-                          deleteTrendFunc={(recordId, trendId) =>
-                            deleteTrendFunc(item.id, recordId, trendId)
+                          deleteTrendFunc={(evidenceId, trendId) =>
+                            deleteTrendFunc(item.id, evidenceId, trendId)
                           }
-                          addTrendFunc={(recordId, trend) =>
-                            addTrendFunc(item.id, recordId, trend)
+                          addTrendFunc={(evidenceId, trend) =>
+                            addTrendFunc(item.id, evidenceId, trend)
+                          }
+                          updateTrendNameFunc={(evidenceId, trend) =>
+                            updateTrendFunc(item.id, evidenceId, trend)
                           }
                         />
                       </div>

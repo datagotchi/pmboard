@@ -37,7 +37,7 @@ export const updateEvidenceExpressFunc =
     try {
       if (records.length === 0) {
         await req.client.query({
-          text: "delete from evidence where story_id = $1::integer",
+          text: `delete from evidence where ${itemIdKey} = $1::integer`,
           values: [itemId],
         });
       } else {
@@ -48,8 +48,7 @@ export const updateEvidenceExpressFunc =
               evidence = record;
               const setClauseItems = Object.keys(record)
                 .filter(
-                  (key) =>
-                    key !== "id" && key !== "trends" && key !== "story_id"
+                  (key) => key !== "id" && key !== "trends" && key !== itemIdKey
                 )
                 .map(
                   (recordKey) =>
@@ -126,14 +125,13 @@ export const updateEvidenceExpressFunc =
     });
   };
 
-export const trackEvidenceIndexExpressFunc =
-  (itemCollectionName, itemIndexKey) => (req, res, next) => {
-    const { evidence_id } = req.params;
+export const trackEvidenceIdExpressFunc = () => (req, res, next) => {
+  const { evidence_id } = req.params;
 
-    req.evidence_id = evidence_id;
+  req.evidence_id = evidence_id;
 
-    next();
-  };
+  next();
+};
 
 export const deleteEvidenceExpressFunc =
   (itemCollectionName, itemIndexKey) => async (req, res, next) => {
@@ -145,13 +143,13 @@ export const deleteEvidenceExpressFunc =
 
 // *** trends functions ***
 
-export const getTrendsExpressFunc =
-  (itemCollectionName, itemIndexKey) => (req, res, next) => {
-    const { product, [itemIndexKey]: itemIndex } = req;
-    return res.json(
-      product[itemCollectionName][itemIndex].evidence[req.evidence_ix].trends
-    );
-  };
+// export const getTrendsExpressFunc =
+//   (itemCollectionName, itemIndexKey) => (req, res, next) => {
+//     const { product, [itemIndexKey]: itemIndex } = req;
+//     return res.json(
+//       product[itemCollectionName][itemIndex].evidence[req.evidence_ix].trends
+//     );
+//   };
 
 export const addTrendExpressFunc = () => async (req, res, next) => {
   const evId = req.evidence_id;
@@ -167,25 +165,27 @@ export const addTrendExpressFunc = () => async (req, res, next) => {
   return res.json(newTrend);
 };
 
-export const changeTrendExpressFunc =
-  (itemCollectionName, itemIndexKey) => async (req, res, next) => {
-    const { product, [itemIndexKey]: itemIndex } = req;
-    var evIx = req.evidence_ix;
-    var trendIx = req.params.trend_ix;
-    var trend =
-      product[itemCollectionName][itemIndex].evidence[evIx].trends[trendIx];
+export const updateTrendExpressFunc = () => async (req, res, next) => {
+  const trendId = req.params.trend_id;
+  const trend = req.body;
 
-    // execute the PUT changes
-    trend.type = req.body.type;
-
-    await prod.save();
+  if (trendId) {
+    await req.client.query({
+      text: "update trends set name = $1::text, type = $2::text where id = $3::integer",
+      values: [trend.name, trend.type, trendId],
+    });
     return res.json({
       success: true,
     });
-  };
+  } else {
+    const err = new Error("Invalid request: no trend_id");
+    err.status = 400;
+    next(err);
+  }
+};
 
 export const deleteTrendExpressFunc = () => async (req, res, next) => {
-  var trendId = req.params.trend_id;
+  const trendId = req.params.trend_id;
 
   if (trendId) {
     await req.client.query({
@@ -203,15 +203,3 @@ export const deleteTrendExpressFunc = () => async (req, res, next) => {
     next(err);
   }
 };
-
-// module.exports = {
-//   getEvidenceExpressFunc,
-//   addEvidenceExpressFunc,
-//   trackEvidenceIndexExpressFunc,
-//   updateEvidenceExpressFunc,
-//   deleteEvidenceExpressFunc,
-//   getTrendsExpressFunc,
-//   addTrendExpressFunc,
-//   changeTrendExpressFunc,
-//   deleteTrendExpressFunc,
-// };

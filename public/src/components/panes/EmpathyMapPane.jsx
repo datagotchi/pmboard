@@ -62,13 +62,12 @@ const EmpathyMapPane = ({
                     allowDragDrop={allowDragDrop}
                     handleDrag={handleDrag}
                     handleTagClick={(tagIndex, event) => {
+                      // TODO: show a context menu to choose class, rather than clicking repeatedly
                       const tagWrapper = event.target;
                       if (tagWrapper.className.includes("selected")) {
-                        tagWrapper.className = tagWrapper.className
-                          .split(" ")
-                          .filter((cn) => cn !== "selected");
+                        tagWrapper.classList.remove("selected");
                       } else {
-                        tagWrapper.className += " selected";
+                        tagWrapper.classList.add("selected");
                       }
                       handleTagClick(tagIndex, typedTags);
                     }}
