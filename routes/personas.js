@@ -14,6 +14,7 @@ import {
   changeTrendExpressFunc,
   deleteTrendExpressFunc,
 } from "./evidenceFunctions.js";
+import { formatSetClauseValue } from "../util.js";
 
 // get user personas
 router.get("/", async (req, res, next) => {
@@ -49,6 +50,23 @@ router.get("/", async (req, res, next) => {
   );
   req.client.release();
   return res.json(personas);
+});
+
+router.put("/", async (req, res, next) => {
+  const personas = req.body;
+  await Promise.all(
+    personas.map((persona) => {
+      const setClause = Object.keys(persona)
+        .filter((key) => key !== "id")
+        .map((key) => `${key} = ${formatSetClauseValue(persona[key])}`);
+      return req.client.query({
+        text: `update personas set ${setClause} where id = $1::integer`,
+        values: [persona.id],
+      });
+    })
+  );
+  req.client.release();
+  return res.sendStatus(200);
 });
 
 router.post("/", addItem("personas"));
