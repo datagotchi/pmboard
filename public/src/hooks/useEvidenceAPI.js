@@ -1,4 +1,4 @@
-import { EvidenceAPIProps, WidgetDataItem } from "../types";
+import { EvidenceAPIProps, EvidenceTrend, WidgetDataItem } from "../types";
 
 /**
  * A React hook to access API calls related to widget item evidence.
@@ -57,10 +57,32 @@ const useEvidenceAPI = (productId, collectionName) => {
       }
     );
 
+  /**
+   * Create a new trend on the server.
+   * @param {number} itemId The ID of the item containing evidence containing the trend.
+   * @param {number} evidenceId The ID of the evidence containing the trend.
+   * @param {EvidenceTrend} trend The trend to add to the server.
+   * @returns {Promise<Response>} The fetch promise.
+   * @example <ReactTags handleAddition={() => addTrend()} />
+   */
+  const addTrend = (itemId, evidenceId, trend) =>
+    fetch(
+      `/products/${productId}/${collectionName}/${itemId}/evidence/${evidenceId}/trends`,
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(trend),
+      }
+    );
+
   return {
     updateEvidence,
     // updateTrends,
     deleteTrend,
+    addTrend,
   };
 };
 

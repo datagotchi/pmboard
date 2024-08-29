@@ -456,10 +456,7 @@ COPY public.evidence (id, name, url, icon, persona_id, created_date, modified_da
 15	PMboard Self user research notes - R&D scientist	https://docs.google.com/document/d/1fDUyMO5GRTokJn5khMWPAhJCsuFUmQp62m-lYmhfDGo/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	5	2024-08-08	2024-08-08	\N
 16	Self user research notes - DG Labs	https://docs.google.com/document/d/1hynxBUqOSq8o_0Y2zAkbNHeUVQ36f_U1cNZTwKhubp4/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	5	2024-08-07	2024-08-07	\N
 17	We Need to Raise the Bar for AI Product Managers _ by Julia Winn _ Aug, 2024 _ Towards Data Science.pdf	https://drive.google.com/file/d/1EpBkloFburQh-EC1n_1wSM8rKd1tQIsS/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	6	2024-08-12	2024-08-12	\N
-18	Proposal for Supply	https://docs.google.com/document/d/1kACV_wMgDPCnFiPtAgqMGamSzgAkNJYsid8Ku6Fhf24/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	7	\N	\N	\N
 19	Counteroffer self user research notes -- Driven	https://docs.google.com/document/d/1Z0NPKFz1AshUPttLePROeVEgmbQgujyVwR8IFfzmQ1c/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	7	\N	\N	\N
-20	Counteroffer self user research notes -- Collusion	https://docs.google.com/document/d/1zPEtCLeSYJCT_3iLFYuR4U3NqAY8-ZoptGnN0RiR3XI/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	7	2024-08-06	2024-08-06	\N
-21	Counteroffer self user research notes -- Exaptive	https://docs.google.com/document/d/1I-kxJBTBNjiuUEgaYEW0dYNDFy98sWc1CnqPJ3KJfbc/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	7	2024-08-06	2024-08-06	\N
 26	Entrepreneurs/Startups	\N	\N	\N	\N	\N	11
 27	Interview - Megan	https://docs.google.com/document/d/1udeKLySXsdG4VQp_OO8QGR4LhI6Q6fqHz4SPZpziDTg/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	8	\N	\N	\N
 28	Interview - Molly	https://docs.google.com/document/d/1WjmDXTRvzQ_G1n80Yb3MrJqjU9XUd4q4LsAYWmifL-4/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	8	\N	\N	\N
@@ -468,6 +465,8 @@ COPY public.evidence (id, name, url, icon, persona_id, created_date, modified_da
 31	Tracking the Reliability of Information _ Datagotchi Labs.pdf	https://drive.google.com/file/d/1KCxhnd6j8XPr5dZHJ-MaNVK3BTmUS-TF/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	8	\N	\N	\N
 32	Trump bizarrely blames Harris for turned-Black remark_ _She said it. I didn't say it_ (video) - Boing Boing.pdf	https://drive.google.com/file/d/1xFDIjHTSpLPZ_D5TVff92nfJz-i-YZFQ/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	8	2024-08-11	2024-08-11	\N
 33	Inspect proposal for information tracking	https://docs.google.com/document/d/1UI8zBNhSGD31j6YuBpH3rFm0wrJwLeyXt7iaZR-M1yU/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	9	\N	\N	\N
+20	Counteroffer self user research notes -- Collusion	https://docs.google.com/document/d/1zPEtCLeSYJCT_3iLFYuR4U3NqAY8-ZoptGnN0RiR3XI/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	7	2024-08-06	2024-08-06	\N
+18	PMBoard proposal	https://docs.google.com/document/d/1KzD6QLuWW0qv7SJreMW0G3Piw96x7zBmUgdLC-vCIoE/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	7	\N	\N	\N
 34	$$$ Plans	https://docs.google.com/spreadsheets/d/1Kr8kb82eSsRiRC09rPkbbII6nom8-yWMmFp9JObk0EY/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.spreadsheet	12	2023-02-14	2024-08-10	\N
 37	We All Know AI Can’t Code, Right_ _ by Joe Procopio _ Aug, 2024 _ Entrepreneurship Handbook.pdf	https://drive.google.com/file/d/1Q2SncKXRLoNMBpdIOZF9HD5-8oV7aeJU/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	15	2024-08-11	2024-08-11	\N
 38	The Braindead Senior Dev Hypothesis _ by Andrew Zuo _ Aug, 2024 _ Medium.pdf	https://drive.google.com/file/d/1WlOWFq7uFUpUACaEaheSWvl_HThR6f5Z/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	15	2024-08-12	2024-08-12	\N
@@ -509,6 +508,7 @@ COPY public.evidence (id, name, url, icon, persona_id, created_date, modified_da
 73	Unemployed Techie	\N	\N	\N	\N	\N	21
 74	Employed Techie	\N	\N	\N	\N	\N	21
 78	Product Manager	\N	\N	\N	2024-08-17	2024-08-17	22
+21	Counteroffer self user research notes -- Exaptive	https://docs.google.com/document/d/1I-kxJBTBNjiuUEgaYEW0dYNDFy98sWc1CnqPJ3KJfbc/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	7	2024-08-06	2024-08-06	\N
 35	Is Your Rent an Antitrust Violation_ - The Atlantic.pdf	https://drive.google.com/file/d/1Y-XQbq-dnVOde9GjSjjQ4lPzDaXU6de1/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	14	2024-08-11	2024-08-11	\N
 85	R&D Scientist	null	null	5	2024-08-17	2024-08-17	23
 \.
@@ -543,9 +543,6 @@ COPY public.personas (id, name, product_id, index) FROM stdin;
 2	Me	1	\N
 3	Entrepreneur	1	\N
 4	Investor	1	\N
-5	R&D Scientist	2	\N
-6	Product Manager	2	\N
-7	Entrepreneurs/Startups	2	\N
 8	All People	3	\N
 9	Social Thought Leader	3	\N
 10	Journalist	3	\N
@@ -563,6 +560,9 @@ COPY public.personas (id, name, product_id, index) FROM stdin;
 22	Hiring Manager	6	\N
 23	Recruiter	6	\N
 24	Wage Workers	6	\N
+5	R&D Scientist	2	0
+7	Entrepreneurs/Startups	2	1
+6	Product Manager	2	2
 \.
 
 
@@ -585,11 +585,6 @@ COPY public.products (id, name) FROM stdin;
 --
 
 COPY public.stories (id, name, product_id, index) FROM stdin;
-1	Help Entrepreneurs create new startups by understanding stakeholders	1	\N
-2	Reduce investor risk aversion by being able to empathize with all stakeholders	1	\N
-4	Make new products useful to yourself first	1	\N
-5	Then rely on word-of-mouth marketing	1	\N
-6	Improve Michigan's startup scenes	1	\N
 15	Make sharing important news on social media easier for Thought Leaders	3	\N
 16	Enable Thought Leaders to synthesize news articles into new insights	3	\N
 17	Enable People to consume news according to its reliability	3	\N
@@ -597,16 +592,21 @@ COPY public.stories (id, name, product_id, index) FROM stdin;
 19	s2	4	\N
 20	Enable all kinds of Techies to quickly apply to gigs based on specific skills	6	\N
 21	Enable Techies to use CO as a career dashboard their entire lives	6	\N
-24	Enable R&D Scientists, Entrepreneurs, & Product Managers to manage risks across business areas	2	0
+9	Enable users to link trends at different levels/types	2	9
+23	Enable R&D Scientists to explore user journeys to decide on a solution	2	0
+4	Make new products useful to yourself first	1	0
 25	Enable Entrepreneurs to document MVP test lessons	2	1
-23	Enable R&D Scientists to explore user journeys to decide on a solution	2	2
+2	Reduce investor risk aversion by being able to empathize with all stakeholders	1	1
+1	Help Entrepreneurs create new startups by understanding stakeholders	1	2
+24	Enable R&D Scientists, Entrepreneurs, & Product Managers to manage risks across business areas	2	2
+5	Then rely on word-of-mouth marketing	1	3
 12	Enable R&D Scientists, Entrepreneurs, and Product Managers to quickly & effectively pivot when markets/stakeholder needs change	2	3
 26	Enable Entrepreneurs & Product Managers to document business objectives and link them to stakeholder needs	2	4
+6	Improve Michigan's startup scenes	1	4
 13	For MVP iteration, users need a timeline view of lessons learned	2	5
 22	Integrated product teams will retain employees better, make them less upset/burned out/etc.	2	6
 14	Enable R&D Scientists to compare several revenue streams	2	7
 11	Assist Entrepreneurs/Startups empathizing with stakeholders using PMBoard	2	8
-9	Enable users to link trends at different levels/types	2	9
 \.
 
 
@@ -791,11 +791,6 @@ COPY public.trends (id, name, type, evidence_id) FROM stdin;
 138	Reading sales meeting notes & enumerating insights in Google Docs	task	19
 139	Continuously documenting & analyzing user research	activity	19
 140	Standup meetings	task	19
-141	Javascript	resource	20
-142	PHP	resource	20
-143	Node.js	resource	20
-144	The Collusion app	resource	20
-145	Other meetings	task	20
 146	Talking with the founders/executives	task	20
 147	Constantly doing heuristic UX reviews of the product	activity	20
 148	Checking in with teammates	activity	20
@@ -806,9 +801,9 @@ COPY public.trends (id, name, type, evidence_id) FROM stdin;
 153	To be a productive engineer	objective	20
 154	To be a productive UX designer	objective	20
 155	To be a productive product lead"	objective	20
-156	Javascript	resource	21
+141	Javascript	resource	20
+142	PHP	resource	20
 157	D3.js	resource	21
-158	Python	resource	21
 159	Rserve	resource	21
 160	Standup meetings	task	21
 161	Other meetings	task	21
@@ -821,6 +816,11 @@ COPY public.trends (id, name, type, evidence_id) FROM stdin;
 168	To be a productive engineer	objective	21
 169	To apply my recently-gained human-systems integration (HSI)/government R&D knowledge to startups	objective	21
 170	To be a productive assistant product lead	objective	21
+158	Python	resource	21
+145	Other meetings	task	20
+143	Node.js	resource	20
+144	The Collusion app	resource	20
+156	Javascript	resource	21
 177	Need to improve the empathy map visualization		26
 178	Finds news in social media	activity	27
 179	Gets news from talking to friends	task	27
@@ -1165,6 +1165,7 @@ COPY public.trends (id, name, type, evidence_id) FROM stdin;
 519	Email myself insights from talking to friends and family	task	85
 520	Network to gain professional connections	task	85
 521	Email myself insights from professional connections	task	85
+541	Linked Widget Timelines		18
 522	Read Feedly, Google News, Twitter	task	85
 523	Share articles/posts to myself via email	task	85
 524	Prototype in React & Node.js in Visual Studio Code	task	85
@@ -1180,10 +1181,7 @@ COPY public.trends (id, name, type, evidence_id) FROM stdin;
 534	Reacat	resource	85
 535	Node.js	resource	85
 536	PMBoard	resource	85
-537	Test		35
 500	To explore social problem spaces, potential solutions, & novel revenue streams	objective selected	85
-538	Test2		35
-539	Test3		35
 \.
 
 
@@ -1247,7 +1245,7 @@ SELECT pg_catalog.setval('public.tasks_id_seq', 45, true);
 -- Name: trends_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.trends_id_seq', 539, true);
+SELECT pg_catalog.setval('public.trends_id_seq', 541, true);
 
 
 --

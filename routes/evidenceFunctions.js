@@ -153,27 +153,19 @@ export const getTrendsExpressFunc =
     );
   };
 
-export const addTrendExpressFunc =
-  (itemCollectionName, itemIndexKey) => async (req, res, next) => {
-    const { product, [itemIndexKey]: itemIndex } = req;
-    var trend = req.body;
+export const addTrendExpressFunc = () => async (req, res, next) => {
+  const evId = req.evidence_id;
+  const trend = req.body;
 
-    if (
-      !(
-        "trends" in
-        product[itemCollectionName][itemIndex].evidence[req.evidence_ix]
-      )
-    ) {
-      product[itemCollectionName][itemIndex].evidence[req.evidence_ix].trends =
-        [];
-    }
-    product[itemCollectionName][itemIndex].evidence[
-      req.evidence_ix
-    ].trends.push(trend);
+  const newTrend = await req.client
+    .query({
+      text: "insert into trends (name, type, evidence_id) values ($1::text, $2::text, $3::integer) returning *",
+      values: [trend.name, trend.type, evId],
+    })
+    .then((result) => result.rows[0]);
 
-    await prod.save();
-    return res.json(trend);
-  };
+  return res.json(newTrend);
+};
 
 export const changeTrendExpressFunc =
   (itemCollectionName, itemIndexKey) => async (req, res, next) => {

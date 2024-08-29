@@ -73,7 +73,6 @@ router.post("/", addItem("personas"));
 
 router.param("persona_id", function (req, res, next) {
   req.persona_id = req.params.persona_id;
-  console.log("*** setting persona_id: ", req.persona_id);
   return next();
 });
 
@@ -112,14 +111,11 @@ router.get(
   getTrendsExpressFunc("personas", "persona_id")
 );
 
-router.post(
-  "/:persona_id/evidence/:evidence_id/trends",
-  addTrendExpressFunc("personas", "persona_id")
-);
+router.post("/:persona_id/evidence/:evidence_id/trends", addTrendExpressFunc());
 
 router.put(
   "/:persona_id/evidence/:evidence_id/trends/:trend_id",
-  changeTrendExpressFunc("personas", "persona_id")
+  changeTrendExpressFunc()
 );
 
 router.delete(

@@ -30,6 +30,7 @@ const FileEvidencePane = ({
   updateEvidenceOnServer,
   allTagsUpdated,
   deleteTrendFunc,
+  addTrendFunc,
 }) => {
   const ADD_FILES_DIALOG_ID = `addFilesModal: ${containerModalId}`;
 
@@ -176,7 +177,6 @@ const FileEvidencePane = ({
       if (thereAreChangesToTrends) {
         const flatTags = getFlatTagsWithCountsFromTagsPerFile(tagsPerFile);
         allTagsUpdated(flatTags);
-        updateEvidenceOnServer(evidence);
       }
     }
   }, [tagsPerFile]);
@@ -323,6 +323,10 @@ const FileEvidencePane = ({
                         setTagsPerFile({
                           ...tagsPerFile,
                           [file.url]: fileTags,
+                        });
+                        addTrendFunc(file.id, {
+                          name: tag.id,
+                          type: tag.className,
                         });
                       }}
                       // suggestions={allTags
