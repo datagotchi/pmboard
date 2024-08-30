@@ -20,8 +20,8 @@ import {
  * @param {string} props.productId The ID of the current product.
  * @param {WidgetDataItem} props.item The item to show in the modal.
  * @param {string} props.dialogId The ID to give the dialog.
- * @param {(evidence: EvidenceRecord[]) => void} props.updateEvidenceOnServer The function to call when evidence is updated in this modal.
- * @param {(itemId: number, evidenceId: number) => Promise<Response>} props.removeFileFunc The function to call to remove an evidence record.
+ * @param {(itemId: number, evidenceRecord: EvidenceRecord) => Promise<Response>} props.addEvidenceFunc The function to call to add an evidence record.
+ * @param {(itemId: number, evidenceId: number) => Promise<Response>} props.removeEvidenceFunc The function to call to remove an evidence record.
  * @param {string} props.summaryTitle The title of the summary tab.
  * @param {(item: WidgetDataItem) => Promise<Response>} props.updateItemFunc The function to call to update an entire item.
  * @param {(itemId: number, evidenceRecordId: number, trendId: number) => Promise<Response>} props.deleteTrendFunc The function to call to delete a trend.
@@ -35,8 +35,8 @@ const Modal = ({
   item,
   dialogId,
   productId,
-  updateEvidenceOnServer,
-  removeFileFunc,
+  addEvidenceFunc,
+  removeEvidenceFunc,
   summaryTitle,
   updateItemFunc,
   deleteTrendFunc,
@@ -205,10 +205,10 @@ const Modal = ({
                           productId={productId}
                           evidence={item.evidence}
                           containerModalId={dialogId}
-                          updateEvidenceOnServer={updateEvidenceOnServer}
-                          removeFileFunc={(fileId) => {
-                            removeFileFunc(item.id, fileId);
-                          }}
+                          addFileFunc={(file) => addEvidenceFunc(item.id, file)}
+                          removeFileFunc={(fileId) =>
+                            removeEvidenceFunc(item.id, fileId)
+                          }
                           allTagsUpdated={(tags) => setAllTags(tags)}
                           deleteTrendFunc={(evidenceId, trendId) =>
                             deleteTrendFunc(item.id, evidenceId, trendId)

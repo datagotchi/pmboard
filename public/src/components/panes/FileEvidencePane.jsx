@@ -22,12 +22,12 @@ import { AllTagsContext } from "../../contexts/AllTagsContext";
  * A pane to show in a modal dialog to add files from Google Drive as evidence to a widget item.
  * @param {EvidencePaneProps} props The object containing the props.
  * @returns {React.JSX.Element} The rendered pane.
- * @example <FileEvidencePane evidence={[...]} containerModalId="" updateEvidenceOnServer={() => {}} allTagsUpdated={() => {}}
+ * @example <FileEvidencePane evidence={[...]} containerModalId="" allTagsUpdated={() => {}}
  */
 const FileEvidencePane = ({
   evidence,
   containerModalId,
-  updateEvidenceOnServer,
+  addFileFunc,
   removeFileFunc,
   allTagsUpdated,
   deleteTrendFunc,
@@ -111,7 +111,6 @@ const FileEvidencePane = ({
         });
       });
       if (thereAreChanges) {
-        // updateEvidenceOnServer(evidence); // FIXME: remove this in favor of specific calls
         // TODO: try to avoid one more re-render/re-evaluation of this effect after making this change
         setTagsPerFile({ ...tagsPerFile });
       }
@@ -194,7 +193,6 @@ const FileEvidencePane = ({
           addFilesModal.close();
         }
       });
-      // FIXME: does not list files
       addFilesModal.showModal();
     }
   };
@@ -213,11 +211,11 @@ const FileEvidencePane = ({
           name: file.title,
           url: file.alternateLink,
           icon: file.iconLink,
-          createdDate: file.createdDate,
-          modifiedDate: file.modifiedDate,
+          created_date: file.createdDate,
+          modified_date: file.modifiedDate,
         };
         evidence.push(newFile);
-        await updateEvidenceOnServer(evidence);
+        addFileFunc(newFile);
         tagsPerFile[newFile.url] = [];
         setTagsPerFile({ ...tagsPerFile });
 

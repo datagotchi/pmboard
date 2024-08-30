@@ -7,13 +7,12 @@ import {
   getEvidenceExpressFunc,
   addEvidenceExpressFunc,
   trackEvidenceIdExpressFunc,
-  updateEvidenceExpressFunc,
   deleteEvidenceExpressFunc,
   addTrendExpressFunc,
   updateTrendExpressFunc,
   deleteTrendExpressFunc,
 } from "./evidenceFunctions.js";
-import { formatSetClauseValue } from "../util.js";
+import { formatSQLValue } from "../util.js";
 
 // get user personas
 router.get("/", async (req, res, next) => {
@@ -57,7 +56,7 @@ router.put("/", async (req, res, next) => {
     personas.map((persona) => {
       const setClause = Object.keys(persona)
         .filter((key) => key !== "id")
-        .map((key) => `${key} = ${formatSetClauseValue(persona[key])}`);
+        .map((key) => `${key} = ${formatSQLValue(persona[key])}`);
       return req.client.query({
         text: `update personas set ${setClause} where id = $1::integer`,
         values: [persona.id],
@@ -88,12 +87,7 @@ router.get(
 );
 
 // add persona evidence
-router.post(
-  "/:persona_id/evidence",
-  addEvidenceExpressFunc("personas", "persona_id")
-);
-
-router.put("/:persona_id/evidence", updateEvidenceExpressFunc("persona_id"));
+router.post("/:persona_id/evidence", addEvidenceExpressFunc("persona_id"));
 
 router.param("evidence_id", trackEvidenceIdExpressFunc());
 

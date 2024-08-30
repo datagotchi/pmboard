@@ -46,22 +46,15 @@ export const getOccurenceNumber = (tagText) =>
  * @returns {string | number} The formatted string or number.
  * @example  const setClause = Object.keys(task)
         .filter((key) => key !== "id")
-        .map((key) => `${key} = ${formatSetClauseValue(task[key])}`)
+        .map((key) => `${key} = ${formatSQLValue(task[key])}`)
         .join(", ");
  */
-export const formatSetClauseValue = (value) => {
+export const formatSQLValue = (value) => {
   switch (typeof value) {
     case "number":
       return value;
     case "string":
     default:
-      return `'${value.replace("'", "''")}'`;
+      return `'${value.replace("'", "''").replace("$", "$")}'`;
   }
 };
-
-// module.exports = {
-//   sortString,
-//   getJsonSortedString,
-//   getOccurenceNumber,
-//   formatSetClauseValue,
-// };

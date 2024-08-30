@@ -6,14 +6,13 @@ import { addItem, updateItem, deleteItem } from "./collectionItemFunctions.js";
 import {
   getEvidenceExpressFunc,
   addEvidenceExpressFunc,
-  updateEvidenceExpressFunc,
   trackEvidenceIdExpressFunc,
   deleteEvidenceExpressFunc,
   addTrendExpressFunc,
   updateTrendExpressFunc,
   deleteTrendExpressFunc,
 } from "./evidenceFunctions.js";
-import { formatSetClauseValue } from "../util.js";
+import { formatSQLValue } from "../util.js";
 
 router.get("/", async (req, res, next) => {
   /*
@@ -73,7 +72,7 @@ router.put("/", async (req, res, next) => {
     stories.map((story) => {
       const setClause = Object.keys(story)
         .filter((key) => key !== "id")
-        .map((key) => `${key} = ${formatSetClauseValue(story[key])}`);
+        .map((key) => `${key} = ${formatSQLValue(story[key])}`);
       return req.client.query({
         text: `update stories set ${setClause} where id = $1::integer`,
         values: [story.id],
@@ -143,8 +142,6 @@ router.post(
   "/:story_id/evidence",
   addEvidenceExpressFunc("stories", "story_id")
 );
-
-router.put("/:story_id/evidence", updateEvidenceExpressFunc("story_id"));
 
 router.param("evidence_ix", trackEvidenceIdExpressFunc("stories", "story_id"));
 

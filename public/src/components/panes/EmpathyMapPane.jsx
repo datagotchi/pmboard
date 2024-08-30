@@ -32,11 +32,9 @@ const EmpathyMapPane = ({
           {[...indexToClassName, ""].map((trendType) => {
             const typedTags = allTagsForThisPersona.filter((tag) => {
               if (trendType === "") {
-                return (
-                  tag.className === trendType || tag.className === "selected"
-                );
+                return !tag.className || tag.className === trendType;
               } else {
-                return tag.className.includes(trendType);
+                return tag.className && tag.className.includes(trendType);
               }
             });
             return (

@@ -63,6 +63,7 @@ const useCollectionAPI = (productId, collectionName) => {
 
   const {
     updateEvidence,
+    addEvidenceRecord,
     removeEvidenceRecord,
     deleteTrend,
     addTrend,
@@ -74,6 +75,7 @@ const useCollectionAPI = (productId, collectionName) => {
     updateItem,
     deleteItem,
     updateEvidence,
+    addEvidenceRecord,
     removeEvidenceRecord,
     deleteTrend,
     addTrend,

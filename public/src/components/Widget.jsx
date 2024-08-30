@@ -38,7 +38,7 @@ const Widget = ({
     addItem,
     updateItem,
     deleteItem,
-    updateEvidence,
+    addEvidenceRecord,
     removeEvidenceRecord,
     deleteTrend,
     addTrend,
@@ -299,11 +299,8 @@ const Widget = ({
           item={currentWidgetItem}
           updateItemFunc={(item) => updateItem(item)}
           summaryTitle={summaryTitle}
-          updateEvidenceOnServer={(evidence) => {
-            currentWidgetItem.evidence = evidence;
-            updateEvidence(currentWidgetItem.id, evidence);
-          }}
-          removeFileFunc={removeEvidenceRecord}
+          addEvidenceFunc={addEvidenceRecord}
+          removeEvidenceFunc={removeEvidenceRecord}
           deleteTrendFunc={deleteTrend}
           addTrendFunc={addTrend}
           updateTrendFunc={updateTrend}

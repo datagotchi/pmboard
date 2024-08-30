@@ -63,8 +63,7 @@ const useOAuthAPI = () => {
       authorizationUrl.searchParams.set("state", state);
     }
 
-    // FIXME: 401 invalid client: "The OAuth client was not found."
-    // open(authorizationUrl, "_self");
+    open(authorizationUrl, "_self");
   };
 
   /**
@@ -217,13 +216,13 @@ const useOAuthAPI = () => {
    */
   const init = async () => {
     authorizationServer = await getAuthorizationServer();
-    var config = await import("../../../config");
+    const { key, secret } = await import("../../../config");
     /**
      * @type {oauth.Client}
      */
     client = {
-      client_id: config.key,
-      client_secret: config.secret,
+      client_id: key,
+      client_secret: secret,
       token_endpoint_auth_method: "client_secret_basic",
     };
     code_challenge_method = "S256";

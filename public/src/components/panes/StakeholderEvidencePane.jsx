@@ -313,8 +313,8 @@ const StakeholderEvidencePane = ({
                 ></span>
               </td>
               <td>
-                {personaAsEvidence.createdDate &&
-                  new Date(personaAsEvidence.createdDate).toLocaleDateString()}
+                {personaAsEvidence.created_date &&
+                  new Date(personaAsEvidence.created_date).toLocaleDateString()}
               </td>
               <td>
                 <a

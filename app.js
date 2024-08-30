@@ -13,8 +13,8 @@ const pool = new Pool({
   host: "localhost",
   port: 5432,
   max: 50, // 10 is default
-  idleTimeoutMillis: 10000, // 10000 is default
-  connectionTimeoutMillis: 2000, // 0 (no timeout!) is default
+  // idleTimeoutMillis: 10000, // 10000 is default
+  // connectionTimeoutMillis: 2000, // 0 (no timeout!) is default
 });
 pool.on("error", (err) => {
   console.error("pg pool error: ", err);

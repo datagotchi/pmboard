@@ -1,4 +1,9 @@
-import { EvidenceAPIProps, EvidenceTrend, WidgetDataItem } from "../types";
+import {
+  EvidenceAPIProps,
+  EvidenceRecord,
+  EvidenceTrend,
+  WidgetDataItem,
+} from "../types";
 
 /**
  * A React hook to access API calls related to widget item evidence.
@@ -27,6 +32,23 @@ const useEvidenceAPI = (productId, collectionName) => {
       }
     );
   };
+
+  /**
+   * Add an evidence record to the server.
+   * @param {number} itemId The ID of the collection item.
+   * @param {EvidenceRecord} evidenceRecord The the evidence record to be added.
+   * @returns {Promise<Response>} The fetch promise.
+   * @example <Component onClick={() => addEvidenceRecord()} />
+   */
+  const addEvidenceRecord = (itemId, evidenceRecord) =>
+    fetch(`/products/${productId}/${collectionName}/${itemId}/evidence`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(evidenceRecord),
+    });
 
   /**
    * Delete an evidence record on the server.
@@ -103,6 +125,7 @@ const useEvidenceAPI = (productId, collectionName) => {
 
   return {
     updateEvidence,
+    addEvidenceRecord,
     removeEvidenceRecord,
     deleteTrend,
     addTrend,

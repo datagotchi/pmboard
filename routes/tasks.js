@@ -12,7 +12,7 @@ import {
   updateTrendExpressFunc,
   deleteTrendExpressFunc,
 } from "./evidenceFunctions.js";
-import { formatSetClauseValue } from "../util.js";
+import { formatSQLValue } from "../util.js";
 
 // get user personas
 router.get("/", async (req, res, next) => {
@@ -39,7 +39,7 @@ router.put("/", async (req, res, next) => {
     tasks.map((task) => {
       const setClause = Object.keys(task)
         .filter((key) => key !== "id")
-        .map((key) => `${key} = ${formatSetClauseValue(task[key])}`)
+        .map((key) => `${key} = ${formatSQLValue(task[key])}`)
         .join(", ");
       return req.client.query({
         text: `update tasks set ${setClause} where id = $1::integer`,
