@@ -10,12 +10,7 @@ export const getEvidenceExpressFunc =
 export const addEvidenceExpressFunc = (itemIdKey) => async (req, res, next) => {
   const { [itemIdKey]: id, body: record } = req;
 
-  console.log("*** itemIdKey: ", itemIdKey);
-  console.log("*** record: ", record);
-
   const fields = Object.keys(record);
-
-  console.log("*** fields: ", fields);
 
   await req.client.query({
     text: `insert into evidence 
