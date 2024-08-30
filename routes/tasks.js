@@ -68,7 +68,7 @@ router.delete("/:task_id", deleteItem("tasks", "task_id"));
 router.get("/:task_id/evidence", getEvidenceExpressFunc("taks", "task_id"));
 
 // add persona evidence
-router.post("/:task_id/evidence", addEvidenceExpressFunc("tasks", "task_id"));
+router.post("/:task_id/evidence", addEvidenceExpressFunc("task_id"));
 
 router.param("evidence_ix", trackEvidenceIdExpressFunc("tasks", "task_id"));
 

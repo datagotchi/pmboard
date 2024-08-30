@@ -121,14 +121,16 @@ const FileEvidencePane = ({
     if (accessToken && !googleFiles) {
       const encodedToken = encodeURI(accessToken);
       getGoogleDriveFiles(encodedToken).then((files) => {
-        const filteredFiles = files.filter(
-          (file) =>
-            evidence
-              .map(function (f) {
-                return f.url;
-              })
-              .indexOf(file.alternateLink) === -1
-        );
+        const filteredFiles = files
+          .filter(
+            (file) =>
+              evidence
+                .map(function (f) {
+                  return f.url;
+                })
+                .indexOf(file.alternateLink) === -1
+          )
+          .sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate));
         setGoogleFiles([...filteredFiles]);
         setFilteredGoogleFiles([...filteredFiles]);
       });

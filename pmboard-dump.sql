@@ -68,7 +68,8 @@ CREATE TABLE public.evidence (
     persona_id bigint,
     created_date date,
     modified_date date,
-    story_id bigint
+    story_id bigint,
+    company_id bigint
 );
 
 
@@ -439,76 +440,94 @@ COPY public.companies (id, name, product_id, index) FROM stdin;
 -- Data for Name: evidence; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.evidence (id, name, url, icon, persona_id, created_date, modified_date, story_id) FROM stdin;
-1	Datagotchi Proposal	https://docs.google.com/document/d/1RPeGXVGPUrk8QH6lbqhpY_5ir7IHRzseGDIGhnr5KhM/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	1	\N	\N	\N
-2	Self user research notes - DG Labs	https://docs.google.com/document/d/1hynxBUqOSq8o_0Y2zAkbNHeUVQ36f_U1cNZTwKhubp4/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	2	\N	\N	\N
-3	Neuroscience Says This Quality Is Key for Entrepreneurial Success, and It Has Nothing to Do With Intelligence or Grit _ Inc.com.pdf	https://drive.google.com/file/d/1U-rbRJb5nwqx7XE32id_ghTYPaaQ6FCE/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	2	2024-08-13	2024-08-13	\N
-4	Dear Founders, Before Pitching to an Investor, Prepare an Investment Memo _ by Wayne Wee _ Jun, 2024 _ Startup Stash.pdf	https://drive.google.com/file/d/1KSqZXEJqZVhAQEKEWUJxnIEvfuHyHyQP/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	3	2024-08-11	2024-08-11	\N
-5	Strategies For Getting VCs To Compete For Your Startup _ Medium.pdf	https://drive.google.com/file/d/1SRnaY-gf8m2Z8Ihw0_U-0862ZI7WUI1v/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	3	2024-08-11	2024-08-11	\N
-6	You Are Being Lied to About Building a Business in Your 40s _ by Sarina Chiu _ Career Paths _ Jul, 2024 _ Medium.pdf	https://drive.google.com/file/d/1qlGCGwL64Ym1A8g0KJJm9RBZmIxHgQOC/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	3	2024-08-11	2024-08-11	\N
-7	Actual tactics (not strategies) for growing a bootstrapped B2B startup _ by Nevo David _ Aug, 2024 _ Entrepreneurship Handbook.pdf	https://drive.google.com/file/d/1Fsbw0ha6qkwTo3DopH2rV1aKerLOY3VQ/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	3	2024-08-11	2024-08-11	\N
-8	SaaS Is Under Pressure. SaaS has been the holy grail of… _ by Ryan Frederick _ Medium.pdf	https://drive.google.com/file/d/1xPbVyD3JBkRh3kCuJ6hbj-twGFtZkgwy/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	3	2024-08-13	2024-08-13	\N
-9	How To Stay Motivated When Your Dreams Keep Drifting Into The Future _ by Alberto Cabas Vidani _ Aug, 2024 _ Entrepreneurship Handbook.pdf	https://drive.google.com/file/d/1xDjgq3UmlgGiGKoh-eK08MVUZo2WCx62/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	3	2024-08-13	2024-08-13	\N
-10	Neuroscience Says This Quality Is Key for Entrepreneurial Success, and It Has Nothing to Do With Intelligence or Grit _ Inc.com.pdf	https://drive.google.com/file/d/1U-rbRJb5nwqx7XE32id_ghTYPaaQ6FCE/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	3	2024-08-13	2024-08-13	\N
-11	Venture capitalists move toward _pay to play_.pdf	https://drive.google.com/file/d/1PnyAVHteY4quNPbWGmO8n-bKH2i5Wq_Y/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	4	2024-08-13	2024-08-13	\N
-13	Investor	\N	\N	\N	\N	\N	2
-14	PMBoard proposal	https://docs.google.com/document/d/1KzD6QLuWW0qv7SJreMW0G3Piw96x7zBmUgdLC-vCIoE/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	5	\N	\N	\N
-15	PMboard Self user research notes - R&D scientist	https://docs.google.com/document/d/1fDUyMO5GRTokJn5khMWPAhJCsuFUmQp62m-lYmhfDGo/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	5	2024-08-08	2024-08-08	\N
-16	Self user research notes - DG Labs	https://docs.google.com/document/d/1hynxBUqOSq8o_0Y2zAkbNHeUVQ36f_U1cNZTwKhubp4/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	5	2024-08-07	2024-08-07	\N
-17	We Need to Raise the Bar for AI Product Managers _ by Julia Winn _ Aug, 2024 _ Towards Data Science.pdf	https://drive.google.com/file/d/1EpBkloFburQh-EC1n_1wSM8rKd1tQIsS/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	6	2024-08-12	2024-08-12	\N
-19	Counteroffer self user research notes -- Driven	https://docs.google.com/document/d/1Z0NPKFz1AshUPttLePROeVEgmbQgujyVwR8IFfzmQ1c/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	7	\N	\N	\N
-26	Entrepreneurs/Startups	\N	\N	\N	\N	\N	11
-27	Interview - Megan	https://docs.google.com/document/d/1udeKLySXsdG4VQp_OO8QGR4LhI6Q6fqHz4SPZpziDTg/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	8	\N	\N	\N
-28	Interview - Molly	https://docs.google.com/document/d/1WjmDXTRvzQ_G1n80Yb3MrJqjU9XUd4q4LsAYWmifL-4/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	8	\N	\N	\N
-29	Inspect: Self user research notes outline -- US citizen	https://docs.google.com/document/d/1WDL5N38AVfiZY5UGxkv3Et0H8cMnQ1WZJcID0DLlBto/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	8	\N	\N	\N
-30	Inspect proposal for information tracking	https://docs.google.com/document/d/1UI8zBNhSGD31j6YuBpH3rFm0wrJwLeyXt7iaZR-M1yU/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	8	\N	\N	\N
-31	Tracking the Reliability of Information _ Datagotchi Labs.pdf	https://drive.google.com/file/d/1KCxhnd6j8XPr5dZHJ-MaNVK3BTmUS-TF/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	8	\N	\N	\N
-32	Trump bizarrely blames Harris for turned-Black remark_ _She said it. I didn't say it_ (video) - Boing Boing.pdf	https://drive.google.com/file/d/1xFDIjHTSpLPZ_D5TVff92nfJz-i-YZFQ/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	8	2024-08-11	2024-08-11	\N
-33	Inspect proposal for information tracking	https://docs.google.com/document/d/1UI8zBNhSGD31j6YuBpH3rFm0wrJwLeyXt7iaZR-M1yU/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	9	\N	\N	\N
-20	Counteroffer self user research notes -- Collusion	https://docs.google.com/document/d/1zPEtCLeSYJCT_3iLFYuR4U3NqAY8-ZoptGnN0RiR3XI/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	7	2024-08-06	2024-08-06	\N
-18	PMBoard proposal	https://docs.google.com/document/d/1KzD6QLuWW0qv7SJreMW0G3Piw96x7zBmUgdLC-vCIoE/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	7	\N	\N	\N
-37	We All Know AI Can’t Code, Right_ _ by Joe Procopio _ Aug, 2024 _ Entrepreneurship Handbook.pdf	https://drive.google.com/file/d/1Q2SncKXRLoNMBpdIOZF9HD5-8oV7aeJU/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	15	2024-08-11	2024-08-11	\N
-38	The Braindead Senior Dev Hypothesis _ by Andrew Zuo _ Aug, 2024 _ Medium.pdf	https://drive.google.com/file/d/1WlOWFq7uFUpUACaEaheSWvl_HThR6f5Z/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	15	2024-08-12	2024-08-12	\N
-39	Flood of 'junk'_ How AI is changing scientific publishing.pdf	https://drive.google.com/file/d/1oq8fJ7ur33fnvkVWij2onoHu6sN4yCJj/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	16	2024-08-11	2024-08-11	\N
-40	We Need to Raise the Bar for AI Product Managers _ by Julia Winn _ Aug, 2024 _ Towards Data Science.pdf	https://drive.google.com/file/d/1EpBkloFburQh-EC1n_1wSM8rKd1tQIsS/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	17	2024-08-12	2024-08-12	\N
-41	6 hard truths of generative AI in the enterprise _ CIO.pdf	https://drive.google.com/file/d/10XYXrur15fUetRiweVg455N7aVCbxk0m/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	18	2024-08-13	2024-08-13	\N
-42	Remote work is bad for you. How people willingly slow down their… _ by Michal Malewicz _ Jul, 2024 _ Medium.pdf	https://drive.google.com/file/d/1jFUtbEavbyI7LmqUiysqrv75_mtET3lX/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	19	2024-08-13	2024-08-13	\N
-43	There is no Developer Shortage. None of this crap really needs to exist _ by Kenneth Reilly _ Medium.pdf	https://drive.google.com/file/d/1GKgAON8U43XwIWaXr23YLQvIhLHxbj9K/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	19	2024-08-13	2024-08-13	\N
-44	Tech Companies Can’t Find Good Employees and It’s Their Own Fault _ by Joe Procopio _ Aug, 2024 _ Entrepreneurship Handbook.pdf	https://drive.google.com/file/d/1IWBIk1pTXS7Szc-LTa32CrlZbusU1u7e/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	19	2024-08-13	2024-08-13	\N
-45	Hard Core Programming is Dead. Software developers voted with their… _ by The Secret Developer _ Jun, 2024 _ Medium.pdf	https://drive.google.com/file/d/1f_8Hlk5zttqi_NrUrnT-GsqOCmz5st9o/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	19	2024-08-12	2024-08-12	\N
-46	Why Most Programmers Burn Out After the Age of 40 _ by Aleena _ Jul, 2024 _ Level Up Coding.pdf	https://drive.google.com/file/d/1TWYLquN7LZwSm6Fj6pxGglvsd85EqpH-/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	19	2024-08-11	2024-08-11	\N
-47	HackerX	https://docs.google.com/document/d/1rXwkoYJIM9ybNDFC7AsKWYTIw0cmegAw9JSJN5YqKvU/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	20	\N	\N	\N
-48	My past jobs' task breakdown	https://docs.google.com/document/d/1Sr5l76cOj8SO9R4iW2aOxfj7IqdFdpM5sjP6ahaUQ4k/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	20	\N	\N	\N
-49	Consulting brainstorming	https://docs.google.com/document/d/1gxjaEB-2YLZyx2slPN7VpZcAx_JUdnbDjGX2yIqsUN0/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	20	\N	\N	\N
-50	Petaluma businesses	https://docs.google.com/spreadsheets/d/1XbXRtRk0wm5YRRw_2A67rSS4WCDXuzpqhuQGHQbeFkA/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.spreadsheet	20	\N	\N	\N
-51	Counteroffer v3 (combined marketplace) proposal	https://docs.google.com/document/d/1YjKfPKhnFZZkUIuVCqEOKnumhzyQmG5iENBmhhqKNXw/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	20	\N	\N	\N
-52	Jobhunters Flood Recruiters With AI-Generated CVs - Slashdot.pdf	https://drive.google.com/file/d/1nVcQPKz-GFQeLhNE1IX-T5fKEn6RgGH6/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	20	2024-08-13	2024-08-13	\N
-53	Counteroffer self user research notes -- Tanium (#1)	https://docs.google.com/document/d/17-ErdWqh0nhy03n90tsHjLDNSmhseAmW6QkaT1MEj6c/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	21	\N	\N	\N
-54	Counteroffer self user research notes -- Driven	https://docs.google.com/document/d/1Z0NPKFz1AshUPttLePROeVEgmbQgujyVwR8IFfzmQ1c/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	21	\N	\N	\N
-55	Counteroffer self user research notes -- Collusion	https://docs.google.com/document/d/1zPEtCLeSYJCT_3iLFYuR4U3NqAY8-ZoptGnN0RiR3XI/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	21	\N	\N	\N
-56	Counteroffer self user research notes -- Exaptive	https://docs.google.com/document/d/1I-kxJBTBNjiuUEgaYEW0dYNDFy98sWc1CnqPJ3KJfbc/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	21	\N	\N	\N
-57	Counteroffer v1 proposal	https://docs.google.com/document/d/1sncONQyNV2mrYZftuwtOll4CoHU1uJvQAx3_OR2TMPQ/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	21	\N	\N	\N
-58	Using Leverage to Make Demands from Employers _ Datagotchi Labs.pdf	https://drive.google.com/file/d/1d2AGhDcn9JQX9KQWz8yhmEWUqoBlOBsF/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	21	\N	\N	\N
-59	My New Tech Job Strategy is Doing Nothing _ by The Secret Developer _ Jun, 2024 _ Medium.pdf	https://drive.google.com/file/d/13KKCg7nQh1PU8tH2O5dQtqydP4dK3MNW/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	21	2024-08-11	2024-08-11	\N
-60	There is no Developer Shortage. None of this crap really needs to exist _ by Kenneth Reilly _ Medium.pdf	https://drive.google.com/file/d/1GKgAON8U43XwIWaXr23YLQvIhLHxbj9K/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	22	2024-08-13	2024-08-13	\N
-61	Hard Core Programming is Dead. Software developers voted with their… _ by The Secret Developer _ Jun, 2024 _ Medium.pdf	https://drive.google.com/file/d/1f_8Hlk5zttqi_NrUrnT-GsqOCmz5st9o/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	22	2024-08-12	2024-08-12	\N
-36	New Google Pixel 9 voice assistant Gemini is a trainwreck - Fast Company.pdf	https://drive.google.com/file/d/1v1fwScg0uJz2Q1gUCNnMnrd9Skm9JkKB/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	14	2024-08-15	2024-08-15	\N
-62	Tech Companies Can’t Find Good Employees and It’s Their Own Fault _ by Joe Procopio _ Aug, 2024 _ Entrepreneurship Handbook.pdf	https://drive.google.com/file/d/1IWBIk1pTXS7Szc-LTa32CrlZbusU1u7e/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	22	2024-08-13	2024-08-13	\N
-63	Recruiter research: Barry Kwok	https://docs.google.com/document/d/1XyIbba5H05ckeBVqADJ3iG5PeUeX5IcQaTIoIdQWihc/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	23	\N	\N	\N
-64	Career Nebula	https://docs.google.com/document/d/1NhY2KogMo0ik8bqYwH1KPu6qTXv2ngeOgwGcpY44qlY/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	23	\N	\N	\N
-65	Counteroffer v2 (employer side, "Illuminate") proposal	https://docs.google.com/document/d/1y6aUf9A1BrprUvvlVzl-6rEpPqyNGLuvRT4tNAn32rU/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	23	\N	\N	\N
-66	Jobhunters Flood Recruiters With AI-Generated CVs - Slashdot.pdf	https://drive.google.com/file/d/1nVcQPKz-GFQeLhNE1IX-T5fKEn6RgGH6/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	23	2024-08-13	2024-08-13	\N
-67	Bandana lands new investment to help hourly wage workers find good jobs _ TechCrunch.pdf	https://drive.google.com/file/d/1WInVBD1wlZPReuL3RvGgSkPjnDAx1luN/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	24	2024-08-11	2024-08-11	\N
-68	Social Thought Leader	\N	\N	\N	\N	\N	15
-69	Social Thought Leader	\N	\N	\N	\N	\N	16
-70	All People	\N	\N	\N	\N	\N	17
-71	Techie	\N	\N	\N	\N	\N	20
-72	Techie	\N	\N	\N	\N	\N	21
-73	Unemployed Techie	\N	\N	\N	\N	\N	21
-74	Employed Techie	\N	\N	\N	\N	\N	21
-78	Product Manager	\N	\N	\N	2024-08-17	2024-08-17	22
-21	Counteroffer self user research notes -- Exaptive	https://docs.google.com/document/d/1I-kxJBTBNjiuUEgaYEW0dYNDFy98sWc1CnqPJ3KJfbc/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	7	2024-08-06	2024-08-06	\N
-35	Is Your Rent an Antitrust Violation_ - The Atlantic.pdf	https://drive.google.com/file/d/1Y-XQbq-dnVOde9GjSjjQ4lPzDaXU6de1/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	14	2024-08-11	2024-08-11	\N
+COPY public.evidence (id, name, url, icon, persona_id, created_date, modified_date, story_id, company_id) FROM stdin;
+1	Datagotchi Proposal	https://docs.google.com/document/d/1RPeGXVGPUrk8QH6lbqhpY_5ir7IHRzseGDIGhnr5KhM/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	1	\N	\N	\N	\N
+2	Self user research notes - DG Labs	https://docs.google.com/document/d/1hynxBUqOSq8o_0Y2zAkbNHeUVQ36f_U1cNZTwKhubp4/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	2	\N	\N	\N	\N
+3	Neuroscience Says This Quality Is Key for Entrepreneurial Success, and It Has Nothing to Do With Intelligence or Grit _ Inc.com.pdf	https://drive.google.com/file/d/1U-rbRJb5nwqx7XE32id_ghTYPaaQ6FCE/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	2	2024-08-13	2024-08-13	\N	\N
+4	Dear Founders, Before Pitching to an Investor, Prepare an Investment Memo _ by Wayne Wee _ Jun, 2024 _ Startup Stash.pdf	https://drive.google.com/file/d/1KSqZXEJqZVhAQEKEWUJxnIEvfuHyHyQP/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	3	2024-08-11	2024-08-11	\N	\N
+5	Strategies For Getting VCs To Compete For Your Startup _ Medium.pdf	https://drive.google.com/file/d/1SRnaY-gf8m2Z8Ihw0_U-0862ZI7WUI1v/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	3	2024-08-11	2024-08-11	\N	\N
+6	You Are Being Lied to About Building a Business in Your 40s _ by Sarina Chiu _ Career Paths _ Jul, 2024 _ Medium.pdf	https://drive.google.com/file/d/1qlGCGwL64Ym1A8g0KJJm9RBZmIxHgQOC/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	3	2024-08-11	2024-08-11	\N	\N
+7	Actual tactics (not strategies) for growing a bootstrapped B2B startup _ by Nevo David _ Aug, 2024 _ Entrepreneurship Handbook.pdf	https://drive.google.com/file/d/1Fsbw0ha6qkwTo3DopH2rV1aKerLOY3VQ/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	3	2024-08-11	2024-08-11	\N	\N
+8	SaaS Is Under Pressure. SaaS has been the holy grail of… _ by Ryan Frederick _ Medium.pdf	https://drive.google.com/file/d/1xPbVyD3JBkRh3kCuJ6hbj-twGFtZkgwy/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	3	2024-08-13	2024-08-13	\N	\N
+9	How To Stay Motivated When Your Dreams Keep Drifting Into The Future _ by Alberto Cabas Vidani _ Aug, 2024 _ Entrepreneurship Handbook.pdf	https://drive.google.com/file/d/1xDjgq3UmlgGiGKoh-eK08MVUZo2WCx62/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	3	2024-08-13	2024-08-13	\N	\N
+10	Neuroscience Says This Quality Is Key for Entrepreneurial Success, and It Has Nothing to Do With Intelligence or Grit _ Inc.com.pdf	https://drive.google.com/file/d/1U-rbRJb5nwqx7XE32id_ghTYPaaQ6FCE/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	3	2024-08-13	2024-08-13	\N	\N
+11	Venture capitalists move toward _pay to play_.pdf	https://drive.google.com/file/d/1PnyAVHteY4quNPbWGmO8n-bKH2i5Wq_Y/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	4	2024-08-13	2024-08-13	\N	\N
+13	Investor	\N	\N	\N	\N	\N	2	\N
+14	PMBoard proposal	https://docs.google.com/document/d/1KzD6QLuWW0qv7SJreMW0G3Piw96x7zBmUgdLC-vCIoE/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	5	\N	\N	\N	\N
+15	PMboard Self user research notes - R&D scientist	https://docs.google.com/document/d/1fDUyMO5GRTokJn5khMWPAhJCsuFUmQp62m-lYmhfDGo/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	5	2024-08-08	2024-08-08	\N	\N
+16	Self user research notes - DG Labs	https://docs.google.com/document/d/1hynxBUqOSq8o_0Y2zAkbNHeUVQ36f_U1cNZTwKhubp4/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	5	2024-08-07	2024-08-07	\N	\N
+17	We Need to Raise the Bar for AI Product Managers _ by Julia Winn _ Aug, 2024 _ Towards Data Science.pdf	https://drive.google.com/file/d/1EpBkloFburQh-EC1n_1wSM8rKd1tQIsS/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	6	2024-08-12	2024-08-12	\N	\N
+19	Counteroffer self user research notes -- Driven	https://docs.google.com/document/d/1Z0NPKFz1AshUPttLePROeVEgmbQgujyVwR8IFfzmQ1c/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	7	\N	\N	\N	\N
+26	Entrepreneurs/Startups	\N	\N	\N	\N	\N	11	\N
+27	Interview - Megan	https://docs.google.com/document/d/1udeKLySXsdG4VQp_OO8QGR4LhI6Q6fqHz4SPZpziDTg/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	8	\N	\N	\N	\N
+28	Interview - Molly	https://docs.google.com/document/d/1WjmDXTRvzQ_G1n80Yb3MrJqjU9XUd4q4LsAYWmifL-4/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	8	\N	\N	\N	\N
+29	Inspect: Self user research notes outline -- US citizen	https://docs.google.com/document/d/1WDL5N38AVfiZY5UGxkv3Et0H8cMnQ1WZJcID0DLlBto/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	8	\N	\N	\N	\N
+30	Inspect proposal for information tracking	https://docs.google.com/document/d/1UI8zBNhSGD31j6YuBpH3rFm0wrJwLeyXt7iaZR-M1yU/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	8	\N	\N	\N	\N
+31	Tracking the Reliability of Information _ Datagotchi Labs.pdf	https://drive.google.com/file/d/1KCxhnd6j8XPr5dZHJ-MaNVK3BTmUS-TF/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	8	\N	\N	\N	\N
+32	Trump bizarrely blames Harris for turned-Black remark_ _She said it. I didn't say it_ (video) - Boing Boing.pdf	https://drive.google.com/file/d/1xFDIjHTSpLPZ_D5TVff92nfJz-i-YZFQ/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	8	2024-08-11	2024-08-11	\N	\N
+33	Inspect proposal for information tracking	https://docs.google.com/document/d/1UI8zBNhSGD31j6YuBpH3rFm0wrJwLeyXt7iaZR-M1yU/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	9	\N	\N	\N	\N
+20	Counteroffer self user research notes -- Collusion	https://docs.google.com/document/d/1zPEtCLeSYJCT_3iLFYuR4U3NqAY8-ZoptGnN0RiR3XI/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	7	2024-08-06	2024-08-06	\N	\N
+18	PMBoard proposal	https://docs.google.com/document/d/1KzD6QLuWW0qv7SJreMW0G3Piw96x7zBmUgdLC-vCIoE/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	7	\N	\N	\N	\N
+37	We All Know AI Can’t Code, Right_ _ by Joe Procopio _ Aug, 2024 _ Entrepreneurship Handbook.pdf	https://drive.google.com/file/d/1Q2SncKXRLoNMBpdIOZF9HD5-8oV7aeJU/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	15	2024-08-11	2024-08-11	\N	\N
+38	The Braindead Senior Dev Hypothesis _ by Andrew Zuo _ Aug, 2024 _ Medium.pdf	https://drive.google.com/file/d/1WlOWFq7uFUpUACaEaheSWvl_HThR6f5Z/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	15	2024-08-12	2024-08-12	\N	\N
+39	Flood of 'junk'_ How AI is changing scientific publishing.pdf	https://drive.google.com/file/d/1oq8fJ7ur33fnvkVWij2onoHu6sN4yCJj/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	16	2024-08-11	2024-08-11	\N	\N
+40	We Need to Raise the Bar for AI Product Managers _ by Julia Winn _ Aug, 2024 _ Towards Data Science.pdf	https://drive.google.com/file/d/1EpBkloFburQh-EC1n_1wSM8rKd1tQIsS/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	17	2024-08-12	2024-08-12	\N	\N
+41	6 hard truths of generative AI in the enterprise _ CIO.pdf	https://drive.google.com/file/d/10XYXrur15fUetRiweVg455N7aVCbxk0m/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	18	2024-08-13	2024-08-13	\N	\N
+42	Remote work is bad for you. How people willingly slow down their… _ by Michal Malewicz _ Jul, 2024 _ Medium.pdf	https://drive.google.com/file/d/1jFUtbEavbyI7LmqUiysqrv75_mtET3lX/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	19	2024-08-13	2024-08-13	\N	\N
+43	There is no Developer Shortage. None of this crap really needs to exist _ by Kenneth Reilly _ Medium.pdf	https://drive.google.com/file/d/1GKgAON8U43XwIWaXr23YLQvIhLHxbj9K/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	19	2024-08-13	2024-08-13	\N	\N
+44	Tech Companies Can’t Find Good Employees and It’s Their Own Fault _ by Joe Procopio _ Aug, 2024 _ Entrepreneurship Handbook.pdf	https://drive.google.com/file/d/1IWBIk1pTXS7Szc-LTa32CrlZbusU1u7e/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	19	2024-08-13	2024-08-13	\N	\N
+45	Hard Core Programming is Dead. Software developers voted with their… _ by The Secret Developer _ Jun, 2024 _ Medium.pdf	https://drive.google.com/file/d/1f_8Hlk5zttqi_NrUrnT-GsqOCmz5st9o/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	19	2024-08-12	2024-08-12	\N	\N
+46	Why Most Programmers Burn Out After the Age of 40 _ by Aleena _ Jul, 2024 _ Level Up Coding.pdf	https://drive.google.com/file/d/1TWYLquN7LZwSm6Fj6pxGglvsd85EqpH-/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	19	2024-08-11	2024-08-11	\N	\N
+47	HackerX	https://docs.google.com/document/d/1rXwkoYJIM9ybNDFC7AsKWYTIw0cmegAw9JSJN5YqKvU/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	20	\N	\N	\N	\N
+48	My past jobs' task breakdown	https://docs.google.com/document/d/1Sr5l76cOj8SO9R4iW2aOxfj7IqdFdpM5sjP6ahaUQ4k/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	20	\N	\N	\N	\N
+49	Consulting brainstorming	https://docs.google.com/document/d/1gxjaEB-2YLZyx2slPN7VpZcAx_JUdnbDjGX2yIqsUN0/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	20	\N	\N	\N	\N
+50	Petaluma businesses	https://docs.google.com/spreadsheets/d/1XbXRtRk0wm5YRRw_2A67rSS4WCDXuzpqhuQGHQbeFkA/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.spreadsheet	20	\N	\N	\N	\N
+51	Counteroffer v3 (combined marketplace) proposal	https://docs.google.com/document/d/1YjKfPKhnFZZkUIuVCqEOKnumhzyQmG5iENBmhhqKNXw/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	20	\N	\N	\N	\N
+52	Jobhunters Flood Recruiters With AI-Generated CVs - Slashdot.pdf	https://drive.google.com/file/d/1nVcQPKz-GFQeLhNE1IX-T5fKEn6RgGH6/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	20	2024-08-13	2024-08-13	\N	\N
+53	Counteroffer self user research notes -- Tanium (#1)	https://docs.google.com/document/d/17-ErdWqh0nhy03n90tsHjLDNSmhseAmW6QkaT1MEj6c/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	21	\N	\N	\N	\N
+54	Counteroffer self user research notes -- Driven	https://docs.google.com/document/d/1Z0NPKFz1AshUPttLePROeVEgmbQgujyVwR8IFfzmQ1c/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	21	\N	\N	\N	\N
+55	Counteroffer self user research notes -- Collusion	https://docs.google.com/document/d/1zPEtCLeSYJCT_3iLFYuR4U3NqAY8-ZoptGnN0RiR3XI/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	21	\N	\N	\N	\N
+56	Counteroffer self user research notes -- Exaptive	https://docs.google.com/document/d/1I-kxJBTBNjiuUEgaYEW0dYNDFy98sWc1CnqPJ3KJfbc/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	21	\N	\N	\N	\N
+57	Counteroffer v1 proposal	https://docs.google.com/document/d/1sncONQyNV2mrYZftuwtOll4CoHU1uJvQAx3_OR2TMPQ/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	21	\N	\N	\N	\N
+58	Using Leverage to Make Demands from Employers _ Datagotchi Labs.pdf	https://drive.google.com/file/d/1d2AGhDcn9JQX9KQWz8yhmEWUqoBlOBsF/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	21	\N	\N	\N	\N
+59	My New Tech Job Strategy is Doing Nothing _ by The Secret Developer _ Jun, 2024 _ Medium.pdf	https://drive.google.com/file/d/13KKCg7nQh1PU8tH2O5dQtqydP4dK3MNW/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	21	2024-08-11	2024-08-11	\N	\N
+60	There is no Developer Shortage. None of this crap really needs to exist _ by Kenneth Reilly _ Medium.pdf	https://drive.google.com/file/d/1GKgAON8U43XwIWaXr23YLQvIhLHxbj9K/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	22	2024-08-13	2024-08-13	\N	\N
+61	Hard Core Programming is Dead. Software developers voted with their… _ by The Secret Developer _ Jun, 2024 _ Medium.pdf	https://drive.google.com/file/d/1f_8Hlk5zttqi_NrUrnT-GsqOCmz5st9o/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	22	2024-08-12	2024-08-12	\N	\N
+36	New Google Pixel 9 voice assistant Gemini is a trainwreck - Fast Company.pdf	https://drive.google.com/file/d/1v1fwScg0uJz2Q1gUCNnMnrd9Skm9JkKB/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	14	2024-08-15	2024-08-15	\N	\N
+62	Tech Companies Can’t Find Good Employees and It’s Their Own Fault _ by Joe Procopio _ Aug, 2024 _ Entrepreneurship Handbook.pdf	https://drive.google.com/file/d/1IWBIk1pTXS7Szc-LTa32CrlZbusU1u7e/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	22	2024-08-13	2024-08-13	\N	\N
+63	Recruiter research: Barry Kwok	https://docs.google.com/document/d/1XyIbba5H05ckeBVqADJ3iG5PeUeX5IcQaTIoIdQWihc/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	23	\N	\N	\N	\N
+64	Career Nebula	https://docs.google.com/document/d/1NhY2KogMo0ik8bqYwH1KPu6qTXv2ngeOgwGcpY44qlY/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	23	\N	\N	\N	\N
+65	Counteroffer v2 (employer side, "Illuminate") proposal	https://docs.google.com/document/d/1y6aUf9A1BrprUvvlVzl-6rEpPqyNGLuvRT4tNAn32rU/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	23	\N	\N	\N	\N
+66	Jobhunters Flood Recruiters With AI-Generated CVs - Slashdot.pdf	https://drive.google.com/file/d/1nVcQPKz-GFQeLhNE1IX-T5fKEn6RgGH6/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	23	2024-08-13	2024-08-13	\N	\N
+67	Bandana lands new investment to help hourly wage workers find good jobs _ TechCrunch.pdf	https://drive.google.com/file/d/1WInVBD1wlZPReuL3RvGgSkPjnDAx1luN/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	24	2024-08-11	2024-08-11	\N	\N
+68	Social Thought Leader	\N	\N	\N	\N	\N	15	\N
+69	Social Thought Leader	\N	\N	\N	\N	\N	16	\N
+70	All People	\N	\N	\N	\N	\N	17	\N
+71	Techie	\N	\N	\N	\N	\N	20	\N
+72	Techie	\N	\N	\N	\N	\N	21	\N
+73	Unemployed Techie	\N	\N	\N	\N	\N	21	\N
+74	Employed Techie	\N	\N	\N	\N	\N	21	\N
+78	Product Manager	\N	\N	\N	2024-08-17	2024-08-17	22	\N
+21	Counteroffer self user research notes -- Exaptive	https://docs.google.com/document/d/1I-kxJBTBNjiuUEgaYEW0dYNDFy98sWc1CnqPJ3KJfbc/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	7	2024-08-06	2024-08-06	\N	\N
+87	Datagotchi pitch deck - social entrepreneurship	https://docs.google.com/presentation/d/14GGVxuvla3l1KqoQX8lihPL6f9hSpy9kd1TP8c7V3iQ/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.presentation	12	2024-07-29	2024-08-30	\N	\N
+88	Signal Is More Than Encrypted Messaging. Under Meredith Whittaker, It’s Out to Prove Surveillance Capitalism Wrong _ WIRED.pdf	https://drive.google.com/file/d/1GoGt7MGmAcJ00KZc5BXF35Da-LLSNHhN/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	2	2024-08-30	2024-08-30	\N	\N
+89	Signal Is More Than Encrypted Messaging. Under Meredith Whittaker, It’s Out to Prove Surveillance Capitalism Wrong _ WIRED.pdf	https://drive.google.com/file/d/1GoGt7MGmAcJ00KZc5BXF35Da-LLSNHhN/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	14	2024-08-30	2024-08-30	\N	\N
+90	8 Tips To Optimize Your Resume For Applicant Tracking Systems.pdf	https://drive.google.com/file/d/1hN9MpgdPMoQ61V6K-D9LLaLoL28q3act/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	20	2024-08-30	2024-08-30	\N	\N
+91	A podcast gives an inside look at how the far-right is mainstreaming itself _ Vox.pdf	https://drive.google.com/file/d/1zG2ya3m0cgX95q67xF4paztFv5jdAV6j/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	8	2024-08-30	2024-08-28	\N	\N
+92	The End of the Creator Economy. YouTubers and TikTokers are the new… _ by Joe Procopio _ Aug, 2024 _ Entrepreneurship Handbook.pdf	https://drive.google.com/file/d/1gA817iA4-PlaG4KqUgW7E1irQ72cRFrS/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	9	2024-08-30	2024-08-27	\N	\N
+93	Stakeholder Wants vs. User Needs_ Why Following Orders Creates Bad Products _ by Michael H. Goitein _ Aug, 2024 _ Product Coalition.pdf	https://drive.google.com/file/d/19v0-abf0uZOvfVY7thO08j1aBWgo6iLo/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	5	2024-08-30	2024-08-27	\N	\N
+94	Stakeholder Wants vs. User Needs_ Why Following Orders Creates Bad Products _ by Michael H. Goitein _ Aug, 2024 _ Product Coalition.pdf	https://drive.google.com/file/d/19v0-abf0uZOvfVY7thO08j1aBWgo6iLo/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	7	2024-08-30	2024-08-27	\N	\N
+95	Stakeholder Wants vs. User Needs_ Why Following Orders Creates Bad Products _ by Michael H. Goitein _ Aug, 2024 _ Product Coalition.pdf	https://drive.google.com/file/d/19v0-abf0uZOvfVY7thO08j1aBWgo6iLo/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	6	2024-08-30	2024-08-27	\N	\N
+96	AI Influencers Are Falling for Hoaxes and Scams.pdf	https://drive.google.com/file/d/1LlDagjF8pF0j1huBTcMRC7Yxs64hJN_H/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	16	2024-08-30	2024-08-26	\N	\N
+97	Why Artificial Intelligence Hype Isn't Living Up To Expectations.pdf	https://drive.google.com/file/d/17WhE-Zpctp2DTxaaZw5T2hLXGVSqrhbW/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	16	2024-08-30	2024-08-26	\N	\N
+98	Paperguide - Discover, read, write and manage research with ease using AI _ Product Hunt.pdf	https://drive.google.com/file/d/1KMsPslHVvz-3LVn9ohpEYhfGTdCcIskU/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	\N	2024-08-30	2024-08-26	\N	6
+35	Is Your Rent an Antitrust Violation_ - The Atlantic.pdf	https://drive.google.com/file/d/1Y-XQbq-dnVOde9GjSjjQ4lPzDaXU6de1/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	14	2024-08-11	2024-08-11	\N	\N
+99	uBest - Efficient hiring made simple _ Product Hunt.pdf	https://drive.google.com/file/d/1MJtisFPns-0nVwGAqFWT2v7L5wbCG5O0/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	\N	2024-08-30	2024-08-26	\N	6
+101	The problem with growth_ why everything is failing now _ by Joanna Weber _ Aug, 2024 _ UX Collective.pdf	https://drive.google.com/file/d/1hnIZUTqz3iSYMILQg44Yu6u2008yIam0/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	7	2024-08-30	2024-08-23	\N	\N
+102	A Recruiter Actually Said This to Me _ by Courtney Leigh _ Writers’ Blokke _ Medium.pdf	https://drive.google.com/file/d/1Kc69DyY76h6jgMSbJWrJQns20ZhKYbxx/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	20	2024-08-30	2024-08-23	\N	\N
+103	Venture capital is full of distribution deadbeats.pdf	https://drive.google.com/file/d/1P8iWm3ujKLmMzDFKTazsCcISvQnQBdLT/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	4	2024-08-30	2024-08-20	\N	\N
+104	GM cuts 1,000 software jobs as it prioritizes quality and AI _ TechCrunch.pdf	https://drive.google.com/file/d/1r8CWTz55kNdjSf572hRFFC9ptDZmsGSE/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	20	2024-08-30	2024-08-20	\N	\N
+105	The Tech Industry Finally Broke the Spirit of Its Last Great Employee _ by Joe Procopio _ Aug, 2024 _ Entrepreneurship Handbook.pdf	https://drive.google.com/file/d/1wdIBJ5Dw4UQfuUKmDztkpyt6SbKV067o/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	19	2024-08-30	2024-08-20	\N	\N
 \.
 
 
@@ -1139,6 +1158,8 @@ COPY public.trends (id, name, type, evidence_id) FROM stdin;
 541	Linked Widget Timelines	resource	18
 542	Semantic Widget Citations	resource	18
 543	Incrementally-Formalized Stakeholder Empathy Visualizations	resource	18
+545	Test	goal	87
+547	Test4	\N	87
 \.
 
 
@@ -1153,7 +1174,7 @@ SELECT pg_catalog.setval('public.companies_id_seq', 16, true);
 -- Name: evidence_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.evidence_id_seq', 86, true);
+SELECT pg_catalog.setval('public.evidence_id_seq', 105, true);
 
 
 --
@@ -1202,7 +1223,7 @@ SELECT pg_catalog.setval('public.tasks_id_seq', 45, true);
 -- Name: trends_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.trends_id_seq', 543, true);
+SELECT pg_catalog.setval('public.trends_id_seq', 547, true);
 
 
 --
@@ -1291,6 +1312,14 @@ ALTER TABLE ONLY public.journey_steps
 
 ALTER TABLE ONLY public.journeys
     ADD CONSTRAINT u_sid UNIQUE (story_id);
+
+
+--
+-- Name: evidence fk_cid_companies; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.evidence
+    ADD CONSTRAINT fk_cid_companies FOREIGN KEY (company_id) REFERENCES public.companies(id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
 
 
 --

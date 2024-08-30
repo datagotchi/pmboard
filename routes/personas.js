@@ -80,13 +80,11 @@ router.delete("/:persona_id", deleteItem("personas", "persona_id"));
 
 // ****** persona evidence *****
 
-// get persona evidence
 router.get(
   "/:persona_id/evidence",
   getEvidenceExpressFunc("personas", "persona_id")
 );
 
-// add persona evidence
 router.post("/:persona_id/evidence", addEvidenceExpressFunc("persona_id"));
 
 router.param("evidence_id", trackEvidenceIdExpressFunc());

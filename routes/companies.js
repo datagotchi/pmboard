@@ -24,20 +24,27 @@ router.get("/", async (req, res, next) => {
       values: [req.product_id],
     })
     .then((result) => result.rows);
-  // await Promise.all(
-  //   companies.map(async (company) => {
-  //     company.evidence = await req.client
-  //       .query({
-  //         text: "select * from evidence where story_id = $1::integer",
-  //         values: [company.id],
-  //       })
-  //       .then((result) => result.rows);
-  //   })
-  // );
+  await Promise.all(
+    companies.map(async (company) => {
+      company.evidence = await req.client
+        .query({
+          text: "select * from evidence where company_id = $1::integer",
+          values: [company.id],
+        })
+        .then((result) => result.rows);
+      await Promise.all(
+        company.evidence.map(async (file) => {
+          file.trends = await req.client
+            .query({
+              text: "select * from trends where evidence_id = $1::integer",
+              values: [file.id],
+            })
+            .then((result) => result.rows);
+        })
+      );
+    })
+  );
   req.client.release();
-  // DEBUG until they get evidence
-  companies.forEach((company) => (company.evidence = []));
-  // TODO: get and assign trends, too
   return res.json(companies);
 });
 
@@ -59,10 +66,7 @@ router.get(
   getEvidenceExpressFunc("companies", "company_id")
 );
 
-router.post(
-  "/:company_id/evidence",
-  addEvidenceExpressFunc("companies", "company_id")
-);
+router.post("/:company_id/evidence", addEvidenceExpressFunc("company_id"));
 
 router.param(
   "evidence_ix",

@@ -138,10 +138,7 @@ router.get(
   getEvidenceExpressFunc("stories", "story_id")
 );
 
-router.post(
-  "/:story_id/evidence",
-  addEvidenceExpressFunc("stories", "story_id")
-);
+router.post("/:story_id/evidence", addEvidenceExpressFunc("story_id"));
 
 router.param("evidence_ix", trackEvidenceIdExpressFunc("stories", "story_id"));
 
