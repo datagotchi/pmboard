@@ -509,7 +509,6 @@ COPY public.evidence (id, name, url, icon, persona_id, created_date, modified_da
 78	Product Manager	\N	\N	\N	2024-08-17	2024-08-17	22
 21	Counteroffer self user research notes -- Exaptive	https://docs.google.com/document/d/1I-kxJBTBNjiuUEgaYEW0dYNDFy98sWc1CnqPJ3KJfbc/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	7	2024-08-06	2024-08-06	\N
 35	Is Your Rent an Antitrust Violation_ - The Atlantic.pdf	https://drive.google.com/file/d/1Y-XQbq-dnVOde9GjSjjQ4lPzDaXU6de1/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	14	2024-08-11	2024-08-11	\N
-85	R&D Scientist	null	null	5	2024-08-17	2024-08-17	23
 \.
 
 
@@ -1137,44 +1136,6 @@ COPY public.trends (id, name, type, evidence_id) FROM stdin;
 496	There are many roles because of Unrealistic Expectations	objective	71
 497	There are many roles because of Manipulative Practices	objective	71
 498	There are many roles because of Overdigitalization of our lives	objective	71
-499	There is so much information involved in the creation of new products	objective selected	85
-501	To document my learnings so I can get better/make others better over time	objective selected	85
-502	Afford to live by myself	objective selected	85
-503	Research & document stakeholder needs	goal	85
-504	To frame information so it can be used	goal	85
-505	To expose hidden information	goal	85
-506	To reduce information overload	goal	85
-507	Make money	goal	85
-508	Talk to people who might be associated to a problem space	activity	85
-509	Document insights from talking to people	activity	85
-510	Stay aware of news in my feeds	activity	85
-511	Document important articles/posts	activity	85
-512	Develop & test prototypes locally	activity	85
-513	Commit code to GitHub to document it"	activity	85
-514	Try crowdfunding, investors, subscriptions, transaction fees, etc…	activity	85
-515	Provide services to companies	activity	85
-516	Any solution must link stakeholder needs to value propositions, then value propositions to features and their roadmap	task	85
-517	Any solution must any solution must track and link stakeholder research (original and with your product), market research, and product development/launches over time	task	85
-518	Talk to friends and family	task	85
-519	Email myself insights from talking to friends and family	task	85
-520	Network to gain professional connections	task	85
-521	Email myself insights from professional connections	task	85
-522	Read Feedly, Google News, Twitter	task	85
-523	Share articles/posts to myself via email	task	85
-524	Prototype in React & Node.js in Visual Studio Code	task	85
-525	Analyze, approve, & push code reviews on GitHub	task	85
-526	Software development	task	85
-527	Incrementally-Formalized Stakeholder Empathy Visualizations	resource	85
-528	Feedly	resource	85
-529	Google News	resource	85
-530	Twitter	resource	85
-531	Email	resource	85
-532	GitHub	resource	85
-533	Visual Studio Code	resource	85
-534	Reacat	resource	85
-535	Node.js	resource	85
-536	PMBoard	resource	85
-500	To explore social problem spaces, potential solutions, & novel revenue streams	objective selected	85
 541	Linked Widget Timelines	resource	18
 542	Semantic Widget Citations	resource	18
 543	Incrementally-Formalized Stakeholder Empathy Visualizations	resource	18

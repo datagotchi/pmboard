@@ -133,13 +133,14 @@ export const trackEvidenceIdExpressFunc = () => (req, res, next) => {
   next();
 };
 
-export const deleteEvidenceExpressFunc =
-  (itemCollectionName, itemIndexKey) => async (req, res, next) => {
-    const { product, [itemIndexKey]: itemIndex } = req;
-    product[itemCollectionName][itemIndex].evidence.splice(req.evidence_ix, 1);
+export const deleteEvidenceExpressFunc = () => async (req, res, next) => {
+  await req.client.query({
+    text: "delete from evidence where id = $1::integer",
+    values: [req.evidence_id],
+  });
 
-    await prod.save();
-  };
+  return res.json({ success: true });
+};
 
 // *** trends functions ***
 

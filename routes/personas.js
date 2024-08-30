@@ -99,7 +99,7 @@ router.param("evidence_id", trackEvidenceIdExpressFunc());
 
 router.delete(
   "/:company_ix/evidence/:evidence_id",
-  deleteEvidenceExpressFunc("personas", "persona_id")
+  deleteEvidenceExpressFunc()
 );
 
 // router.get(

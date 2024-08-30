@@ -29,6 +29,21 @@ const useEvidenceAPI = (productId, collectionName) => {
   };
 
   /**
+   * Delete an evidence record on the server.
+   * @param {number} itemId The ID of the collection item.
+   * @param {number} evidenceId The ID of the evidence record to be deleted.
+   * @returns {Promise<Response>} The fetch promise.
+   * @example <Component onClick={() => removeEvidenceRecord()} />
+   */
+  const removeEvidenceRecord = (itemId, evidenceId) =>
+    fetch(
+      `/products/${productId}/${collectionName}/${itemId}/evidence/${evidenceId}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+  /**
    * Delete a trend by its ID.
    * @param {number} itemId The ID of the item containing evidence containing the trend.
    * @param {number} evidenceId The ID of the evidence containing the trend.
@@ -88,6 +103,7 @@ const useEvidenceAPI = (productId, collectionName) => {
 
   return {
     updateEvidence,
+    removeEvidenceRecord,
     deleteTrend,
     addTrend,
     updateTrend,

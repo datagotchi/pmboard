@@ -72,8 +72,9 @@
 
 /**
  * @typedef EvidenceAPIProps
- * @property {(itemIndex: number, evidence: EvidenceRecord[]) => Promise<Response>} updateEvidence The function to call to update a widget item's evidence.
- * @property {(itemIndex: number, evidenceIndex: number, trends: EvidenceTrend[]) => Promise<Response>} updateTrends The function to call to update an evidence object's trends.
+ * @property {(itemId: number, evidence: EvidenceRecord[]) => Promise<Response>} updateEvidence The function to call to update a widget item's evidence.
+ * @property {(itemId: number, evidenceId: number) => Promise<Response>} removeEvidenceRecord The function to call to remove an evidence record.
+ * @property {(itemId: number, evidenceId: number, trends: EvidenceTrend[]) => Promise<Response>} updateTrends The function to call to update an evidence object's trends.
  * @property {(evidenceRecordId: number, trendId: number) => Promise<Response>} deleteTrendFunc The function to call to delete a single trend.
  */
 
@@ -108,6 +109,7 @@
  * @property {EvidenceRecord[]} evidence The evidence to show in the pane.
  * @property {string} containerModalId The ID of the containing modal dialog.
  * @property {(evidence: EvidenceRecord[]) => Promise<Response>} updateEvidenceOnServer The function to call when the evidence collection changes.
+ * @property {(file: EvidenceFile) => Promise<Response>} removeFileFunc The function to call to remove an evidence file.
  * @property {(tags: ReactTags.Tag[]) => void} allTagsUpdated The function to call when tags are updated in the evidence pane.
  * @property {(fileId: number, trendId: number) => Promise<Response>} deleteTrendFunc The function to call to delete a trend from the server.
  * @property {(fileId: number, trend: EvidenceTrend) => Promise<Response>} addTrendFunc The function to call to add a trend to the server.

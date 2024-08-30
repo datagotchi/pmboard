@@ -28,6 +28,7 @@ const FileEvidencePane = ({
   evidence,
   containerModalId,
   updateEvidenceOnServer,
+  removeFileFunc,
   allTagsUpdated,
   deleteTrendFunc,
   addTrendFunc,
@@ -241,8 +242,7 @@ const FileEvidencePane = ({
   const removeFile = async (file) => {
     const fileIndex = evidence.indexOf((f) => f.url === file.url);
     evidence.splice(fileIndex, 1);
-    // await updateEvidenceOnServer(evidence.filter((f) => f.url !== file.url));
-    await updateEvidenceOnServer(evidence);
+    await removeFileFunc(file.id);
     setFiles(files.filter((f) => f.url !== file.url));
     const newGoogleFiles = [...googleFiles, file];
     setGoogleFiles(newGoogleFiles);

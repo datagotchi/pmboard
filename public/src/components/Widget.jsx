@@ -39,6 +39,7 @@ const Widget = ({
     updateItem,
     deleteItem,
     updateEvidence,
+    removeEvidenceRecord,
     deleteTrend,
     addTrend,
     updateTrend,
@@ -302,6 +303,7 @@ const Widget = ({
             currentWidgetItem.evidence = evidence;
             updateEvidence(currentWidgetItem.id, evidence);
           }}
+          removeFileFunc={removeEvidenceRecord}
           deleteTrendFunc={deleteTrend}
           addTrendFunc={addTrend}
           updateTrendFunc={updateTrend}

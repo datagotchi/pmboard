@@ -61,16 +61,20 @@ const useCollectionAPI = (productId, collectionName) => {
       // TODO: credentials
     });
 
-  const { updateEvidence, deleteTrend, addTrend, updateTrend } = useEvidenceAPI(
-    productId,
-    collectionName
-  );
+  const {
+    updateEvidence,
+    removeEvidenceRecord,
+    deleteTrend,
+    addTrend,
+    updateTrend,
+  } = useEvidenceAPI(productId, collectionName);
 
   return {
     addItem,
     updateItem,
     deleteItem,
     updateEvidence,
+    removeEvidenceRecord,
     deleteTrend,
     addTrend,
     updateTrend,
