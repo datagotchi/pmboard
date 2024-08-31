@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: hooks/useEvidenceAPI.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: hooks/useEvidenceAPI.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import {
+  EvidenceAPIProps,
+  EvidenceRecord,
+  EvidenceTrend,
+  WidgetDataItem,
+} from "../types";
+
+/**
+ * A React hook to access API calls related to widget item evidence.
+ * @type {EvidenceAPIProps}
+ * @example const { updateEvidence } = useEvidenceAPI(productId, collectionName);
+ */
+const useEvidenceAPI = (productId, collectionName) => {
+  /**
+   * A function to update all evidence of a widget item.
+   * @param {number} itemId The ID of the item to update.
+   * @param {WidgetDataItem[]} evidence The entire evidence array to send to the server.
+   * @returns {Promise&lt;Response>} The fetch promise.
+   * @example &lt;Component onClick={() => updateEvidence(...)} />
+   */
+  const updateEvidence = (itemId, evidence) => {
+    evidence.updated_date = new Date();
+    return fetch(
+      `/products/${productId}/${collectionName}/${itemId}/evidence`,
+      {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(evidence),
+      }
+    );
+  };
+
+  /**
+   * Add an evidence record to the server.
+   * @param {number} itemId The ID of the collection item.
+   * @param {EvidenceRecord} evidenceRecord The the evidence record to be added.
+   * @returns {Promise&lt;Response>} The fetch promise.
+   * @example &lt;Component onClick={() => addEvidenceRecord()} />
+   */
+  const addEvidenceRecord = (itemId, evidenceRecord) =>
+    fetch(`/products/${productId}/${collectionName}/${itemId}/evidence`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(evidenceRecord),
+    });
+
+  /**
+   * Delete an evidence record on the server.
+   * @param {number} itemId The ID of the collection item.
+   * @param {number} evidenceId The ID of the evidence record to be deleted.
+   * @returns {Promise&lt;Response>} The fetch promise.
+   * @example &lt;Component onClick={() => removeEvidenceRecord()} />
+   */
+  const removeEvidenceRecord = (itemId, evidenceId) =>
+    fetch(
+      `/products/${productId}/${collectionName}/${itemId}/evidence/${evidenceId}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+  /**
+   * Delete a trend by its ID.
+   * @param {number} itemId The ID of the item containing evidence containing the trend.
+   * @param {number} evidenceId The ID of the evidence containing the trend.
+   * @param {number} trendId The ID of the trend being deleted.
+   * @returns {Promise&lt;Response>} The fetch promise.
+   * @example &lt;Component onClick={() => deleteTrend(..)} />
+   */
+  const deleteTrend = (itemId, evidenceId, trendId) =>
+    fetch(
+      `/products/${productId}/${collectionName}/${itemId}/evidence/${evidenceId}/trends/${trendId}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+  /**
+   * Create a new trend on the server.
+   * @param {number} itemId The ID of the item containing evidence containing the trend.
+   * @param {number} evidenceId The ID of the evidence containing the trend.
+   * @param {EvidenceTrend} trend The trend to add to the server.
+   * @returns {Promise&lt;Response>} The fetch promise.
+   * @example &lt;ReactTags handleAddition={() => addTrend()} />
+   */
+  const addTrend = (itemId, evidenceId, trend) =>
+    fetch(
+      `/products/${productId}/${collectionName}/${itemId}/evidence/${evidenceId}/trends`,
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(trend),
+      }
+    );
+
+  /**
+   * Replace the name or type of a trend.
+   * @param {number} itemId The ID of the item containing evidence containing the trend.
+   * @param {number} evidenceId The ID of the evidence containing the trend.
+   * @param {EvidenceTrend} trend The trend to update on the server.
+   * @returns {Promise&lt;Response>} The fetch promise.
+   * @example &lt;ReactTags handleTagClick={() => updateTrend()} />
+   */
+  const updateTrend = (itemId, evidenceId, trend) =>
+    fetch(
+      `/products/${productId}/${collectionName}/${itemId}/evidence/${evidenceId}/trends/${trend.id}`,
+      {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(trend),
+      }
+    );
+
+  return {
+    updateEvidence,
+    addEvidenceRecord,
+    removeEvidenceRecord,
+    deleteTrend,
+    addTrend,
+    updateTrend,
+  };
+};
+
+export default useEvidenceAPI;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AddPersonaPane">AddPersonaPane</a></li><li><a href="global.html#AllTagsContext">AllTagsContext</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Dashboard">Dashboard</a></li><li><a href="global.html#EmpathyMapPane">EmpathyMapPane</a></li><li><a href="global.html#EvidencePaneContext">EvidencePaneContext</a></li><li><a href="global.html#FileEvidencePane">FileEvidencePane</a></li><li><a href="global.html#JourneyMapPane">JourneyMapPane</a></li><li><a href="global.html#MarketResearchWidget">MarketResearchWidget</a></li><li><a href="global.html#Modal">Modal</a></li><li><a href="global.html#StakeholderEvidencePane">StakeholderEvidencePane</a></li><li><a href="global.html#StakeholderResearchWidget">StakeholderResearchWidget</a></li><li><a href="global.html#StoriesWidget">StoriesWidget</a></li><li><a href="global.html#SummaryPaneContext">SummaryPaneContext</a></li><li><a href="global.html#TodoWidget">TodoWidget</a></li><li><a href="global.html#Widget">Widget</a></li><li><a href="global.html#WidgetItemRow">WidgetItemRow</a></li><li><a href="global.html#formatTrendTypeText">formatTrendTypeText</a></li><li><a href="global.html#useCollectionAPI">useCollectionAPI</a></li><li><a href="global.html#useCollectionItems">useCollectionItems</a></li><li><a href="global.html#useEvidenceAPI">useEvidenceAPI</a></li><li><a href="global.html#useOAuthAPI">useOAuthAPI</a></li><li><a href="global.html#useProductAPI">useProductAPI</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Sat Aug 31 2024 15:59:11 GMT-0400 (Eastern Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

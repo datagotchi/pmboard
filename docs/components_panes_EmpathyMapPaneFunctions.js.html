@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: components/panes/EmpathyMapPaneFunctions.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,48 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: components/panes/EmpathyMapPaneFunctions.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>export const indexToClassName = [
+  "objective",
+  "goal",
+  "activity",
+  "task",
+  "resource",
+];
+export const classNameToIndex = {};
+indexToClassName.forEach((className, index) => {
+  classNameToIndex[className] = index;
+});
 
-
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+/**
+ * Make a trend type string plural.
+ * @param {string} trendType The type of change, ~ in (objective, goal, activity, task, resource).
+ * @returns {string} The plural version of the trendType input.
+ * @example &lt;strong>{formatTrendTypeText(trendType)}&lt;/strong>
+ */
+export const formatTrendTypeText = (trendType) => {
+  switch (trendType.toLocaleLowerCase()) {
+    case "activity":
+      return "Activities";
+    case "resource":
+      return "Resources &amp; Constraints";
+    case "":
+      return "";
+    default:
+      return `${trendType.charAt(0).toUpperCase() + trendType.slice(1)}s`;
+  }
+};
+</code></pre>
+        </article>
+    </section>
 
 
 

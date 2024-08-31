@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: components/TodoWidget.jsx</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,47 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: components/TodoWidget.jsx</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from "react";
 
+import Widget from "./Widget";
 
-    <h3> </h3>
+/**
+ * A widget to document and visualize to-do items.
+ * @param {object} props The component properties.
+ * @param {number | undefined} props.productId the ID of the current product.
+ * @returns {React.JSX.Element} The rendered widget.
+ * @example
+ *  &lt;TodoWidget productId={*} />
+ */
+const TodoWidget = ({ productId }) => {
+  const TODO_MODAL_ID = "todoModal";
 
+  return (
+    &lt;Widget
+      productId={productId}
+      collectionName="tasks"
+      type="Task"
+      evidenceColumnLabel="User Stories"
+      title="What are your TODO items?"
+      mainModalId={TODO_MODAL_ID}
+      summaryTitle="Activity"
+    />
+  );
+};
 
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+export default TodoWidget;
+</code></pre>
+        </article>
+    </section>
 
 
 

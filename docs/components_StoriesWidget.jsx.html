@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: components/StoriesWidget.jsx</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,57 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: components/StoriesWidget.jsx</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from "react";
 
+import { EvidencePaneContext } from "../contexts/EvidencePaneContext";
+import StakeholderEvidencePane from "./panes/StakeholderEvidencePane";
 
-    <h3> </h3>
+import { SummaryPaneContext } from "../contexts/SummaryPaneContext";
+import JourneyMapPane from "./panes/JourneyMapPane";
 
+import Widget from "./Widget";
 
+/**
+ * A widget to document and visualize user stories.
+ * @param {object} props The component properties.
+ * @param {number | undefined} props.productId the ID of the current product.
+ * @returns {React.JSX.Element} The rendered widget.
+ * @example
+ *  &lt;StoriesWidget productId={*} />
+ */
+const StoriesWidget = ({ productId }) => {
+  const STORY_MODAL_ID = "storyModal";
 
+  return (
+    &lt;EvidencePaneContext.Provider value={StakeholderEvidencePane}>
+      &lt;SummaryPaneContext.Provider value={JourneyMapPane}>
+        &lt;Widget
+          productId={productId}
+          collectionName="stories"
+          type="Story"
+          evidenceColumnLabel="Personas"
+          title="What are the planned user stories?"
+          mainModalId={STORY_MODAL_ID}
+          summaryTitle="Story Journey"
+        />
+      &lt;/SummaryPaneContext.Provider>
+    &lt;/EvidencePaneContext.Provider>
+  );
+};
 
-
-
-
-
-
-
-    
-
-
-
-
-
+export default StoriesWidget;
+</code></pre>
+        </article>
+    </section>
 
 
 

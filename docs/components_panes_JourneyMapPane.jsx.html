@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/panes/JourneyMapPane.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/panes/JourneyMapPane.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useCallback, useContext, useEffect, useState } from "react";
+import { Draggable, Droppable } from "@shopify/draggable";
+
+import { AllTagsContext } from "../../contexts/AllTagsContext";
+
+/**
+ * A modal pane to show and enable editing of a user journey from research trends/tags.
+ * @param {object} props The React component properties.
+ * @param {object} props.data The summary data to show on load.
+ * @param {() => void} props.summaryChanged The function to call when the summary is changed (and saved).
+ * @returns {React.JSX.Element} The rendered pane.
+ * @example &lt;JourneyMapPane data={*} summaryChanged={() => {}} />
+ */
+const JourneyMapPane = ({ data, summaryChanged }) => {
+  const allTagsForThisStory = useContext(AllTagsContext);
+
+  const [summary, setSummary] = useState(data);
+
+  /**
+   * @type {[Droppable | undefined, React.Dispatch&lt;Droppable>]}
+   */
+  const [droppable, setDroppable] = useState();
+
+  useEffect(() => {
+    if (!droppable) {
+      const tagsToUse = document.getElementById("tagsToUse");
+      const d = new Droppable(tagsToUse, {
+        draggable: ".tag",
+        dropzone: ".dropzone",
+        distance: 0,
+      });
+      let currentDropzone;
+      d.on("droppable:dropped", (event) => {
+        currentDropzone = event.dropzone;
+      });
+      d.on("drag:stop", () => {
+        if (currentDropzone) {
+          currentDropzone.style.minWidth = "";
+        }
+      });
+      setDroppable(d);
+    }
+  }, [droppable]);
+
+  const [dropzones, setDropzones] = useState([]);
+  const [dropzoneNumber, setDropzoneNumber] = useState(1);
+
+  useEffect(() => {
+    if (summary &amp;&amp; summary.steps &amp;&amp; summary.steps.length > dropzones.length) {
+      setDropzones(
+        summary.steps.map((step) => ({
+          dropzone: dropzoneNumber,
+          x: step.x,
+          y: step.y,
+          tag_id: step.tag_id,
+          tag_class_name: step.tag_class_name,
+          tag_text: step.tag_text,
+          type: step.type,
+        }))
+      );
+      setDropzoneNumber(dropzoneNumber + 1);
+    }
+  }, [summary, dropzoneNumber]);
+
+  const addFlowChartItem = useCallback(() => {
+    setDropzones([
+      ...dropzones,
+      {
+        dropzone: dropzoneNumber,
+        className: "dropzone",
+        minWidth: "100px",
+        type: mode,
+      },
+    ]);
+    setDropzoneNumber(dropzoneNumber + 1);
+  }, [dropzones]);
+
+  /**
+   * @type {[Draggable | undefined, React.Dispatch&lt;Draggable>]}
+   */
+  const [draggable, setDraggable] = useState();
+
+  /**
+   * Update an HTMLElement's left/top absolute position.
+   * @param {number} dropzoneNumber The data-dropzone value to add to the HTMLElement.
+   * @param {number} dx The x coordinate to modify from its current position.
+   * @param {number} dy The y coordinate to modify from its current position.
+   * @example updateTagXY(1, 5, 5)
+   */
+  const updateTagXY = (dropzoneNumber, dx, dy) => {
+    setTimeout(() => {
+      const div = document.querySelector(`[data-dropzone='${dropzoneNumber}'`);
+      // const bounds = div.getBoundingClientRect();
+      if (div) {
+        const left = parseInt(div.style.left || 0);
+        const top = parseInt(
+          div.style.top || document.getElementById("addButton").offsetHeight
+        );
+        div.style.left = `${left + dx}px`;
+        div.style.top = `${top + dy}px`;
+      }
+    }, 50);
+  };
+
+  useEffect(() => {
+    if (!draggable) {
+      const flowchartArea = document.getElementById("flowchartArea");
+      const d = new Draggable(flowchartArea, {
+        draggable: ".draggable-dropzone--occupied",
+        distance: 0,
+      });
+      /**
+       * @type {HTMLElement}
+       */
+      let currentDragItem;
+      let absoluteClientX, absoluteClientY;
+      let originalOffsetX, originalOffsetY;
+
+      d.on("drag:start", (event) => {
+        currentDragItem = event.source;
+        originalOffsetX = event.sensorEvent.clientX;
+        originalOffsetY = event.sensorEvent.clientY;
+      });
+      d.on("drag:move", (event) => {
+        absoluteClientX = event.sensorEvent.clientX;
+        absoluteClientY = event.sensorEvent.clientY;
+      });
+      d.on("drag:stop", () => {
+        updateTagXY(
+          currentDragItem.dataset.dropzone,
+          absoluteClientX - originalOffsetX,
+          absoluteClientY - originalOffsetY
+        );
+      });
+      setDraggable(d);
+    }
+  }, [draggable]);
+
+  /**
+   * @type {["terminus" | "step" | "decision " | "io" | undefined, React.Dispatch&lt;string | undefined>]}
+   */
+  const [mode, setMode] = useState("terminus");
+
+  /**
+   * When a mode button is clicked, setMode() to the mode, make that button active,
+   * and make the other buttons inactive.
+   * @param {React.MouseEvent&lt;HTMLButtonElement, MouseEvent>} event The mouse event.
+   * @param {string} mode The mode to set.
+   * @example &lt;button onClick={(event) => handleModeButtonClick(event, "mode")
+   */
+  const handleModeButtonClick = (event, mode) => {
+    setMode(mode);
+    const buttons = Array.from(document.getElementsByClassName("modeButton"));
+    buttons.forEach((button) => {
+      if (button === event.target) {
+        button.classList.add("active");
+      } else {
+        button.classList.remove("active");
+      }
+    });
+  };
+
+  if (allTagsForThisStory) {
+    return (
+      &lt;div id="journeyMap">
+        &lt;nav>
+          &lt;div id="tagsToUse" className="dropzone">
+            {allTagsForThisStory
+              .filter(
+                (tag) =>
+                  !summary ||
+                  !summary.steps.map((step) => step.tag_id).includes(tag.id)
+              )
+              .map((tag) => (
+                &lt;div
+                  className={`tag trendItem ${tag.className}`}
+                  key={`tag named ${tag.id}`}
+                  data-tag={JSON.stringify(tag)}
+                >
+                  {tag.text}
+                &lt;/div>
+              ))}
+          &lt;/div>
+        &lt;/nav>
+        &lt;div id="body">
+          &lt;div>
+            &lt;button
+              className="modeButton active"
+              onClick={(event) => handleModeButtonClick(event, "terminus")}
+            >
+              ⬭
+            &lt;/button>
+            &lt;button
+              className="modeButton"
+              onClick={(event) => handleModeButtonClick(event, "step")}
+            >
+              ▢
+            &lt;/button>
+            &lt;button
+              className="modeButton"
+              onClick={(event) => handleModeButtonClick(event, "decision")}
+            >
+              ♢
+            &lt;/button>
+            &lt;button
+              className="modeButton"
+              onClick={(event) => handleModeButtonClick(event, "io")}
+            >
+              ▱
+            &lt;/button>
+            &lt;button
+              id="addButton"
+              onClick={() => {
+                addFlowChartItem(document.createElement("div"));
+              }}
+            >
+              Add Step
+            &lt;/button>
+            &lt;button
+              onClick={() => {
+                const dropzones = Array.from(
+                  document.querySelectorAll("[data-dropzone]")
+                ).sort(
+                  (a, b) =>
+                    Number(b.dataset.dropzone) - Number(a.dataset.dropzone)
+                );
+                const steps = dropzones.map((dropzoneDiv) => {
+                  const tag = JSON.parse(
+                    dropzoneDiv.childNodes.item(0).dataset.tag
+                  );
+                  return {
+                    tagId: tag.id,
+                    tagClassName: tag.className,
+                    tagText: tag.text,
+                    x: dropzoneDiv.style.left,
+                    y: dropzoneDiv.style.top,
+                  };
+                });
+                const newSummary = {
+                  ...summary,
+                  steps,
+                  // connections
+                };
+                summaryChanged(newSummary);
+                setSummary(newSummary);
+              }}
+              style={{ float: "right" }}
+            >
+              Save
+            &lt;/button>
+          &lt;/div>
+          &lt;div
+            id="flowchartArea"
+            style={{
+              border: "1px black solid",
+              width: "90%",
+              minHeight: "300px",
+              position: "relative",
+            }}
+          >
+            {dropzones.map((zone, i) => (
+              &lt;div
+                key={`dropzone #${i}`}
+                className={`dropzone ${
+                  zone.x &amp;&amp; zone.y ? "draggable-dropzone--occupied" : ""
+                }`}
+                data-dropzone={zone.dropzone}
+                style={{
+                  minHeight: "30px",
+                  maxWidth: "200px",
+                  minWidth: zone.minWidth,
+                  position: "absolute",
+                  left: zone.x,
+                  top: zone.y,
+                }}
+              >
+                {zone.tag_id &amp;&amp; (
+                  &lt;div
+                    className={`tag trendItem ${zone.tag_class_name}`}
+                    style={{
+                      textShadow: "2px 3px black",
+                      borderRadius: zone.type === "terminus" ? "50%" : "",
+                      transform: zone.type === "io" ? "skew(20deg)" : "",
+                      border:
+                        zone.type === "decision"
+                          ? "50px solid transparent"
+                          : "",
+                    }}
+                    data-tag={JSON.stringify({
+                      id: zone.tag_id,
+                      text: zone.tag_text,
+                      className: zone.tag_class_name,
+                    })}
+                  >
+                    {zone.tag_text}
+                  &lt;/div>
+                )}
+              &lt;/div>
+            ))}
+          &lt;/div>
+        &lt;/div>
+      &lt;/div>
+    );
+  }
+  return &lt;>&lt;/>;
+};
+
+export default JourneyMapPane;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AddPersonaPane">AddPersonaPane</a></li><li><a href="global.html#AllTagsContext">AllTagsContext</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Dashboard">Dashboard</a></li><li><a href="global.html#EmpathyMapPane">EmpathyMapPane</a></li><li><a href="global.html#EvidencePaneContext">EvidencePaneContext</a></li><li><a href="global.html#FileEvidencePane">FileEvidencePane</a></li><li><a href="global.html#JourneyMapPane">JourneyMapPane</a></li><li><a href="global.html#MarketResearchWidget">MarketResearchWidget</a></li><li><a href="global.html#Modal">Modal</a></li><li><a href="global.html#StakeholderEvidencePane">StakeholderEvidencePane</a></li><li><a href="global.html#StakeholderResearchWidget">StakeholderResearchWidget</a></li><li><a href="global.html#StoriesWidget">StoriesWidget</a></li><li><a href="global.html#SummaryPaneContext">SummaryPaneContext</a></li><li><a href="global.html#TodoWidget">TodoWidget</a></li><li><a href="global.html#Widget">Widget</a></li><li><a href="global.html#WidgetItemRow">WidgetItemRow</a></li><li><a href="global.html#formatTrendTypeText">formatTrendTypeText</a></li><li><a href="global.html#useCollectionAPI">useCollectionAPI</a></li><li><a href="global.html#useCollectionItems">useCollectionItems</a></li><li><a href="global.html#useEvidenceAPI">useEvidenceAPI</a></li><li><a href="global.html#useOAuthAPI">useOAuthAPI</a></li><li><a href="global.html#useProductAPI">useProductAPI</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Sat Aug 31 2024 15:59:11 GMT-0400 (Eastern Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

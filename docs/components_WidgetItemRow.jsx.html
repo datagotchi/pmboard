@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/WidgetItemRow.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/WidgetItemRow.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from "react";
+
+import { EvidenceRecord, WidgetDataItem } from "../types";
+
+/**
+ * A React component to render a row of a widget item.
+ * @param {object} props The component properties.
+ * @param {WidgetDataItem | undefined} props.item The item to show in this row
+ * @param {(item: WidgetDataItem) => void} props.onDeleteCallback The function to call when deleting this item
+ * @param {(item: WidgetDataItem) => void} props.onClickCallback The function to call when the name is clicked
+ * @returns {React.JSX.Element} The resulting widget element.
+ * @example &lt;WidgetItemRow item={*} onDeleteCallback={() => {}} onClickCallback={() => {}}
+ */
+const WidgetItemRow = ({ item, onDeleteCallback, onClickCallback }) => {
+  /**
+   * Returns a classname for a widget item's count badge based on how much evidence it has.
+   * @param {WidgetDataItem} item The item containing evidence for this badge class.
+   * @returns {string} The resulting classname.
+   * @example getEvidenceLabelClass(item.evidence) === "bg-danger"
+   */
+  const getEvidenceLabelClass = (item) => {
+    if (item &amp;&amp; item.evidence) {
+      switch (item.evidence.length) {
+        case item.evidence.length > 0 &amp;&amp; item.evidence.length &lt; 10:
+          return "bg-warning";
+        case item.evidence.length >= 10:
+          return "bg-success";
+        default:
+          return "bg-danger";
+      }
+    }
+    return "";
+  };
+
+  const trendTypes = ["objective", "goal", "activity", "task", "resource"];
+
+  /**
+   * Determines whether or not an evidence record has all trend types on it.
+   * @param {EvidenceRecord} record The record to evaluate whether it has all trend types
+   * @returns {boolean} whether or not the record has trends of all types
+   * @example hasAllTrendTypes() === true | false
+   */
+  const hasAllTrendTypes = (record) => {
+    const typeMap = record.trends.reduce((map, trend) => {
+      if (trend.type &amp;&amp; !map[trend.type]) {
+        map[trend.type] = true;
+      }
+      return map;
+    }, {});
+    return trendTypes.filter((tt) => typeMap[tt]).length === trendTypes.length;
+  };
+
+  const numberOfEvidenceCompleted =
+    item &amp;&amp; item.evidence
+      ? item.evidence.filter(
+          (record) =>
+            record.trends &amp;&amp;
+            record.trends.length > 0 &amp;&amp;
+            hasAllTrendTypes(record)
+        ).length
+      : 0;
+
+  return (
+    &lt;tr>
+      &lt;td
+        className="dragHandle"
+        style={{
+          cursor: "pointer",
+          backgroundColor: "#ccc",
+          fontSize: "10px",
+        }}
+      >
+        ||
+      &lt;/td>
+      &lt;td>
+        &lt;a
+          style={{ cursor: "pointer" }}
+          onClick={() => {
+            onClickCallback(item);
+          }}
+        >
+          {item &amp;&amp; item.name}
+        &lt;/a>
+      &lt;/td>
+      &lt;td>
+        &lt;span className={`evidence badge ${getEvidenceLabelClass(item)}`}>
+          {numberOfEvidenceCompleted}/{item.evidence.length}
+        &lt;/span>
+      &lt;/td>
+      &lt;td>
+        &lt;a
+          style={{ cursor: "pointer" }}
+          onClick={() => {
+            if (confirm("Are you sure?")) {
+              onDeleteCallback(item);
+            }
+          }}
+        >
+          &lt;span className="remove-evidence bi bi-trash" /> Delete
+        &lt;/a>
+      &lt;/td>
+    &lt;/tr>
+  );
+};
+
+export default WidgetItemRow;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AddPersonaPane">AddPersonaPane</a></li><li><a href="global.html#AllTagsContext">AllTagsContext</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Dashboard">Dashboard</a></li><li><a href="global.html#EmpathyMapPane">EmpathyMapPane</a></li><li><a href="global.html#EvidencePaneContext">EvidencePaneContext</a></li><li><a href="global.html#FileEvidencePane">FileEvidencePane</a></li><li><a href="global.html#JourneyMapPane">JourneyMapPane</a></li><li><a href="global.html#MarketResearchWidget">MarketResearchWidget</a></li><li><a href="global.html#Modal">Modal</a></li><li><a href="global.html#StakeholderEvidencePane">StakeholderEvidencePane</a></li><li><a href="global.html#StakeholderResearchWidget">StakeholderResearchWidget</a></li><li><a href="global.html#StoriesWidget">StoriesWidget</a></li><li><a href="global.html#SummaryPaneContext">SummaryPaneContext</a></li><li><a href="global.html#TodoWidget">TodoWidget</a></li><li><a href="global.html#Widget">Widget</a></li><li><a href="global.html#WidgetItemRow">WidgetItemRow</a></li><li><a href="global.html#formatTrendTypeText">formatTrendTypeText</a></li><li><a href="global.html#useCollectionAPI">useCollectionAPI</a></li><li><a href="global.html#useCollectionItems">useCollectionItems</a></li><li><a href="global.html#useEvidenceAPI">useEvidenceAPI</a></li><li><a href="global.html#useOAuthAPI">useOAuthAPI</a></li><li><a href="global.html#useProductAPI">useProductAPI</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Sat Aug 31 2024 15:59:11 GMT-0400 (Eastern Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

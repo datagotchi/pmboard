@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/panes/AddPersonaPane.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/panes/AddPersonaPane.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useEffect, useState } from "react";
+import useCollectionItems from "../../hooks/useCollectionItems";
+
+/**
+ * A pane to show in a modal dialog to choose a persona (e.g., as evidence for a user story).
+ * @param {object} props The React component properties object.
+ * @param {string} props.productId The ID of the current product;
+ * @param {string[]} props.existingPersonaNames The names of personas currently on the StakeholderEvidencePane.
+ * @param {() => void} props.personaSelectedCallback The function to call when a persona is selected.
+ * @returns {React.JSX.Element} The rendered pane.
+ * @example &lt;AddPersonaPane productId={2} existingPersonaNames={[...]} personaSelectedCallback={() => {}}
+ */
+const AddPersonaPane = ({
+  productId,
+  existingPersonaNames,
+  personaSelectedCallback,
+}) => {
+  const allPersonas = useCollectionItems(productId, "personas");
+  const [possiblePersonas, setPossiblePersonas] = useState();
+
+  useEffect(() => {
+    if (allPersonas &amp;&amp; !possiblePersonas) {
+      setPossiblePersonas(
+        allPersonas.filter((ap) => !existingPersonaNames.includes(ap.name))
+      );
+    }
+  }, [allPersonas, possiblePersonas]);
+
+  const [searchPersonasFilter, setSearchPersonasFilter] = useState();
+
+  return (
+    &lt;div className="modal-content">
+      &lt;div className="modal-header">
+        &lt;h5>Add Persona to Evidence&lt;/h5>
+      &lt;/div>
+      &lt;div className="modal-body">
+        {/* &lt;div ng-show="loading" style={{ textAlign: "center" }}>
+              &lt;img src="ajax-loader.gif" width="32" height="32" />
+            &lt;/div> */}
+        {possiblePersonas &amp;&amp; (
+          &lt;input
+            type="text"
+            id="personaFilter"
+            placeholder="Search stakeholder personas..."
+            style={{ width: "100%" }}
+            onChange={(event) => {
+              setSearchPersonasFilter(
+                possiblePersonas.filter((persona) =>
+                  persona.name
+                    .toLocaleLowerCase()
+                    .includes(event.target.value.toLocaleLowerCase())
+                )
+              );
+            }}
+          />
+        )}
+        &lt;div id="files">
+          &lt;table className="table">
+            &lt;tbody>
+              {possiblePersonas &amp;&amp;
+                possiblePersonas
+                  .filter(
+                    (p) =>
+                      !searchPersonasFilter ||
+                      searchPersonasFilter.includes(p.name)
+                  )
+                  .map((persona) => (
+                    &lt;tr key={`persona #${persona.name}`}>
+                      &lt;td style={{ width: "100px" }}>
+                        &lt;input
+                          type="checkbox"
+                          onChange={(event) => {
+                            const checkbox = event.target;
+                            if (checkbox.checked) {
+                              personaSelectedCallback(persona);
+                            }
+                          }}
+                        />
+                      &lt;/td>
+                      &lt;td className="file">
+                        {/* &lt;a
+                              href={persona.name}
+                              target="_blank"
+                              rel="noreferrer"
+                            > */}
+                        {/* &lt;img src={persona.iconLink} /> */}
+                        {persona.name}
+                        {/* &lt;/a> */}
+                      &lt;/td>
+                    &lt;/tr>
+                  ))}
+            &lt;/tbody>
+          &lt;/table>
+        &lt;/div>
+      &lt;/div>
+    &lt;/div>
+  );
+};
+
+export default AddPersonaPane;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AddPersonaPane">AddPersonaPane</a></li><li><a href="global.html#AllTagsContext">AllTagsContext</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Dashboard">Dashboard</a></li><li><a href="global.html#EmpathyMapPane">EmpathyMapPane</a></li><li><a href="global.html#EvidencePaneContext">EvidencePaneContext</a></li><li><a href="global.html#FileEvidencePane">FileEvidencePane</a></li><li><a href="global.html#JourneyMapPane">JourneyMapPane</a></li><li><a href="global.html#MarketResearchWidget">MarketResearchWidget</a></li><li><a href="global.html#Modal">Modal</a></li><li><a href="global.html#StakeholderEvidencePane">StakeholderEvidencePane</a></li><li><a href="global.html#StakeholderResearchWidget">StakeholderResearchWidget</a></li><li><a href="global.html#StoriesWidget">StoriesWidget</a></li><li><a href="global.html#SummaryPaneContext">SummaryPaneContext</a></li><li><a href="global.html#TodoWidget">TodoWidget</a></li><li><a href="global.html#Widget">Widget</a></li><li><a href="global.html#WidgetItemRow">WidgetItemRow</a></li><li><a href="global.html#formatTrendTypeText">formatTrendTypeText</a></li><li><a href="global.html#useCollectionAPI">useCollectionAPI</a></li><li><a href="global.html#useCollectionItems">useCollectionItems</a></li><li><a href="global.html#useEvidenceAPI">useEvidenceAPI</a></li><li><a href="global.html#useOAuthAPI">useOAuthAPI</a></li><li><a href="global.html#useProductAPI">useProductAPI</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Sat Aug 31 2024 15:59:11 GMT-0400 (Eastern Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

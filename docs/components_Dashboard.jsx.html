@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/Dashboard.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/Dashboard.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useEffect, useState } from "react";
+import { Product } from "../types";
+import StakeholderResearchWidget from "./StakeholderResearchWidget";
+import useProductAPI from "../hooks/useProductAPI";
+import useOAuthAPI from "../hooks/useOAuthAPI";
+import MarketResearchWidget from "./MarketResearchWidget";
+import StoriesWidget from "./StoriesWidget";
+import TodoWidget from "./TodoWidget";
+
+/**
+ * The container of all widgets.
+ * @returns {React.JSX.Element} The rendered dashboard.
+ * @example
+ *  &lt;Dashboard>
+ *    &lt;Widget>
+ *    &lt;Widget>
+ *    ...
+ *  &lt;/Dashboard>
+ */
+const Dashboard = () => {
+  const CURRENT_PRODUCTid_SESSION_KEY = "currentProductId";
+  /**
+   * @type {[Product[] | undefined, React.Dispatch&lt;Product[]>]}
+   */
+  const [products, setProducts] = useState();
+
+  const currentProjectIdFromStorage = sessionStorage.getItem(
+    CURRENT_PRODUCTid_SESSION_KEY
+  );
+  /**
+   * @type {[number, React.Dispatch&lt;string>]}
+   */
+  const [currentProductId, setCurrentProductId] = useState(
+    Number(currentProjectIdFromStorage)
+  );
+  /**
+   * @type {[Product | undefined, React.Dispatch&lt;Product>]}
+   */
+  const [currentProduct, setCurrentProduct] = useState();
+
+  const { getAccessToken } = useOAuthAPI();
+
+  if (
+    !sessionStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token") === "undefined"
+  ) {
+    getAccessToken();
+  }
+
+  // TODO: eventually when there is a lot of data, save just the IDs, not all products
+  useEffect(() => {
+    if (!products) {
+      getProducts().then((products) => {
+        setProducts(products);
+      });
+    }
+  }, [products]);
+
+  useEffect(() => {
+    if (currentProductId &amp;&amp; products) {
+      const product = products.find(
+        (product) => product.id === currentProductId
+      );
+      setCurrentProduct(product);
+    }
+  }, [currentProductId, products]);
+
+  const { getProducts, createProduct, deleteProduct } = useProductAPI();
+
+  /**
+   * Find the product by ID, then save it in sessionStorage and in state variables.
+   * @param {number} productId The ID of the product to set as current.
+   * @example handleSetCurrentProduct(1)
+   */
+  const handleSetCurrentProduct = (productId) => {
+    const product = products.find((product) => product.id === productId);
+    if (product) {
+      sessionStorage.setItem(CURRENT_PRODUCTid_SESSION_KEY, productId);
+      setCurrentProduct(product);
+      setCurrentProductId(product.id);
+    }
+  };
+
+  const SESSION_TAB_KEY = "currentDashboardTab";
+
+  const currentTab = sessionStorage.getItem(SESSION_TAB_KEY);
+
+  useEffect(() => {
+    if (document.querySelectorAll('a[data-bs-toggle="tab"]').length === 4) {
+      const tabs = document.querySelectorAll('a[data-bs-toggle="tab"]');
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          sessionStorage.setItem(SESSION_TAB_KEY, tab.dataset.bsTarget);
+        });
+      });
+    }
+  });
+
+  return (
+    &lt;>
+      &lt;nav className="navbar navbar-expand-lg navbar-light bg-light">
+        &lt;div className="container-fluid">
+          &lt;span className="navbar-brand">PMBoard&lt;/span>
+
+          &lt;div className="collapse navbar-collapse">
+            &lt;ul className="navbar-nav me-auto">
+              &lt;li className="nav-item dropdown mx-sm-5">
+                &lt;a
+                  className="nav-link dropdown-toggle btn"
+                  data-bs-toggle="dropdown"
+                  role="button"
+                  aria-expanded="false"
+                >
+                  Products
+                &lt;/a>
+                &lt;ul className="dropdown-menu" role="menu">
+                  {products &amp;&amp;
+                    products.map((product) => (
+                      &lt;li key={`Product #${product.id}`}>
+                        &lt;a
+                          className="dropdown-item pointer"
+                          onClick={() => handleSetCurrentProduct(product.id)}
+                        >
+                          {product.name}
+                        &lt;/a>
+                      &lt;/li>
+                    ))}
+                  &lt;li className="divider">
+                    &lt;hr />
+                  &lt;/li>
+                  &lt;li>
+                    &lt;a
+                      className="dropdown-item pointer"
+                      onClick={async () => {
+                        const name = prompt("Give the new product a name:");
+                        if (name) {
+                          const newProduct = await createProduct({ name });
+                          setProducts([...products, newProduct]);
+                          setCurrentProductId(newProduct.id);
+                        }
+                      }}
+                    >
+                      &lt;span className="bi bi-file-plus">&lt;/span> New Product
+                    &lt;/a>
+                  &lt;/li>
+                &lt;/ul>
+              &lt;/li>
+
+              &lt;li className="nav-item mx-sm-5">
+                &lt;div className="navbar-text">
+                  Current Product: &lt;strong>{currentProduct?.name}&lt;/strong>
+                &lt;/div>
+              &lt;/li>
+              &lt;li className="nav-item mx-sm-5">
+                &lt;a
+                  className="nav-link"
+                  style={{ cursor: "pointer" }}
+                  onClick={async () => {
+                    if (confirm("Are you sure?")) {
+                      await deleteProduct(currentProduct.id);
+                      setProducts(
+                        products.filter(
+                          (product) => product.id !== currentProduct.id
+                        )
+                      );
+                      setCurrentProduct(undefined);
+                    }
+                  }}
+                >
+                  &lt;span className="remove-evidence bi bi-trash" /> Delete
+                  Product
+                &lt;/a>
+              &lt;/li>
+            &lt;/ul>
+
+            &lt;ul className="nav navbar-nav">
+              &lt;li className="nav-item mx-sm-3">
+                &lt;a className="nav-link">
+                  &lt;span className="bi bi-share-fill">&lt;/span> Share
+                &lt;/a>
+              &lt;/li>
+              &lt;li className="dropdown nav-item mx-sm-3">
+                &lt;a
+                  className="dropdown-toggle btn"
+                  data-bs-toggle="dropdown"
+                  role="button"
+                  aria-expanded="false"
+                >
+                  My Account
+                &lt;/a>
+                &lt;ul className="dropdown-menu" role="menu">
+                  &lt;li>
+                    &lt;a>Profile&lt;/a>
+                  &lt;/li>
+                  &lt;li className="divider">&lt;/li>
+                  &lt;li>
+                    &lt;a>Logout&lt;/a>
+                  &lt;/li>
+                &lt;/ul>
+              &lt;/li>
+            &lt;/ul>
+          &lt;/div>
+        &lt;/div>
+      &lt;/nav>
+      {!currentProduct &amp;&amp; &lt;span>Select a product from the menu.&lt;/span>}
+      {currentProduct &amp;&amp; (
+        &lt;div role="tabpanel">
+          &lt;ul className="nav nav-tabs" role="tablist">
+            &lt;li role="presentation" className="nav-item">
+              &lt;a
+                className={`nav-link ${
+                  currentTab === "#stakeholderWidget" ? "active" : ""
+                }`}
+                data-bs-toggle="tab"
+                data-bs-target="#stakeholderWidget"
+                aria-controls="evidence"
+                role="tab"
+                type="button"
+              >
+                Stakeholder Research
+              &lt;/a>
+            &lt;/li>
+            &lt;li role="presentation" className="nav-item">
+              &lt;a
+                className={`nav-link ${
+                  currentTab === "#storiesWidget" ? "active" : ""
+                }`}
+                data-bs-toggle="tab"
+                data-bs-target="#storiesWidget"
+                aria-controls="evidence"
+                role="tab"
+                type="button"
+              >
+                User Stories
+              &lt;/a>
+            &lt;/li>
+            &lt;li role="presentation" className="nav-item">
+              &lt;a
+                className={`nav-link ${
+                  currentTab === "#marketWidget" ? "active" : ""
+                }`}
+                data-bs-toggle="tab"
+                data-bs-target="#marketWidget"
+                aria-controls="evidence"
+                role="tab"
+                type="button"
+              >
+                Market Research
+              &lt;/a>
+            &lt;/li>
+            &lt;li role="presentation" className="nav-item">
+              &lt;a
+                className={`nav-link ${
+                  currentTab === "#todowidget" ? "active" : ""
+                }`}
+                data-bs-toggle="tab"
+                data-bs-target="#todoWidget"
+                aria-controls="evidence"
+                role="tab"
+                type="button"
+              >
+                TODO Items
+              &lt;/a>
+            &lt;/li>
+          &lt;/ul>
+          &lt;div className="tab-content">
+            &lt;div
+              role="tabpanel"
+              className={`tab-pane ${
+                currentTab === "#stakeholderWidget" ? "active" : ""
+              }`}
+              id="stakeholderWidget"
+            >
+              &lt;StakeholderResearchWidget productId={currentProduct.id} />
+            &lt;/div>
+            &lt;div
+              role="tabpanel"
+              className={`tab-pane ${
+                currentTab === "#storiesWidget" ? "active" : ""
+              }`}
+              id="storiesWidget"
+            >
+              &lt;StoriesWidget productId={currentProduct.id} />
+            &lt;/div>
+            &lt;div
+              role="tabpanel"
+              className={`tab-pane ${
+                currentTab === "#marketWidget" ? "active" : ""
+              }`}
+              id="marketWidget"
+            >
+              &lt;MarketResearchWidget productId={currentProduct.id} />
+            &lt;/div>
+            &lt;div
+              role="tabpanel"
+              className={`tab-pane ${
+                currentTab === "#todoWidget" ? "active" : ""
+              }`}
+              id="todoWidget"
+            >
+              &lt;TodoWidget productId={currentProduct.id} />
+            &lt;/div>
+          &lt;/div>
+        &lt;/div>
+      )}
+    &lt;/>
+  );
+};
+
+export default Dashboard;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AddPersonaPane">AddPersonaPane</a></li><li><a href="global.html#AllTagsContext">AllTagsContext</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Dashboard">Dashboard</a></li><li><a href="global.html#EmpathyMapPane">EmpathyMapPane</a></li><li><a href="global.html#EvidencePaneContext">EvidencePaneContext</a></li><li><a href="global.html#FileEvidencePane">FileEvidencePane</a></li><li><a href="global.html#JourneyMapPane">JourneyMapPane</a></li><li><a href="global.html#MarketResearchWidget">MarketResearchWidget</a></li><li><a href="global.html#Modal">Modal</a></li><li><a href="global.html#StakeholderEvidencePane">StakeholderEvidencePane</a></li><li><a href="global.html#StakeholderResearchWidget">StakeholderResearchWidget</a></li><li><a href="global.html#StoriesWidget">StoriesWidget</a></li><li><a href="global.html#SummaryPaneContext">SummaryPaneContext</a></li><li><a href="global.html#TodoWidget">TodoWidget</a></li><li><a href="global.html#Widget">Widget</a></li><li><a href="global.html#WidgetItemRow">WidgetItemRow</a></li><li><a href="global.html#formatTrendTypeText">formatTrendTypeText</a></li><li><a href="global.html#useCollectionAPI">useCollectionAPI</a></li><li><a href="global.html#useCollectionItems">useCollectionItems</a></li><li><a href="global.html#useEvidenceAPI">useEvidenceAPI</a></li><li><a href="global.html#useOAuthAPI">useOAuthAPI</a></li><li><a href="global.html#useProductAPI">useProductAPI</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Sat Aug 31 2024 15:59:11 GMT-0400 (Eastern Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

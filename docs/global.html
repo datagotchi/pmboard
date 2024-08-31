@@ -94,6 +94,281 @@
     
 
     
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="AllTagsContext"><span class="type-signature">(constant) </span>AllTagsContext<span class="type-signature"> :React.Context.&lt;(Array.&lt;ReactTags.Tag>|undefined)></span></h4>
+
+
+
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">React.Context.&lt;(Array.&lt;ReactTags.Tag>|undefined)></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="contexts_AllTagsContext.js.html">contexts/AllTagsContext.js</a>, <a href="contexts_AllTagsContext.js.html#line7">line 7</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="EvidencePaneContext"><span class="type-signature">(constant) </span>EvidencePaneContext<span class="type-signature"> :React.Context.&lt;React.FC.&lt;<a href="global.html#EvidencePaneProps">EvidencePaneProps</a>>></span></h4>
+
+
+
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">React.Context.&lt;React.FC.&lt;<a href="global.html#EvidencePaneProps">EvidencePaneProps</a>>></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="contexts_EvidencePaneContext.js.html">contexts/EvidencePaneContext.js</a>, <a href="contexts_EvidencePaneContext.js.html#line8">line 8</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="SummaryPaneContext"><span class="type-signature">(constant) </span>SummaryPaneContext<span class="type-signature"> :React.Context.&lt;React.FC.&lt;<a href="global.html#SummaryPaneProps">SummaryPaneProps</a>>></span></h4>
+
+
+
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">React.Context.&lt;React.FC.&lt;<a href="global.html#SummaryPaneProps">SummaryPaneProps</a>>></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="contexts_SummaryPaneContext.js.html">contexts/SummaryPaneContext.js</a>, <a href="contexts_SummaryPaneContext.js.html#line8">line 8</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="formatTrendTypeText"><span class="type-signature">(constant) </span>formatTrendTypeText<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Make a trend type string plural.</p>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_panes_EmpathyMapPaneFunctions.js.html">components/panes/EmpathyMapPaneFunctions.js</a>, <a href="components_panes_EmpathyMapPaneFunctions.js.html#line19">line 19</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>&lt;strong>{formatTrendTypeText(trendType)}&lt;/strong></code></pre>
+
+
+
+        
+    
 
     
         <h3 class="subsection-title">Methods</h3>
@@ -104,7 +379,7 @@
     
 
     
-    <h4 class="name" id="ResearchWidget"><span class="type-signature"></span>ResearchWidget<span class="signature">(productId)</span><span class="type-signature"> &rarr; {JSX.Element}</span></h4>
+    <h4 class="name" id="AddPersonaPane"><span class="type-signature"></span>AddPersonaPane<span class="signature">(props)</span><span class="type-signature"> &rarr; {React.JSX.Element}</span></h4>
     
 
     
@@ -112,7 +387,7 @@
 
 
 <div class="description">
-    <p>A widget to document and visualize user/customer problems</p>
+    <p>A pane to show in a modal dialog to choose a persona (e.g., as evidence for a user story).</p>
 </div>
 
 
@@ -148,16 +423,13 @@
 
         <tr>
             
-                <td class="name"><code>productId</code></td>
+                <td class="name"><code>props</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
-|
-
-<span class="param-type">undefined</span>
+<span class="param-type">object</span>
 
 
             
@@ -167,7 +439,97 @@
 
             
 
-            <td class="description last"><p>the ID of the current product.</p></td>
+            <td class="description last"><p>The React component properties object.</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>productId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ID of the current product;</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>existingPersonaNames</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The names of personas currently on the StakeholderEvidencePane.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code></code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
         </tr>
 
     
@@ -208,7 +570,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="components_ResearchWidget.jsx.html">components/ResearchWidget.jsx</a>, <a href="components_ResearchWidget.jsx.html#line14">line 14</a>
+        <a href="components_panes_AddPersonaPane.jsx.html">components/panes/AddPersonaPane.jsx</a>, <a href="components_panes_AddPersonaPane.jsx.html#line13">line 13</a>
     </li></ul></dd>
     
 
@@ -237,7 +599,7 @@
 
         
 <div class="param-desc">
-    <p>The rendered widget.</p>
+    <p>The rendered pane.</p>
 </div>
 
 
@@ -248,7 +610,7 @@
     </dt>
     <dd>
         
-<span class="param-type">JSX.Element</span>
+<span class="param-type">React.JSX.Element</span>
 
 
     </dd>
@@ -261,7 +623,7 @@
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>&lt;ResearchWidget productId={5} /></code></pre>
+    <pre class="prettyprint"><code>&lt;AddPersonaPane productId={2} existingPersonaNames={[...]} personaSelectedCallback={() => {}}</code></pre>
 
 
 
@@ -271,7 +633,7 @@
     
 
     
-    <h4 class="name" id="Widget"><span class="type-signature"></span>Widget<span class="signature">(data, title, children)</span><span class="type-signature"> &rarr; {JSX.Element}</span></h4>
+    <h4 class="name" id="App"><span class="type-signature"></span>App<span class="signature">()</span><span class="type-signature"> &rarr; {React.JSX.Element}</span></h4>
     
 
     
@@ -279,8 +641,241 @@
 
 
 <div class="description">
-    <p>The HTML component for all PMBoard widgets
-to document and visualize information</p>
+    <p>Rendering the React app.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="App.jsx.html">App.jsx</a>, <a href="App.jsx.html#line10">line 10</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The rendered app.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">React.JSX.Element</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>&lt;App /></code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="Dashboard"><span class="type-signature"></span>Dashboard<span class="signature">()</span><span class="type-signature"> &rarr; {React.JSX.Element}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>The container of all widgets.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_Dashboard.jsx.html">components/Dashboard.jsx</a>, <a href="components_Dashboard.jsx.html#line20">line 20</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The rendered dashboard.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">React.JSX.Element</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>&lt;Dashboard>
+   &lt;Widget>
+   &lt;Widget>
+   ...
+ &lt;/Dashboard></code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="EmpathyMapPane"><span class="type-signature"></span>EmpathyMapPane<span class="signature">(props)</span><span class="type-signature"> &rarr; {React.JSX.Element}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>A modal pane to show a persona's empathy map.</p>
 </div>
 
 
@@ -293,6 +888,376 @@ to document and visualize information</p>
 
     <h5>Parameters:</h5>
     
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#SummaryPaneProps">SummaryPaneProps</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The properties for all summary panes.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_panes_EmpathyMapPane.jsx.html">components/panes/EmpathyMapPane.jsx</a>, <a href="components_panes_EmpathyMapPane.jsx.html#line19">line 19</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The renedered pane.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">React.JSX.Element</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>&lt;EmpathyMapPane handleTagClick={() => {}} allowDragDrop={true | false} handleDrag={() => {}} removeComponent={() => {}} handleDelete={() => {}} /></code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="FileEvidencePane"><span class="type-signature"></span>FileEvidencePane<span class="signature">(props)</span><span class="type-signature"> &rarr; {React.JSX.Element}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>A pane to show in a modal dialog to add files from Google Drive as evidence to a widget item.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#EvidencePaneProps">EvidencePaneProps</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The object containing the props.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_panes_FileEvidencePane.jsx.html">components/panes/FileEvidencePane.jsx</a>, <a href="components_panes_FileEvidencePane.jsx.html#line27">line 27</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The rendered pane.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">React.JSX.Element</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>&lt;FileEvidencePane evidence={[...]} containerModalId="" allTagsUpdated={() => {}}</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="JourneyMapPane"><span class="type-signature"></span>JourneyMapPane<span class="signature">(props)</span><span class="type-signature"> &rarr; {React.JSX.Element}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>A modal pane to show and enable editing of a user journey from research trends/tags.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The React component properties.</p>
+                <h6>Properties</h6>
+                
 
 <table class="params">
     <thead>
@@ -322,10 +1287,7 @@ to document and visualize information</p>
             <td class="type">
             
                 
-<span class="param-type">any</span>
-|
-
-<span class="param-type">undefined</span>
+<span class="param-type">object</span>
 
 
             
@@ -335,22 +1297,24 @@ to document and visualize information</p>
 
             
 
-            <td class="description last"><p>the data to show in the widget.</p></td>
+            <td class="description last"><p>The summary data to show on load.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>title</code></td>
+                <td class="name"><code></code></td>
             
 
             <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
             
             </td>
 
@@ -358,30 +1322,7 @@ to document and visualize information</p>
 
             
 
-            <td class="description last"><p>the title to show at the top of the widget.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>children</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">any</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>the modal to show when a data item is clicked.</p></td>
+            <td class="description last"></td>
         </tr>
 
     
@@ -422,7 +1363,223 @@ to document and visualize information</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="components_Widget.jsx.html">components/Widget.jsx</a>, <a href="components_Widget.jsx.html#line15">line 15</a>
+        <a href="components_panes_JourneyMapPane.jsx.html">components/panes/JourneyMapPane.jsx</a>, <a href="components_panes_JourneyMapPane.jsx.html#line14">line 14</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The rendered pane.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">React.JSX.Element</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>&lt;JourneyMapPane data={*} summaryChanged={() => {}} /></code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="MarketResearchWidget"><span class="type-signature"></span>MarketResearchWidget<span class="signature">(props)</span><span class="type-signature"> &rarr; {React.JSX.Element}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>A widget to document and visualize companies in related markets.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The component properties.</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>productId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+|
+
+<span class="param-type">undefined</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the ID of the current product.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_MarketResearchWidget.jsx.html">components/MarketResearchWidget.jsx</a>, <a href="components_MarketResearchWidget.jsx.html#line15">line 15</a>
     </li></ul></dd>
     
 
@@ -462,7 +1619,7 @@ to document and visualize information</p>
     </dt>
     <dd>
         
-<span class="param-type">JSX.Element</span>
+<span class="param-type">React.JSX.Element</span>
 
 
     </dd>
@@ -475,7 +1632,7 @@ to document and visualize information</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>&lt;ResearchWidget productId={5} /></code></pre>
+    <pre class="prettyprint"><code>&lt;MarketResearchWidget productId={*} /></code></pre>
 
 
 
@@ -485,7 +1642,7 @@ to document and visualize information</p>
     
 
     
-    <h4 class="name" id="useModifyPersonas"><span class="type-signature"></span>useModifyPersonas<span class="signature">(productId)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    <h4 class="name" id="Modal"><span class="type-signature"></span>Modal<span class="signature">(props)</span><span class="type-signature"> &rarr; {React.JSX.Element}</span></h4>
     
 
     
@@ -493,7 +1650,1812 @@ to document and visualize information</p>
 
 
 <div class="description">
-    <p>A hook to modify product personas</p>
+    <p>The React component to show the base dialog.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The component properties.</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>productId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ID of the current product.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>item</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#WidgetDataItem">WidgetDataItem</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The item to show in the modal.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>dialogId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ID to give the dialog.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code></code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code></code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>props.summaryTitle</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The title of the summary tab.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code></code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code></code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code></code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code></code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_Modal.jsx.html">components/Modal.jsx</a>, <a href="components_Modal.jsx.html#line34">line 34</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The rendered modal.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">React.JSX.Element</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>&lt;Modal item={*} dialogId="*" updateItemFunc={*} updateTrendFunc={*} summaryTitle="*" addItemEvidenceFunc={*} /></code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="StakeholderEvidencePane"><span class="type-signature"></span>StakeholderEvidencePane<span class="signature">(props)</span><span class="type-signature"> &rarr; {React.JSX.Element}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>A React component pane to organize stakeholders used as evidence for something else (e.g., a user story).</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#EvidencePaneProps">EvidencePaneProps</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The object containing the props.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_panes_StakeholderEvidencePane.jsx.html">components/panes/StakeholderEvidencePane.jsx</a>, <a href="components_panes_StakeholderEvidencePane.jsx.html#line29">line 29</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The rendered pane.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">React.JSX.Element</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>&lt;StakeholderEvidencePane productId="" evidence={[...]} containerModalId="" updateEvidenceOnServer={() => {}} allTagsUpdated={() => {}}</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="StakeholderResearchWidget"><span class="type-signature"></span>StakeholderResearchWidget<span class="signature">(props)</span><span class="type-signature"> &rarr; {React.JSX.Element}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>A widget to document and visualize stakeholder problems.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The component properties.</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>productId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+|
+
+<span class="param-type">undefined</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the ID of the current product.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_StakeholderResearchWidget.jsx.html">components/StakeholderResearchWidget.jsx</a>, <a href="components_StakeholderResearchWidget.jsx.html#line17">line 17</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The rendered widget.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">React.JSX.Element</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>&lt;StakeholderResearchWidget productId={*} /></code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="StoriesWidget"><span class="type-signature"></span>StoriesWidget<span class="signature">(props)</span><span class="type-signature"> &rarr; {React.JSX.Element}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>A widget to document and visualize user stories.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The component properties.</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>productId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+|
+
+<span class="param-type">undefined</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the ID of the current product.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_StoriesWidget.jsx.html">components/StoriesWidget.jsx</a>, <a href="components_StoriesWidget.jsx.html#line19">line 19</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The rendered widget.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">React.JSX.Element</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>&lt;StoriesWidget productId={*} /></code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="TodoWidget"><span class="type-signature"></span>TodoWidget<span class="signature">(props)</span><span class="type-signature"> &rarr; {React.JSX.Element}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>A widget to document and visualize to-do items.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The component properties.</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>productId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+|
+
+<span class="param-type">undefined</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the ID of the current product.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_TodoWidget.jsx.html">components/TodoWidget.jsx</a>, <a href="components_TodoWidget.jsx.html#line13">line 13</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The rendered widget.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">React.JSX.Element</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>&lt;TodoWidget productId={*} /></code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="Widget"><span class="type-signature"></span>Widget<span class="signature">(props)</span><span class="type-signature"> &rarr; {React.JSX.Element}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>The HTML component for all PMBoard widgets to document and visualize information.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The component props</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>productId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ID of the current product.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>collectionName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The name of the product collection.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The type of the data rows.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>evidenceColumnLabel</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The label for the evidence column.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>title</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The title to show at the top of the widget.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>mainModalId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ID of the item modal passed in <code>children</code>.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>summaryTitle</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The title of the summary tab on the modal.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_Widget.jsx.html">components/Widget.jsx</a>, <a href="components_Widget.jsx.html#line27">line 27</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The rendered widget.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">React.JSX.Element</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>&lt;Widget productId="" collectionName="" type="" title="" mainModalId="" /></code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="WidgetItemRow"><span class="type-signature"></span>WidgetItemRow<span class="signature">(props)</span><span class="type-signature"> &rarr; {React.JSX.Element}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>A React component to render a row of a widget item.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The component properties.</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>item</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#WidgetDataItem">WidgetDataItem</a></span>
+|
+
+<span class="param-type">undefined</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The item to show in this row</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code></code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code></code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_WidgetItemRow.jsx.html">components/WidgetItemRow.jsx</a>, <a href="components_WidgetItemRow.jsx.html#line14">line 14</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The resulting widget element.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">React.JSX.Element</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>&lt;WidgetItemRow item={*} onDeleteCallback={() => {}} onClickCallback={() => {}}</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="useCollectionAPI"><span class="type-signature"></span>useCollectionAPI<span class="signature">(productId, collectionName)</span><span class="type-signature"> &rarr; {CollectionAPI}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>A high-level hook to modify product collection items.</p>
 </div>
 
 
@@ -545,7 +3507,30 @@ to document and visualize information</p>
 
             
 
-            <td class="description last"><p>the ID of the current product.</p></td>
+            <td class="description last"><p>The ID of the current product.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>collectionName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The name of the collection for API calls.</p></td>
         </tr>
 
     
@@ -586,7 +3571,7 @@ to document and visualize information</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hooks_useModifyPersonas.js.html">hooks/useModifyPersonas.js</a>, <a href="hooks_useModifyPersonas.js.html#line12">line 12</a>
+        <a href="hooks_useCollectionAPI.js.html">hooks/useCollectionAPI.js</a>, <a href="hooks_useCollectionAPI.js.html#line12">line 12</a>
     </li></ul></dd>
     
 
@@ -615,7 +3600,7 @@ to document and visualize information</p>
 
         
 <div class="param-desc">
-    <p>An object of functions.</p>
+    <p>A collection of API functions.</p>
 </div>
 
 
@@ -626,7 +3611,7 @@ to document and visualize information</p>
     </dt>
     <dd>
         
-<span class="param-type">Object</span>
+<span class="param-type">CollectionAPI</span>
 
 
     </dd>
@@ -639,7 +3624,7 @@ to document and visualize information</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>const { addPersona, deletePersona } = useModifyPersonas();</code></pre>
+    <pre class="prettyprint"><code>const { addItem, updateItem, deleteItem } = useCollectionAPI({productId, collectionName});</code></pre>
 
 
 
@@ -649,7 +3634,7 @@ to document and visualize information</p>
     
 
     
-    <h4 class="name" id="usePersonas"><span class="type-signature"></span>usePersonas<span class="signature">(productId)</span><span class="type-signature"> &rarr; {Array.&lt;<a href="global.html#Persona">Persona</a>>|undefined}</span></h4>
+    <h4 class="name" id="useCollectionItems"><span class="type-signature"></span>useCollectionItems<span class="signature">(productId, collectionName)</span><span class="type-signature"> &rarr; {Array.&lt;<a href="global.html#WidgetDataItem">WidgetDataItem</a>>|undefined}</span></h4>
     
 
     
@@ -657,7 +3642,7 @@ to document and visualize information</p>
 
 
 <div class="description">
-    <p>A hook to download product personas</p>
+    <p>A hook to download collection items.</p>
 </div>
 
 
@@ -709,7 +3694,30 @@ to document and visualize information</p>
 
             
 
-            <td class="description last"><p>the ID of the current product.</p></td>
+            <td class="description last"><p>The ID of the current product.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>collectionName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The name of the product collection.</p></td>
         </tr>
 
     
@@ -750,7 +3758,7 @@ to document and visualize information</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hooks_usePersonas.js.html">hooks/usePersonas.js</a>, <a href="hooks_usePersonas.js.html#line13">line 13</a>
+        <a href="hooks_useCollectionItems.js.html">hooks/useCollectionItems.js</a>, <a href="hooks_useCollectionItems.js.html#line13">line 13</a>
     </li></ul></dd>
     
 
@@ -779,7 +3787,7 @@ to document and visualize information</p>
 
         
 <div class="param-desc">
-    <p>An array of personas.</p>
+    <p>An array of items.</p>
 </div>
 
 
@@ -790,7 +3798,7 @@ to document and visualize information</p>
     </dt>
     <dd>
         
-<span class="param-type">Array.&lt;<a href="global.html#Persona">Persona</a>></span>
+<span class="param-type">Array.&lt;<a href="global.html#WidgetDataItem">WidgetDataItem</a>></span>
 |
 
 <span class="param-type">undefined</span>
@@ -806,7 +3814,311 @@ to document and visualize information</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>const personas = usePersonas();</code></pre>
+    <pre class="prettyprint"><code>const data = useCollectionItems(productId, collectionName);</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="useEvidenceAPI"><span class="type-signature"></span>useEvidenceAPI<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>A React hook to access API calls related to widget item evidence.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hooks_useEvidenceAPI.js.html">hooks/useEvidenceAPI.js</a>, <a href="hooks_useEvidenceAPI.js.html#line13">line 13</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const { updateEvidence } = useEvidenceAPI(productId, collectionName);</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="useOAuthAPI"><span class="type-signature"></span>useOAuthAPI<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>A React hook to expose the API from oauth4webapi.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hooks_useOAuthAPI.js.html">hooks/useOAuthAPI.js</a>, <a href="hooks_useOAuthAPI.js.html#line10">line 10</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const {a, b, c} = useOAuthAPI();</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="useProductAPI"><span class="type-signature"></span>useProductAPI<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="global.html#ProductAPIFunctions">ProductAPIFunctions</a>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>A React hook to expose API functions related to products.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hooks_useProductAPI.js.html">hooks/useProductAPI.js</a>, <a href="hooks_useProductAPI.js.html#line11">line 11</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The product API functions.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="global.html#ProductAPIFunctions">ProductAPIFunctions</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const {getProducts,
+    createProduct,
+    deleteProduct,
+    updateProductCollection} = useProductAPI();</code></pre>
 
 
 
@@ -817,6 +4129,1529 @@ to document and visualize information</p>
         <h3 class="subsection-title">Type Definitions</h3>
 
         
+                
+<h4 class="name" id="BaseCollectionAPI">BaseCollectionAPI</h4>
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line82">line 82</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="Company">Company</h4>
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The name of the company</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>evidence</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="global.html#EvidenceFile">EvidenceFile</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The files that act as evidence</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line55">line 55</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="EvidenceAPIProps">EvidenceAPIProps</h4>
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line73">line 73</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="EvidenceFile">EvidenceFile</h4>
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The name of the file.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>url</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The url of the file.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>icon</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">any</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The icon of the file.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>created_date</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The date it was created.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>modified_date</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The date it was last modified.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>trends</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="global.html#EvidenceTrend">EvidenceTrend</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The trends found in the file.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line21">line 21</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="EvidencePaneProps">EvidencePaneProps</h4>
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>productId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ID of the currnent product.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>evidence</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="global.html#EvidenceRecord">EvidenceRecord</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The evidence to show in the pane.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>containerModalId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ID of the containing modal dialog.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code></code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code></code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code></code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code></code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code></code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code></code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code></code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line107">line 107</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="EvidenceRecord">EvidenceRecord</h4>
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The name of the evidence record.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>created_date</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The date it was created.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>modified_date</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The date it was last modified.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>trends</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="global.html#EvidenceTrend">EvidenceTrend</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The trends found in the evidence.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line13">line 13</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="EvidenceTrend">EvidenceTrend</h4>
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The name of the trend.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The type of the trend.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line7">line 7</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="GoogleFile">GoogleFile</h4>
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>title</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The title of the file.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>alternateLink</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The url of the file.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>iconLink</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The icon of the file.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line31">line 31</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="OAuthAPIFunctions">OAuthAPIFunctions</h4>
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line93">line 93</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
                 
 <h4 class="name" id="Persona">Persona</h4>
 
@@ -871,6 +5706,288 @@ to document and visualize information</p>
 
             
 
+            <td class="description last"><p>The name of the persona</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>evidence</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="global.html#EvidenceFile">EvidenceFile</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The files that act as evidence</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line44">line 44</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="Product">Product</h4>
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The name of the product</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line2">line 2</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="ProductAPIFunctions">ProductAPIFunctions</h4>
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
             <td class="description last"></td>
         </tr>
 
@@ -910,7 +6027,574 @@ to document and visualize information</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types_Persona.js.html">types/Persona.js</a>, <a href="types_Persona.js.html#line1">line 1</a>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line99">line 99</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="Story">Story</h4>
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The name of the user story</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>evidence</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="global.html#EvidenceFile">EvidenceFile</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The files that act as evidence</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line61">line 61</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="SummaryPaneProps">SummaryPaneProps</h4>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line121">line 121</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="Task">Task</h4>
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The name of task</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>evidence</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="global.html#EvidenceFile">EvidenceFile</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The files that act as evidence</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line67">line 67</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="WidgetDataItem">WidgetDataItem</h4>
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The name of the item</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>evidence</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="global.html#EvidenceRecord">EvidenceRecord</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The objects that act as evidence</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line38">line 38</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="personaAsEvidence">personaAsEvidence</h4>
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The name of the persona</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types.js.html">types.js</a>, <a href="types.js.html#line50">line 50</a>
     </li></ul></dd>
     
 
@@ -940,13 +6624,13 @@ to document and visualize information</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ResearchWidget">ResearchWidget</a></li><li><a href="global.html#Widget">Widget</a></li><li><a href="global.html#useModifyPersonas">useModifyPersonas</a></li><li><a href="global.html#usePersonas">usePersonas</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AddPersonaPane">AddPersonaPane</a></li><li><a href="global.html#AllTagsContext">AllTagsContext</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Dashboard">Dashboard</a></li><li><a href="global.html#EmpathyMapPane">EmpathyMapPane</a></li><li><a href="global.html#EvidencePaneContext">EvidencePaneContext</a></li><li><a href="global.html#FileEvidencePane">FileEvidencePane</a></li><li><a href="global.html#JourneyMapPane">JourneyMapPane</a></li><li><a href="global.html#MarketResearchWidget">MarketResearchWidget</a></li><li><a href="global.html#Modal">Modal</a></li><li><a href="global.html#StakeholderEvidencePane">StakeholderEvidencePane</a></li><li><a href="global.html#StakeholderResearchWidget">StakeholderResearchWidget</a></li><li><a href="global.html#StoriesWidget">StoriesWidget</a></li><li><a href="global.html#SummaryPaneContext">SummaryPaneContext</a></li><li><a href="global.html#TodoWidget">TodoWidget</a></li><li><a href="global.html#Widget">Widget</a></li><li><a href="global.html#WidgetItemRow">WidgetItemRow</a></li><li><a href="global.html#formatTrendTypeText">formatTrendTypeText</a></li><li><a href="global.html#useCollectionAPI">useCollectionAPI</a></li><li><a href="global.html#useCollectionItems">useCollectionItems</a></li><li><a href="global.html#useEvidenceAPI">useEvidenceAPI</a></li><li><a href="global.html#useOAuthAPI">useOAuthAPI</a></li><li><a href="global.html#useProductAPI">useProductAPI</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Sat Jul 27 2024 17:26:12 GMT-0400 (Eastern Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Sat Aug 31 2024 15:59:11 GMT-0400 (Eastern Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

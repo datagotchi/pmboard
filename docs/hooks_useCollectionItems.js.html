@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: hooks/useCollectionItems.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,46 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: hooks/useCollectionItems.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useEffect, useState } from "react";
 
+import { WidgetDataItem } from "../types";
 
-    <h3> </h3>
+/**
+ * A hook to download collection items.
+ * @param {number} productId The ID of the current product.
+ * @param {string} collectionName The name of the product collection.
+ * @returns {WidgetDataItem[] | undefined} An array of items.
+ * @example
+ * const data = useCollectionItems(productId, collectionName);
+ */
+const useCollectionItems = (productId, collectionName) => {
+  /**
+   * @type {[WidgetDataItem[] | undefined, React.Dispatch&lt;WidgetDataItem[]>]}
+   */
+  const [items, setItems] = useState();
 
+  useEffect(() => {
+    fetch(`/products/${productId}/${collectionName}`)
+      .then((response) => response.json())
+      .then((value) => setItems(value));
+  }, [productId]);
 
+  return items;
+};
 
-
-
-
-
-
-
-
-    
-
-
-
-
-
+export default useCollectionItems;
+</code></pre>
+        </article>
+    </section>
 
 
 

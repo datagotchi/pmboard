@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/panes/StakeholderEvidencePane.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/panes/StakeholderEvidencePane.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useCallback, useEffect, useState } from "react";
+import { WithContext as ReactTags } from "react-tag-input";
+
+import {
+  EvidencePaneProps,
+  Persona,
+  PersonaAsEvidence,
+  TagsPerEvidenceRecord,
+} from "../../types";
+import {
+  getJsonSortedString,
+  getOccurenceNumber,
+  sortString,
+} from "../../../../util";
+
+// import { EvidencePaneContext } from "../../contexts/EvidencePaneContext";
+
+import EmpathyMapPane from "./EmpathyMapPane";
+import { AllTagsContext } from "../../contexts/AllTagsContext";
+import AddPersonaPane from "./AddPersonaPane";
+import useCollectionItems from "../../hooks/useCollectionItems";
+
+/**
+ * A React component pane to organize stakeholders used as evidence for something else (e.g., a user story).
+ * @param {EvidencePaneProps} props The object containing the props.
+ * @returns {React.JSX.Element} The rendered pane.
+ * @example &lt;StakeholderEvidencePane productId="" evidence={[...]} containerModalId="" updateEvidenceOnServer={() => {}} allTagsUpdated={() => {}}
+ */
+const StakeholderEvidencePane = ({
+  productId,
+  evidence,
+  containerModalId,
+  updateEvidenceOnServer,
+  allTagsUpdated,
+}) => {
+  const ADD_PERSONA_DIALOG_ID = `addPersona: ${containerModalId}`;
+  const EMPATHY_MAP_DIALOG_ID = `empathyMap: ${containerModalId}`;
+
+  /**
+   * @type {[Persona[] | undefined, React.Dispatch&lt;Persona[]>]}
+   */
+  const allPersonas = useCollectionItems(productId, "personas");
+
+  /**
+   * @type {[PersonaAsEvidence[] | undefined, React.Dispatch&lt;PersonaAsEvidence[]>]}
+   */
+  const [personasAsEvidence, setPersonasAsEvidence] = useState(evidence);
+
+  /**
+   * @type {[TagsPerEvidenceRecord | undefined, React.Dispatch&lt;TagsPerEvidenceRecord | undefined>]}
+   */
+  const [tagsPerPersona, setTagsPerPersona] = useState();
+
+  /**
+   * @type {[HTMLDialogElement | undefined, React.Disptch&lt;HTMLDialogElement | undefined>]}
+   */
+  const [addPersonaDialog, setAddPersonaDialog] = useState();
+
+  useEffect(() => {
+    if (!addPersonaDialog &amp;&amp; document.getElementById(ADD_PERSONA_DIALOG_ID)) {
+      setAddPersonaDialog(document.getElementById(ADD_PERSONA_DIALOG_ID));
+    }
+  });
+
+  /**
+   * @type {[HTMLDialogElement | undefined, React.Disptch&lt;HTMLDialogElement | undefined>]}
+   */
+  const [empathyMapDialog, setEmpathyMapDialog] = useState();
+
+  useEffect(() => {
+    if (!empathyMapDialog &amp;&amp; document.getElementById(EMPATHY_MAP_DIALOG_ID)) {
+      setEmpathyMapDialog(document.getElementById(EMPATHY_MAP_DIALOG_ID));
+    }
+  });
+
+  /**
+   * @type {[ReactTags.Tag[] | undefined, React.Dispatch&lt;ReactTags.Tag[] | undefined>]}
+   */
+  const [allTagsForEmpathyMapDialog, setAllTagsForEmpathyMapDialog] =
+    useState();
+  /**
+   * @type {[ReactTags.Tag[], React.Dispatch&lt;ReactTags.Tag[]>]}
+   */
+  const [selectedTags, setSelectedTags] = useState([]);
+
+  const [currentPersonaAsEvidence, setCurrentPersonaAsEvidence] = useState();
+
+  const showPersonaTrendModal = useCallback(
+    (personaAsEvidence) => {
+      if (empathyMapDialog &amp;&amp; allPersonas) {
+        const fullPersona = allPersonas.find(
+          (p) => p.id == personaAsEvidence.persona_id
+        );
+        const selectedPersonaAllTags = fullPersona.evidence.reduce(
+          (reactTags, file) => {
+            if (file.trends) {
+              file.trends.forEach((trend) => {
+                if (!reactTags.find((rt) => rt.id === trend.name)) {
+                  reactTags.push({
+                    id: trend.name,
+                    text: trend.name, // TODO: put (n) here?
+                    className: trend.type,
+                  });
+                }
+              });
+            }
+            return reactTags;
+          },
+          []
+        );
+        const existingTrendNames = personaAsEvidence.trends.map(
+          (trend) => trend.name
+        );
+        selectedPersonaAllTags.forEach((tag) => {
+          if (existingTrendNames.includes(tag.id)) {
+            tag.className += " selected";
+          }
+        });
+        setSelectedTags(
+          selectedPersonaAllTags.filter((tag) =>
+            tag.className.includes("selected")
+          )
+        );
+        setAllTagsForEmpathyMapDialog(selectedPersonaAllTags);
+        setCurrentPersonaAsEvidence(personaAsEvidence);
+        empathyMapDialog.addEventListener("click", (event) => {
+          if (event.target === event.currentTarget) {
+            empathyMapDialog.close();
+          }
+        });
+        empathyMapDialog.addEventListener("close", async () => {
+          setAllTagsForEmpathyMapDialog(undefined);
+        });
+        empathyMapDialog.showModal();
+      }
+    },
+    [empathyMapDialog, allPersonas, selectedTags]
+  );
+
+  useEffect(() => {
+    if (currentPersonaAsEvidence) {
+      setTagsPerPersona({
+        ...tagsPerPersona,
+        [currentPersonaAsEvidence.name]: [...selectedTags],
+      });
+    }
+  }, [currentPersonaAsEvidence, selectedTags]);
+
+  // set tagsPerPersona initially from evidence
+  useEffect(() => {
+    const initialTags = personasAsEvidence.reduce(
+      (trendsMap, personaAsEvidence) => {
+        if (!trendsMap[personaAsEvidence.name]) {
+          if (personaAsEvidence.trends) {
+            trendsMap[personaAsEvidence.name] = personaAsEvidence.trends.map(
+              (trend) => ({
+                id: trend.name,
+                text: trend.name,
+                className: trend.type,
+              })
+            );
+          } else {
+            trendsMap[personaAsEvidence.name] = [];
+          }
+        }
+        return trendsMap;
+      },
+      {}
+    );
+    setTagsPerPersona(initialTags);
+  }, []);
+
+  /**
+   * A function to open a modal dialog on top of a base modal to add a stakehodler persona as evidence.
+   * @example &lt;Component onClick={() => openAddPersonaModal()} />
+   */
+  const openAddPersonaModal = () => {
+    if (addPersonaDialog) {
+      addPersonaDialog.addEventListener("click", (event) => {
+        if (event.target === event.currentTarget) {
+          addPersonaDialog.close();
+        }
+      });
+      addPersonaDialog.showModal();
+    }
+  };
+
+  const addPersonaAsEvidence = useCallback(
+    /**
+     * Add a Persona object to personasAsEvidence.
+     * @param {Persona} persona The persona to add as evidence.
+     * @returns {void}
+     * @example &lt;AddPersonaPane personaSelectedCallback={(persona) => addPersonaAsEvidence(persona)} />
+     */
+    async (persona) => {
+      const newPersonasAsEvidence = [
+        ...personasAsEvidence,
+        {
+          name: persona.name,
+          persona_id: persona.id,
+        },
+      ];
+      setPersonasAsEvidence(newPersonasAsEvidence);
+      await updateEvidenceOnServer(newPersonasAsEvidence);
+
+      document.getElementById("personaFilter").value = "";
+      // addPersonaDialog.close();
+    },
+    [personasAsEvidence]
+  );
+
+  /**
+   * A function to remove a persona as evidence from this pane.
+   * @param {PersonaAsEvidence} persona The person to remove.
+   * @example &lt;Component onClick={() => removePersona(...)} />
+   */
+  const removePersona = async (persona) => {
+    const newPersonasAsEvidence = personasAsEvidence.filter(
+      (p) => p.name !== persona.name
+    );
+    setPersonasAsEvidence(newPersonasAsEvidence);
+    await updateEvidenceOnServer(newPersonasAsEvidence);
+    document.getElementById("personaFilter").value = "";
+  };
+
+  const getFlatTagsWithCountsFromTagsPerPersona = useCallback(() => {
+    /**
+     * @type {ReactTags.Tag[]}
+     */
+    const newAllTags = [];
+    /**
+     * @type {{[key: string]: {count: number, className: string}}}
+     */
+    const tagDataMap = {};
+    Object.keys(tagsPerPersona).forEach((personaName) => {
+      const fileTags = JSON.parse(JSON.stringify(tagsPerPersona[personaName]));
+      fileTags.forEach((tag) => {
+        if (!tagDataMap[tag.id]) {
+          tagDataMap[tag.id] = {
+            count: 0,
+            className: tag.className,
+          };
+        }
+        tagDataMap[tag.id].count += 1;
+      });
+    });
+    Object.keys(tagDataMap).forEach((tagId) => {
+      const tagData = tagDataMap[tagId];
+      newAllTags.push({
+        id: tagId,
+        text: `${tagId} (${tagData.count})`,
+        className: tagData.className,
+      });
+    });
+    return newAllTags
+      .sort(sortString)
+      .sort((a, b) => getOccurenceNumber(b.text) - getOccurenceNumber(a.text));
+  }, [tagsPerPersona]);
+
+  // update allTags and evidence on the server if there are changes: added tags, edited tags, deleted tags
+  useEffect(() => {
+    if (tagsPerPersona &amp;&amp; personasAsEvidence) {
+      let thereAreChangesToTrends = false;
+
+      Object.keys(tagsPerPersona).forEach((personaName) => {
+        const evidencePersona = personasAsEvidence.find(
+          (p) => p.name === personaName
+        );
+        const tags = tagsPerPersona[personaName];
+        if (tags &amp;&amp; tags.length > 0) {
+          const trends = tags.map((tag) => ({
+            name: tag.id,
+            type: tag.className,
+          }));
+          if (
+            getJsonSortedString(evidencePersona.trends) !==
+            getJsonSortedString(trends)
+          ) {
+            evidencePersona.trends = trends;
+            thereAreChangesToTrends = true;
+          }
+        }
+      });
+      if (thereAreChangesToTrends) {
+        const flatTags =
+          getFlatTagsWithCountsFromTagsPerPersona(tagsPerPersona);
+        allTagsUpdated(flatTags);
+        updateEvidenceOnServer(personasAsEvidence);
+      }
+    }
+  }, [tagsPerPersona]);
+
+  return (
+    &lt;>
+      &lt;h2>
+        &lt;a style={{ cursor: "pointer" }} onClick={() => openAddPersonaModal()}>
+          Add Persona
+        &lt;/a>
+      &lt;/h2>
+      &lt;table className="table">
+        &lt;tbody>
+          {personasAsEvidence.map((personaAsEvidence) => (
+            &lt;tr key={`Item evidence: ${personaAsEvidence.name} `}>
+              &lt;td>
+                &lt;span
+                  className="remove-evidence bi bi-trash"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    if (confirm("Are you sure?")) {
+                      removePersona(personaAsEvidence);
+                    }
+                  }}
+                >&lt;/span>
+              &lt;/td>
+              &lt;td>
+                {personaAsEvidence.created_date &amp;&amp;
+                  new Date(personaAsEvidence.created_date).toLocaleDateString()}
+              &lt;/td>
+              &lt;td>
+                &lt;a
+                  className="pointer"
+                  onClick={() => showPersonaTrendModal(personaAsEvidence)}
+                >
+                  {/* &lt;img src={persona.icon} /> */}
+                  {personaAsEvidence.name}
+                &lt;/a>
+              &lt;/td>
+              &lt;td>
+                {tagsPerPersona &amp;&amp; tagsPerPersona[personaAsEvidence.name] &amp;&amp; (
+                  &lt;AllTagsContext.Provider
+                    value={tagsPerPersona[personaAsEvidence.name]}
+                  >
+                    &lt;EmpathyMapPane
+                      removeComponent={({ className, onRemove }) => {
+                        return (
+                          &lt;button onClick={onRemove} className={className}>
+                            X
+                          &lt;/button>
+                        );
+                      }}
+                      handleDelete={(index) => {
+                        const thisPersonaTrends =
+                          tagsPerPersona[personaAsEvidence.name];
+                        thisPersonaTrends.splice(index, 1);
+                        setTagsPerPersona({
+                          ...tagsPerPersona,
+                          [personaAsEvidence.name]:
+                            tagsPerPersona[personaAsEvidence.name],
+                        });
+                      }}
+                    />
+                  &lt;/AllTagsContext.Provider>
+                )}
+              &lt;/td>
+            &lt;/tr>
+          ))}
+        &lt;/tbody>
+      &lt;/table>
+      &lt;dialog
+        id={ADD_PERSONA_DIALOG_ID}
+        style={{ width: "600px", height: "600px" }}
+      >
+        &lt;AddPersonaPane
+          productId={productId}
+          existingPersonaNames={personasAsEvidence.map((pae) => pae.name)}
+          personaSelectedCallback={(persona) => addPersonaAsEvidence(persona)}
+        />
+      &lt;/dialog>
+      &lt;dialog
+        id={EMPATHY_MAP_DIALOG_ID}
+        style={{ width: "800px", height: "600px" }}
+      >
+        &lt;AllTagsContext.Provider value={allTagsForEmpathyMapDialog}>
+          &lt;EmpathyMapPane
+            handleTagClick={(tagIndex, reactTags) => {
+              const tag = reactTags[tagIndex];
+              setSelectedTags([...selectedTags, tag]);
+            }}
+          />
+        &lt;/AllTagsContext.Provider>
+      &lt;/dialog>
+    &lt;/>
+  );
+};
+
+export default StakeholderEvidencePane;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AddPersonaPane">AddPersonaPane</a></li><li><a href="global.html#AllTagsContext">AllTagsContext</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Dashboard">Dashboard</a></li><li><a href="global.html#EmpathyMapPane">EmpathyMapPane</a></li><li><a href="global.html#EvidencePaneContext">EvidencePaneContext</a></li><li><a href="global.html#FileEvidencePane">FileEvidencePane</a></li><li><a href="global.html#JourneyMapPane">JourneyMapPane</a></li><li><a href="global.html#MarketResearchWidget">MarketResearchWidget</a></li><li><a href="global.html#Modal">Modal</a></li><li><a href="global.html#StakeholderEvidencePane">StakeholderEvidencePane</a></li><li><a href="global.html#StakeholderResearchWidget">StakeholderResearchWidget</a></li><li><a href="global.html#StoriesWidget">StoriesWidget</a></li><li><a href="global.html#SummaryPaneContext">SummaryPaneContext</a></li><li><a href="global.html#TodoWidget">TodoWidget</a></li><li><a href="global.html#Widget">Widget</a></li><li><a href="global.html#WidgetItemRow">WidgetItemRow</a></li><li><a href="global.html#formatTrendTypeText">formatTrendTypeText</a></li><li><a href="global.html#useCollectionAPI">useCollectionAPI</a></li><li><a href="global.html#useCollectionItems">useCollectionItems</a></li><li><a href="global.html#useEvidenceAPI">useEvidenceAPI</a></li><li><a href="global.html#useOAuthAPI">useOAuthAPI</a></li><li><a href="global.html#useProductAPI">useProductAPI</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Sat Aug 31 2024 15:59:11 GMT-0400 (Eastern Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

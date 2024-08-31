@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: components/MarketResearchWidget.jsx</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,51 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: components/MarketResearchWidget.jsx</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from "react";
 
+import Widget from "./Widget";
+import FileEvidencePane from "./panes/FileEvidencePane";
+import { EvidencePaneContext } from "../contexts/EvidencePaneContext";
 
-    <h3> </h3>
+/**
+ * A widget to document and visualize companies in related markets.
+ * @param {object} props The component properties.
+ * @param {number | undefined} props.productId the ID of the current product.
+ * @returns {React.JSX.Element} The rendered widget.
+ * @example
+ *  &lt;MarketResearchWidget productId={*} />
+ */
+const MarketResearchWidget = ({ productId }) => {
+  const COMPANY_MODAL_ID = "companyModal";
 
+  return (
+    &lt;EvidencePaneContext.Provider value={FileEvidencePane}>
+      &lt;Widget
+        productId={productId}
+        collectionName="companies"
+        type="Company"
+        evidenceColumnLabel="Claims"
+        title="What are the competing companies?"
+        mainModalId={COMPANY_MODAL_ID}
+        summaryTitle="Market Map"
+      />
+    &lt;/EvidencePaneContext.Provider>
+  );
+};
 
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+export default MarketResearchWidget;
+</code></pre>
+        </article>
+    </section>
 
 
 

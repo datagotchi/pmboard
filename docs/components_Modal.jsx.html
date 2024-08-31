@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/Modal.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/Modal.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useCallback, useContext, useState } from "react";
+import { WithContext as ReactTags } from "react-tag-input";
+
+import { EvidenceRecord, EvidenceTrend, WidgetDataItem } from "../types";
+
+import { getOccurenceNumber, sortString } from "../../../util";
+
+import { AllTagsContext } from "../contexts/AllTagsContext";
+import { EvidencePaneContext } from "../contexts/EvidencePaneContext";
+import { SummaryPaneContext } from "../contexts/SummaryPaneContext";
+
+import {
+  classNameToIndex,
+  indexToClassName,
+} from "./panes/EmpathyMapPaneFunctions";
+
+/**
+ * The React component to show the base dialog.
+ * @param {object} props The component properties.
+ * @param {string} props.productId The ID of the current product.
+ * @param {WidgetDataItem} props.item The item to show in the modal.
+ * @param {string} props.dialogId The ID to give the dialog.
+ * @param {(itemId: number, evidenceRecord: EvidenceRecord) => Promise&lt;Response>} props.addEvidenceFunc The function to call to add an evidence record.
+ * @param {(itemId: number, evidenceId: number) => Promise&lt;Response>} props.removeEvidenceFunc The function to call to remove an evidence record.
+ * @param {string} props.summaryTitle The title of the summary tab.
+ * @param {(item: WidgetDataItem) => Promise&lt;Response>} props.updateItemFunc The function to call to update an entire item.
+ * @param {(itemId: number, evidenceRecordId: number, trendId: number) => Promise&lt;Response>} props.deleteTrendFunc The function to call to delete a trend.
+ * @param {(itemId: number, evidenceRecordId: number, trend: EvidenceTrend) => Promise&lt;Response>} props.addTrendFunc The function to call to add a new trend.
+ * @param {(itemId: number, evidenceRecordId: number, trend: EvidenceTrend) => Promise&lt;Response>} props.updateTrendFunc The function to call to update a trend.
+ * @returns {React.JSX.Element} The rendered modal.
+ * @example
+ *  &lt;Modal item={*} dialogId="*" updateItemFunc={*} updateTrendFunc={*} summaryTitle="*" addItemEvidenceFunc={*} />
+ */
+const Modal = ({
+  item,
+  dialogId,
+  productId,
+  addEvidenceFunc,
+  removeEvidenceFunc,
+  summaryTitle,
+  updateItemFunc,
+  deleteTrendFunc,
+  addTrendFunc,
+  updateTrendFunc,
+}) => {
+  /**
+   * Convert the per-record evidence data into a flat tag array.
+   * @param {EvidenceRecord} evidence The evidence records on a widget item.
+   * @example getFlatTagsWithCountFromEvience(item.evidence) ~ ["a", "b", "c", etc.]
+   * @returns {ReactTags.Tag[]} A flat array of tags.
+   */
+  const getFlatTagsWithCountsFromEvidence = (evidence) => {
+    /**
+     * @type {ReactTags.Tag[]}
+     */
+    const newAllTags = [];
+    /**
+     * @type {{[key: string]: {count: number, className: string}}}
+     */
+    const trendCountMap = {};
+    evidence.forEach((record) => {
+      /**
+       * @type {EvidenceTrend[]}
+       */
+      const recordTrends = JSON.parse(JSON.stringify(record.trends ?? [])); // to avoid referencing the same trend objects
+      recordTrends.forEach((trend) => {
+        if (!trendCountMap[trend.name]) {
+          trendCountMap[trend.name] = {
+            count: 0,
+            className: trend.type,
+          };
+        }
+        trendCountMap[trend.name].count += 1;
+      });
+    });
+    Object.keys(trendCountMap).forEach((trendName) => {
+      const trendInfoObject = trendCountMap[trendName];
+      newAllTags.push({
+        id: trendName,
+        text: `${trendName} (${trendInfoObject.count})`,
+        className: trendInfoObject.className,
+      });
+    });
+    return newAllTags
+      .sort(sortString)
+      .sort((a, b) => getOccurenceNumber(b.text) - getOccurenceNumber(a.text));
+  };
+
+  /**
+   * @type {[ReactTags.Tag[] | undefined, React.Dispatch&lt;ReactTags.Tag[] | undefined>]}
+   */
+  const [allTags, setAllTags] = useState(
+    getFlatTagsWithCountsFromEvidence(item.evidence)
+  );
+
+  const findTrendInEvidence = useCallback(
+    (tagId) => {
+      let foundTrend;
+      const evidence = item.evidence.find((ev) => {
+        if (!foundTrend) {
+          const trend = ev.trends.find((t) => t.name === tagId);
+          if (trend) {
+            foundTrend = trend;
+            return true;
+          }
+        }
+        return false;
+      });
+      return {
+        evidenceId: evidence.id,
+        trend: foundTrend,
+      };
+    },
+    [item.evidence]
+  );
+
+  const EvidencePaneComponent = useContext(EvidencePaneContext);
+  const SummaryPaneComponent = useContext(SummaryPaneContext);
+
+  return (
+    &lt;>
+      &lt;dialog id={dialogId} style={{ width: "90%", height: "90%" }}>
+        &lt;div>
+          &lt;div>
+            &lt;div>
+              &lt;div className="modal-header">
+                &lt;h4 className="modal-title">{item.name}&lt;/h4>
+              &lt;/div>
+              &lt;div className="modal-body">
+                &lt;div role="tabpanel">
+                  &lt;ul className="nav nav-tabs" role="tablist">
+                    &lt;li role="presentation" className="nav-item">
+                      &lt;a
+                        className="nav-link active"
+                        data-bs-toggle="tab"
+                        data-bs-target="#modalEvidence"
+                        aria-controls="evidence"
+                        role="tab"
+                        type="button"
+                      >
+                        Evidence
+                      &lt;/a>
+                    &lt;/li>
+                    &lt;li role="presentation" className="nav-item">
+                      &lt;a
+                        className="nav-link"
+                        data-bs-toggle="tab"
+                        data-bs-target="#modalSummary"
+                        aria-controls="summary"
+                        role="tab"
+                        type="button"
+                      >
+                        {summaryTitle}
+                      &lt;/a>
+                    &lt;/li>
+                  &lt;/ul>
+                  &lt;div className="tab-content">
+                    &lt;AllTagsContext.Provider value={allTags}>
+                      &lt;div
+                        role="tabpanel"
+                        className="tab-pane"
+                        id="modalSummary"
+                      >
+                        {!allTags ||
+                          (allTags.length === 0 &amp;&amp; (
+                            &lt;span>
+                              There is no evidence. Start by adding a file!
+                            &lt;/span>
+                          ))}
+                        {allTags &amp;&amp; allTags.length > 0 &amp;&amp; (
+                          &lt;SummaryPaneComponent
+                            handleTagClick={(tagIndex, reactTags) => {
+                              const tag = reactTags[tagIndex];
+                              const currentClassIndex = tag.className
+                                ? classNameToIndex[tag.className]
+                                : -1;
+                              const newClassName =
+                                indexToClassName[
+                                  (currentClassIndex + 1) %
+                                    indexToClassName.length
+                                ];
+                              tag.className = newClassName;
+                              setAllTags([...allTags]); // to refresh their className displays
+                              const { evidenceId, trend } = findTrendInEvidence(
+                                tag.id
+                              );
+                              trend.type = newClassName;
+                              updateTrendFunc(item.id, evidenceId, trend);
+                            }}
+                            // TODO: come up with a better data schema for journeys
+                            summaryChanged={(summary) => {
+                              item.summary = summary;
+                              updateItemFunc(item);
+                            }}
+                            data={item.summary}
+                          />
+                        )}
+                      &lt;/div>
+                      &lt;div
+                        role="tabpanel"
+                        className="tab-pane active"
+                        id="modalEvidence"
+                      >
+                        &lt;EvidencePaneComponent
+                          productId={productId}
+                          evidence={item.evidence}
+                          containerModalId={dialogId}
+                          addFileFunc={(file) => addEvidenceFunc(item.id, file)}
+                          removeFileFunc={(fileId) =>
+                            removeEvidenceFunc(item.id, fileId)
+                          }
+                          allTagsUpdated={(tags) => setAllTags(tags)}
+                          deleteTrendFunc={(evidenceId, trendId) =>
+                            deleteTrendFunc(item.id, evidenceId, trendId)
+                          }
+                          addTrendFunc={(evidenceId, trend) =>
+                            addTrendFunc(item.id, evidenceId, trend)
+                          }
+                          updateTrendNameFunc={(evidenceId, trend) =>
+                            updateTrendFunc(item.id, evidenceId, trend)
+                          }
+                        />
+                      &lt;/div>
+                    &lt;/AllTagsContext.Provider>
+                  &lt;/div>
+                &lt;/div>
+              &lt;/div>
+              &lt;div className="modal-footer">&lt;/div>
+            &lt;/div>
+          &lt;/div>
+        &lt;/div>
+      &lt;/dialog>
+    &lt;/>
+  );
+};
+
+export default Modal;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AddPersonaPane">AddPersonaPane</a></li><li><a href="global.html#AllTagsContext">AllTagsContext</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Dashboard">Dashboard</a></li><li><a href="global.html#EmpathyMapPane">EmpathyMapPane</a></li><li><a href="global.html#EvidencePaneContext">EvidencePaneContext</a></li><li><a href="global.html#FileEvidencePane">FileEvidencePane</a></li><li><a href="global.html#JourneyMapPane">JourneyMapPane</a></li><li><a href="global.html#MarketResearchWidget">MarketResearchWidget</a></li><li><a href="global.html#Modal">Modal</a></li><li><a href="global.html#StakeholderEvidencePane">StakeholderEvidencePane</a></li><li><a href="global.html#StakeholderResearchWidget">StakeholderResearchWidget</a></li><li><a href="global.html#StoriesWidget">StoriesWidget</a></li><li><a href="global.html#SummaryPaneContext">SummaryPaneContext</a></li><li><a href="global.html#TodoWidget">TodoWidget</a></li><li><a href="global.html#Widget">Widget</a></li><li><a href="global.html#WidgetItemRow">WidgetItemRow</a></li><li><a href="global.html#formatTrendTypeText">formatTrendTypeText</a></li><li><a href="global.html#useCollectionAPI">useCollectionAPI</a></li><li><a href="global.html#useCollectionItems">useCollectionItems</a></li><li><a href="global.html#useEvidenceAPI">useEvidenceAPI</a></li><li><a href="global.html#useOAuthAPI">useOAuthAPI</a></li><li><a href="global.html#useProductAPI">useProductAPI</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Sat Aug 31 2024 15:59:11 GMT-0400 (Eastern Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

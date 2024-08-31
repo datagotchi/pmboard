@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: components/StakeholderResearchWidget.jsx</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,55 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: components/StakeholderResearchWidget.jsx</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from "react";
 
+import Widget from "./Widget";
+import { EvidencePaneContext } from "../contexts/EvidencePaneContext";
+import FileEvidencePane from "./panes/FileEvidencePane";
+import { SummaryPaneContext } from "../contexts/SummaryPaneContext";
+import EmpathyMapPane from "./panes/EmpathyMapPane";
 
-    <h3> </h3>
+/**
+ * A widget to document and visualize stakeholder problems.
+ * @param {object} props The component properties.
+ * @param {number | undefined} props.productId the ID of the current product.
+ * @returns {React.JSX.Element} The rendered widget.
+ * @example
+ *  &lt;StakeholderResearchWidget productId={*} />
+ */
+const StakeholderResearchWidget = ({ productId }) => {
+  const PERSONA_MODAL_ID = "personaModal";
 
+  return (
+    &lt;EvidencePaneContext.Provider value={FileEvidencePane}>
+      &lt;SummaryPaneContext.Provider value={EmpathyMapPane}>
+        &lt;Widget
+          productId={productId}
+          collectionName="personas"
+          type="Persona"
+          evidenceColumnLabel="Research"
+          title="Who are the stakeholders?"
+          mainModalId={PERSONA_MODAL_ID}
+          summaryTitle="Empathy Map"
+        />
+      &lt;/SummaryPaneContext.Provider>
+    &lt;/EvidencePaneContext.Provider>
+  );
+};
 
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+export default StakeholderResearchWidget;
+</code></pre>
+        </article>
+    </section>
 
 
 

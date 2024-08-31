@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: types.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: types.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/* eslint-disable jsdoc/no-undefined-types */
+/**
+ * @typedef Product
+ * @property {string} name The name of the product
+ */
+
+/**
+ * @typedef EvidenceTrend
+ * @property {string} name The name of the trend.
+ * @property {string} type The type of the trend.
+ */
+
+/**
+ * @typedef EvidenceRecord
+ * @property {string} name The name of the evidence record.
+ * @property {string} created_date The date it was created.
+ * @property {string} modified_date The date it was last modified.
+ * @property {EvidenceTrend[]} trends The trends found in the evidence.
+ */
+
+/**
+ * @typedef EvidenceFile
+ * @property {string} name The name of the file.
+ * @property {string} url The url of the file.
+ * @property {any} icon The icon of the file.
+ * @property {string} created_date The date it was created.
+ * @property {string} modified_date The date it was last modified.
+ * @property {EvidenceTrend[]} trends The trends found in the file.
+ */
+
+/**
+ * @typedef GoogleFile
+ * @property {string} title The title of the file.
+ * @property {string} alternateLink The url of the file.
+ * @property {string} iconLink The icon of the file.
+ */
+
+/**
+ * @typedef WidgetDataItem
+ * @property {string} name The name of the item
+ * @property {EvidenceRecord[]} evidence The objects that act as evidence
+ */
+
+/**
+ * @typedef Persona
+ * @property {string} name The name of the persona
+ * @property {EvidenceFile[]} evidence The files that act as evidence
+ */
+
+/**
+ * @typedef personaAsEvidence
+ * @property {string} name The name of the persona
+ */
+
+/**
+ * @typedef Company
+ * @property {string} name The name of the company
+ * @property {EvidenceFile[]} evidence The files that act as evidence
+ */
+
+/**
+ * @typedef Story
+ * @property {string} name The name of the user story
+ * @property {EvidenceFile[]} evidence The files that act as evidence
+ */
+
+/**
+ * @typedef Task
+ * @property {string} name The name of task
+ * @property {EvidenceFile[]} evidence The files that act as evidence
+ */
+
+/**
+ * @typedef EvidenceAPIProps
+ * @property {(itemId: number, evidence: EvidenceRecord[]) => Promise&lt;Response>} updateEvidence The function to call to update a widget item's evidence.
+ * @property {(itemId: number, evidenceRecord: EvidenceRecord) => Promise&lt;Response>} add The function to call to add an evidence record.
+ * @property {(itemId: number, evidenceId: number) => Promise&lt;Response>} removeEvidenceRecord The function to call to remove an evidence record.
+ * @property {(itemId: number, evidenceId: number, trends: EvidenceTrend[]) => Promise&lt;Response>} updateTrends The function to call to update an evidence object's trends.
+ * @property {(evidenceRecordId: number, trendId: number) => Promise&lt;Response>} deleteTrendFunc The function to call to delete a single trend.
+ */
+
+/**
+ * @typedef BaseCollectionAPI
+ * @property {(item: WidgetDataItem) => Promise&lt;Response>} addItem The function to call to add a widget item to the server.
+ * @property {(item: WidgetDataItem, index: number) => Promise&lt;Response>} updateItem The function to call to update a widget item on the server.
+ * @property {(index: number) => Promise&lt;Response>} deleteItem The function to call to delete a widget item from the server.
+ */
+
+/**
+ * @typedef {BaseCollectionAPI &amp; EvidenceAPIProps} CollectionAPI
+ */
+
+/**
+ * @typedef OAuthAPIFunctions
+ * @property {() => Promise&lt;string | null | undefined>} getAccessToken Obtain a Google OAuth access token from storage or their server.
+ * @property {(access_token: string) => Promise&lt;GoogleFile[]>} getGoogleDriveFiles A function to call to get a list of Google Drive files.
+ */
+
+/**
+ * @typedef ProductAPIFunctions
+ * @property {() => Promise&lt;Response>} getProducts A function to get all products from the server.
+ * @property {(bodyObject: any) => Promise&lt;Response>} createProduct A function to create a new product on the server.
+ * @property {(productId: number) => Promise&lt;Response>} deleteProduct A function to delete a product from the server
+ * @property {(collection: WidgetDataItem[]) => Promise&lt;Response>} updateProductCollection A function to update an entire collection (personas, stories, companies, tasks, etc).
+ */
+
+/**
+ * @typedef EvidencePaneProps
+ * @property {string} productId The ID of the currnent product.
+ * @property {EvidenceRecord[]} evidence The evidence to show in the pane.
+ * @property {string} containerModalId The ID of the containing modal dialog.
+ * @property {(evidence: EvidenceRecord[]) => Promise&lt;Response>} updateEvidenceOnServer The function to call when the evidence collection changes.
+ * @property {(file: EvidenceFile) => Promise&lt;Response>} addFileFunc The function to call to add an evidence file.
+ * @property {(fileId: number) => Promise&lt;Response>} removeFileFunc The function to call to remove an evidence file.
+ * @property {(tags: ReactTags.Tag[]) => void} allTagsUpdated The function to call when tags are updated in the evidence pane.
+ * @property {(fileId: number, trendId: number) => Promise&lt;Response>} deleteTrendFunc The function to call to delete a trend from the server.
+ * @property {(fileId: number, trend: EvidenceTrend) => Promise&lt;Response>} addTrendFunc The function to call to add a trend to the server.
+ * @property {(fileId: number, trend: EvidenceTrend) => Promise&lt;Response>} updateTrendNameFunc The function to call to update a trend's name or type on the server.
+ */
+
+/**
+ * @typedef SummaryPaneProps
+ * @param {(tagIndex: number, reactTags: ReactTags.Tag[]) => void} handleTagClick The ReactTags function to call when a tag is clicked.
+ * @param {boolean} allowDrag Whether or not to allow drag-n-drop.
+ * @param {(tag: ReactTags.Tag, currPos: number, newPos: number) => void} handleDrag A callback to handle drag-n-drop.
+ * @param {(className: string, onRemove: React.Component&lt;any>) => React.JSX.Element} removeComponent A component (e.g., X button) to remove a tag.
+ * @param {(index: number, event: React.MouseEvent) => void} handleDelete The function to call when deleting a tag.
+ */
+
+/**
+ * @typedef {{[key: string]: ReactTags.Tag[]}} TagsPerEvidenceRecord
+ */
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AddPersonaPane">AddPersonaPane</a></li><li><a href="global.html#AllTagsContext">AllTagsContext</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Dashboard">Dashboard</a></li><li><a href="global.html#EmpathyMapPane">EmpathyMapPane</a></li><li><a href="global.html#EvidencePaneContext">EvidencePaneContext</a></li><li><a href="global.html#FileEvidencePane">FileEvidencePane</a></li><li><a href="global.html#JourneyMapPane">JourneyMapPane</a></li><li><a href="global.html#MarketResearchWidget">MarketResearchWidget</a></li><li><a href="global.html#Modal">Modal</a></li><li><a href="global.html#StakeholderEvidencePane">StakeholderEvidencePane</a></li><li><a href="global.html#StakeholderResearchWidget">StakeholderResearchWidget</a></li><li><a href="global.html#StoriesWidget">StoriesWidget</a></li><li><a href="global.html#SummaryPaneContext">SummaryPaneContext</a></li><li><a href="global.html#TodoWidget">TodoWidget</a></li><li><a href="global.html#Widget">Widget</a></li><li><a href="global.html#WidgetItemRow">WidgetItemRow</a></li><li><a href="global.html#formatTrendTypeText">formatTrendTypeText</a></li><li><a href="global.html#useCollectionAPI">useCollectionAPI</a></li><li><a href="global.html#useCollectionItems">useCollectionItems</a></li><li><a href="global.html#useEvidenceAPI">useEvidenceAPI</a></li><li><a href="global.html#useOAuthAPI">useOAuthAPI</a></li><li><a href="global.html#useProductAPI">useProductAPI</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Sat Aug 31 2024 15:59:11 GMT-0400 (Eastern Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
