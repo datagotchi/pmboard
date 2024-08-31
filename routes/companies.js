@@ -1,89 +1,97 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-const {
-  addItem,
-  updateItem,
-  deleteItem,
-} = require("./collectionItemFunctions");
+import { addItem, updateItem, deleteItem } from "./collectionItemFunctions.js";
 
-const {
+import {
   getEvidenceExpressFunc,
   addEvidenceExpressFunc,
-  trackEvidenceIndexExpressFunc,
+  trackEvidenceIdExpressFunc,
   deleteEvidenceExpressFunc,
-  getTrendsExpressFunc,
   addTrendExpressFunc,
-  changeTrendExpressFunc,
+  updateTrendExpressFunc,
   deleteTrendExpressFunc,
-} = require("./evidenceFunctions");
+} from "./evidenceFunctions.js";
 
-router.get("/", (req, res, next) => {
+router.get("/", async (req, res, next) => {
   /*
   const err = checkUserAccess(req, 1);
   if (err) return next(err);
 */
-  return res.json(req.product.companies);
+  const companies = await req.client
+    .query({
+      text: "select * from companies where product_id = $1::integer",
+      values: [req.product_id],
+    })
+    .then((result) => result.rows);
+  await Promise.all(
+    companies.map(async (company) => {
+      company.evidence = await req.client
+        .query({
+          text: "select * from evidence where company_id = $1::integer",
+          values: [company.id],
+        })
+        .then((result) => result.rows);
+      await Promise.all(
+        company.evidence.map(async (file) => {
+          file.trends = await req.client
+            .query({
+              text: "select * from trends where evidence_id = $1::integer",
+              values: [file.id],
+            })
+            .then((result) => result.rows);
+        })
+      );
+    })
+  );
+  req.client.release();
+  return res.json(companies);
 });
 
 router.post("/", addItem("companies"));
 
-router.param("company_ix", function (req, res, next) {
-  const ix = req.params.company_ix;
-  const prod = req.product;
-  if (ix && ix < prod.companies.length) {
-    req.company_ix = ix; // need to save just the index because we're saving the entire product document to the db
-    return next();
-  }
-  const err = new Error("No such company type");
-  err.status = 404;
-  return next(err);
+router.param("company_id", function (req, res, next) {
+  req.company_id = req.params.company_id;
+  return next();
 });
 
-router.put("/:company_ix", updateItem("companies", "company_ix"));
+router.put("/:company_id", updateItem("companies", "company_id"));
 
-router.delete("/:company_ix", deleteItem("companies", "company_ix"));
+router.delete("/:company_id", deleteItem("companies", "company_id"));
 
 // evidence & trends from evidenceFunctions.js
 
 router.get(
-  "/:company_ix/evidence",
-  getEvidenceExpressFunc("companies", "company_ix")
+  "/:company_id/evidence",
+  getEvidenceExpressFunc("companies", "company_id")
 );
 
-router.post(
-  "/:company_ix/evidence",
-  addEvidenceExpressFunc("companies", "company_ix")
-);
+router.post("/:company_id/evidence", addEvidenceExpressFunc("company_id"));
 
 router.param(
   "evidence_ix",
-  trackEvidenceIndexExpressFunc("companies", "company_ix")
+  trackEvidenceIdExpressFunc("companies", "company_id")
 );
 
 router.delete(
-  "/:company_ix/evidence/:evidence_ix",
-  deleteEvidenceExpressFunc("companies", "company_ix")
-);
-
-router.get(
-  "/:company_ix/evidence/:evidence_ix/trends",
-  getTrendsExpressFunc("companies", "company_ix")
+  "/:company_id/evidence/:evidence_ix",
+  deleteEvidenceExpressFunc("companies", "company_id")
 );
 
 router.post(
-  "/:company_ix/evidence/:evidence_ix/trends",
-  addTrendExpressFunc("companies", "company_ix")
+  "/:company_id/evidence/:evidence_ix/trends",
+  addTrendExpressFunc("companies", "company_id")
 );
 
 router.put(
-  "/:company_ix/evidence/:evidence_ix/trends/:trend_ix",
-  changeTrendExpressFunc("companies", "company_ix")
+  "/:company_id/evidence/:evidence_ix/trends/:trend_ix",
+  updateTrendExpressFunc("companies", "company_id")
 );
 
 router.delete(
-  "/:company_ix/evidence/:evidence_ix/trends/:trend_ix",
-  deleteTrendExpressFunc("companies", "company_ix")
+  "/:company_id/evidence/:evidence_ix/trends/:trend_ix",
+  deleteTrendExpressFunc("companies", "company_id")
 );
 
-module.exports = router;
+// module.exports = router;
+export default router;

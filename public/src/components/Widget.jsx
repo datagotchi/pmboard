@@ -2,52 +2,63 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Sortable, Plugins } from "@shopify/draggable";
 
 import { WidgetDataItem } from "../types";
+
 import Modal from "./Modal";
 import WidgetItemRow from "./WidgetItemRow";
+
 import useCollectionAPI from "../hooks/useCollectionAPI";
 import useCollectionItems from "../hooks/useCollectionItems";
 import useProductAPI from "../hooks/useProductAPI";
 
 /**
- * The HTML component for all PMBoard widgets to document and visualize information
+ * The HTML component for all PMBoard widgets to document and visualize information.
  * @param {object} props The component props
  * @param {string} props.productId The ID of the current product.
  * @param {string} props.collectionName The name of the product collection.
  * @param {string} props.type The type of the data rows.
- * @param {string} props.evidenceType The type-name for the evidence.
+ * @param {string} props.evidenceColumnLabel The label for the evidence column.
  * @param {string} props.title The title to show at the top of the widget.
- * @param {string} props.itemModalId The ID of the item modal passed in `children`.
+ * @param {string} props.mainModalId The ID of the item modal passed in `children`.
  * @param {string} props.summaryTitle The title of the summary tab on the modal.
  * @returns {React.JSX.Element} The rendered widget.
  * @example
- * <Widget productId="" collectionName="" type="" title="" itemModalId="" />
+ * <Widget productId="" collectionName="" type="" title="" mainModalId="" />
  */
 const Widget = ({
   productId,
   collectionName,
   type,
-  evidenceType,
+  evidenceColumnLabel,
   title,
-  itemModalId,
+  mainModalId,
   summaryTitle,
 }) => {
   const data = useCollectionItems(productId, collectionName);
-
+  const {
+    addItem,
+    updateItem,
+    deleteItem,
+    addEvidenceRecord,
+    removeEvidenceRecord,
+    deleteTrend,
+    addTrend,
+    updateTrend,
+  } = useCollectionAPI(productId, collectionName);
   const { updateProductCollection } = useProductAPI();
 
   /**
-   * @type {[WidgetDataItem[] | undefined, React.Dispatch<any[]>]}
+   * @type {[WidgetDataItem[] | undefined, React.Dispatch<WidgetDataItem[]>]}
    */
   const [liveData, setLiveData] = useState();
 
-  const CREATE_DIALOG_ID = `createDialog: ${itemModalId}`;
-  const NEW_NAME_FIELD_ID = `newName: ${itemModalId}`;
+  const CREATE_DIALOG_ID = `createDialog: ${mainModalId}`;
+  const NEW_NAME_FIELD_ID = `newName: ${mainModalId}`;
   const LIST_ID = `itemsTbody_${type}`;
 
+  /**
+   * @type {[Sortable | undefined, React.Dispatch<Sortable>]}
+   */
   const [sortable, setSortable] = useState();
-
-  const { addItem, updateItem, deleteItem, addEvidenceFile, updateTrend } =
-    useCollectionAPI(productId, collectionName);
 
   useEffect(() => {
     if (data) {
@@ -58,9 +69,7 @@ const Widget = ({
   /**
    * @type {[WidgetDataItem | undefined, React.Dispatch<WidgetDataItem>]}
    */
-  const [currentItem, setCurrentItem] = useState();
-
-  const [currentItemIndex, setCurrentItemIndex] = useState();
+  const [currentWidgetItem, setCurrentWidgetItem] = useState();
 
   /**
    * @type {[HTMLDialogElement | undefined, React.Dispatch<HTMLDialogElement | undefined>]}
@@ -72,6 +81,10 @@ const Widget = ({
    */
   const [createDialog, setCreateDialog] = useState();
 
+  /**
+   * Show a dialog toward the bottom of the page to create a new widget item by name.
+   * @example <Component onClic={() => showCreateDialog()}
+   */
   const showCreateDialog = () => {
     /**
      * @type {HTMLDialogElement}
@@ -88,7 +101,7 @@ const Widget = ({
   };
 
   useEffect(() => {
-    if (currentItem) {
+    if (currentWidgetItem) {
       if (itemModal) {
         // TODO: track if these have been added/removed so they don't get added multiple times
         itemModal.addEventListener("click", (event) => {
@@ -98,36 +111,34 @@ const Widget = ({
         });
         itemModal.addEventListener("close", () => {
           setItemModal(undefined);
-          setCurrentItem(undefined);
-          setCurrentItemIndex(undefined);
+          setCurrentWidgetItem(undefined);
         });
         itemModal.showModal();
       } else {
         /**
          * @type {HTMLDialogElement}
          */
-        const modal = document.getElementById(itemModalId);
+        const modal = document.getElementById(mainModalId);
         setItemModal(modal);
       }
     }
-  }, [currentItem, itemModal]);
+  }, [currentWidgetItem, itemModal]);
 
-  const [draggableContainer, setDraggableContainer] = useState();
+  const [sortableContainer, setDraggableContainer] = useState();
 
   useEffect(() => {
-    if (document.getElementById(LIST_ID) && !draggableContainer) {
+    if (document.getElementById(LIST_ID) && !sortableContainer) {
       setDraggableContainer(document.getElementById(LIST_ID));
     }
   });
 
   useEffect(() => {
-    if (draggableContainer && !sortable) {
+    if (sortableContainer && !sortable) {
       setSortable(
-        new Sortable(draggableContainer, {
+        new Sortable(sortableContainer, {
           draggable: "tr",
           handle: ".dragHandle",
           mirror: {
-            appendTo: `#${LIST_ID}`,
             constrainDimensions: true,
           },
           collidables: "tr",
@@ -140,17 +151,17 @@ const Widget = ({
         })
       );
     }
-  }, [draggableContainer, sortable]);
+  }, [sortableContainer, sortable]);
 
   let currentDragIndex = -1;
   useEffect(() => {
     if (sortable && liveData) {
       sortable.on("drag:start", (event) => {
-        const trElements = Array.from(draggableContainer.childNodes);
+        const trElements = Array.from(sortableContainer.childNodes);
         currentDragIndex = trElements.indexOf(event.source);
       });
       sortable.on("drag:stop", (event) => {
-        const trElements = Array.from(draggableContainer.childNodes).filter(
+        const trElements = Array.from(sortableContainer.childNodes).filter(
           (tr) =>
             !tr.className.includes("draggable-mirror") &&
             !tr.className.includes("draggable--original")
@@ -162,13 +173,26 @@ const Widget = ({
             newData[currentDragIndex],
             newData[newIndex],
           ];
-          updateProductCollection(productId, collectionName, newData).then(
-            () => {
+          newData.forEach((item, index) => (item.index = index));
+          updateProductCollection(
+            productId,
+            collectionName,
+            newData.map((item) => ({
+              // to avoid including evidence & trends in the call
+              id: item.id,
+              index: item.index,
+              name: item.name,
+              product_id: item.product_id,
+            }))
+          )
+            .then(() => {
               // TODO: refreshing the page works, but I'd prefer not to
               // setLiveData((prevLiveData) => [...newData]); // resets the live data, but renders it the old way (!)
               window.location.reload();
-            }
-          );
+            })
+            .catch((err) => {
+              console.error(err);
+            });
         }
         // done: cleanup
         currentDragIndex = -1;
@@ -179,19 +203,15 @@ const Widget = ({
   // TODO: (above TODO) vs: this uses old `liveData` after drag reordering
   const deleteItemCallback = useCallback(
     (item) => {
-      const itemIndex = liveData.indexOf(item);
-      liveData.splice(itemIndex, 1);
-      setLiveData([...liveData]);
-      deleteItem(itemIndex);
+      setLiveData(liveData.filter((i) => i.id !== item.id));
+      deleteItem(item.id);
     },
     [liveData]
   );
 
   const widgetOnClickCallback = useCallback(
     (item) => {
-      setCurrentItem(item);
-      const index = liveData.indexOf(item);
-      setCurrentItemIndex(index);
+      setCurrentWidgetItem(item);
     },
     [liveData]
   );
@@ -222,20 +242,22 @@ const Widget = ({
               <tr>
                 <th style={{ width: "20px" }}></th>
                 <th>{type}</th>
-                <th>{evidenceType}</th>
+                <th>{evidenceColumnLabel}</th>
                 <th>Delete</th>
               </tr>
             </thead>
             <tbody id={LIST_ID}>
               {liveData &&
-                liveData.map((item, index) => (
-                  <WidgetItemRow
-                    item={item}
-                    key={`WidgetItemRow #${index}`}
-                    onDeleteCallback={deleteItemCallback}
-                    onClickCallback={widgetOnClickCallback}
-                  />
-                ))}
+                liveData
+                  .sort((a, b) => a.index - b.index)
+                  .map((item, index) => (
+                    <WidgetItemRow
+                      item={item}
+                      key={`WidgetItemRow #${index}`}
+                      onDeleteCallback={deleteItemCallback}
+                      onClickCallback={widgetOnClickCallback}
+                    />
+                  ))}
             </tbody>
           </table>
         </div>
@@ -270,26 +292,18 @@ const Widget = ({
           </form>
         </dialog>
       </div>
-      {currentItem && (
+      {currentWidgetItem && (
         <Modal
-          dialogId={itemModalId}
-          item={currentItem}
-          deleteItemFunc={deleteItemCallback}
-          updateItemFunc={(item) => updateItem(item, currentItemIndex)}
-          updateTrendFunc={(trendIndex, trend) => {
-            currentItem.evidence.forEach((file, fileIndex) => {
-              const trendIndex = file.trends
-                .map((trend) => trend.name)
-                .indexOf(trend.name);
-              if (trendIndex > -1) {
-                updateTrend(currentItemIndex, fileIndex, trendIndex, trend);
-              }
-            });
-          }}
+          productId={productId}
+          dialogId={mainModalId}
+          item={currentWidgetItem}
+          updateItemFunc={(item) => updateItem(item)}
           summaryTitle={summaryTitle}
-          addItemEvidenceFunc={(file) =>
-            addEvidenceFile(currentItemIndex, file)
-          }
+          addEvidenceFunc={addEvidenceRecord}
+          removeEvidenceFunc={removeEvidenceRecord}
+          deleteTrendFunc={deleteTrend}
+          addTrendFunc={addTrend}
+          updateTrendFunc={updateTrend}
         />
       )}
     </>

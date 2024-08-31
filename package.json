@@ -2,17 +2,22 @@
   "name": "pmboard",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {},
   "dependencies": {
     "body-parser": "^1.12.0",
     "bson": "6",
+    "chai": "^5.1.1",
     "cookie-parser": "^1.3.4",
     "csurf": "^1.11.0",
     "debug": "4",
     "express": "^4.12.2",
     "express-session": "^1.10.4",
+    "fs": "^0.0.1-security",
     "jsdoc": "^4.0.3",
-    "mongodb": "6",
-    "mongoose": "8"
+    "mocha": "^10.7.3",
+    "pg": "^8.12.0",
+    "sinon": "^18.0.0",
+    "supertest": "^7.0.0"
   }
 }

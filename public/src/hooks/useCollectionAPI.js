@@ -1,39 +1,45 @@
-import { WidgetDataItem } from "../types";
+import { CollectionAPI, WidgetDataItem } from "../types";
 import useEvidenceAPI from "./useEvidenceAPI";
 
 /**
- * A high-level hook to modify product collection items
+ * A high-level hook to modify product collection items.
  * @param {number} productId The ID of the current product.
  * @param {string} collectionName The name of the collection for API calls.
- * @returns {object} A collection of API functions.
+ * @returns {CollectionAPI} A collection of API functions.
  * @example
  * const { addItem, updateItem, deleteItem } = useCollectionAPI({productId, collectionName});
  */
 const useCollectionAPI = (productId, collectionName) => {
   /**
-   * Add an item to the server.
-   * @param {WidgetDataItem} item The item object to add.
-   * @returns {Promise<Response>} The POST fetch promise.
+   * Add an item to the {collectionName} of {productId}.
+   * @param {WidgetDataItem} item The item to add to a widget.
+   * @returns {Promise<Response> | void} The fetch promise if the item is specified.
+   * @example <Component onClick={() => addItem(...)} />
    */
-  const addItem = (item) =>
-    fetch(`/products/${productId}/${collectionName}`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      // TODO: credentials
-      body: JSON.stringify(item),
-    });
+  const addItem = (item) => {
+    if (item) {
+      return fetch(`/products/${productId}/${collectionName}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        // TODO: credentials
+        body: JSON.stringify(item),
+      });
+    } else {
+      throw new Error("Item is undefined");
+    }
+  };
 
   /**
-   * Update an item on the server.
-   * @param {WidgetDataItem} item The item object with fields to replace the existing one with.
-   * @param {number} index The index of the item.
-   * @returns {Promise<Response>} The PUT fetch promise.
+   * Update the attributes of an item in a collection specified by {collectionName} for {productId}.
+   * @param {WidgetDataItem} item The item to update with new properties.
+   * @returns {Promise<Response>} The fetch promise.
+   * @example <Component onClick={() => updateItem(...)} />
    */
-  const updateItem = (item, index) =>
-    fetch(`/products/${productId}/${collectionName}/${index}`, {
+  const updateItem = (item) =>
+    fetch(`/products/${productId}/${collectionName}/${item.id}`, {
       method: "PUT",
       headers: {
         Accept: "application/json",
@@ -44,26 +50,35 @@ const useCollectionAPI = (productId, collectionName) => {
     });
 
   /**
-   * Delete an item from the server via index.
-   * @param {number} index The index of the item in its collection.
-   * @returns {Promise<Response>} The DELETE fetch request promise.
+   * Delete an item in {collectionName} for {productId}.
+   * @param {number} id The ID of the item to delete.
+   * @returns {Promise<Response>} The fetch promise.
+   * @example <Component onClick={() => deleteItem(...)} />
    */
-  const deleteItem = (index) =>
-    fetch(`/products/${productId}/${collectionName}/${index}`, {
+  const deleteItem = (id) =>
+    fetch(`/products/${productId}/${collectionName}/${id}`, {
       method: "DELETE",
       // TODO: credentials
     });
 
-  const { addEvidenceFile, updateTrend } = useEvidenceAPI(
-    productId,
-    collectionName
-  );
+  const {
+    updateEvidence,
+    addEvidenceRecord,
+    removeEvidenceRecord,
+    deleteTrend,
+    addTrend,
+    updateTrend,
+  } = useEvidenceAPI(productId, collectionName);
 
   return {
     addItem,
     updateItem,
     deleteItem,
-    addEvidenceFile,
+    updateEvidence,
+    addEvidenceRecord,
+    removeEvidenceRecord,
+    deleteTrend,
+    addTrend,
     updateTrend,
   };
 };

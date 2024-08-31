@@ -5,9 +5,10 @@ import useProductAPI from "../hooks/useProductAPI";
 import useOAuthAPI from "../hooks/useOAuthAPI";
 import MarketResearchWidget from "./MarketResearchWidget";
 import StoriesWidget from "./StoriesWidget";
+import TodoWidget from "./TodoWidget";
 
 /**
- * The container of all widgets
+ * The container of all widgets.
  * @returns {React.JSX.Element} The rendered dashboard.
  * @example
  *  <Dashboard>
@@ -17,20 +18,20 @@ import StoriesWidget from "./StoriesWidget";
  *  </Dashboard>
  */
 const Dashboard = () => {
-  const CURRENT_PRODUCT_ID_SESSION_KEY = "currentProductId";
+  const CURRENT_PRODUCTid_SESSION_KEY = "currentProductId";
   /**
    * @type {[Product[] | undefined, React.Dispatch<Product[]>]}
    */
   const [products, setProducts] = useState();
 
   const currentProjectIdFromStorage = sessionStorage.getItem(
-    CURRENT_PRODUCT_ID_SESSION_KEY
+    CURRENT_PRODUCTid_SESSION_KEY
   );
   /**
-   * @type {[string, React.Dispatch<string>]}
+   * @type {[number, React.Dispatch<string>]}
    */
   const [currentProductId, setCurrentProductId] = useState(
-    currentProjectIdFromStorage
+    Number(currentProjectIdFromStorage)
   );
   /**
    * @type {[Product | undefined, React.Dispatch<Product>]}
@@ -58,7 +59,7 @@ const Dashboard = () => {
   useEffect(() => {
     if (currentProductId && products) {
       const product = products.find(
-        (product) => product._id === currentProductId
+        (product) => product.id === currentProductId
       );
       setCurrentProduct(product);
     }
@@ -66,12 +67,17 @@ const Dashboard = () => {
 
   const { getProducts, createProduct, deleteProduct } = useProductAPI();
 
+  /**
+   * Find the product by ID, then save it in sessionStorage and in state variables.
+   * @param {number} productId The ID of the product to set as current.
+   * @example handleSetCurrentProduct(1)
+   */
   const handleSetCurrentProduct = (productId) => {
-    const product = products.find((product) => product._id === productId);
+    const product = products.find((product) => product.id === productId);
     if (product) {
-      sessionStorage.setItem(CURRENT_PRODUCT_ID_SESSION_KEY, productId);
+      sessionStorage.setItem(CURRENT_PRODUCTid_SESSION_KEY, productId);
       setCurrentProduct(product);
-      setCurrentProductId(product._id);
+      setCurrentProductId(product.id);
     }
   };
 
@@ -79,8 +85,13 @@ const Dashboard = () => {
 
   const currentTab = sessionStorage.getItem(SESSION_TAB_KEY);
 
+  const WIDGET_COUNT = 4;
+
   useEffect(() => {
-    if (document.querySelectorAll('a[data-bs-toggle="tab"]').length === 3) {
+    if (
+      document.querySelectorAll('a[data-bs-toggle="tab"]').length ===
+      WIDGET_COUNT
+    ) {
       const tabs = document.querySelectorAll('a[data-bs-toggle="tab"]');
       tabs.forEach((tab) => {
         tab.addEventListener("click", () => {
@@ -110,11 +121,10 @@ const Dashboard = () => {
                 <ul className="dropdown-menu" role="menu">
                   {products &&
                     products.map((product) => (
-                      <li key={`Product #${product._id}`}>
+                      <li key={`Product #${product.id}`}>
                         <a
-                          className="dropdown-item"
-                          style={{ cursor: "pointer" }}
-                          onClick={() => handleSetCurrentProduct(product._id)}
+                          className="dropdown-item pointer"
+                          onClick={() => handleSetCurrentProduct(product.id)}
                         >
                           {product.name}
                         </a>
@@ -125,14 +135,13 @@ const Dashboard = () => {
                   </li>
                   <li>
                     <a
-                      className="dropdown-item"
-                      style={{ cursor: "pointer" }}
+                      className="dropdown-item pointer"
                       onClick={async () => {
                         const name = prompt("Give the new product a name:");
                         if (name) {
                           const newProduct = await createProduct({ name });
                           setProducts([...products, newProduct]);
-                          setCurrentProductId(newProduct._id);
+                          setCurrentProductId(newProduct.id);
                         }
                       }}
                     >
@@ -153,10 +162,10 @@ const Dashboard = () => {
                   style={{ cursor: "pointer" }}
                   onClick={async () => {
                     if (confirm("Are you sure?")) {
-                      await deleteProduct(currentProduct._id);
+                      await deleteProduct(currentProduct.id);
                       setProducts(
                         products.filter(
-                          (product) => product._id !== currentProduct._id
+                          (product) => product.id !== currentProduct.id
                         )
                       );
                       setCurrentProduct(undefined);
@@ -219,6 +228,20 @@ const Dashboard = () => {
             <li role="presentation" className="nav-item">
               <a
                 className={`nav-link ${
+                  currentTab === "#storiesWidget" ? "active" : ""
+                }`}
+                data-bs-toggle="tab"
+                data-bs-target="#storiesWidget"
+                aria-controls="evidence"
+                role="tab"
+                type="button"
+              >
+                User Stories
+              </a>
+            </li>
+            <li role="presentation" className="nav-item">
+              <a
+                className={`nav-link ${
                   currentTab === "#marketWidget" ? "active" : ""
                 }`}
                 data-bs-toggle="tab"
@@ -233,15 +256,15 @@ const Dashboard = () => {
             <li role="presentation" className="nav-item">
               <a
                 className={`nav-link ${
-                  currentTab === "#storiesWidget" ? "active" : ""
+                  currentTab === "#todowidget" ? "active" : ""
                 }`}
                 data-bs-toggle="tab"
-                data-bs-target="#storiesWidget"
+                data-bs-target="#todoWidget"
                 aria-controls="evidence"
                 role="tab"
                 type="button"
               >
-                User Stories
+                TODO Items
               </a>
             </li>
           </ul>
@@ -253,16 +276,7 @@ const Dashboard = () => {
               }`}
               id="stakeholderWidget"
             >
-              <StakeholderResearchWidget productId={currentProduct._id} />
-            </div>
-            <div
-              role="tabpanel"
-              className={`tab-pane ${
-                currentTab === "#marketWidget" ? "active" : ""
-              }`}
-              id="marketWidget"
-            >
-              <MarketResearchWidget productId={currentProduct._id} />
+              <StakeholderResearchWidget productId={currentProduct.id} />
             </div>
             <div
               role="tabpanel"
@@ -271,7 +285,25 @@ const Dashboard = () => {
               }`}
               id="storiesWidget"
             >
-              <StoriesWidget productId={currentProduct._id} />
+              <StoriesWidget productId={currentProduct.id} />
+            </div>
+            <div
+              role="tabpanel"
+              className={`tab-pane ${
+                currentTab === "#marketWidget" ? "active" : ""
+              }`}
+              id="marketWidget"
+            >
+              <MarketResearchWidget productId={currentProduct.id} />
+            </div>
+            <div
+              role="tabpanel"
+              className={`tab-pane ${
+                currentTab === "#todoWidget" ? "active" : ""
+              }`}
+              id="todoWidget"
+            >
+              <TodoWidget productId={currentProduct.id} />
             </div>
           </div>
         </div>

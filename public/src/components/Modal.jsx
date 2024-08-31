@@ -1,22 +1,32 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { WithContext as ReactTags, SEPARATORS } from "react-tag-input";
+import React, { useCallback, useContext, useState } from "react";
+import { WithContext as ReactTags } from "react-tag-input";
 
-import useOAuthAPI from "../hooks/useOAuthAPI";
+import { EvidenceRecord, EvidenceTrend, WidgetDataItem } from "../types";
+
+import { getOccurenceNumber, sortString } from "../../../util";
+
+import { AllTagsContext } from "../contexts/AllTagsContext";
+import { EvidencePaneContext } from "../contexts/EvidencePaneContext";
+import { SummaryPaneContext } from "../contexts/SummaryPaneContext";
+
 import {
-  EvidenceFile,
-  EvidenceTrend,
-  WidgetDataItem,
-  GoogleFile,
-} from "../types";
+  classNameToIndex,
+  indexToClassName,
+} from "./panes/EmpathyMapPaneFunctions";
 
 /**
+ * The React component to show the base dialog.
  * @param {object} props The component properties.
+ * @param {string} props.productId The ID of the current product.
  * @param {WidgetDataItem} props.item The item to show in the modal.
  * @param {string} props.dialogId The ID to give the dialog.
- * @param {(item: WidgetDataItem) => void} props.updateItemFunc The function to call when a new item is updated.
- * @param {(trendIndex: number, trend: EvidenceTrend) => Promise<void>} props.updateTrendFunc The function to call when a trend is updated.
+ * @param {(itemId: number, evidenceRecord: EvidenceRecord) => Promise<Response>} props.addEvidenceFunc The function to call to add an evidence record.
+ * @param {(itemId: number, evidenceId: number) => Promise<Response>} props.removeEvidenceFunc The function to call to remove an evidence record.
  * @param {string} props.summaryTitle The title of the summary tab.
- * @param {(file: EvidenceFile) => Promise<Response>} props.addItemEvidenceFunc The function to call when adding an evidence file.
+ * @param {(item: WidgetDataItem) => Promise<Response>} props.updateItemFunc The function to call to update an entire item.
+ * @param {(itemId: number, evidenceRecordId: number, trendId: number) => Promise<Response>} props.deleteTrendFunc The function to call to delete a trend.
+ * @param {(itemId: number, evidenceRecordId: number, trend: EvidenceTrend) => Promise<Response>} props.addTrendFunc The function to call to add a new trend.
+ * @param {(itemId: number, evidenceRecordId: number, trend: EvidenceTrend) => Promise<Response>} props.updateTrendFunc The function to call to update a trend.
  * @returns {React.JSX.Element} The rendered modal.
  * @example
  *  <Modal item={*} dialogId="*" updateItemFunc={*} updateTrendFunc={*} summaryTitle="*" addItemEvidenceFunc={*} />
@@ -24,317 +34,91 @@ import {
 const Modal = ({
   item,
   dialogId,
-  updateItemFunc,
-  updateTrendFunc,
+  productId,
+  addEvidenceFunc,
+  removeEvidenceFunc,
   summaryTitle,
-  addItemEvidenceFunc,
+  updateItemFunc,
+  deleteTrendFunc,
+  addTrendFunc,
+  updateTrendFunc,
 }) => {
-  const ADD_FILES_DIALOG_ID = `addFilesModal: ${dialogId}`;
-
   /**
-   * @type {[{[key: string]: ReactTags.Tag[]}, React.Dispatch<{[key: string]: ReactTags.Tag[]}>]}
+   * Convert the per-record evidence data into a flat tag array.
+   * @param {EvidenceRecord} evidence The evidence records on a widget item.
+   * @example getFlatTagsWithCountFromEvience(item.evidence) ~ ["a", "b", "c", etc.]
+   * @returns {ReactTags.Tag[]} A flat array of tags.
    */
-  const [trendTagsPerFile, setTrendTagsPerFile] = useState();
-
-  useEffect(() => {
-    const initialTrendTags = item.evidence.reduce((trendsMap, file) => {
-      if (!trendsMap[file.url]) {
-        if (file.trends) {
-          trendsMap[file.url] = file.trends.map((trend) => ({
-            id: trend.name,
-            text: trend.name,
-            className: trend.type,
-          }));
-        } else {
-          trendsMap[file.url] = [];
-        }
-      }
-      return trendsMap;
-    }, {});
-    setTrendTagsPerFile(initialTrendTags);
-  }, []);
-
-  useEffect(() => {
-    if (trendTagsPerFile) {
-      updateAllTagsFromTrendTags();
-    }
-  }, [trendTagsPerFile]);
-
-  const sortString = (a, b) => {
-    if (a < b) {
-      return 1;
-    }
-    if (b < a) {
-      return -1;
-    }
-    return 0;
-  };
-
-  const getJsonSortedString = (trends) => {
-    if (trends) {
-      return JSON.stringify(trends.map((trend) => trend.name).sort(sortString));
-    }
-    return "";
-  };
-
-  const getOccurenceNumber = (tagText) =>
-    parseInt(tagText.match(/\(([0-9]+)\)/)[1]);
-  const updateAllTagsFromTrendTags = useCallback(() => {
+  const getFlatTagsWithCountsFromEvidence = (evidence) => {
     /**
      * @type {ReactTags.Tag[]}
      */
     const newAllTags = [];
-    const tagDataMap = {};
-    Object.keys(trendTagsPerFile).forEach((fileUrl) => {
-      const fileTags = JSON.parse(JSON.stringify(trendTagsPerFile[fileUrl]));
-      fileTags.forEach((tag) => {
-        if (!tagDataMap[tag.id]) {
-          tagDataMap[tag.id] = {
-            count: 0,
-            className: tag.className,
-          };
-        }
-        tagDataMap[tag.id].count += 1;
-      });
-    });
-    Object.keys(tagDataMap).forEach((tagId) => {
-      const tagData = tagDataMap[tagId];
-      newAllTags.push({
-        id: tagId,
-        text: `${tagId} (${tagData.count})`,
-        className: tagData.className,
-      });
-    });
-    setAllTags(
-      newAllTags
-        .sort(sortString)
-        .sort((a, b) => getOccurenceNumber(b.text) - getOccurenceNumber(a.text))
-    );
-  }, [trendTagsPerFile]);
-
-  /**
-   *
-   * @param {ReactTags.Tag[]} allTags All tags for the Summary tab.
-   */
-  const updateTagTrendsFromAllTagsClassNames = (allTags) => {
-    Object.keys(trendTagsPerFile).forEach((fileUrl) => {
-      trendTagsPerFile[fileUrl].forEach((tag) => {
-        const allTagsTag = allTags.find((t) => t.id === tag.id);
-        tag.className = allTagsTag.className;
-      });
+    /**
+     * @type {{[key: string]: {count: number, className: string}}}
+     */
+    const trendCountMap = {};
+    evidence.forEach((record) => {
       /**
        * @type {EvidenceTrend[]}
        */
-      const newTrends = trendTagsPerFile[fileUrl].map((tag) => ({
-        name: tag.id,
-        type: tag.className,
-      }));
-
-      const evidenceFile = item.evidence.find((file) => file.url === fileUrl);
-      if (evidenceFile) {
-        evidenceFile.trends = newTrends;
-      }
-    });
-    setTrendTagsPerFile({ ...trendTagsPerFile });
-  };
-
-  useEffect(() => {
-    if (trendTagsPerFile) {
-      let thereAreChanges = false;
-
-      item.evidence.forEach((file) => {
-        const tags = trendTagsPerFile[file.url];
-        if (tags && tags.length > 0) {
-          const trends = tags.map((tag) => ({
-            name: tag.id,
-            type: tag.className,
-          }));
-          if (
-            getJsonSortedString(file.trends) !== getJsonSortedString(trends)
-          ) {
-            file.trends = trends;
-            thereAreChanges = true;
-          }
+      const recordTrends = JSON.parse(JSON.stringify(record.trends ?? [])); // to avoid referencing the same trend objects
+      recordTrends.forEach((trend) => {
+        if (!trendCountMap[trend.name]) {
+          trendCountMap[trend.name] = {
+            count: 0,
+            className: trend.type,
+          };
         }
+        trendCountMap[trend.name].count += 1;
       });
-      if (thereAreChanges) {
-        updateAllTagsFromTrendTags(trendTagsPerFile);
-        updateItemFunc(item);
-      }
-    }
-  }, [trendTagsPerFile, item.evidence]);
+    });
+    Object.keys(trendCountMap).forEach((trendName) => {
+      const trendInfoObject = trendCountMap[trendName];
+      newAllTags.push({
+        id: trendName,
+        text: `${trendName} (${trendInfoObject.count})`,
+        className: trendInfoObject.className,
+      });
+    });
+    return newAllTags
+      .sort(sortString)
+      .sort((a, b) => getOccurenceNumber(b.text) - getOccurenceNumber(a.text));
+  };
 
   /**
    * @type {[ReactTags.Tag[] | undefined, React.Dispatch<ReactTags.Tag[] | undefined>]}
    */
-  const [allTags, setAllTags] = useState();
-
-  /**
-   * @type {[HTMLDialogElement | undefined, React.Disptch<HTMLDialogElement | undefined>]}
-   */
-  const [addFilesModal, setAddFilesModal] = useState();
-
-  useEffect(() => {
-    setAddFilesModal(document.getElementById(ADD_FILES_DIALOG_ID));
-  }, []);
-
-  const { getGoogleDriveFiles } = useOAuthAPI();
-
-  const accessToken = useMemo(() => sessionStorage.getItem("access_token"), []);
-
-  useEffect(() => {
-    if (accessToken) {
-      const encodedToken = encodeURI(accessToken);
-      getGoogleDriveFiles(encodedToken).then((files) => {
-        const filteredFiles = files.filter(
-          (file) =>
-            item.evidence
-              .map(function (f) {
-                return f.url;
-              })
-              .indexOf(file.alternateLink) === -1
-        );
-        setGoogleFiles([...filteredFiles]);
-        setFilteredFiles([...filteredFiles]);
-      });
-    }
-  }, [accessToken]);
-
-  const openFilesModal = () => {
-    if (addFilesModal) {
-      addFilesModal.addEventListener("click", (event) => {
-        if (event.target === event.currentTarget) {
-          addFilesModal.close();
-        }
-      });
-      addFilesModal.showModal();
-    }
-  };
-
-  /**
-   * @type {[GoogleFile[] | undefined, React.Dispatch<GoogleFile[] | undefined>]}
-   */
-  const [googleFiles, setGoogleFiles] = useState();
-  const [filteredFiles, setFilteredFiles] = useState();
-
-  const addFile = useCallback(
-    /**
-     *
-     * @param {GoogleFile} file The gdrive file to add as evidence.
-     * @param {React.ChangeEvent<HTMLInputElement>} event The event called on <input> change
-     * @returns {void}
-     */
-    async (file, event) => {
-      const checkbox = event.target;
-      if (checkbox.checked) {
-        var newFile = {
-          name: file.title,
-          url: file.alternateLink,
-          icon: file.iconLink,
-          createdDate: file.createdDate,
-          modifiedDate: file.modifiedDate,
-        };
-        item.evidence.push(newFile);
-        addItemEvidenceFunc(newFile);
-
-        const newFiles = googleFiles.filter(
-          (f) => f.alternateLink !== file.alternateLink
-        );
-        setGoogleFiles(newFiles);
-        document.getElementById("fileFilter").value = "";
-        setFilteredFiles(newFiles);
-        addFilesModal.close();
-      }
-    },
-    [googleFiles]
+  const [allTags, setAllTags] = useState(
+    getFlatTagsWithCountsFromEvidence(item.evidence)
   );
 
-  const removeFile = (file) => {
-    item.evidence = item.evidence.filter((file2) => file2.url !== file.url);
-    updateItemFunc(item);
-    const newFiles = [...googleFiles, file];
-    setGoogleFiles(newFiles);
-    document.getElementById("fileFilter").value = "";
-    // setFilteredFiles(newFiles);
-  };
+  const findTrendInEvidence = useCallback(
+    (tagId) => {
+      let foundTrend;
+      const evidence = item.evidence.find((ev) => {
+        if (!foundTrend) {
+          const trend = ev.trends.find((t) => t.name === tagId);
+          if (trend) {
+            foundTrend = trend;
+            return true;
+          }
+        }
+        return false;
+      });
+      return {
+        evidenceId: evidence.id,
+        trend: foundTrend,
+      };
+    },
+    [item.evidence]
+  );
 
-  const css = `
-    .trendItem {
-      margin: 2px;
-      padding: 0 0 0 5px;
-      display: inline-block;
-      font: 12px "Helvetica Neue", Helvetica, Arial, sans-serif;
-      height: 26px;
-      line-height: 25px;
-      border-radius: 3px;
-      background-color: #337ab7;
-      color: #fff;
-      font-weight: 700;
-      cursor: pointer !important;
-    }
-    .objective {
-      background-color: red;
-    }
-    .goal {
-      background-color: purple;
-    }
-    .activity { 
-      background-color: blue;
-    }
-    .task {
-      background-color: green;
-    }
-    .resource {
-      background-color: gray;
-    }
-    .readOnly {
-      padding: 0 5px;
-    }
-    .removeButton {
-      background-color: transparent;
-      height: 22px;
-      border-radius: 5px;
-      float: right;
-      margin: 2px 0 0 5px;
-      font-size: 12px;
-      line-height: 12px;
-    }
-    .removeButton:hover {
-      background-color: rgba(204, 204, 204, 0.5);
-    }
-    #modalSummary .ReactTags__tagInput {
-      display: none;
-    }
-  `;
-
-  const indexToClassName = [
-    "objective",
-    "goal",
-    "activity",
-    "task",
-    "resource",
-  ];
-  const classNameToIndex = {};
-  indexToClassName.forEach((className, index) => {
-    classNameToIndex[className] = index;
-  });
-
-  const formatTrendTypeText = (trendType) => {
-    switch (trendType.toLocaleLowerCase()) {
-      case "activity":
-        return "Activities";
-      case "resource":
-        return "Resources & Constraints";
-      case "":
-        return "";
-      default:
-        return `${trendType.charAt(0).toUpperCase() + trendType.slice(1)}s`;
-    }
-  };
+  const EvidencePaneComponent = useContext(EvidencePaneContext);
+  const SummaryPaneComponent = useContext(SummaryPaneContext);
 
   return (
     <>
-      <style>{css}</style>
       <dialog id={dialogId} style={{ width: "90%", height: "90%" }}>
         <div>
           <div>
@@ -371,281 +155,79 @@ const Modal = ({
                     </li>
                   </ul>
                   <div className="tab-content">
-                    {/* TODO: use d3.js instead of ReactTags */}
-                    <div role="tabpanel" className="tab-pane" id="modalSummary">
-                      {!allTags ||
-                        (allTags.length === 0 && (
-                          <span>
-                            There is no evidence. Start by adding a file!
-                          </span>
-                        ))}
-                      {allTags && allTags.length > 0 && (
-                        <>
-                          {/* <div style={{ float: "left", fontSize: "25px" }}>
-                            <p>⬆️</p>
-                            <p>Why?</p>
-                          </div> */}
-                          <table className="table" style={{ width: "90%" }}>
-                            <tbody>
-                              {[...indexToClassName, ""].map((trendType) => {
-                                const typedTags = allTags.filter(
-                                  (tag) => tag.className === trendType
-                                );
-                                return (
-                                  <tr key={`ReactTags for '${trendType}'`}>
-                                    <td>
-                                      <strong>
-                                        {formatTrendTypeText(trendType)}
-                                      </strong>
-                                    </td>
-                                    <td>
-                                      <ReactTags
-                                        tags={typedTags}
-                                        classNames={{
-                                          tag: "trendItem readOnly",
-                                        }}
-                                        removeComponent={() => {
-                                          // because readOnly={true} makes `handleTagClick` do nothing
-                                          return "";
-                                        }}
-                                        handleTagClick={(tagIndex) => {
-                                          const tag = typedTags[tagIndex];
-                                          const currentClassIndex =
-                                            tag.className
-                                              ? classNameToIndex[tag.className]
-                                              : -1;
-                                          const newClassName =
-                                            indexToClassName[
-                                              (currentClassIndex + 1) %
-                                                indexToClassName.length
-                                            ];
-                                          tag.className = newClassName;
-                                          setAllTags([...allTags]); // to refresh their className displays
-                                          updateTagTrendsFromAllTagsClassNames(
-                                            allTags
-                                          );
-                                          updateTrendFunc(tagIndex, {
-                                            name: tag.id,
-                                            type: tag.className,
-                                          });
-                                        }}
-                                      />
-                                    </td>
-                                  </tr>
-                                );
-                              })}
-                            </tbody>
-                          </table>
-                        </>
-                      )}
-                    </div>
-                    <div
-                      role="tabpanel"
-                      className="tab-pane active"
-                      id="modalEvidence"
-                    >
-                      <h2>
-                        <a
-                          style={{ cursor: "pointer" }}
-                          onClick={() => openFilesModal(item)}
-                        >
-                          Add File
-                        </a>
-                      </h2>
-                      <table className="table">
-                        <tbody>
-                          {item.evidence.map((file) => (
-                            <tr key={`Item evidence: ${file.url} `}>
-                              <td>
-                                <span
-                                  className="remove-evidence bi bi-trash"
-                                  style={{ cursor: "pointer" }}
-                                  onClick={() => {
-                                    if (confirm("Are you sure?")) {
-                                      removeFile(file);
-                                    }
-                                  }}
-                                ></span>
-                              </td>
-                              <td>
-                                {file.createdDate &&
-                                  new Date(
-                                    file.createdDate
-                                  ).toLocaleDateString()}
-                              </td>
-                              <td>
-                                <a
-                                  href={file.url}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                >
-                                  <img src={file.icon} />
-                                  {file.name}
-                                </a>
-                              </td>
-                              <td>
-                                {allTags &&
-                                  trendTagsPerFile &&
-                                  trendTagsPerFile[file.url] && (
-                                    <ReactTags
-                                      tags={trendTagsPerFile[file.url]}
-                                      separators={[SEPARATORS.ENTER]}
-                                      allowAdditionFromPaste={false}
-                                      handleAddition={(tag) => {
-                                        const fileTags = [
-                                          ...trendTagsPerFile[file.url],
-                                        ];
-                                        fileTags.push(tag);
-                                        setTrendTagsPerFile({
-                                          ...trendTagsPerFile,
-                                          [file.url]: fileTags,
-                                        });
-                                      }}
-                                      suggestions={allTags
-                                        .filter(
-                                          (tag) =>
-                                            trendTagsPerFile[file.url] &&
-                                            !trendTagsPerFile[file.url]
-                                              .map((t) => t.id)
-                                              .includes(tag.id)
-                                        )
-                                        .map((allTag) => ({
-                                          id: allTag.id,
-                                          text: allTag.id,
-                                          className: allTag.className,
-                                        }))}
-                                      // renderSuggestion={(item, query) => {}}
-                                      editable={true}
-                                      onTagUpdate={(index, tag) => {
-                                        const fileTags = [
-                                          ...trendTagsPerFile[file.url],
-                                        ];
-                                        fileTags[index] = {
-                                          id:
-                                            tag.id.charAt(0).toUpperCase() +
-                                            tag.id.slice(1),
-                                          text:
-                                            tag.text.charAt(0).toUpperCase() +
-                                            tag.text.slice(1),
-                                          className: fileTags[index].className,
-                                        };
-                                        setTrendTagsPerFile({
-                                          ...trendTagsPerFile,
-                                          [file.url]: fileTags,
-                                        });
-                                      }}
-                                      placeholder="Add a trend"
-                                      classNames={{
-                                        tag: "trendItem",
-                                        remove: "removeButton",
-                                      }}
-                                      allowUnique={true}
-                                      inputFieldPosition="top"
-                                      removeComponent={({
-                                        className,
-                                        onRemove,
-                                      }) => {
-                                        return (
-                                          <button
-                                            onClick={onRemove}
-                                            className={className}
-                                          >
-                                            X
-                                          </button>
-                                        );
-                                      }}
-                                      handleDelete={(index) => {
-                                        const thisFileTrends =
-                                          trendTagsPerFile[file.url];
-                                        thisFileTrends.splice(index, 1);
-                                        setTrendTagsPerFile({
-                                          ...trendTagsPerFile,
-                                          [file.url]:
-                                            trendTagsPerFile[file.url],
-                                        });
-                                      }}
-                                    />
-                                  )}
-                              </td>
-                            </tr>
+                    {/* TODO: look into Redux instead of/in addition to contexts for data */}
+                    <AllTagsContext.Provider value={allTags}>
+                      <div
+                        role="tabpanel"
+                        className="tab-pane"
+                        id="modalSummary"
+                      >
+                        {!allTags ||
+                          (allTags.length === 0 && (
+                            <span>
+                              There is no evidence. Start by adding a file!
+                            </span>
                           ))}
-                        </tbody>
-                      </table>
-                    </div>
+                        {allTags && allTags.length > 0 && (
+                          <SummaryPaneComponent
+                            handleTagClick={(tagIndex, reactTags) => {
+                              const tag = reactTags[tagIndex];
+                              const currentClassIndex = tag.className
+                                ? classNameToIndex[tag.className]
+                                : -1;
+                              const newClassName =
+                                indexToClassName[
+                                  (currentClassIndex + 1) %
+                                    indexToClassName.length
+                                ];
+                              tag.className = newClassName;
+                              setAllTags([...allTags]); // to refresh their className displays
+                              const { evidenceId, trend } = findTrendInEvidence(
+                                tag.id
+                              );
+                              trend.type = newClassName;
+                              updateTrendFunc(item.id, evidenceId, trend);
+                            }}
+                            // TODO: come up with a better data schema for journeys
+                            summaryChanged={(summary) => {
+                              item.summary = summary;
+                              updateItemFunc(item);
+                            }}
+                            data={item.summary}
+                          />
+                        )}
+                      </div>
+                      <div
+                        role="tabpanel"
+                        className="tab-pane active"
+                        id="modalEvidence"
+                      >
+                        <EvidencePaneComponent
+                          productId={productId}
+                          evidence={item.evidence}
+                          containerModalId={dialogId}
+                          addFileFunc={(file) => addEvidenceFunc(item.id, file)}
+                          removeFileFunc={(fileId) =>
+                            removeEvidenceFunc(item.id, fileId)
+                          }
+                          allTagsUpdated={(tags) => setAllTags(tags)}
+                          deleteTrendFunc={(evidenceId, trendId) =>
+                            deleteTrendFunc(item.id, evidenceId, trendId)
+                          }
+                          addTrendFunc={(evidenceId, trend) =>
+                            addTrendFunc(item.id, evidenceId, trend)
+                          }
+                          updateTrendNameFunc={(evidenceId, trend) =>
+                            updateTrendFunc(item.id, evidenceId, trend)
+                          }
+                        />
+                      </div>
+                    </AllTagsContext.Provider>
                   </div>
                 </div>
               </div>
               <div className="modal-footer"></div>
             </div>
-          </div>
-        </div>
-      </dialog>
-      <dialog
-        id={ADD_FILES_DIALOG_ID}
-        style={{ width: "600px", height: "600px" }}
-      >
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5>Add File to Evidence for {item.name}</h5>
-          </div>
-          <div className="modal-body">
-            {/* <div ng-show="loading" style={{ textAlign: "center" }}>
-              <img src="ajax-loader.gif" width="32" height="32" />
-            </div> */}
-            {googleFiles && (
-              <input
-                type="text"
-                id="fileFilter"
-                placeholder="Search files..."
-                style={{ width: "100%" }}
-                onChange={(event) => {
-                  setFilteredFiles(
-                    googleFiles.filter((file) =>
-                      file.title
-                        .toLocaleLowerCase()
-                        .includes(event.target.value.toLocaleLowerCase())
-                    )
-                  );
-                }}
-              />
-            )}
-            <div id="files">
-              <table className="table">
-                <tbody>
-                  {filteredFiles &&
-                    filteredFiles.map((file) => (
-                      <tr key={`file #${file.alternateLink}`}>
-                        <td style={{ width: "100px" }}>
-                          <input
-                            type="checkbox"
-                            onChange={(event) => addFile(file, event)}
-                          />
-                        </td>
-                        <td className="file">
-                          <a
-                            href={file.alternateLink}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            <img src={file.iconLink} />
-                            {file.title}
-                          </a>
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div className="modal-footer">
-            <button
-              type="button"
-              className="btn-primary"
-              onClick={() => addFilesModal.close()}
-              aria-label="Close"
-            >
-              Close
-            </button>
           </div>
         </div>
       </dialog>

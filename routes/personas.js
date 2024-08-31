@@ -1,93 +1,114 @@
-var express = require("express");
-var router = express.Router();
+import express from "express";
+const router = express.Router();
 
-const {
-  addItem,
-  updateItem,
-  deleteItem,
-} = require("./collectionItemFunctions");
+import { addItem, updateItem, deleteItem } from "./collectionItemFunctions.js";
 
-const {
+import {
   getEvidenceExpressFunc,
   addEvidenceExpressFunc,
-  getTrendsExpressFunc,
-  trackEvidenceIndexExpressFunc,
+  trackEvidenceIdExpressFunc,
   deleteEvidenceExpressFunc,
   addTrendExpressFunc,
-  changeTrendExpressFunc,
+  updateTrendExpressFunc,
   deleteTrendExpressFunc,
-} = require("./evidenceFunctions");
+} from "./evidenceFunctions.js";
+import { formatSQLValue } from "../util.js";
 
 // get user personas
-router.get("/", (req, res, next) => {
+router.get("/", async (req, res, next) => {
   /*
   var err = checkUserAccess(req, 1);
   if (err) return next(err);
 */
-  return res.json(req.product.personas);
+  const personas = await req.client
+    .query({
+      text: "select * from personas where product_id = $1::integer",
+      values: [req.product_id],
+    })
+    .then((result) => result.rows);
+  await Promise.all(
+    personas.map(async (persona) => {
+      persona.evidence = await req.client
+        .query({
+          text: "select * from evidence where persona_id = $1::integer",
+          values: [persona.id],
+        })
+        .then((result) => result.rows);
+      await Promise.all(
+        persona.evidence.map(async (file) => {
+          file.trends = await req.client
+            .query({
+              text: "select * from trends where evidence_id = $1::integer",
+              values: [file.id],
+            })
+            .then((result) => result.rows);
+        })
+      );
+    })
+  );
+  req.client.release();
+  return res.json(personas);
+});
+
+router.put("/", async (req, res, next) => {
+  const personas = req.body;
+  await Promise.all(
+    personas.map((persona) => {
+      const setClause = Object.keys(persona)
+        .filter((key) => key !== "id")
+        .map((key) => `${key} = ${formatSQLValue(persona[key])}`);
+      return req.client.query({
+        text: `update personas set ${setClause} where id = $1::integer`,
+        values: [persona.id],
+      });
+    })
+  );
+  req.client.release();
+  return res.sendStatus(200);
 });
 
 router.post("/", addItem("personas"));
 
-router.param("persona_ix", function (req, res, next) {
-  // TODO: assert ix is a normal int
-  var ix = req.params.persona_ix;
-  var prod = req.product;
-  if (ix && ix < prod.personas.length) {
-    req.persona_ix = ix; // need to save just the index because we're saving the entire product document to the db
-    return next();
-  }
-  var err = new Error("No such stakeholder type");
-  err.status = 404;
-  return next(err);
+router.param("persona_id", function (req, res, next) {
+  req.persona_id = req.params.persona_id;
+  return next();
 });
 
-router.put("/:persona_ix", updateItem("personas", "persona_ix"));
+router.put("/:persona_id", updateItem("personas", "persona_id"));
 
-router.delete("/:persona_ix", deleteItem("personas", "persona_ix"));
+router.delete("/:persona_id", deleteItem("personas", "persona_id"));
 
 // ****** persona evidence *****
 
-// get persona evidence
 router.get(
-  "/:persona_ix/evidence",
-  getEvidenceExpressFunc("personas", "persona_ix")
+  "/:persona_id/evidence",
+  getEvidenceExpressFunc("personas", "persona_id")
 );
 
-// add persona evidence
-router.post(
-  "/:persona_ix/evidence",
-  addEvidenceExpressFunc("personas", "persona_ix")
-);
+router.post("/:persona_id/evidence", addEvidenceExpressFunc("persona_id"));
 
-router.param(
-  "evidence_ix",
-  trackEvidenceIndexExpressFunc("personas", "persona_ix")
-);
+router.param("evidence_id", trackEvidenceIdExpressFunc());
 
 router.delete(
-  "/:company_ix/evidence/:evidence_ix",
-  deleteEvidenceExpressFunc("personas", "persona_ix")
+  "/:company_ix/evidence/:evidence_id",
+  deleteEvidenceExpressFunc()
 );
 
-router.get(
-  "/:persona_ix/evidence/:evidence_ix/trends",
-  getTrendsExpressFunc("personas", "persona_ix")
-);
+// router.get(
+//   "/:persona_id/evidence/:evidence_id/trends",
+//   getTrendsExpressFunc("personas", "persona_id")
+// );
 
-router.post(
-  "/:persona_ix/evidence/:evidence_ix/trends",
-  addTrendExpressFunc("personas", "persona_ix")
-);
+router.post("/:persona_id/evidence/:evidence_id/trends", addTrendExpressFunc());
 
 router.put(
-  "/:persona_ix/evidence/:evidence_ix/trends/:trend_ix",
-  changeTrendExpressFunc("personas", "persona_ix")
+  "/:persona_id/evidence/:evidence_id/trends/:trend_id",
+  updateTrendExpressFunc()
 );
 
 router.delete(
-  "/:persona_ix/evidence/:evidence_ix/trends/:trend_ix",
-  deleteTrendExpressFunc("personas", "persona_ix")
+  "/:persona_id/evidence/:evidence_id/trends/:trend_id",
+  deleteTrendExpressFunc()
 );
 
-module.exports = router;
+export default router;

@@ -9,65 +9,76 @@ function checkUserAccess(req, req_level) {
 }
 */
 
-const addItem = (collectionName) => async (req, res, next) => {
+// FIXME: missing JSDoc + no tool complaints
+
+export const addItem = (collectionName) => async (req, res, next) => {
   /*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
 */
 
-  var prod = req.product;
-  var newObject = req.body;
+  const { product_id, body: newObject } = req;
 
-  prod[collectionName].push(newObject);
   try {
-    await prod.save();
-    return res.json(prod[collectionName][prod[collectionName].length - 1]);
+    const insertedObject = await req.client.query({
+      text: `insert into ${collectionName} (name, product_id) values ($1::text, $2::integer) returning *`,
+      values: [newObject.name, product_id],
+    });
+    req.client.release();
+    return res.json(insertedObject);
   } catch (err) {
     return next(err);
   }
 };
 
-const updateItem = (collectionName, indexName) => async (req, res, next) => {
-  /*
+export const updateItem =
+  (collectionName, idName) => async (req, res, next) => {
+    /*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
 */
 
-  var prod = req.product;
-  var ix = req[indexName];
+    const { [idName]: id, body } = req;
 
-  prod[collectionName][ix] = {
-    ...prod[collectionName][ix],
-    ...req.body,
+    const setClause = Object.keys(body)
+      .map((objectKey) => `${key} = ${body[objectKey]}`)
+      .join(" and ");
+
+    try {
+      await req.client.query({
+        text: `update ${collectionName} set ${setClause} where id = $1::integer`,
+        values: [id],
+      });
+      req.client.release();
+      return res.json({
+        success: true,
+      });
+    } catch (err) {
+      return next(err);
+    }
   };
-  try {
-    await prod.save();
-    return res.json({
-      success: true,
-    });
-  } catch (err) {
-    return next(err);
-  }
-};
 
-const deleteItem = (collectionName, indexName) => async (req, res, next) => {
-  /*
+export const deleteItem =
+  (collectionName, idName) => async (req, res, next) => {
+    /*
   var err = checkUserAccess(req, 2);
   if (err) return next(err);
 */
 
-  var prod = req.product;
-  var ix = req[indexName];
-  prod[collectionName].splice(ix, 1);
+    const { [idName]: id } = req;
 
-  try {
-    await prod.save();
-    return res.json({
-      success: true,
-    });
-  } catch (err) {
-    return next(err);
-  }
-};
+    try {
+      await req.client.query({
+        text: `delete from ${collectionName} where id = $1::integer`,
+        values: [id],
+      });
+      req.client.release();
+      return res.json({
+        success: true,
+      });
+    } catch (err) {
+      return next(err);
+    }
+  };
 
-module.exports = { addItem, updateItem, deleteItem };
+// module.exports = { addItem, updateItem, deleteItem };
