@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 import { EvidenceRecord, WidgetDataItem } from "../types";
+
+const EVIDENCE_MILESTONE = 10;
 
 /**
  * A React component to render a row of a widget item.
@@ -21,9 +23,10 @@ const WidgetItemRow = ({ item, onDeleteCallback, onClickCallback }) => {
   const getEvidenceLabelClass = (item) => {
     if (item && item.evidence) {
       switch (item.evidence.length) {
-        case item.evidence.length > 0 && item.evidence.length < 10:
+        case item.evidence.length > 0 &&
+          item.evidence.length < EVIDENCE_MILESTONE:
           return "bg-warning";
-        case item.evidence.length >= 10:
+        case item.evidence.length >= EVIDENCE_MILESTONE:
           return "bg-success";
         default:
           return "bg-danger";
@@ -32,6 +35,7 @@ const WidgetItemRow = ({ item, onDeleteCallback, onClickCallback }) => {
     return "";
   };
 
+  // TODO: get trend schema from database once I have multiple
   const trendTypes = ["objective", "goal", "activity", "task", "resource"];
 
   /**
@@ -50,7 +54,7 @@ const WidgetItemRow = ({ item, onDeleteCallback, onClickCallback }) => {
     return trendTypes.filter((tt) => typeMap[tt]).length === trendTypes.length;
   };
 
-  const numberOfEvidenceCompleted =
+  const numberOfEvidenceCompleted = useMemo(() => {
     item && item.evidence
       ? item.evidence.filter(
           (record) =>
@@ -59,6 +63,7 @@ const WidgetItemRow = ({ item, onDeleteCallback, onClickCallback }) => {
             hasAllTrendTypes(record)
         ).length
       : 0;
+  }, [item, item.evidence]);
 
   return (
     <tr>

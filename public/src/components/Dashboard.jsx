@@ -85,8 +85,13 @@ const Dashboard = () => {
 
   const currentTab = sessionStorage.getItem(SESSION_TAB_KEY);
 
+  const WIDGET_COUNT = 4;
+
   useEffect(() => {
-    if (document.querySelectorAll('a[data-bs-toggle="tab"]').length === 4) {
+    if (
+      document.querySelectorAll('a[data-bs-toggle="tab"]').length ===
+      WIDGET_COUNT
+    ) {
       const tabs = document.querySelectorAll('a[data-bs-toggle="tab"]');
       tabs.forEach((tab) => {
         tab.addEventListener("click", () => {

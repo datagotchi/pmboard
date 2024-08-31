@@ -65,6 +65,8 @@ const useEvidenceAPI = (productId, collectionName) => {
       }
     );
 
+  // TODO: separate trend functions into a new `useTrendsAPI.js`
+
   /**
    * Delete a trend by its ID.
    * @param {number} itemId The ID of the item containing evidence containing the trend.

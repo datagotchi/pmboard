@@ -13,7 +13,11 @@ import {
   GoogleFile,
   TagsPerEvidenceRecord,
 } from "../../types";
-import { getJsonSortedString, getOccurenceNumber } from "../../../../util";
+import {
+  getJsonSortedString,
+  getOccurenceNumber,
+  sortString,
+} from "../../../../util";
 
 import useOAuthAPI from "../../hooks/useOAuthAPI";
 import { AllTagsContext } from "../../contexts/AllTagsContext";
@@ -35,23 +39,6 @@ const FileEvidencePane = ({
   updateTrendNameFunc,
 }) => {
   const ADD_FILES_DIALOG_ID = `addFilesModal: ${containerModalId}`;
-
-  /**
-   * A convenience function to sort strings in an array.
-   * @param {string} a The first item to compare to the second.
-   * @param {string} b The second item to compare to the first.
-   * @returns {number} Positive if a should come first, negative if b, and 0 if they are the same.
-   * @example sortString("asdf", "basdf") === 1
-   */
-  const sortString = (a, b) => {
-    if (a < b) {
-      return 1;
-    }
-    if (b < a) {
-      return -1;
-    }
-    return 0;
-  };
 
   /**
    * @type {[TagsPerEvidenceRecord | undefined, React.Dispatch<TagsPerEvidenceRecord | undefined>]}
@@ -156,6 +143,7 @@ const FileEvidencePane = ({
   }, []);
 
   // update allTags and evidence on the server if there are changes: edited tags, deleted tags
+  // TODO: document useEffect's with JSDoc
   useEffect(() => {
     if (tagsPerFile) {
       let thereAreChangesToTrends = false;

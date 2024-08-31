@@ -13,6 +13,7 @@ import Widget from "./Widget";
 const TodoWidget = ({ productId }) => {
   const TODO_MODAL_ID = "todoModal";
 
+  // TODO: add pane context providers once I get to using the modal for tasks
   return (
     <Widget
       productId={productId}

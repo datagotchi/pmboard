@@ -9,6 +9,8 @@ function checkUserAccess(req, req_level) {
 }
 */
 
+// FIXME: missing JSDoc + no tool complaints
+
 export const addItem = (collectionName) => async (req, res, next) => {
   /*
   var err = checkUserAccess(req, 2);

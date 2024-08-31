@@ -155,6 +155,7 @@ const Modal = ({
                     </li>
                   </ul>
                   <div className="tab-content">
+                    {/* TODO: look into Redux instead of/in addition to contexts for data */}
                     <AllTagsContext.Provider value={allTags}>
                       <div
                         role="tabpanel"
