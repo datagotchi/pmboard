@@ -1,6 +1,6 @@
 import express from "express";
-import session from "express-session";
-import bodyParser from "body-parser";
+// import session from "express-session";
+// import bodyParser from "body-parser";
 import pg from "pg";
 const { Pool } = pg;
 
@@ -12,7 +12,7 @@ const pool = new Pool({
   database: "pmboard",
   host: "localhost",
   port: 5432,
-  max: 50, // 10 is default
+  // max: 50, // 10 is default
   // idleTimeoutMillis: 10000, // 10000 is default
   // connectionTimeoutMillis: 2000, // 0 (no timeout!) is default
 });
@@ -25,7 +25,7 @@ const app = express();
 
 app.use(async (req, res, next) => {
   try {
-    req.client = await pool.connect();
+    req.pool = pool;
     next();
   } catch (err) {
     console.error(err);

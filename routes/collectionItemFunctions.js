@@ -20,11 +20,10 @@ export const addItem = (collectionName) => async (req, res, next) => {
   const { product_id, body: newObject } = req;
 
   try {
-    const insertedObject = await req.client.query({
+    const insertedObject = await req.pool.query({
       text: `insert into ${collectionName} (name, product_id) values ($1::text, $2::integer) returning *`,
       values: [newObject.name, product_id],
     });
-    req.client.release();
     return res.json(insertedObject);
   } catch (err) {
     return next(err);
@@ -45,11 +44,10 @@ export const updateItem =
       .join(" and ");
 
     try {
-      await req.client.query({
+      await req.pool.query({
         text: `update ${collectionName} set ${setClause} where id = $1::integer`,
         values: [id],
       });
-      req.client.release();
       return res.json({
         success: true,
       });
@@ -68,11 +66,10 @@ export const deleteItem =
     const { [idName]: id } = req;
 
     try {
-      await req.client.query({
+      await req.pool.query({
         text: `delete from ${collectionName} where id = $1::integer`,
         values: [id],
       });
-      req.client.release();
       return res.json({
         success: true,
       });

@@ -55,14 +55,14 @@ const WidgetItemRow = ({ item, onDeleteCallback, onClickCallback }) => {
   };
 
   const numberOfEvidenceCompleted = useMemo(() => {
-    item && item.evidence
-      ? item.evidence.filter(
-          (record) =>
-            record.trends &&
-            record.trends.length > 0 &&
-            hasAllTrendTypes(record)
-        ).length
-      : 0;
+    if (item && item.evidence) {
+      return item.evidence.filter(
+        (record) =>
+          record.trends && record.trends.length > 0 && hasAllTrendTypes(record)
+      ).length;
+    } else {
+      return 0;
+    }
   }, [item, item.evidence]);
 
   return (
@@ -89,6 +89,7 @@ const WidgetItemRow = ({ item, onDeleteCallback, onClickCallback }) => {
       </td>
       <td>
         <span className={`evidence badge ${getEvidenceLabelClass(item)}`}>
+          {/* FIXME: numberOfEvidenceCompleted not showing up */}
           {numberOfEvidenceCompleted}/{item.evidence.length}
         </span>
       </td>

@@ -20,7 +20,7 @@ router.get("/", async (req, res, next) => {
   var err = checkUserAccess(req, 1);
   if (err) return next(err);
 */
-  const personas = await req.client
+  const personas = await req.pool
     .query({
       text: "select * from personas where product_id = $1::integer",
       values: [req.product_id],
@@ -28,7 +28,7 @@ router.get("/", async (req, res, next) => {
     .then((result) => result.rows);
   await Promise.all(
     personas.map(async (persona) => {
-      persona.evidence = await req.client
+      persona.evidence = await req.pool
         .query({
           text: "select * from evidence where persona_id = $1::integer",
           values: [persona.id],
@@ -36,7 +36,7 @@ router.get("/", async (req, res, next) => {
         .then((result) => result.rows);
       await Promise.all(
         persona.evidence.map(async (file) => {
-          file.trends = await req.client
+          file.trends = await req.pool
             .query({
               text: "select * from trends where evidence_id = $1::integer",
               values: [file.id],
@@ -46,7 +46,6 @@ router.get("/", async (req, res, next) => {
       );
     })
   );
-  req.client.release();
   return res.json(personas);
 });
 
@@ -57,13 +56,12 @@ router.put("/", async (req, res, next) => {
       const setClause = Object.keys(persona)
         .filter((key) => key !== "id")
         .map((key) => `${key} = ${formatSQLValue(persona[key])}`);
-      return req.client.query({
+      return req.pool.query({
         text: `update personas set ${setClause} where id = $1::integer`,
         values: [persona.id],
       });
     })
   );
-  req.client.release();
   return res.sendStatus(200);
 });
 

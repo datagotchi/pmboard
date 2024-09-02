@@ -14,7 +14,7 @@ export const addEvidenceExpressFunc = (itemIdKey) => async (req, res, next) => {
 
   const fields = Object.keys(record);
 
-  await req.client.query({
+  await req.pool.query({
     text: `insert into evidence 
           (${fields.join(", ")}, ${itemIdKey}) 
           values (${fields.map((field) =>
@@ -23,7 +23,6 @@ export const addEvidenceExpressFunc = (itemIdKey) => async (req, res, next) => {
     values: [id],
   });
 
-  req.client.release();
   return res.json({
     success: true,
   });
@@ -38,11 +37,10 @@ export const trackEvidenceIdExpressFunc = () => (req, res, next) => {
 };
 
 export const deleteEvidenceExpressFunc = () => async (req, res, next) => {
-  await req.client.query({
+  await req.pool.query({
     text: "delete from evidence where id = $1::integer",
     values: [req.evidence_id],
   });
-  req.client.release();
   return res.json({ success: true });
 };
 
@@ -60,7 +58,7 @@ export const addTrendExpressFunc = () => async (req, res, next) => {
   const evId = req.evidence_id;
   const trend = req.body;
 
-  const newTrend = await req.client
+  const newTrend = await req.pool
     .query({
       text: "insert into trends (name, type, evidence_id) values ($1::text, $2::text, $3::integer) returning *",
       values: [trend.name, trend.type, evId],
@@ -75,16 +73,14 @@ export const updateTrendExpressFunc = () => async (req, res, next) => {
   const trend = req.body;
 
   if (trendId) {
-    await req.client.query({
+    await req.pool.query({
       text: "update trends set name = $1::text, type = $2::text where id = $3::integer",
       values: [trend.name, trend.type, trendId],
     });
-    req.client.release();
     return res.json({
       success: true,
     });
   } else {
-    req.client.release();
     const err = new Error("Invalid request: no trend_id");
     err.status = 400;
     next(err);
@@ -95,17 +91,15 @@ export const deleteTrendExpressFunc = () => async (req, res, next) => {
   const trendId = req.params.trend_id;
 
   if (trendId) {
-    await req.client.query({
+    await req.pool.query({
       text: "delete from trends where id = $1::integer",
       values: [trendId],
     });
 
-    req.client.release();
     return res.json({
       success: true,
     });
   } else {
-    req.client.release();
     const err = new Error("Invalid request: no trend_id");
     err.status = 400;
     next(err);

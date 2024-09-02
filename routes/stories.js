@@ -19,7 +19,7 @@ router.get("/", async (req, res, next) => {
   const err = checkUserAccess(req, 1);
   if (err) return next(err);
 */
-  const stories = await req.client
+  const stories = await req.pool
     .query({
       text: "select * from stories where product_id = $1::integer",
       values: [req.product_id],
@@ -27,7 +27,7 @@ router.get("/", async (req, res, next) => {
     .then((result) => result.rows);
   await Promise.all(
     stories.map(async (story) => {
-      story.evidence = await req.client
+      story.evidence = await req.pool
         .query({
           text: "select * from evidence where story_id = $1::integer",
           values: [story.id],
@@ -35,7 +35,7 @@ router.get("/", async (req, res, next) => {
         .then((result) => result.rows);
       await Promise.all(
         story.evidence.map(async (personaAsEvidence) => {
-          personaAsEvidence.trends = await req.client
+          personaAsEvidence.trends = await req.pool
             .query({
               text: "select * from trends where evidence_id = $1::integer",
               values: [personaAsEvidence.id],
@@ -43,7 +43,7 @@ router.get("/", async (req, res, next) => {
             .then((result) => result.rows);
         })
       );
-      const journey = await req.client
+      const journey = await req.pool
         .query({
           text: "select * from journeys where story_id = $1::integer",
           values: [story.id],
@@ -52,7 +52,7 @@ router.get("/", async (req, res, next) => {
       if (journey) {
         story.summary = {
           id: journey.id,
-          steps: await req.client
+          steps: await req.pool
             .query({
               text: "select * from journey_steps where journey_id = $1::integer",
               values: [journey.id],
@@ -62,7 +62,6 @@ router.get("/", async (req, res, next) => {
       }
     })
   );
-  req.client.release();
   return res.json(stories);
 });
 
@@ -73,13 +72,12 @@ router.put("/", async (req, res, next) => {
       const setClause = Object.keys(story)
         .filter((key) => key !== "id")
         .map((key) => `${key} = ${formatSQLValue(story[key])}`);
-      return req.client.query({
+      return req.pool.query({
         text: `update stories set ${setClause} where id = $1::integer`,
         values: [story.id],
       });
     })
   );
-  req.client.release();
   return res.sendStatus(200);
 });
 
@@ -98,7 +96,7 @@ router.put("/:story_id", async (req, res, next) => {
     let journeyId = summary.id;
     let steps = summary.steps;
     if (!journeyId) {
-      journeyId = await req.client
+      journeyId = await req.pool
         .query({
           text: "insert into journeys (story_id) values ($1::integer) returning *",
           values: [story_id],
@@ -107,7 +105,7 @@ router.put("/:story_id", async (req, res, next) => {
     }
     await Promise.all(
       steps.map((step) => {
-        req.client.query({
+        req.pool.query({
           text: `insert into journey_steps (journey_id, tag_id, tag_class_name, tag_text, x, y) 
           values ($1::integer, $2::text, $3::text, $4::text, $5::text, $6::text) 
           on conflict (journey_id, tag_id) do update 
@@ -123,7 +121,6 @@ router.put("/:story_id", async (req, res, next) => {
         });
       })
     );
-    req.client.release();
     return res.sendStatus(200);
   }
   return res.sendStatus(400);

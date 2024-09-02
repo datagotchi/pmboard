@@ -13,10 +13,9 @@ const router = express.Router();
 // get products
 // disabled, INSECURE
 router.get("/", async (req, res, next) => {
-  const products = await req.client
+  const products = await req.pool
     .query("select * from products")
     .then((result) => result.rows);
-  req.client.release();
   return res.json(products);
 });
 

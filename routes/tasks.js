@@ -20,7 +20,7 @@ router.get("/", async (req, res, next) => {
   var err = checkUserAccess(req, 1);
   if (err) return next(err);
 */
-  const tasks = await req.client
+  const tasks = await req.pool
     .query({
       text: "select * from tasks where product_id = $1::integer",
       values: [req.product_id],
@@ -28,7 +28,6 @@ router.get("/", async (req, res, next) => {
     .then((result) => result.rows);
   // DEBUG until they get evidence
   tasks.forEach((task) => (task.evidence = []));
-  req.client.release();
   // TODO: get and assign trends, too
   return res.json(tasks);
 });
@@ -41,13 +40,12 @@ router.put("/", async (req, res, next) => {
         .filter((key) => key !== "id")
         .map((key) => `${key} = ${formatSQLValue(task[key])}`)
         .join(", ");
-      return req.client.query({
+      return req.pool.query({
         text: `update tasks set ${setClause} where id = $1::integer`,
         values: [task.id],
       });
     })
   );
-  req.client.release();
   return res.sendStatus(200);
 });
 
