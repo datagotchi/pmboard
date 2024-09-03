@@ -89,7 +89,6 @@ const WidgetItemRow = ({ item, onDeleteCallback, onClickCallback }) => {
       </td>
       <td>
         <span className={`evidence badge ${getEvidenceLabelClass(item)}`}>
-          {/* FIXME: numberOfEvidenceCompleted not showing up */}
           {numberOfEvidenceCompleted}/{item.evidence.length}
         </span>
       </td>

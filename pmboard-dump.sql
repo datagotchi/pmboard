@@ -442,8 +442,6 @@ COPY public.companies (id, name, product_id, index) FROM stdin;
 
 COPY public.evidence (id, name, url, icon, persona_id, created_date, modified_date, story_id, company_id) FROM stdin;
 1	Datagotchi Proposal	https://docs.google.com/document/d/1RPeGXVGPUrk8QH6lbqhpY_5ir7IHRzseGDIGhnr5KhM/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	1	\N	\N	\N	\N
-2	Self user research notes - DG Labs	https://docs.google.com/document/d/1hynxBUqOSq8o_0Y2zAkbNHeUVQ36f_U1cNZTwKhubp4/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	2	\N	\N	\N	\N
-3	Neuroscience Says This Quality Is Key for Entrepreneurial Success, and It Has Nothing to Do With Intelligence or Grit _ Inc.com.pdf	https://drive.google.com/file/d/1U-rbRJb5nwqx7XE32id_ghTYPaaQ6FCE/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	2	2024-08-13	2024-08-13	\N	\N
 4	Dear Founders, Before Pitching to an Investor, Prepare an Investment Memo _ by Wayne Wee _ Jun, 2024 _ Startup Stash.pdf	https://drive.google.com/file/d/1KSqZXEJqZVhAQEKEWUJxnIEvfuHyHyQP/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	3	2024-08-11	2024-08-11	\N	\N
 5	Strategies For Getting VCs To Compete For Your Startup _ Medium.pdf	https://drive.google.com/file/d/1SRnaY-gf8m2Z8Ihw0_U-0862ZI7WUI1v/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	3	2024-08-11	2024-08-11	\N	\N
 6	You Are Being Lied to About Building a Business in Your 40s _ by Sarina Chiu _ Career Paths _ Jul, 2024 _ Medium.pdf	https://drive.google.com/file/d/1qlGCGwL64Ym1A8g0KJJm9RBZmIxHgQOC/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	3	2024-08-11	2024-08-11	\N	\N
@@ -509,13 +507,10 @@ COPY public.evidence (id, name, url, icon, persona_id, created_date, modified_da
 74	Employed Techie	\N	\N	\N	\N	\N	21	\N
 78	Product Manager	\N	\N	\N	2024-08-17	2024-08-17	22	\N
 21	Counteroffer self user research notes -- Exaptive	https://docs.google.com/document/d/1I-kxJBTBNjiuUEgaYEW0dYNDFy98sWc1CnqPJ3KJfbc/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	7	2024-08-06	2024-08-06	\N	\N
-87	Datagotchi pitch deck - social entrepreneurship	https://docs.google.com/presentation/d/14GGVxuvla3l1KqoQX8lihPL6f9hSpy9kd1TP8c7V3iQ/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.presentation	12	2024-07-29	2024-08-30	\N	\N
-88	Signal Is More Than Encrypted Messaging. Under Meredith Whittaker, It’s Out to Prove Surveillance Capitalism Wrong _ WIRED.pdf	https://drive.google.com/file/d/1GoGt7MGmAcJ00KZc5BXF35Da-LLSNHhN/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	2	2024-08-30	2024-08-30	\N	\N
 89	Signal Is More Than Encrypted Messaging. Under Meredith Whittaker, It’s Out to Prove Surveillance Capitalism Wrong _ WIRED.pdf	https://drive.google.com/file/d/1GoGt7MGmAcJ00KZc5BXF35Da-LLSNHhN/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	14	2024-08-30	2024-08-30	\N	\N
 90	8 Tips To Optimize Your Resume For Applicant Tracking Systems.pdf	https://drive.google.com/file/d/1hN9MpgdPMoQ61V6K-D9LLaLoL28q3act/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	20	2024-08-30	2024-08-30	\N	\N
 91	A podcast gives an inside look at how the far-right is mainstreaming itself _ Vox.pdf	https://drive.google.com/file/d/1zG2ya3m0cgX95q67xF4paztFv5jdAV6j/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	8	2024-08-30	2024-08-28	\N	\N
 92	The End of the Creator Economy. YouTubers and TikTokers are the new… _ by Joe Procopio _ Aug, 2024 _ Entrepreneurship Handbook.pdf	https://drive.google.com/file/d/1gA817iA4-PlaG4KqUgW7E1irQ72cRFrS/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	9	2024-08-30	2024-08-27	\N	\N
-93	Stakeholder Wants vs. User Needs_ Why Following Orders Creates Bad Products _ by Michael H. Goitein _ Aug, 2024 _ Product Coalition.pdf	https://drive.google.com/file/d/19v0-abf0uZOvfVY7thO08j1aBWgo6iLo/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	5	2024-08-30	2024-08-27	\N	\N
 94	Stakeholder Wants vs. User Needs_ Why Following Orders Creates Bad Products _ by Michael H. Goitein _ Aug, 2024 _ Product Coalition.pdf	https://drive.google.com/file/d/19v0-abf0uZOvfVY7thO08j1aBWgo6iLo/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	7	2024-08-30	2024-08-27	\N	\N
 95	Stakeholder Wants vs. User Needs_ Why Following Orders Creates Bad Products _ by Michael H. Goitein _ Aug, 2024 _ Product Coalition.pdf	https://drive.google.com/file/d/19v0-abf0uZOvfVY7thO08j1aBWgo6iLo/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	6	2024-08-30	2024-08-27	\N	\N
 96	AI Influencers Are Falling for Hoaxes and Scams.pdf	https://drive.google.com/file/d/1LlDagjF8pF0j1huBTcMRC7Yxs64hJN_H/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	16	2024-08-30	2024-08-26	\N	\N
@@ -560,11 +555,12 @@ COPY public.evidence (id, name, url, icon, persona_id, created_date, modified_da
 135	ChatGPT hits 200 million active weekly users, but how many will admit using it_ _ Ars Technica.pdf	https://drive.google.com/file/d/169_1jQsi1VUd7gq8bWJlW2vWwZ8CnRDZ/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	14	2024-09-02	2024-09-02	\N	\N
 136	What’s next for SB 1047_ California Gov. Newsom has the chance to make AI history _ Vox.pdf	https://drive.google.com/file/d/12O0YpMLTvc393-L2k3onKG53WkQ2Nf4z/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	14	2024-09-02	2024-09-02	\N	\N
 137	Why A.I. Isn’t Going to Make Art _ The New Yorker.pdf	https://drive.google.com/file/d/1LkSuFYUUJu7P2-LyNW1dot0c9tHZVQHd/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	16	2024-09-02	2024-09-02	\N	\N
-138	Structuration theory - Wikipedia.pdf	https://drive.google.com/file/d/1zoQYIsC3FBzv49qIlyhTAAe16eoMPWkm/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	5	2024-09-02	2024-09-02	\N	\N
-139	Practice theory - Wikipedia.pdf	https://drive.google.com/file/d/1mdKjJWdTfrO58H7YY5lIqGTx4__yu8Tz/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	5	2024-09-02	2024-09-02	\N	\N
-140	ASRSwidler1986.pdf	https://drive.google.com/file/d/12rHjU1P7eLjXZsD9AO7AVDXLhhWh3sod/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	5	2024-09-02	2024-09-02	\N	\N
 141	AIDP_SeekingReliableElectionInformation-DontTrustAI_2024.pdf	https://drive.google.com/file/d/1rWTWHxtRmYsA6Y8_tAtSwvVa5Z3tO-vy/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	14	2024-09-02	2024-09-02	\N	\N
 142	AIDP_SeekingReliableElectionInformation-DontTrustAI_2024.pdf	https://drive.google.com/file/d/1rWTWHxtRmYsA6Y8_tAtSwvVa5Z3tO-vy/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	8	2024-09-02	2024-09-02	\N	\N
+143	California lawmakers approve legislation to ban deepfakes, regulate AI _ AP News.pdf	https://drive.google.com/file/d/1HpT-bG7_4j9UzHa6gwt8ESVdlCYc_o1u/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	12	2024-09-02	2024-09-02	\N	\N
+144	Structuration theory - Wikipedia.pdf	https://drive.google.com/file/d/1zoQYIsC3FBzv49qIlyhTAAe16eoMPWkm/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	7	2024-09-02	2024-09-02	\N	\N
+145	Practice theory - Wikipedia.pdf	https://drive.google.com/file/d/1mdKjJWdTfrO58H7YY5lIqGTx4__yu8Tz/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	7	2024-09-02	2024-09-02	\N	\N
+146	ASRSwidler1986.pdf	https://drive.google.com/file/d/12rHjU1P7eLjXZsD9AO7AVDXLhhWh3sod/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	7	2024-09-02	2024-09-02	\N	\N
 \.
 
 
@@ -594,7 +590,6 @@ COPY public.journeys (id, story_id) FROM stdin;
 
 COPY public.personas (id, name, product_id, index) FROM stdin;
 1	All People	1	\N
-2	Me	1	\N
 3	Entrepreneur	1	\N
 4	Investor	1	\N
 8	All People	3	\N
@@ -719,23 +714,6 @@ COPY public.trends (id, name, type, evidence_id) FROM stdin;
 11	Focusing on opt-in experiences with opt-out & never experiences that have neither (advertising)	resource	1
 12	Focusing on creating two-sided marketplaces so people can share information to their benefit	resource	1
 13	Always enabling exporting and using data in other contexts	resource	1
-14	Upwork	resource	2
-15	Fiverr	resource	2
-16	Wordpress	resource	2
-17	Medium	resource	2
-18	Applying to gigs	task	2
-19	Blogging	task	2
-20	Software development	task	2
-21	Prototype empowering information products	activity	2
-22	Provide services to companies	activity	2
-23	Write online content and share it	activity	2
-24	To reduce information overload	goal	2
-25	To expose hidden information	goal	2
-26	To frame information so it can be used	goal	2
-27	Documenting my knowledge and skills	goal	2
-28	Sharing my knowledge and skills	goal	2
-29	To empower myself & other people with information	objective	2
-30	To use my knowledge and skills	objective	2
 32	Probably through generation of pitches		13
 33	There is so much information involved in the creation of new products	objective	14
 34	Also a lot of information in MVP iteration	objective	14
@@ -1192,11 +1170,23 @@ COPY public.trends (id, name, type, evidence_id) FROM stdin;
 496	There are many roles because of Unrealistic Expectations	objective	71
 497	There are many roles because of Manipulative Practices	objective	71
 498	There are many roles because of Overdigitalization of our lives	objective	71
+571	Software development is often outsourced	objective	101
+572	Software developers often have no contact with the business	objective	101
+570	Agile through Scrum has become problematic in startups	goal	101
+559	Bringing our stakeholders along to these discussions, along with Tech and UX, would have allowed everyone to move from “building an app” to solving real people’s problems through the app.	resource	94
+563	Project stakeholders are not customers	goal	94
+564	Stakeholder desires are not the same as customer needs	goal	94
+565	Designing for "superusers" will result in a better product	activity	94
+562	Not all users have the same importance	goal	94
+566	Acting as a "waiter" means doing what stakeholders ask	objective	94
+567	Acting as a "doctor" means solving the customers' actual problems	objective	94
+569	The key is to define the problem and the way to measure success	objective	94
+568	When consulting, sometimes you need to do "waiter" things and sometimes "doctor" things	activity	94
+561	Failing talking to superusers, talk to the customer support team	task	94
+560	Ideally, talk to "superuser" people	task	94
 541	Linked Widget Timelines	resource	18
 542	Semantic Widget Citations	resource	18
 543	Incrementally-Formalized Stakeholder Empathy Visualizations	resource	18
-545	Test	goal	87
-547	Test4	\N	87
 \.
 
 
@@ -1211,7 +1201,7 @@ SELECT pg_catalog.setval('public.companies_id_seq', 16, true);
 -- Name: evidence_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.evidence_id_seq', 142, true);
+SELECT pg_catalog.setval('public.evidence_id_seq', 146, true);
 
 
 --
@@ -1260,7 +1250,7 @@ SELECT pg_catalog.setval('public.tasks_id_seq', 45, true);
 -- Name: trends_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.trends_id_seq', 547, true);
+SELECT pg_catalog.setval('public.trends_id_seq', 583, true);
 
 
 --

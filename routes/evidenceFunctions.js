@@ -72,7 +72,7 @@ export const updateTrendExpressFunc = () => async (req, res, next) => {
   const trendId = req.params.trend_id;
   const trend = req.body;
 
-  if (trendId) {
+  if (trendId && trendId == parseInt(trendId)) {
     await req.pool.query({
       text: "update trends set name = $1::text, type = $2::text where id = $3::integer",
       values: [trend.name, trend.type, trendId],

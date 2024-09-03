@@ -102,7 +102,7 @@ const useEvidenceAPI = (productId, collectionName) => {
         },
         body: JSON.stringify(trend),
       }
-    );
+    ).then((response) => response.json());
 
   /**
    * Replace the name or type of a trend.

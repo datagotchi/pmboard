@@ -132,6 +132,7 @@ const FileEvidencePane = ({
             id: trend.name,
             text: trend.name,
             className: trend.type,
+            trend_id: trend.id,
           }));
         } else {
           trendsMap[file.url] = [];
@@ -153,6 +154,7 @@ const FileEvidencePane = ({
         const tags = tagsPerFile[fileUrl];
         if (tags && tags.length > 0) {
           const trends = tags.map((tag) => ({
+            id: tag.trend_id,
             name: tag.id,
             type: tag.className,
           }));
@@ -310,15 +312,16 @@ const FileEvidencePane = ({
                       tags={tagsPerFile[file.url]}
                       separators={[SEPARATORS.ENTER]}
                       allowAdditionFromPaste={false}
-                      handleAddition={(tag) => {
+                      handleAddition={async (tag) => {
                         const fileTags = [...tagsPerFile[file.url]];
+                        const savedTrend = await addTrendFunc(file.id, {
+                          name: tag.id,
+                        });
+                        tag.trend_id = savedTrend.id;
                         fileTags.push(tag);
                         setTagsPerFile({
                           ...tagsPerFile,
                           [file.url]: fileTags,
-                        });
-                        addTrendFunc(file.id, {
-                          name: tag.id,
                         });
                       }}
                       // suggestions={allTags
@@ -336,7 +339,10 @@ const FileEvidencePane = ({
                       //   }))}
                       // renderSuggestion={(item, query) => {}}
                       editable={true}
-                      onTagUpdate={(index, tag) => {
+                      onTagUpdate={(index, newTag) => {
+                        const tag = tagsPerFile[file.url][index];
+                        tag.id = newTag.id;
+                        tag.text = newTag.text;
                         const fileTags = [...tagsPerFile[file.url]];
                         fileTags[index] = {
                           id: tag.id.charAt(0).toUpperCase() + tag.id.slice(1),
@@ -344,10 +350,10 @@ const FileEvidencePane = ({
                             tag.text.charAt(0).toUpperCase() +
                             tag.text.slice(1),
                           className: fileTags[index].className,
+                          ...fileTags[index], // for other fields like trend_id
                         };
-                        const trend = file.trends[index];
                         updateTrendNameFunc(file.id, {
-                          id: trend.id,
+                          id: tag.trend_id,
                           name: tag.id,
                         });
                         setTagsPerFile({
