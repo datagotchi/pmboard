@@ -1,4 +1,4 @@
-import globals from "globals";
+import globals, { jest } from "globals";
 import pluginJs from "@eslint/js";
 import pluginReact from "eslint-plugin-react";
 import jsdoc from "eslint-plugin-jsdoc";
@@ -7,11 +7,13 @@ export default [
   pluginJs.configs.recommended,
   pluginReact.configs.flat.recommended,
   jsdoc.configs["flat/recommended-error"],
+  jest.configs.recommended.rules,
   {
     files: ["**/*.{js,mjs,cjs,jsx}"],
     plugins: {
       jsdoc,
       pluginReact,
+      jest,
     },
     rules: {
       "react/prop-types": "off",
@@ -50,7 +52,7 @@ export default [
   },
   {
     languageOptions: {
-      globals: globals.browser,
+      globals: [...globals.browser, ...globals.jest],
       parserOptions: {
         ecmaFeatures: {
           jsx: true,
