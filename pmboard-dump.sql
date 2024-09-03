@@ -544,7 +544,6 @@ COPY public.evidence (id, name, url, icon, persona_id, created_date, modified_da
 124	How To Craft An Offer So Good, People Say “Shut Up And Take My Money!” _ Entrepreneurship Handbook.pdf	https://drive.google.com/file/d/1Hle9Vvsn4Rn8YoapUx_CzB_6SctzGwTJ/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	3	2024-09-02	2024-08-31	\N	\N
 125	How to Pitch to Angels—Your Early Stage Investors _ by DC Palter _ Entrepreneurship Handbook.pdf	https://drive.google.com/file/d/1jWdVWlN0Fb18qP8NuZUFqOn6tKWt_xRl/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	3	2024-09-02	2024-09-02	\N	\N
 126	There’s a Reason Things Feel So Damn Hard Right Now _ by Peter Shanosky _ Jul, 2024 _ Medium.pdf	https://drive.google.com/file/d/1WavBHQyRQwxfpvWyK_sHTzVcvj1ApaHY/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	20	2024-09-02	2024-09-02	\N	\N
-127	A person's intelligence limits their computer proficiency more than previously thought, say researchers.pdf	https://drive.google.com/file/d/1GAOJz-T9fGwpdd4y05s9G8zDcSj3lZzK/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	7	2024-09-02	2024-09-02	\N	\N
 128	Going Back to Work Made Me Realize How Pointless It Is _ by Aure's Notes _ Notes _ Aug, 2024 _ Medium.pdf	https://drive.google.com/file/d/1Gff2ed0MpHUnGUCRY1YnSNNqKjMPHNax/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	19	2024-09-02	2024-09-02	\N	\N
 129	Generative AI Transformed English Homework. Math Is Next _ WIRED.pdf	https://drive.google.com/file/d/1iZFjiMGk3Z-8mWH0wEeUrtBTRZ3HFtYj/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	16	2024-09-02	2024-09-02	\N	\N
 130	Fight Health Insurance uses AI to appeal claim denials.pdf	https://drive.google.com/file/d/1-kffqOKMwt-9pdJNY6wnPIjz0T87P2Oa/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	14	2024-09-02	2024-09-02	\N	\N
@@ -558,9 +557,6 @@ COPY public.evidence (id, name, url, icon, persona_id, created_date, modified_da
 141	AIDP_SeekingReliableElectionInformation-DontTrustAI_2024.pdf	https://drive.google.com/file/d/1rWTWHxtRmYsA6Y8_tAtSwvVa5Z3tO-vy/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	14	2024-09-02	2024-09-02	\N	\N
 142	AIDP_SeekingReliableElectionInformation-DontTrustAI_2024.pdf	https://drive.google.com/file/d/1rWTWHxtRmYsA6Y8_tAtSwvVa5Z3tO-vy/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	8	2024-09-02	2024-09-02	\N	\N
 143	California lawmakers approve legislation to ban deepfakes, regulate AI _ AP News.pdf	https://drive.google.com/file/d/1HpT-bG7_4j9UzHa6gwt8ESVdlCYc_o1u/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	12	2024-09-02	2024-09-02	\N	\N
-144	Structuration theory - Wikipedia.pdf	https://drive.google.com/file/d/1zoQYIsC3FBzv49qIlyhTAAe16eoMPWkm/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	7	2024-09-02	2024-09-02	\N	\N
-145	Practice theory - Wikipedia.pdf	https://drive.google.com/file/d/1mdKjJWdTfrO58H7YY5lIqGTx4__yu8Tz/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	7	2024-09-02	2024-09-02	\N	\N
-146	ASRSwidler1986.pdf	https://drive.google.com/file/d/12rHjU1P7eLjXZsD9AO7AVDXLhhWh3sod/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	7	2024-09-02	2024-09-02	\N	\N
 \.
 
 
@@ -1171,9 +1167,11 @@ COPY public.trends (id, name, type, evidence_id) FROM stdin;
 497	There are many roles because of Manipulative Practices	objective	71
 498	There are many roles because of Overdigitalization of our lives	objective	71
 571	Software development is often outsourced	objective	101
-572	Software developers often have no contact with the business	objective	101
-570	Agile through Scrum has become problematic in startups	goal	101
+604	A strong understanding of a product’s need at the beginning of a project can empower you with solid arguments to sell in the future	task	120
+592	Traditional waterfall approaches did not consider that user needs might change	task	101
 559	Bringing our stakeholders along to these discussions, along with Tech and UX, would have allowed everyone to move from “building an app” to solving real people’s problems through the app.	resource	94
+591	Risk management is largely forgotten	task	101
+590	UX research is now often just evaluative	task	101
 563	Project stakeholders are not customers	goal	94
 564	Stakeholder desires are not the same as customer needs	goal	94
 565	Designing for "superusers" will result in a better product	activity	94
@@ -1182,11 +1180,28 @@ COPY public.trends (id, name, type, evidence_id) FROM stdin;
 567	Acting as a "doctor" means solving the customers' actual problems	objective	94
 569	The key is to define the problem and the way to measure success	objective	94
 568	When consulting, sometimes you need to do "waiter" things and sometimes "doctor" things	activity	94
+572	Software developers often have no contact with the business	goal	101
+596	A product's direct benefits/value are often not why someone would buy it	objective	112
+594	Many entrepreneurs focus on development to ship their product and ignore why customers might buy it	goal	112
+584	Most project management systems ignore user research	activity	101
 561	Failing talking to superusers, talk to the customer support team	task	94
 560	Ideally, talk to "superuser" people	task	94
+598	Many startups struggle with sustainable sales growth	activity	112
+585	User research is needed for business strategy	activity	101
 541	Linked Widget Timelines	resource	18
+597	You have to think about it from the perspective of an actual user of the software	resource	112
 542	Semantic Widget Citations	resource	18
 543	Incrementally-Formalized Stakeholder Empathy Visualizations	resource	18
+586	Market research is needed for business strategy	activity	101
+600	Product development teams do not know the reasons behind a solution	task	120
+587	Profitable unique value proposition is needed for business strategy	activity	101
+588	Venture capitalists push startups for growth-at- all-costs	objective	101
+595	But few entrepreneurs/startups know what jobs their buyers are trying to get done	task	112
+603	Product sales knowledge can be used to support the rationale for a solution with teammates or internal stakeholders at any stage of a process	resource	120
+593	A new system is needed that includes all relevant product information & changes over time	resource	101
+602	Product teams usually need to respond to an area or external role that brings the customer’s performance or voice to us	activity	120
+599	Product development teams often are hidden from sales	goal	120
+601	If our focus is just the delivery part, we are only accountable for how we built something	objective	120
 \.
 
 
@@ -1250,7 +1265,7 @@ SELECT pg_catalog.setval('public.tasks_id_seq', 45, true);
 -- Name: trends_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.trends_id_seq', 583, true);
+SELECT pg_catalog.setval('public.trends_id_seq', 605, true);
 
 
 --
