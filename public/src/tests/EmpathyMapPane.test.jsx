@@ -18,6 +18,11 @@ const mockEmpathyMapAllTags = [
     text: " tag1",
     className: "objective",
   },
+  {
+    id: "tag2",
+    text: " tag2",
+    className: "goal",
+  },
 ];
 
 describe("EmpathyMapPane.js", () => {
