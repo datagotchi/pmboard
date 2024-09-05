@@ -59,7 +59,10 @@ const EmpathyMapPane = ({
       const oldClassNameFound = Array.from(
         sourceDropzoneElement.classList
       ).find((classString) => classString.includes(CLASSNAME_PREFIX));
-      if (oldClassNameFound) {
+      if (
+        oldClassNameFound &&
+        oldClassNameFound.substring(CLASSNAME_PREFIX.length)
+      ) {
         const oldClassName = oldClassNameFound.substring(
           CLASSNAME_PREFIX.length
         );
@@ -68,7 +71,10 @@ const EmpathyMapPane = ({
       const newClassNameFound = Array.from(
         destinationDropzoneElement.classList
       ).find((classString) => classString.includes(CLASSNAME_PREFIX));
-      if (newClassNameFound) {
+      if (
+        newClassNameFound &&
+        newClassNameFound.substring(CLASSNAME_PREFIX.length)
+      ) {
         const newClassName = newClassNameFound.substring(
           CLASSNAME_PREFIX.length
         );
