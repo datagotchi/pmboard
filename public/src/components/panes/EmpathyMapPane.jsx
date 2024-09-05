@@ -40,7 +40,6 @@ const EmpathyMapPane = ({
         typedTags[className] = tags;
       });
       typedTags[""] = allTagsForThisPersona.filter((t) => !t.className);
-      // FIXME: new untyped tags from the evidence pane aren't put in `typedTags`
       setTypedTags(typedTags);
     }
   }, [allTagsForThisPersona, typedTags]);
