@@ -177,7 +177,7 @@ const Modal = ({
                               const tagId = tagText
                                 .match(/(.*)\(.*\)/)[1]
                                 .trim();
-                              // FIXME: tell the evidence pane of a change somehow
+                              // TODO: tell the evidence pane of a change somehow
                               await Promise.all(
                                 findTrendsInEvidence(tagId).map(
                                   (foundTrendRecord) => {
@@ -194,7 +194,6 @@ const Modal = ({
                                 )
                               );
                             }}
-                            setAllTags={setAllTags}
                             summaryChanged={(summary) => {
                               item.summary = summary;
                               updateItemFunc(item);

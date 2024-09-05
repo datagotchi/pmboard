@@ -31,7 +31,11 @@ const EmpathyMapPane = ({
   const [typedTags, setTypedTags] = useState();
 
   useLayoutEffect(() => {
-    if (allTagsForThisPersona && !typedTags) {
+    if (
+      allTagsForThisPersona &&
+      allTagsForThisPersona.length > 0 &&
+      !typedTags
+    ) {
       const typedTags = {};
       [...indexToClassName].forEach((className) => {
         const tags = allTagsForThisPersona.filter(
@@ -166,7 +170,7 @@ const EmpathyMapPane = ({
       {selectedTags.length > 1 && (
         <button
           onClick={() => {
-            // FIXME: combine tags
+            // TODO: combine tags
             // prompt for new text
             // create new tag with text and same/one of the types of the selected tags
             // addTrendFunc() to save it on the server
@@ -215,7 +219,7 @@ const EmpathyMapPane = ({
                           tagWrapper.classList.add("selected");
                         }
                         if (handleTagClick) {
-                          handleTagClick(tagIndex, typedTags);
+                          handleTagClick(tagIndex, typedTags[trendType]);
                         }
                       }}
                     />
