@@ -1,4 +1,10 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { WithContext as ReactTags } from "react-tag-input";
 import { Draggable, Droppable } from "@shopify/draggable";
 
@@ -20,16 +26,15 @@ const EmpathyMapPane = ({
   handleTagClick,
   removeComponent,
   updateTrendFunc,
-  // summary,
 }) => {
   const allTagsForThisPersona = useContext(AllTagsContext);
   const [typedTags, setTypedTags] = useState();
 
   // FIXME: use typedTags below
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (allTagsForThisPersona && !typedTags) {
       const typedTags = {};
-      indexToClassName.forEach((className) => {
+      [...indexToClassName, ""].forEach((className) => {
         const tags = allTagsForThisPersona.filter(
           (t) => t.className === className
         );
@@ -39,12 +44,10 @@ const EmpathyMapPane = ({
     }
   }, [allTagsForThisPersona, typedTags]);
 
-  // FIXME: it won't let me add `summary` as a prop and use it here
-  // const [summary, setSummary] = useState();
+  const [selectedTags, setSelectedTags] = useState([]);
+
   const [droppable, setDroppable] = useState();
-
   const CLASSNAME_PREFIX = "type-";
-
   const changeTagType = (
     tagText,
     sourceDropzoneElement,
@@ -54,25 +57,41 @@ const EmpathyMapPane = ({
       const draggedTagElement = Array.from(
         document.querySelectorAll(`.tag-wrapper.readOnly`)
       ).find((el) => el.innerText === tagText);
-      const oldClassName = Array.from(sourceDropzoneElement.classList)
-        .find((classString) => classString.includes(CLASSNAME_PREFIX))
-        .substring(CLASSNAME_PREFIX.length);
-      if (oldClassName) {
+      const oldClassNameFound = Array.from(
+        sourceDropzoneElement.classList
+      ).find((classString) => classString.includes(CLASSNAME_PREFIX));
+      if (oldClassNameFound) {
+        const oldClassName = oldClassNameFound.substring(
+          CLASSNAME_PREFIX.length
+        );
         draggedTagElement.classList.remove(oldClassName);
       }
-      const newClassName = Array.from(destinationDropzoneElement.classList)
-        .find((classString) => classString.includes(CLASSNAME_PREFIX))
-        .substring(CLASSNAME_PREFIX.length);
-      if (newClassName) {
+      const newClassNameFound = Array.from(
+        destinationDropzoneElement.classList
+      ).find((classString) => classString.includes(CLASSNAME_PREFIX));
+      if (newClassNameFound) {
+        const newClassName = newClassNameFound.substring(
+          CLASSNAME_PREFIX.length
+        );
         draggedTagElement.classList.add(newClassName);
         updateTrendFunc(tagText, newClassName);
       }
     }, 50);
   };
 
-  useEffect(() => {
-    if (!droppable) {
-      const tagAreas = document.querySelectorAll(".react-tags-wrapper");
+  const tagAreaRefs = useRef([]);
+  const [tagAreas, setTagAreas] = useState();
+
+  useLayoutEffect(() => {
+    if (!tagAreas && tagAreaRefs.current.length > 0) {
+      // setTagAreas(document.querySelectorAll(".tagArea"));
+      // FIXME: why do I have to filter out the null ref?
+      setTagAreas(tagAreaRefs.current.filter((ref) => !!ref));
+    }
+  });
+
+  useLayoutEffect(() => {
+    if (!droppable && tagAreas) {
       const d = new Droppable(tagAreas, {
         draggable: ".tag-wrapper",
         dropzone: ".react-tags-wrapper",
@@ -93,9 +112,10 @@ const EmpathyMapPane = ({
       });
       d.on("drag:stop", (event) => {
         if (currentDragItem && currentDropzone) {
+          // FIXME: does not work to untype a tag // actually dropping isn't working at all now
           changeTagType(
             currentDragItem.innerText,
-            event.sourceContainer,
+            event.sourceContainer.children[0],
             currentDropzone
           );
           currentDropzone.classList.remove("draggable-dropzone--occupied");
@@ -104,7 +124,7 @@ const EmpathyMapPane = ({
 
       setDroppable(d);
     }
-  }, [droppable]);
+  }, [droppable, tagAreas]);
 
   return (
     <div id="body">
@@ -137,6 +157,20 @@ const EmpathyMapPane = ({
       >
         Save
       </button> */}
+      {selectedTags.length > 1 && (
+        <button
+          onClick={() => {
+            // FIXME: combine tags
+            // prompt for new text
+            // create new tag with text and same/one of the types of the selected tags
+            // addTrendFunc() to save it on the server
+            // update selected tags to empty array
+          }}
+          style={{ margin: "0 auto" }}
+        >
+          Combine
+        </button>
+      )}
       {allTagsForThisPersona && (
         <table className="table" id="empathyMapTable" style={{ width: "90%" }}>
           <tbody>
@@ -147,7 +181,12 @@ const EmpathyMapPane = ({
                     <td>
                       <strong>{formatTrendTypeText(trendType)}</strong>
                     </td>
-                    <td>
+                    <td
+                      ref={(ref) =>
+                        !tagAreaRefs.current.includes(ref) &&
+                        tagAreaRefs.current.push(ref)
+                      }
+                    >
                       <ReactTags
                         tags={typedTags[trendType]}
                         classNames={{
@@ -164,7 +203,7 @@ const EmpathyMapPane = ({
                         }
                         handleTagClick={(tagIndex, event) => {
                           const tagWrapper = event.target;
-                          // FIXME: selection does not always work
+                          // FIXME: selection does not work
                           if (tagWrapper.className.includes("selected")) {
                             tagWrapper.classList.remove("selected");
                           } else {
