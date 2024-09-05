@@ -30,7 +30,6 @@ const EmpathyMapPane = ({
   const allTagsForThisPersona = useContext(AllTagsContext);
   const [typedTags, setTypedTags] = useState();
 
-  // FIXME: use typedTags below
   useLayoutEffect(() => {
     if (allTagsForThisPersona && !typedTags) {
       const typedTags = {};
@@ -84,9 +83,7 @@ const EmpathyMapPane = ({
 
   useLayoutEffect(() => {
     if (!tagAreas && tagAreaRefs.current.length > 0) {
-      // setTagAreas(document.querySelectorAll(".tagArea"));
-      // FIXME: why do I have to filter out the null ref?
-      setTagAreas(tagAreaRefs.current.filter((ref) => !!ref));
+      setTagAreas(tagAreaRefs.current);
     }
   });
 
@@ -112,7 +109,6 @@ const EmpathyMapPane = ({
       });
       d.on("drag:stop", (event) => {
         if (currentDragItem && currentDropzone) {
-          // FIXME: does not work to untype a tag // actually dropping isn't working at all now
           changeTagType(
             currentDragItem.innerText,
             event.sourceContainer.children[0],
@@ -182,10 +178,11 @@ const EmpathyMapPane = ({
                       <strong>{formatTrendTypeText(trendType)}</strong>
                     </td>
                     <td
-                      ref={(ref) =>
-                        !tagAreaRefs.current.includes(ref) &&
-                        tagAreaRefs.current.push(ref)
-                      }
+                      ref={(ref) => {
+                        if (ref && !tagAreaRefs.current.includes(ref)) {
+                          tagAreaRefs.current.push(ref);
+                        }
+                      }}
                     >
                       <ReactTags
                         tags={typedTags[trendType]}
