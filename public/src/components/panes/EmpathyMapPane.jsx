@@ -33,12 +33,14 @@ const EmpathyMapPane = ({
   useLayoutEffect(() => {
     if (allTagsForThisPersona && !typedTags) {
       const typedTags = {};
-      [...indexToClassName, ""].forEach((className) => {
+      [...indexToClassName].forEach((className) => {
         const tags = allTagsForThisPersona.filter(
           (t) => t.className === className
         );
         typedTags[className] = tags;
       });
+      typedTags[""] = allTagsForThisPersona.filter((t) => !t.className);
+      // FIXME: new untyped tags from the evidence pane aren't put in `typedTags`
       setTypedTags(typedTags);
     }
   }, [allTagsForThisPersona, typedTags]);
@@ -80,6 +82,8 @@ const EmpathyMapPane = ({
         );
         draggedTagElement.classList.add(newClassName);
         updateTrendFunc(tagText, newClassName);
+      } else {
+        updateTrendFunc(tagText, "");
       }
     }, 50);
   };
@@ -174,56 +178,54 @@ const EmpathyMapPane = ({
           Combine
         </button>
       )}
-      {allTagsForThisPersona && (
-        <table className="table" id="empathyMapTable" style={{ width: "90%" }}>
-          <tbody>
-            {typedTags &&
-              Object.keys(typedTags).map((trendType) => {
-                return (
-                  <tr key={`ReactTags for '${trendType}'`}>
-                    <td>
-                      <strong>{formatTrendTypeText(trendType)}</strong>
-                    </td>
-                    <td
-                      ref={(ref) => {
-                        if (ref && !tagAreaRefs.current.includes(ref)) {
-                          tagAreaRefs.current.push(ref);
+      <table className="table" id="empathyMapTable" style={{ width: "90%" }}>
+        <tbody>
+          {typedTags &&
+            Object.keys(typedTags).map((trendType) => {
+              return (
+                <tr key={`ReactTags for '${trendType}'`}>
+                  <td>
+                    <strong>{formatTrendTypeText(trendType)}</strong>
+                  </td>
+                  <td
+                    ref={(ref) => {
+                      if (ref && !tagAreaRefs.current.includes(ref)) {
+                        tagAreaRefs.current.push(ref);
+                      }
+                    }}
+                  >
+                    <ReactTags
+                      tags={typedTags[trendType]}
+                      classNames={{
+                        tag: "readOnly",
+                        remove: "removeButton",
+                        tags: `tagArea type-${trendType}`,
+                      }}
+                      removeComponent={
+                        removeComponent ||
+                        (() => {
+                          // because readOnly={true} makes `handleTagClick` do nothing
+                          return "";
+                        })
+                      }
+                      handleTagClick={(tagIndex, event) => {
+                        const tagWrapper = event.target;
+                        if (tagWrapper.className.includes("selected")) {
+                          tagWrapper.classList.remove("selected");
+                        } else {
+                          tagWrapper.classList.add("selected");
+                        }
+                        if (handleTagClick) {
+                          handleTagClick(tagIndex, typedTags);
                         }
                       }}
-                    >
-                      <ReactTags
-                        tags={typedTags[trendType]}
-                        classNames={{
-                          tag: "readOnly",
-                          remove: "removeButton",
-                          tags: `tagArea type-${trendType}`,
-                        }}
-                        removeComponent={
-                          removeComponent ||
-                          (() => {
-                            // because readOnly={true} makes `handleTagClick` do nothing
-                            return "";
-                          })
-                        }
-                        handleTagClick={(tagIndex, event) => {
-                          const tagWrapper = event.target;
-                          if (tagWrapper.className.includes("selected")) {
-                            tagWrapper.classList.remove("selected");
-                          } else {
-                            tagWrapper.classList.add("selected");
-                          }
-                          if (handleTagClick) {
-                            handleTagClick(tagIndex, typedTags);
-                          }
-                        }}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
-          </tbody>
-        </table>
-      )}
+                    />
+                  </td>
+                </tr>
+              );
+            })}
+        </tbody>
+      </table>
     </div>
   );
 };
