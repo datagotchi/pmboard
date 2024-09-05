@@ -99,6 +99,7 @@ const EmpathyMapPane = ({
         draggable: ".tag-wrapper",
         dropzone: ".react-tags-wrapper",
         distance: 0,
+        delay: 100,
       });
       /**
        * @type {HTMLElement}
@@ -206,7 +207,6 @@ const EmpathyMapPane = ({
                         }
                         handleTagClick={(tagIndex, event) => {
                           const tagWrapper = event.target;
-                          // FIXME: selection does not work
                           if (tagWrapper.className.includes("selected")) {
                             tagWrapper.classList.remove("selected");
                           } else {
