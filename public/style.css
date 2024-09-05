@@ -132,7 +132,7 @@ ul.trend-types li:hover {
   display: inline-block;
   cursor: grab;
 }
-.trendItem {
+.tag-wrapper {
   margin: 2px;
   padding: 0 0 0 5px;
   display: inline-block;
@@ -144,6 +144,9 @@ ul.trend-types li:hover {
   color: #fff;
   font-weight: 700;
   cursor: pointer !important;
+}
+.tagArea {
+  height: 100px;
 }
 .objective {
   background-color: red;
