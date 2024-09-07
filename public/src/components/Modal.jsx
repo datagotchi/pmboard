@@ -100,7 +100,7 @@ const Modal = ({
      */
     (tagId) => {
       const foundTrends = [];
-      item.evidence.find((ev) => {
+      item.evidence.forEach((ev) => {
         const trend = ev.trends.find((t) => t.name === tagId);
         if (trend) {
           foundTrends.push({
@@ -172,27 +172,65 @@ const Modal = ({
                           ))}
                         {allTags && allTags.length > 0 && (
                           <SummaryPaneComponent
-                            updateTrendFunc={async (tagText, type) => {
-                              // remove the (N) occurence part of the tag text
-                              const tagId = tagText
-                                .match(/(.*)\(.*\)/)[1]
-                                .trim();
-                              // TODO: tell the evidence pane of a change somehow
+                            updateTrendsFunc={async (tagTexts, changes) => {
+                              const changedTrends = [];
                               await Promise.all(
-                                findTrendsInEvidence(tagId).map(
-                                  (foundTrendRecord) => {
-                                    const updatedTrend = {
-                                      ...foundTrendRecord.trend,
-                                      type,
-                                    };
-                                    return updateTrendFunc(
-                                      item.id,
-                                      foundTrendRecord.evidenceId,
-                                      updatedTrend
-                                    );
-                                  }
-                                )
+                                tagTexts.map(async (tagText) => {
+                                  // remove the (N) occurence part of the tag text
+                                  const tagId = tagText
+                                    .match(/(.*)\(.*\)/)[1]
+                                    .trim();
+                                  const foundTrendInstancesWithSameText =
+                                    findTrendsInEvidence(tagId);
+                                  console.log(
+                                    "*** foundTrendInstancesWithSameText: ",
+                                    foundTrendInstancesWithSameText
+                                  );
+                                  await Promise.all(
+                                    foundTrendInstancesWithSameText.map(
+                                      (foundTrendInstance) => {
+                                        const updatedTrend = {
+                                          ...foundTrendInstance.trend,
+                                        };
+                                        if (changes.className) {
+                                          updatedTrend.type = changes.className;
+                                        }
+                                        if (changes.id) {
+                                          updatedTrend.name = changes.id;
+                                        }
+                                        // TODO: verify the API changes all aspects of the updatedTrend
+                                        return updateTrendFunc(
+                                          item.id,
+                                          foundTrendInstance.evidenceId,
+                                          updatedTrend
+                                        );
+                                      }
+                                    )
+                                  );
+                                  console.log(
+                                    "*** merging with: changedTrends",
+                                    changedTrends
+                                  );
+                                  console.log("*** which will become: ", [
+                                    ...changedTrends,
+                                    ...foundTrendInstancesWithSameText,
+                                  ]);
+                                  changedTrends.push(
+                                    ...foundTrendInstancesWithSameText
+                                  );
+                                })
                               );
+                              console.log("*** changedTrends: ", changedTrends);
+                              setAllTags({
+                                ...allTags.filter(
+                                  (t) => !changedTrends.includes(t)
+                                ),
+                                ...changedTrends.map((changedTrend) => ({
+                                  id: changes.id || ct.name,
+                                  className: changes.className || ct.type,
+                                })),
+                              });
+                              // FIXME: figure out why the evidence pane doesn't update even though I'm changing evidence
                             }}
                             summaryChanged={(summary) => {
                               item.summary = summary;
