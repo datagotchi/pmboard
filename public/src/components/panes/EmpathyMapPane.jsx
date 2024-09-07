@@ -15,6 +15,7 @@ import {
   formatTrendTypeText,
   indexToClassName,
 } from "./EmpathyMapPaneFunctions";
+import { getOccurenceNumber } from "../../../../util";
 
 /**
  * A modal pane to show a persona's empathy map.
@@ -25,7 +26,7 @@ import {
 const EmpathyMapPane = ({
   handleTagClick,
   removeComponent,
-  updateTrendFunc,
+  updateTrendsFunc,
 }) => {
   const allTagsForThisPersona = useContext(AllTagsContext);
   const [typedTags, setTypedTags] = useState();
@@ -84,9 +85,9 @@ const EmpathyMapPane = ({
           CLASSNAME_PREFIX.length
         );
         draggedTagElement.classList.add(newClassName);
-        updateTrendFunc(tagText, newClassName);
+        updateTrendsFunc([tagText], { className: newClassName });
       } else {
-        updateTrendFunc(tagText, "");
+        updateTrendsFunc([tagText], { className: "" });
       }
     }, 50);
   };
@@ -169,12 +170,21 @@ const EmpathyMapPane = ({
       </button> */}
       {selectedTags.length > 1 && (
         <button
-          onClick={() => {
-            // TODO: combine tags
-            // prompt for new text
-            // create new tag with text and same/one of the types of the selected tags
-            // addTrendFunc() to save it on the server
-            // update selected tags to empty array
+          onClick={async () => {
+            const newId = prompt("Combined tag text: ");
+            if (newId) {
+              const count = selectedTags.reduce(
+                (totalCount, tag) => totalCount + getOccurenceNumber(tag.text),
+                0
+              );
+              const tagChanges = {
+                id: newId,
+                className: selectedTags[0].className,
+              };
+              const textsToUpdate = selectedTags.map((t) => t.text);
+              await updateTrendsFunc(textsToUpdate, tagChanges);
+              setSelectedTags([]);
+            }
           }}
           style={{ margin: "0 auto" }}
         >
@@ -213,10 +223,15 @@ const EmpathyMapPane = ({
                       }
                       handleTagClick={(tagIndex, event) => {
                         const tagWrapper = event.target;
+                        const tag = typedTags[trendType][tagIndex];
                         if (tagWrapper.className.includes("selected")) {
                           tagWrapper.classList.remove("selected");
+                          setSelectedTags(
+                            selectedTags.filter((t) => t !== tag)
+                          );
                         } else {
                           tagWrapper.classList.add("selected");
+                          setSelectedTags([...selectedTags, tag]);
                         }
                         if (handleTagClick) {
                           handleTagClick(tagIndex, typedTags[trendType]);

@@ -182,10 +182,6 @@ const Modal = ({
                                     .trim();
                                   const foundTrendInstancesWithSameText =
                                     findTrendsInEvidence(tagId);
-                                  console.log(
-                                    "*** foundTrendInstancesWithSameText: ",
-                                    foundTrendInstancesWithSameText
-                                  );
                                   await Promise.all(
                                     foundTrendInstancesWithSameText.map(
                                       (foundTrendInstance) => {
@@ -207,29 +203,21 @@ const Modal = ({
                                       }
                                     )
                                   );
-                                  console.log(
-                                    "*** merging with: changedTrends",
-                                    changedTrends
-                                  );
-                                  console.log("*** which will become: ", [
-                                    ...changedTrends,
-                                    ...foundTrendInstancesWithSameText,
-                                  ]);
                                   changedTrends.push(
                                     ...foundTrendInstancesWithSameText
                                   );
                                 })
                               );
-                              console.log("*** changedTrends: ", changedTrends);
-                              setAllTags({
+                              setAllTags([
                                 ...allTags.filter(
                                   (t) => !changedTrends.includes(t)
                                 ),
                                 ...changedTrends.map((changedTrend) => ({
-                                  id: changes.id || ct.name,
-                                  className: changes.className || ct.type,
+                                  id: changes.id || changedTrend.name,
+                                  className:
+                                    changes.className || changedTrend.type,
                                 })),
-                              });
+                              ]);
                               // FIXME: figure out why the evidence pane doesn't update even though I'm changing evidence
                             }}
                             summaryChanged={(summary) => {
