@@ -77,5 +77,3 @@ export const deleteItem =
       return next(err);
     }
   };
-
-// module.exports = { addItem, updateItem, deleteItem };

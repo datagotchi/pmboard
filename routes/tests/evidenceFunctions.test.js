@@ -1,13 +1,20 @@
-import { expect } from "chai";
-import sinon from "sinon";
-// import supertest from "supertest";
-
 import pg from "pg";
 const { Pool, Client } = pg;
 
+jest.mock("pg", () => {
+  const mPool = {
+    connect: jest.fn(() => {
+      return Promise.resolve({
+        query: jest.fn(),
+        release: jest.fn(),
+      });
+    }),
+  };
+  return { Pool: jest.fn(() => mPool) };
+});
+
 // import app from "../../app";
-import {} from "../routes/evidenceFunctions.js";
-import { after } from "mocha";
+import {} from "../evidenceFunctions.js";
 
 const VALID_FIELDS = [
   "name",
@@ -73,15 +80,21 @@ const mockNextObject = {
 };
 
 describe("evidenceFunctions.js", () => {
-  let mockClientQuerySpy, mockClientReleaseSpy, mockResJsonSpy, mockNextSpy;
-  let REQ_BASE;
+  let poolStub;
+  let mockClientQuerySpy, mockClientReleaseSpy;
+
+  beforeAll(() => {
+    poolStub = jest
+      .spyOn(Pool.prototype, "connect")
+      .mockResolvedValue(mockClient);
+  });
+
   beforeEach(() => {
-    REQ_BASE = {
-      client: mockClient,
-    };
-    mockClientQuerySpy = sinon.spy(mockClient, "query");
-    mockClientReleaseSpy = sinon.spy(mockClient, "release");
-    mockResJsonSpy = sinon.spy(mockRes, "json");
-    mockNextSpy = sinon.spy(mockNextObject, "next");
+    mockClientQuerySpy = jest.spyOn(mockClient, "query");
+    mockClientReleaseSpy = jest.spyOn(mockClient, "release");
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 });
