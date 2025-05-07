@@ -14,7 +14,7 @@ jest.mock("react-tag-input", () => ({
   },
 }));
 
-import FileEvidencePane from "../FileEvidencePane";
+import FileEvidencePane from "../panes/FileEvidencePane";
 
 // import { mockFacts } from "../hooks/__mocks__/axios";
 
