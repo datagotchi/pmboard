@@ -4,22 +4,25 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "jest babel.config.js"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "jest": {
     "verbose": true,
-    "testEnvironment": "node",
     "testMatch": [
-      "**/*.test.js"
+      "**/*.test.(js|jsx)"
     ],
     "transform": {
-      "^.+\\.js$": [
+      "^.+\\.(js|jsx)$": [
         "babel-jest",
         {
           "configFile": "./babel.config.cjs"
         }
       ]
     },
+    "transformIgnorePatterns": [
+      "public/node_modules/(?!@react-tag-input|oauth4webapi)"
+    ],
     "coverageProvider": "v8",
     "coverageThreshold": {
       "global": {

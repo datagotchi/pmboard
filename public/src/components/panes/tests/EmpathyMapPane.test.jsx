@@ -1,16 +1,38 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 
-import "../hooks/useOAuthAPI";
-jest.mock("../hooks/useOAuthAPI");
+import EmpathyMapPane from "../EmpathyMapPane";
+import { AllTagsContext } from "../../../contexts/AllTagsContext";
+import { getOccurenceNumber } from "../../../../../util";
+import { indexToClassName } from "../EmpathyMapPaneFunctions";
+
 import * as ReactTagInput from "react-tag-input";
 jest.mock("react-tag-input", () => ({ WithContext: jest.fn() }));
 
-import FileEvidencePane from "../components/panes/FileEvidencePane";
-import { mockEvidenceFiles } from "../hooks/__mocks__/useOAuthAPI";
+const mockEmpathyMapAllTags = [
+  {
+    id: "tag1",
+    text: " tag1",
+    className: "objective",
+  },
+  {
+    id: "tag1",
+    text: " tag1",
+    className: "objective",
+  },
+  {
+    id: "tag2",
+    text: " tag2",
+    className: "goal",
+  },
+];
 
-describe("FileEvidencePane.jsx", () => {
+describe("EmpathyMapPane.jsx", () => {
   const mockWithContext = ReactTagInput.WithContext;
   const handleDeleteSpy = jest.fn();
 
@@ -64,17 +86,20 @@ describe("FileEvidencePane.jsx", () => {
     );
   });
 
-  it("Renders mock evidence files", async () => {
+  it("Renders mock allTags correctly", async () => {
     const { container } = render(
-      <FileEvidencePane evidence={mockEvidenceFiles} />
+      <AllTagsContext.Provider value={mockEmpathyMapAllTags}>
+        <EmpathyMapPane />
+      </AllTagsContext.Provider>
     );
     const rows = container.querySelector("tr");
     expect(rows).toBeInTheDocument();
-    expect(rows.length).toEqual(mockEvidenceFiles.length);
+    rows.forEach((row, index) => {
+      const className = indexToClassName[index];
+      const count = getOccurenceNumber(row.innerText);
+      // expect(count).toEqual(...); // number in mockEmpathyMapAllTags
+    });
+    expect(rows.length).toEqual(mockEmpathyMapAllTags.length);
   });
-  it("Adds files correctly", async () => {});
-  it("Removes files correctly", async () => {});
-  it("Adds trends correctly", async () => {});
-  it("Removes trends correctly", async () => {});
-  it("Updates trend names correctly", async () => {});
+  it("Changes tag classNames correctly", async () => {});
 });

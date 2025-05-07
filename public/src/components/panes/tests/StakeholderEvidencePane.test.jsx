@@ -1,13 +1,24 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 
 import * as ReactTagInput from "react-tag-input";
-jest.mock("react-tag-input", () => ({ WithContext: jest.fn() }));
+jest.mock("react-tag-input", () => ({
+  WithContext: jest.fn(),
+  SEPARATORS: {
+    ENTER: 13,
+  },
+}));
 
-import FileEvidencePane from "../components/panes/FileEvidencePane";
+import FileEvidencePane from "../FileEvidencePane";
 
 // import { mockFacts } from "../hooks/__mocks__/axios";
+
+jest.mock("../../../hooks/useOAuthAPI");
 
 describe("StakeholderEvidencePane.jsx", () => {
   const mockWithContext = ReactTagInput.WithContext;
@@ -64,6 +75,11 @@ describe("StakeholderEvidencePane.jsx", () => {
   });
 
   it("Renders mock evidence files", async () => {
+    const mockEvidenceFiles = [
+      { id: "1", name: "Evidence File 1" },
+      { id: "2", name: "Evidence File 2" },
+    ];
+
     const { container } = render(
       <FileEvidencePane evidence={mockEvidenceFiles} />
     );

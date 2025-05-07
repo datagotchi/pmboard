@@ -81,7 +81,7 @@ router.put("/", async (req, res, next) => {
   return res.sendStatus(200);
 });
 
-router.post("/", addItem("stories"));
+router.post("/", () => addItem("stories"));
 
 router.param("story_id", function (req, res, next) {
   req.story_id = req.params.story_id;
@@ -126,33 +126,33 @@ router.put("/:story_id", async (req, res, next) => {
   return res.sendStatus(400);
 });
 
-router.delete("/:story_id", deleteItem("stories", "story_id"));
+router.delete("/:story_id", () => deleteItem("stories", "story_id"));
 
 // evidence & trends from evidenceFunctions.js
 
-router.get(
-  "/:story_id/evidence",
+router.get("/:story_id/evidence", () =>
   getEvidenceExpressFunc("stories", "story_id")
 );
 
-router.post("/:story_id/evidence", addEvidenceExpressFunc("story_id"));
+router.post("/:story_id/evidence", () => addEvidenceExpressFunc("story_id"));
 
-router.param("evidence_id", trackEvidenceIdExpressFunc("stories", "story_id"));
+router.param("evidence_id", () =>
+  trackEvidenceIdExpressFunc("stories", "story_id")
+);
 
-router.delete("/:story_id/evidence/:evidence_id", deleteEvidenceExpressFunc());
+router.delete("/:story_id/evidence/:evidence_id", () =>
+  deleteEvidenceExpressFunc()
+);
 
-router.post(
-  "/:story_id/evidence/:evidence_id/trends",
+router.post("/:story_id/evidence/:evidence_id/trends", () =>
   addTrendExpressFunc("stories", "story_id")
 );
 
-router.put(
-  "/:story_id/evidence/:evidence_id/trends/:trend_ix",
+router.put("/:story_id/evidence/:evidence_id/trends/:trend_ix", () =>
   updateTrendExpressFunc("stories", "story_id")
 );
 
-router.delete(
-  "/:story_id/evidence/:evidence_id/trends/:trend_ix",
+router.delete("/:story_id/evidence/:evidence_id/trends/:trend_ix", () =>
   deleteTrendExpressFunc("stories", "story_id")
 );
 

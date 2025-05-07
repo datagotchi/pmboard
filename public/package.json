@@ -5,18 +5,11 @@
   "type": "module",
   "scripts": {
     "build": "webpack --mode development",
-    "jest:watch": "jest --watch"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "jest": {
     "verbose": true,
-    "testEnvironment": "jsdom",
-    "testEnvironmentOptions": {
-      "runScripts": "dangerously"
-    },
-    "moduleDirectories": [
-      "src",
-      "node_modules"
-    ],
     "testMatch": [
       "**/*.test.(js|jsx)"
     ],
@@ -26,7 +19,6 @@
     "transformIgnorePatterns": [
       "node_modules/(?!@react-tag-input|oauth4webapi)"
     ],
-    "testTimeout": 20000,
     "coverageProvider": "v8",
     "coverageThreshold": {
       "global": {
@@ -62,6 +54,8 @@
     "@babel/preset-env": "^7.27.1",
     "@babel/preset-react": "^7.27.1",
     "@eslint/js": "^9.8.0",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.0.1",
     "babel-jest": "^29.7.0",
     "css-loader": "^7.1.2",

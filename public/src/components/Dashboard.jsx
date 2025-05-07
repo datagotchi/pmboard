@@ -10,12 +10,6 @@ import TodoWidget from "./TodoWidget";
 /**
  * The container of all widgets.
  * @returns {React.JSX.Element} The rendered dashboard.
- * @example
- *  <Dashboard>
- *    <Widget>
- *    <Widget>
- *    ...
- *  </Dashboard>
  */
 const Dashboard = () => {
   const CURRENT_PRODUCTid_SESSION_KEY = "currentProductId";

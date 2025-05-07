@@ -103,7 +103,7 @@ router.param("product_id", async (req, res, next, product_id) => {
 // router.get("/:product_id", function (req, res, next) {
 //   //var userid = JSON.parse(req.cookies.userid);
 //   // ...
-//   return res.json(req.product);
+//   return res.json(req.product_id);
 // });
 
 // // delete product

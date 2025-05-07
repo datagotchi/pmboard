@@ -9,10 +9,10 @@ import { AllTagsContext } from "../contexts/AllTagsContext";
 import { EvidencePaneContext } from "../contexts/EvidencePaneContext";
 import { SummaryPaneContext } from "../contexts/SummaryPaneContext";
 
-import {
-  classNameToIndex,
-  indexToClassName,
-} from "./panes/EmpathyMapPaneFunctions";
+// import {
+//   classNameToIndex,
+//   indexToClassName,
+// } from "./panes/EmpathyMapPaneFunctions";
 
 /**
  * The React component to show the base dialog.

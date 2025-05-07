@@ -1,5 +1,10 @@
+/**
+ * @jest-environment node
+ */
+
 import request from "supertest";
 import express from "express";
+import router from "../stories.js";
 import { Pool } from "pg";
 import * as collectionItemFunctions from "../collectionItemFunctions";
 import * as evidenceFunctions from "../evidenceFunctions";
@@ -8,22 +13,26 @@ jest.mock("pg");
 jest.mock("../collectionItemFunctions");
 jest.mock("../evidenceFunctions");
 
+const app = express();
+app.use(express.json());
+const mockPoolQuery = jest.fn();
+app.use((req, res, next) => {
+  req.pool = {
+    query: mockPoolQuery,
+  };
+  next();
+});
+app.use("/stories", router);
+
 describe("stories.js", () => {
-  const app = express();
   // let mockAddItem, mockUpdateItem, mockDeleteItem;
   // let mockGetEvidenceExpressFunc, mockAddEvidenceExpressFunc;
   // let mockTrackEvidenceIdExpressFunc, mockDeleteEvidenceExpressFunc;
   // let mockAddTrendExpressFunc,
   //   mockUpdateTrendExpressFunc,
   //   mockDeleteTrendExpressFunc;
-  let mockPool, mockPoolQuery;
 
   beforeEach(() => {
-    mockPoolQuery = jest.fn();
-    mockPool = {
-      query: mockPoolQuery,
-    };
-    Pool.mockReturnValue();
     // collectionItemFunctions.mockReturnValue({
     //   addItem: mockAddItem,
     //   updateItem: mockUpdateItem,
@@ -45,9 +54,10 @@ describe("stories.js", () => {
   });
 
   it("should call the correct query when getting stories", async () => {
-    const req = { pool: mockPool };
+    // const req = { pool: mockPool };
+    mockPoolQuery.mockResolvedValue({ rows: [{ id: 1, name: "Test Story" }] });
 
-    await request(app).get("/stories").send(req.body).expect(200);
+    await request(app).get("/stories").expect(200);
 
     expect(mockPoolQuery).toHaveBeenCalledWith({
       text: "select * from stories",

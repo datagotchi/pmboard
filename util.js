@@ -1,4 +1,4 @@
-import types from "./public/src/types.js";
+import * as types from "./public/src/types.js";
 const { EvidenceTrend } = types;
 
 /**

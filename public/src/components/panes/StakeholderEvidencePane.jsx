@@ -7,11 +7,7 @@ import {
   PersonaAsEvidence,
   TagsPerEvidenceRecord,
 } from "../../types";
-import {
-  getJsonSortedString,
-  getOccurenceNumber,
-  sortString,
-} from "../../../../util";
+import { getOccurenceNumber, sortString } from "../../../../util";
 
 // import { EvidencePaneContext } from "../../contexts/EvidencePaneContext";
 
