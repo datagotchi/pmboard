@@ -8,9 +8,9 @@ import "@testing-library/jest-dom";
 
 import * as ReactTagInput from "react-tag-input";
 
-import FileEvidencePane from "../FileEvidencePane";
+import FileEvidencePane from "../panes/FileEvidencePane";
 
-jest.mock("../../../hooks/useOAuthAPI");
+jest.mock("../../hooks/useOAuthAPI");
 
 jest.mock("react-tag-input", () => ({
   WithContext: jest.fn(),

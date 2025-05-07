@@ -6,10 +6,10 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 
-import EmpathyMapPane from "../EmpathyMapPane";
-import { AllTagsContext } from "../../../contexts/AllTagsContext";
-import { getOccurenceNumber } from "../../../../../util";
-import { indexToClassName } from "../EmpathyMapPaneFunctions";
+import EmpathyMapPane from "../panes/EmpathyMapPane";
+import { AllTagsContext } from "../../contexts/AllTagsContext";
+import { getOccurenceNumber } from "../../../../util";
+import { indexToClassName } from "../panes/EmpathyMapPaneFunctions";
 
 import * as ReactTagInput from "react-tag-input";
 jest.mock("react-tag-input", () => ({ WithContext: jest.fn() }));
@@ -17,17 +17,17 @@ jest.mock("react-tag-input", () => ({ WithContext: jest.fn() }));
 const mockEmpathyMapAllTags = [
   {
     id: "tag1",
-    text: " tag1",
-    className: "objective",
-  },
-  {
-    id: "tag1",
-    text: " tag1",
+    text: "tag (1)",
     className: "objective",
   },
   {
     id: "tag2",
-    text: " tag2",
+    text: "tag (2)",
+    className: "objective",
+  },
+  {
+    id: "tag3",
+    text: "tag (3)",
     className: "goal",
   },
 ];
@@ -92,14 +92,20 @@ describe("EmpathyMapPane.jsx", () => {
         <EmpathyMapPane />
       </AllTagsContext.Provider>
     );
-    const rows = container.querySelector("tr");
-    expect(rows).toBeInTheDocument();
+    const rows = container.querySelectorAll("tr");
+    let currentCount = 1;
     rows.forEach((row, index) => {
+      expect(row).toBeInTheDocument();
       const className = indexToClassName[index];
-      const count = getOccurenceNumber(row.innerText);
-      // expect(count).toEqual(...); // number in mockEmpathyMapAllTags
+      console.log("*** row", row.innerHTML);
+      const spans = Array.from(row.querySelectorAll("span"));
+      spans.forEach((span) => {
+        expect(span).toBeInTheDocument();
+        const count = getOccurenceNumber(span.textContent);
+        expect(count).toEqual(currentCount);
+        currentCount += 1;
+      });
     });
-    expect(rows.length).toEqual(mockEmpathyMapAllTags.length);
   });
-  it("Changes tag classNames correctly", async () => {});
+  // it("Changes tag classNames correctly", async () => {});
 });

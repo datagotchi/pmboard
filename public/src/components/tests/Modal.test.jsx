@@ -1,6 +1,18 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
+
 import Modal from "../Modal";
+
+jest.mock("react-tag-input", () => ({
+  WithContext: jest.fn(),
+  SEPARATORS: {
+    ENTER: 13,
+  },
+}));
 
 describe("Modal Component", () => {
   const mockItem = {

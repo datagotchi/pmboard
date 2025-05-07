@@ -18,7 +18,7 @@ import FileEvidencePane from "../panes/FileEvidencePane";
 
 // import { mockFacts } from "../hooks/__mocks__/axios";
 
-jest.mock("../../../hooks/useOAuthAPI");
+jest.mock("../../hooks/useOAuthAPI");
 
 describe("StakeholderEvidencePane.jsx", () => {
   const mockWithContext = ReactTagInput.WithContext;
