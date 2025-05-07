@@ -12,7 +12,9 @@ jobs:
         with:
           node-version: ">=22.0.0"
       - uses: actions/checkout@v3
-      - name: Install dependencies
+      - name: Install dependencies at the root level
         run: yarn install
+      - name: Install dependencies in the public directory
+        run: yarn install --cwd public
       - name: Run jest tests
         run: yarn jest
