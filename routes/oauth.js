@@ -15,10 +15,7 @@ router.use(async (req, res, next) => {
 });
 
 router.get("/token", function (req, res, next) {
-  console.log("*** in GET /token");
-  console.log("*** req.session: ", req.session);
   var token = oauth.generateStateToken(req.session);
-  console.log("*** token: ", token);
 
   res.json({
     token: token,

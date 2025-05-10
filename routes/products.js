@@ -32,7 +32,6 @@ router.get("/", async (req, res, next) => {
 //   });
 //   await Product.create(newprod);
 //   // var userid = req.cookies.userid;
-//   // console.log("*** userid: ", userid);
 //   // newprod.permissions.push({
 //   //   _id: userid,
 //   //   value: 10,

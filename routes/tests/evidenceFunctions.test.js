@@ -41,7 +41,6 @@ const INVALID_COLUMNS_MESSAGE = "Invalid column(s)";
 const mockPool = {
   query: jest.fn(),
   // async ({ text, values }) => {
-  //   console.log("*** mockClient.query called with: ", text, values);
   //   switch (text) {
   //     case "delete from evidence where story_id = $1::integer":
   //       return {};
@@ -76,9 +75,7 @@ const mockPool = {
   //       throw new Error("Unrecognized query");
   //   }
   // },
-  release: jest.fn(() => {
-    console.log("*** mockClient.release called");
-  }),
+  release: jest.fn(),
 };
 
 describe("evidenceFunctions.js", () => {
