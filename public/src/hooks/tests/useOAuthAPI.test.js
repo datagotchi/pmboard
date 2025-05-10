@@ -1,12 +1,37 @@
-import { renderHook, act } from "@testing-library/react-hooks";
-import useOAuthAPI from "../useOAuthAPI";
-import * as oauth from "oauth4webapi";
+/**
+ * @jest-environment jsdom
+ */
 
-jest.mock("oauth4webapi");
-jest.mock("../../../config", () => ({
+import { renderHook, act } from "@testing-library/react";
+
+import useOAuthAPI from "../useOAuthAPI";
+
+jest.mock("oauth4webapi", () => ({
+  validateAuthResponse: jest.fn(),
+  authorizationCodeGrantRequest: jest.fn(),
+  parseWwwAuthenticateChallenges: jest.fn(),
+  processAuthorizationCodeOAuth2Response: jest.fn(),
+  isOAuth2Error: jest.fn(),
+  processDiscoveryResponse: jest.fn(),
+  generateRandomCodeVerifier: jest.fn(),
+  calculatePKCECodeChallenge: jest.fn(),
+  discoveryRequest: jest.fn().mockResolvedValue({}),
+}));
+jest.mock("../../../../config", () => ({
   key: "mockKey",
   secret: "mockSecret",
 }));
+beforeAll(() => {
+  Object.defineProperty(global, "sessionStorage", {
+    value: {
+      getItem: jest.fn(),
+      setItem: jest.fn(),
+      removeItem: jest.fn(),
+      clear: jest.fn(),
+    },
+    writable: true,
+  });
+});
 
 describe("useOAuthAPI", () => {
   beforeEach(() => {

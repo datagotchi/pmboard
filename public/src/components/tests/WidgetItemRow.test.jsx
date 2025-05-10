@@ -4,6 +4,8 @@
 
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
+import "@testing-library/jest-dom";
+
 import WidgetItemRow from "../WidgetItemRow";
 
 describe("WidgetItemRow Component", () => {
@@ -116,7 +118,7 @@ describe("WidgetItemRow Component", () => {
 
     expect(
       screen.getByText(shortEvidenceItem.evidence.length.toString()).className
-    ).toContain("bg-warning");
+    ).toContain("bg-danger");
 
     rerender(
       <WidgetItemRow

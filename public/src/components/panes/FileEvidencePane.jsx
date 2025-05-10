@@ -92,7 +92,7 @@ const FileEvidencePane = ({
             if (trend) {
               trend.type = tag.className;
             } else {
-              console.error("*** trend not found in evidence: ", tag.id);
+              console.error("Trend not found in evidence: ", tag.id);
             }
             thereAreChanges = true;
           }
@@ -160,8 +160,9 @@ const FileEvidencePane = ({
             type: tag.className,
           }));
           if (
+            evidenceFile &&
             getJsonSortedString(evidenceFile.trends) !==
-            getJsonSortedString(trends)
+              getJsonSortedString(trends)
           ) {
             evidenceFile.trends = trends;
             thereAreChangesToTrends = true;
@@ -228,7 +229,6 @@ const FileEvidencePane = ({
   /**
    * A function to remove a file from a widget item's evidence.
    * @param {EvidenceFile} file The file to remove.
-   * @example <DeleteButton onClick={() => removeFile(...)} />
    */
   const removeFile = async (file) => {
     const fileIndex = evidence.indexOf((f) => f.url === file.url);

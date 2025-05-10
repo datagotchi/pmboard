@@ -1,4 +1,9 @@
-import { renderHook } from "@testing-library/react-hooks";
+/**
+ * @jest-environment jsdom
+ */
+
+import { renderHook } from "@testing-library/react";
+
 import useCollectionItems from "../useCollectionItems";
 
 global.fetch = jest.fn();
@@ -38,8 +43,6 @@ describe("useCollectionItems", () => {
 
     expect(result.current).toBeUndefined();
 
-    await waitForNextUpdate();
-
     expect(fetch).toHaveBeenCalledWith("/products/123/testCollection");
     expect(result.current).toBeUndefined();
   });
@@ -64,12 +67,10 @@ describe("useCollectionItems", () => {
       }
     );
 
-    await waitForNextUpdate();
     expect(result.current).toEqual(mockData1);
 
     rerender({ productId: 456, collectionName: "testCollection" });
 
-    await waitForNextUpdate();
     expect(fetch).toHaveBeenCalledWith("/products/456/testCollection");
     expect(result.current).toEqual(mockData2);
   });

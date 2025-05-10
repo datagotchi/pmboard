@@ -7,16 +7,13 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 
 import * as ReactTagInput from "react-tag-input";
+import StakeholderEvidencePane from "../panes/StakeholderEvidencePane";
 jest.mock("react-tag-input", () => ({
   WithContext: jest.fn(),
   SEPARATORS: {
     ENTER: 13,
   },
 }));
-
-import FileEvidencePane from "../panes/FileEvidencePane";
-
-// import { mockFacts } from "../hooks/__mocks__/axios";
 
 jest.mock("../../hooks/useOAuthAPI");
 
@@ -74,22 +71,16 @@ describe("StakeholderEvidencePane.jsx", () => {
     );
   });
 
-  it("Renders mock evidence files", async () => {
-    const mockEvidenceFiles = [
-      { id: "1", name: "Evidence File 1" },
-      { id: "2", name: "Evidence File 2" },
+  it("Renders mock evidence personas", async () => {
+    const mockPersonas = [
+      { id: "1", text: "Persona 1" },
+      { id: "2", text: "Persona 2" },
     ];
-
     const { container } = render(
-      <FileEvidencePane evidence={mockEvidenceFiles} />
+      <StakeholderEvidencePane evidence={mockPersonas} />
     );
     const rows = container.querySelector("tr");
     expect(rows).toBeInTheDocument();
-    expect(rows.length).toEqual(mockEvidenceFiles.length);
+    expect(rows.length).toEqual(mockPersonas.length);
   });
-  it("Adds files correctly", async () => {});
-  it("Removes files correctly", async () => {});
-  it("Adds trends correctly", async () => {});
-  it("Removes trends correctly", async () => {});
-  it("Updates trend names correctly", async () => {});
 });

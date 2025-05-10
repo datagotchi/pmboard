@@ -1,10 +1,6 @@
-const getAccessToken = jest.fn(() => {
-  console.log("*** in MOCK getAccessToken");
-});
+const getAccessToken = jest.fn();
 
-const getGoogleDriveFiles = jest.fn(() => {
-  console.log("*** in MOCK getGoogleDriveFiles");
-});
+const getGoogleDriveFiles = jest.fn();
 
 export default () => ({
   getAccessToken,

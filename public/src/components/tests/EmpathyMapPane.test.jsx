@@ -12,7 +12,10 @@ import { getOccurenceNumber } from "../../../../util";
 import { indexToClassName } from "../panes/EmpathyMapPaneFunctions";
 
 import * as ReactTagInput from "react-tag-input";
+import { Droppable } from "@shopify/draggable";
+
 jest.mock("react-tag-input", () => ({ WithContext: jest.fn() }));
+jest.mock("@shopify/draggable");
 
 const mockEmpathyMapAllTags = [
   {
@@ -35,8 +38,14 @@ const mockEmpathyMapAllTags = [
 describe("EmpathyMapPane.jsx", () => {
   const mockWithContext = ReactTagInput.WithContext;
   const handleDeleteSpy = jest.fn();
+  const mockDroppableOn = jest.fn();
+  const mockDroppableDestroy = jest.fn();
 
   beforeEach(() => {
+    Droppable.mockImplementation(() => ({
+      on: mockDroppableOn,
+      destroy: mockDroppableDestroy,
+    }));
     mockWithContext.mockImplementation(
       ({ tags, handleDelete, onTagUpdate }) => {
         return (
@@ -97,7 +106,6 @@ describe("EmpathyMapPane.jsx", () => {
     rows.forEach((row, index) => {
       expect(row).toBeInTheDocument();
       const className = indexToClassName[index];
-      console.log("*** row", row.innerHTML);
       const spans = Array.from(row.querySelectorAll("span"));
       spans.forEach((span) => {
         expect(span).toBeInTheDocument();
@@ -107,5 +115,40 @@ describe("EmpathyMapPane.jsx", () => {
       });
     });
   });
-  // it("Changes tag classNames correctly", async () => {});
+  // it("Changing a tag variable's className moves it to another row", async () => {
+  //   const { container, rerender } = render(
+  //     <AllTagsContext.Provider value={mockEmpathyMapAllTags}>
+  //       <EmpathyMapPane />
+  //     </AllTagsContext.Provider>
+  //   );
+
+  //   // Verify initial state
+  //   let rows = container.querySelectorAll("tr");
+  //   const firstRowSpans = rows[0].querySelectorAll("ul > li > span");
+  //   expect(firstRowSpans.length).toBe(2);
+  //   expect(firstRowSpans[0].textContent).toBe("tag (1)");
+  //   expect(firstRowSpans[1].textContent).toBe("tag (2)");
+  //   expect(rows[1].querySelector("span").textContent).toBe("tag (3)");
+
+  //   // Change the className of the first tag
+  //   const firstTag = mockEmpathyMapAllTags.find(
+  //     (tag) => tag.text === "tag (1)"
+  //   );
+  //   expect(firstTag).toBeDefined();
+  //   expect(firstTag.className).toBe("objective");
+  //   firstTag.className = "goal";
+
+  //   // Rerender with updated context
+  //   rerender(
+  //     <AllTagsContext.Provider value={[...mockEmpathyMapAllTags]}>
+  //       <EmpathyMapPane />
+  //     </AllTagsContext.Provider>
+  //   );
+
+  //   // Verify the tag has moved to the correct row
+  //   // screen.debug();
+  //   rows = document.querySelectorAll("tr");
+  //   expect(rows[0].querySelector("span")).toBe("tag (2)");
+  //   expect(rows[1].querySelector("span").textContent).toBe("tag (1)");
+  // });
 });

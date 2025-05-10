@@ -9,11 +9,6 @@ import { AllTagsContext } from "../contexts/AllTagsContext";
 import { EvidencePaneContext } from "../contexts/EvidencePaneContext";
 import { SummaryPaneContext } from "../contexts/SummaryPaneContext";
 
-// import {
-//   classNameToIndex,
-//   indexToClassName,
-// } from "./panes/EmpathyMapPaneFunctions";
-
 /**
  * The React component to show the base dialog.
  * @param {object} props The component properties.
@@ -28,8 +23,6 @@ import { SummaryPaneContext } from "../contexts/SummaryPaneContext";
  * @param {(itemId: number, evidenceRecordId: number, trend: EvidenceTrend) => Promise<Response>} props.addTrendFunc The function to call to add a new trend.
  * @param {(itemId: number, evidenceRecordId: number, trend: EvidenceTrend) => Promise<Response>} props.updateTrendFunc The function to call to update a trend.
  * @returns {React.JSX.Element} The rendered modal.
- * @example
- *  <Modal item={*} dialogId="*" updateItemFunc={*} updateTrendFunc={*} summaryTitle="*" addItemEvidenceFunc={*} />
  */
 const Modal = ({
   item,
@@ -37,7 +30,7 @@ const Modal = ({
   productId,
   addEvidenceFunc,
   removeEvidenceFunc,
-  summaryTitle,
+  summaryTitle = "",
   updateItemFunc,
   deleteTrendFunc,
   addTrendFunc,
@@ -149,6 +142,7 @@ const Modal = ({
                         data-bs-toggle="tab"
                         data-bs-target="#modalSummary"
                         aria-controls="summary"
+                        aria-label="summary"
                         role="tab"
                         type="button"
                       >
@@ -163,6 +157,7 @@ const Modal = ({
                         role="tabpanel"
                         className="tab-pane"
                         id="modalSummary"
+                        aria-label="modalSummary"
                       >
                         {!allTags ||
                           (allTags.length === 0 && (
@@ -170,88 +165,96 @@ const Modal = ({
                               There is no evidence. Start by adding a file!
                             </span>
                           ))}
-                        {allTags && allTags.length > 0 && (
-                          <SummaryPaneComponent
-                            updateTrendsFunc={async (tagTexts, changes) => {
-                              const changedTrends = [];
-                              await Promise.all(
-                                tagTexts.map(async (tagText) => {
-                                  // remove the (N) occurence part of the tag text
-                                  const tagId = tagText
-                                    .match(/(.*)\(.*\)/)[1]
-                                    .trim();
-                                  const foundTrendInstancesWithSameText =
-                                    findTrendsInEvidence(tagId);
-                                  await Promise.all(
-                                    foundTrendInstancesWithSameText.map(
-                                      (foundTrendInstance) => {
-                                        const updatedTrend = {
-                                          ...foundTrendInstance.trend,
-                                        };
-                                        if (changes.className) {
-                                          updatedTrend.type = changes.className;
+                        {SummaryPaneComponent &&
+                          allTags &&
+                          allTags.length > 0 && (
+                            <SummaryPaneComponent
+                              updateTrendsFunc={async (tagTexts, changes) => {
+                                const changedTrends = [];
+                                await Promise.all(
+                                  tagTexts.map(async (tagText) => {
+                                    // remove the (N) occurence part of the tag text
+                                    const tagId = tagText
+                                      .match(/(.*)\(.*\)/)[1]
+                                      .trim();
+                                    const foundTrendInstancesWithSameText =
+                                      findTrendsInEvidence(tagId);
+                                    await Promise.all(
+                                      foundTrendInstancesWithSameText.map(
+                                        (foundTrendInstance) => {
+                                          const updatedTrend = {
+                                            ...foundTrendInstance.trend,
+                                          };
+                                          if (changes.className) {
+                                            updatedTrend.type =
+                                              changes.className;
+                                          }
+                                          if (changes.id) {
+                                            updatedTrend.name = changes.id;
+                                          }
+                                          // TODO: verify the API changes all aspects of the updatedTrend
+                                          return updateTrendFunc(
+                                            item.id,
+                                            foundTrendInstance.evidenceId,
+                                            updatedTrend
+                                          );
                                         }
-                                        if (changes.id) {
-                                          updatedTrend.name = changes.id;
-                                        }
-                                        // TODO: verify the API changes all aspects of the updatedTrend
-                                        return updateTrendFunc(
-                                          item.id,
-                                          foundTrendInstance.evidenceId,
-                                          updatedTrend
-                                        );
-                                      }
-                                    )
-                                  );
-                                  changedTrends.push(
-                                    ...foundTrendInstancesWithSameText
-                                  );
-                                })
-                              );
-                              setAllTags([
-                                ...allTags.filter(
-                                  (t) => !changedTrends.includes(t)
-                                ),
-                                ...changedTrends.map((changedTrend) => ({
-                                  id: changes.id || changedTrend.name,
-                                  className:
-                                    changes.className || changedTrend.type,
-                                })),
-                              ]);
-                              // FIXME: figure out why the evidence pane doesn't update even though I'm changing evidence
-                            }}
-                            summaryChanged={(summary) => {
-                              item.summary = summary;
-                              updateItemFunc(item);
-                            }}
-                            summary={item.summary}
-                          />
-                        )}
+                                      )
+                                    );
+                                    changedTrends.push(
+                                      ...foundTrendInstancesWithSameText
+                                    );
+                                  })
+                                );
+                                setAllTags([
+                                  ...allTags.filter(
+                                    (t) => !changedTrends.includes(t)
+                                  ),
+                                  ...changedTrends.map((changedTrend) => ({
+                                    id: changes.id || changedTrend.name,
+                                    className:
+                                      changes.className || changedTrend.type,
+                                  })),
+                                ]);
+                                // FIXME: figure out why the evidence pane doesn't update even though I'm changing evidence
+                              }}
+                              summaryChanged={(summary) => {
+                                item.summary = summary;
+                                updateItemFunc(item);
+                              }}
+                              summary={item.summary}
+                            />
+                          )}
                       </div>
                       <div
                         role="tabpanel"
                         className="tab-pane active"
                         id="modalEvidence"
+                        aria-label="evidence"
                       >
-                        <EvidencePaneComponent
-                          productId={productId}
-                          evidence={item.evidence}
-                          containerModalId={dialogId}
-                          addFileFunc={(file) => addEvidenceFunc(item.id, file)}
-                          removeFileFunc={(fileId) =>
-                            removeEvidenceFunc(item.id, fileId)
-                          }
-                          allTagsUpdated={(tags) => setAllTags(tags)}
-                          deleteTrendFunc={(evidenceId, trendId) =>
-                            deleteTrendFunc(item.id, evidenceId, trendId)
-                          }
-                          addTrendFunc={(evidenceId, trend) =>
-                            addTrendFunc(item.id, evidenceId, trend)
-                          }
-                          updateTrendNameFunc={(evidenceId, trend) =>
-                            updateTrendFunc(item.id, evidenceId, trend)
-                          }
-                        />
+                        {EvidencePaneComponent && (
+                          <EvidencePaneComponent
+                            productId={productId}
+                            evidence={item.evidence}
+                            containerModalId={dialogId}
+                            addFileFunc={(file) =>
+                              addEvidenceFunc(item.id, file)
+                            }
+                            removeFileFunc={(fileId) =>
+                              removeEvidenceFunc(item.id, fileId)
+                            }
+                            allTagsUpdated={(tags) => setAllTags(tags)}
+                            deleteTrendFunc={(evidenceId, trendId) =>
+                              deleteTrendFunc(item.id, evidenceId, trendId)
+                            }
+                            addTrendFunc={(evidenceId, trend) =>
+                              addTrendFunc(item.id, evidenceId, trend)
+                            }
+                            updateTrendNameFunc={(evidenceId, trend) =>
+                              updateTrendFunc(item.id, evidenceId, trend)
+                            }
+                          />
+                        )}
                       </div>
                     </AllTagsContext.Provider>
                   </div>

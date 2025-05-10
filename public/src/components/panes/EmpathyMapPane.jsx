@@ -35,17 +35,25 @@ const EmpathyMapPane = ({
     if (
       allTagsForThisPersona &&
       allTagsForThisPersona.length > 0 &&
-      !typedTags
+      (!typedTags ||
+        Object.values(typedTags).flat().length !==
+          allTagsForThisPersona.length ||
+        Object.values(typedTags)
+          .flat()
+          .some(
+            (tag, index) =>
+              tag.className !== allTagsForThisPersona[index].className
+          ))
     ) {
-      const typedTags = {};
+      const updatedTypedTags = {};
       [...indexToClassName].forEach((className) => {
         const tags = allTagsForThisPersona.filter(
           (t) => t.className === className
         );
-        typedTags[className] = tags;
+        updatedTypedTags[className] = tags;
       });
-      typedTags[""] = allTagsForThisPersona.filter((t) => !t.className);
-      setTypedTags(typedTags);
+      updatedTypedTags[""] = allTagsForThisPersona.filter((t) => !t.className);
+      setTypedTags(updatedTypedTags);
     }
   }, [allTagsForThisPersona, typedTags]);
 
