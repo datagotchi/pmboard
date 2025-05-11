@@ -78,11 +78,6 @@ describe("FileEvidencePane.jsx", () => {
                       tag.text = event.target.value;
                     }}
                     onBlur={async (event) => {
-                      console.log(
-                        "*** edit box onBlur called, about to call onTagUpdate: ",
-                        index,
-                        tag
-                      );
                       const response = await onTagUpdate(index, tag);
                       const previousSibling = event.target.previousSibling;
                       if (response) {

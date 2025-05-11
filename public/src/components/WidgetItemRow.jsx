@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 
 import { EvidenceRecord, WidgetDataItem } from "../types";
 
-const EVIDENCE_MILESTONE = 10;
+export const EVIDENCE_MILESTONE = 10;
 
 /**
  * A React component to render a row of a widget item.
@@ -11,7 +11,6 @@ const EVIDENCE_MILESTONE = 10;
  * @param {(item: WidgetDataItem) => void} props.onDeleteCallback The function to call when deleting this item
  * @param {(item: WidgetDataItem) => void} props.onClickCallback The function to call when the name is clicked
  * @returns {React.JSX.Element} The resulting widget element.
- * @example <WidgetItemRow item={*} onDeleteCallback={() => {}} onClickCallback={() => {}}
  */
 const WidgetItemRow = ({ item, onDeleteCallback, onClickCallback }) => {
   /**
@@ -22,14 +21,10 @@ const WidgetItemRow = ({ item, onDeleteCallback, onClickCallback }) => {
    */
   const getEvidenceLabelClass = (item) => {
     if (item && item.evidence) {
-      switch (item.evidence.length) {
-        case item.evidence.length > 0 &&
-          item.evidence.length < EVIDENCE_MILESTONE:
-          return "bg-warning";
-        case item.evidence.length >= EVIDENCE_MILESTONE:
-          return "bg-success";
-        default:
-          return "bg-danger";
+      if (item.evidence.length < EVIDENCE_MILESTONE) {
+        return "bg-warning";
+      } else if (item.evidence.length >= EVIDENCE_MILESTONE) {
+        return "bg-success";
       }
     }
     return "";
@@ -92,7 +87,6 @@ const WidgetItemRow = ({ item, onDeleteCallback, onClickCallback }) => {
       </td>
       <td>
         <span className={`evidence badge ${getEvidenceLabelClass(item)}`}>
-          {/* {numberOfEvidenceCompleted}/{item.evidence.length} */}
           {item.evidence.length}
         </span>
       </td>

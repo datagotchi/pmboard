@@ -6,7 +6,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 
-import WidgetItemRow from "../WidgetItemRow";
+import WidgetItemRow, { EVIDENCE_MILESTONE } from "../WidgetItemRow";
 
 describe("WidgetItemRow Component", () => {
   const mockItem = {
@@ -29,14 +29,30 @@ describe("WidgetItemRow Component", () => {
 
   const mockOnDeleteCallback = jest.fn();
   const mockOnClickCallback = jest.fn();
+  const mockConfirm = jest.fn().mockReturnValue(false);
+  let originalConfirm;
+
+  beforeEach(() => {
+    originalConfirm = window.confirm;
+    window.confirm = mockConfirm;
+  });
+
+  afterEach(() => {
+    window.confirm = originalConfirm;
+    jest.clearAllMocks();
+  });
 
   it("renders the component with the correct item name", () => {
     render(
-      <WidgetItemRow
-        item={mockItem}
-        onDeleteCallback={mockOnDeleteCallback}
-        onClickCallback={mockOnClickCallback}
-      />
+      <table>
+        <tbody>
+          <WidgetItemRow
+            item={mockItem}
+            onDeleteCallback={mockOnDeleteCallback}
+            onClickCallback={mockOnClickCallback}
+          />
+        </tbody>
+      </table>
     );
 
     expect(screen.getByText("Test Item")).toBeInTheDocument();
@@ -44,11 +60,15 @@ describe("WidgetItemRow Component", () => {
 
   it("calls onClickCallback when the item name is clicked", () => {
     render(
-      <WidgetItemRow
-        item={mockItem}
-        onDeleteCallback={mockOnDeleteCallback}
-        onClickCallback={mockOnClickCallback}
-      />
+      <table>
+        <tbody>
+          <WidgetItemRow
+            item={mockItem}
+            onDeleteCallback={mockOnDeleteCallback}
+            onClickCallback={mockOnClickCallback}
+          />
+        </tbody>
+      </table>
     );
 
     fireEvent.click(screen.getByText("Test Item"));
@@ -57,11 +77,15 @@ describe("WidgetItemRow Component", () => {
 
   it("displays the correct evidence count", () => {
     render(
-      <WidgetItemRow
-        item={mockItem}
-        onDeleteCallback={mockOnDeleteCallback}
-        onClickCallback={mockOnClickCallback}
-      />
+      <table>
+        <tbody>
+          <WidgetItemRow
+            item={mockItem}
+            onDeleteCallback={mockOnDeleteCallback}
+            onClickCallback={mockOnClickCallback}
+          />
+        </tbody>
+      </table>
     );
 
     expect(
@@ -70,14 +94,18 @@ describe("WidgetItemRow Component", () => {
   });
 
   it("calls onDeleteCallback when the delete button is clicked and confirmed", () => {
-    window.confirm = jest.fn(() => true); // Mock confirm dialog to always return true
+    mockConfirm.mockReturnValueOnce(true);
 
     render(
-      <WidgetItemRow
-        item={mockItem}
-        onDeleteCallback={mockOnDeleteCallback}
-        onClickCallback={mockOnClickCallback}
-      />
+      <table>
+        <tbody>
+          <WidgetItemRow
+            item={mockItem}
+            onDeleteCallback={mockOnDeleteCallback}
+            onClickCallback={mockOnClickCallback}
+          />
+        </tbody>
+      </table>
     );
 
     fireEvent.click(screen.getByText("Delete"));
@@ -86,14 +114,18 @@ describe("WidgetItemRow Component", () => {
   });
 
   it("does not call onDeleteCallback when the delete button is clicked and not confirmed", () => {
-    window.confirm = jest.fn(() => false); // Mock confirm dialog to always return false
+    mockConfirm.mockReturnValueOnce(false);
 
     render(
-      <WidgetItemRow
-        item={mockItem}
-        onDeleteCallback={mockOnDeleteCallback}
-        onClickCallback={mockOnClickCallback}
-      />
+      <table>
+        <tbody>
+          <WidgetItemRow
+            item={mockItem}
+            onDeleteCallback={mockOnDeleteCallback}
+            onClickCallback={mockOnClickCallback}
+          />
+        </tbody>
+      </table>
     );
 
     fireEvent.click(screen.getByText("Delete"));
@@ -105,20 +137,26 @@ describe("WidgetItemRow Component", () => {
     const shortEvidenceItem = { ...mockItem, evidence: [{ trends: [] }] };
     const longEvidenceItem = {
       ...mockItem,
-      evidence: new Array(10).fill({ trends: [] }),
+      evidence: new Array(EVIDENCE_MILESTONE).fill({ trends: [] }),
     };
 
     const { rerender } = render(
-      <WidgetItemRow
-        item={shortEvidenceItem}
-        onDeleteCallback={mockOnDeleteCallback}
-        onClickCallback={mockOnClickCallback}
-      />
+      <table>
+        <tbody>
+          <WidgetItemRow
+            item={shortEvidenceItem}
+            onDeleteCallback={mockOnDeleteCallback}
+            onClickCallback={mockOnClickCallback}
+          />
+        </tbody>
+      </table>
     );
+
+    screen.debug();
 
     expect(
       screen.getByText(shortEvidenceItem.evidence.length.toString()).className
-    ).toContain("bg-danger");
+    ).toContain("evidence badge bg-warning");
 
     rerender(
       <WidgetItemRow
@@ -130,6 +168,6 @@ describe("WidgetItemRow Component", () => {
 
     expect(
       screen.getByText(longEvidenceItem.evidence.length.toString()).className
-    ).toContain("bg-success");
+    ).toContain("evidence badge bg-success");
   });
 });

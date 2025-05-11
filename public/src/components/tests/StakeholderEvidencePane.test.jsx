@@ -20,6 +20,7 @@ jest.mock("../../hooks/useOAuthAPI");
 describe("StakeholderEvidencePane.jsx", () => {
   const mockWithContext = ReactTagInput.WithContext;
   const handleDeleteSpy = jest.fn();
+  global.fetch = jest.fn().mockResolvedValue({ json: jest.fn() });
 
   beforeEach(() => {
     mockWithContext.mockImplementation(
@@ -73,14 +74,21 @@ describe("StakeholderEvidencePane.jsx", () => {
 
   it("Renders mock evidence personas", async () => {
     const mockPersonas = [
-      { id: "1", text: "Persona 1" },
-      { id: "2", text: "Persona 2" },
+      { id: "1", name: "Persona 1" },
+      { id: "2", name: "Persona 2" },
     ];
     const { container } = render(
-      <StakeholderEvidencePane evidence={mockPersonas} />
+      <StakeholderEvidencePane
+        evidence={mockPersonas}
+        productId="productId"
+        containerModalId="containerModalId"
+        addFileFunc={jest.fn()}
+        removeFileFunc={jest.fn()}
+      />
     );
-    const rows = container.querySelector("tr");
-    expect(rows).toBeInTheDocument();
+
+    const rows = Array.from(container.querySelectorAll("tr"));
     expect(rows.length).toEqual(mockPersonas.length);
+    rows.forEach((row) => expect(row).toBeInTheDocument());
   });
 });

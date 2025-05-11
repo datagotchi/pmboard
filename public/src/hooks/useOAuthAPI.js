@@ -212,7 +212,6 @@ const useOAuthAPI = () => {
   /**
    * A convenience function to initialize things before requesting an oauth access token & downloading files.
    * @returns {object} The {oauth.AuthorizationServer, oauth.Client, code_verifier} needed for function calls.
-   * @example await init(); do other stuff...
    */
   const init = async () => {
     authorizationServer = await getAuthorizationServer();

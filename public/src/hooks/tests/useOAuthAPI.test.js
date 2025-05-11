@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { renderHook, act } from "@testing-library/react";
+import { renderHook, act, waitFor } from "@testing-library/react";
 
 import useOAuthAPI from "../useOAuthAPI";
 
@@ -49,8 +49,8 @@ describe("useOAuthAPI", () => {
     sessionStorage.setItem("access_token", "mockAccessToken");
 
     const { result } = renderHook(() => useOAuthAPI());
-    const token = await result.current.getAccessToken();
 
+    const token = await result.current.getAccessToken();
     expect(token).toBe("mockAccessToken");
   });
 
@@ -60,7 +60,6 @@ describe("useOAuthAPI", () => {
 
     oauth.generateRandomCodeVerifier.mockReturnValue("mockCodeVerifier");
     oauth.calculatePKCECodeChallenge.mockResolvedValue("mockCodeChallenge");
-    oauth.discoveryRequest.mockResolvedValue({ json: jest.fn() });
     oauth.processDiscoveryResponse.mockResolvedValue({
       authorization_endpoint: "https://mockAuthEndpoint",
     });
