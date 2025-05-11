@@ -1,19 +1,20 @@
 import * as oauth from "oauth4webapi";
 
 import { EvidenceFile, GoogleFile, OAuthAPIFunctions } from "../types";
+import { useRef } from "react";
 
 /**
  * A React hook to expose the API from oauth4webapi.
  * @type {OAuthAPIFunctions}
- * @example const {a, b, c} = useOAuthAPI();
  */
 const useOAuthAPI = () => {
   const redirect_uri = "http://localhost:8000";
   const issuer = new URL("https://accounts.google.com");
+
   /**
-   * @type {oauth.AuthorizationServer}
+   * @type {React.RefObject<oauth.AuthorizationServer>}
    */
-  let authorizationServer;
+  const authorizationServer = useRef();
   /**
    * @type {string}
    */
@@ -26,7 +27,6 @@ const useOAuthAPI = () => {
    * @param {oauth.Client} client The client containing the secret/key information.
    * @param {string} code_challenge The code challenge to send to authorization, and then reuse once you get an access token.
    * @param {string} code_challenge_method The method to use for to verify the code challenge.
-   * @example gotoAuthorizationUrl(client, code_challenge, code_challenge_method)
    */
   const gotoAuthorizationUrl = (
     client,
@@ -34,8 +34,12 @@ const useOAuthAPI = () => {
     code_challenge_method
   ) => {
     // redirect user to as.authorization_endpoint
+    console.log(
+      "*** gotoAuthorizationUrl::authorizationServer: ",
+      authorizationServer.current
+    );
     const authorizationUrl = new URL(
-      authorizationServer.authorization_endpoint
+      authorizationServer.current.authorization_endpoint
     );
     authorizationUrl.searchParams.set("client_id", client.client_id);
     authorizationUrl.searchParams.set("redirect_uri", redirect_uri);
@@ -56,8 +60,9 @@ const useOAuthAPI = () => {
      * backwards compatible even if the AS doesn't support it which is why we're using it regardless.
      */
     if (
-      authorizationServer.code_challenge_methods_supported.includes("S256") !==
-      true
+      authorizationServer.current.code_challenge_methods_supported.includes(
+        "S256"
+      ) !== true
     ) {
       state = oauth.generateRandomState();
       authorizationUrl.searchParams.set("state", state);
@@ -73,12 +78,6 @@ const useOAuthAPI = () => {
    * @param {string} code_verifier The "password" for the next oauth server communication.
    * @param {string} state A state token for auth backup.
    * @returns {string} The access token parsed from the return-URL query parameters.
-   * @example const access_token = await getAccessTokenFromGoogle(
-          authorizationServer,
-          client,
-          code_verifier,
-          state
-        );
    */
   const getAccessTokenFromGoogle = async (
     authorizationServer,
@@ -96,7 +95,7 @@ const useOAuthAPI = () => {
     // const currentUrl = getCurrentUrl();
     const currentUrl = new URL(window.location.href);
     const params = oauth.validateAuthResponse(
-      authorizationServer,
+      authorizationServer.current,
       client,
       currentUrl,
       state
@@ -108,7 +107,7 @@ const useOAuthAPI = () => {
     }
 
     const response = await oauth.authorizationCodeGrantRequest(
-      authorizationServer,
+      authorizationServer.current,
       client,
       params,
       redirect_uri,
@@ -127,7 +126,7 @@ const useOAuthAPI = () => {
     }
 
     const result = await oauth.processAuthorizationCodeOAuth2Response(
-      authorizationServer,
+      authorizationServer.current,
       client,
       response
     );
@@ -144,7 +143,6 @@ const useOAuthAPI = () => {
   /**
    * Get an oauth authorization server.
    * @returns {Promise<oauth.AuthorizationServer>} The promise from the API call
-   * @example authorizationServer = await getAuthorizationServer()
    */
   const getAuthorizationServer = async () =>
     await oauth
@@ -157,9 +155,6 @@ const useOAuthAPI = () => {
    * @param {string} access_token The access token from the oauth server.
    * @param {string} nextPageToken The token to get the next page of files.
    * @returns {EvidenceFile[]} The final version of the filesArray after visiting all pages.
-   * @example if (data.nextPageToken) {
-          return getNextPage(filesArray, access_token, data.nextPageToken);
-        }
    */
   const getNextPage = (filesArray, access_token, nextPageToken = null) =>
     oauth
@@ -202,7 +197,6 @@ const useOAuthAPI = () => {
    * The exposed function to get all files from Google Drive.
    * @param {string} access_token The recently-provided access token to make an API request.
    * @returns {Promise<GoogleFile[]>} The entire list of files from gdrive.
-   * @example const {getGoogleDriveFiles} = useOAuthAPI();
    */
   const getGoogleDriveFiles = async (access_token) => {
     const files = await getNextPage([], access_token);
@@ -214,7 +208,7 @@ const useOAuthAPI = () => {
    * @returns {object} The {oauth.AuthorizationServer, oauth.Client, code_verifier} needed for function calls.
    */
   const init = async () => {
-    authorizationServer = await getAuthorizationServer();
+    authorizationServer.current = await getAuthorizationServer();
     const { key, secret } = await import("../../../config");
     /**
      * @type {oauth.Client}
@@ -233,7 +227,7 @@ const useOAuthAPI = () => {
     }
     code_challenge = await oauth.calculatePKCECodeChallenge(code_verifier);
     return {
-      authorizationServer,
+      authorizationServer: authorizationServer.current,
       client,
       code_verifier,
     };
@@ -242,9 +236,12 @@ const useOAuthAPI = () => {
   /**
    * Request an access token from the Google OAuth server.
    * @returns {Promise<string | null | undefined>} The API call promise.
-   * @example const {getAccessToken} = useOAuthAPI();
    */
   const getAccessToken = async () => {
+    console.log(
+      '*** sessionStorage.getItem("access_token"): ',
+      sessionStorage.getItem("access_token")
+    );
     if (
       sessionStorage.getItem("access_token") &&
       sessionStorage.getItem("access_token") !== "undefined"
