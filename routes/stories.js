@@ -21,8 +21,8 @@ router.get("/", async (req, res, next) => {
 */
   const stories = await req.pool
     .query({
-      text: "select * from stories where product_id = $1::integer",
-      values: [req.product_id],
+      text: "select * from stories",
+      values: [],
     })
     .then((result) => result.rows);
   await Promise.all(
@@ -81,7 +81,7 @@ router.put("/", async (req, res, next) => {
   return res.sendStatus(200);
 });
 
-router.post("/", () => addItem("stories"));
+router.post("/", addItem("stories"));
 
 router.param("story_id", function (req, res, next) {
   req.story_id = req.params.story_id;
@@ -89,7 +89,6 @@ router.param("story_id", function (req, res, next) {
 });
 
 router.put("/:story_id", async (req, res, next) => {
-  // await updateItem("stories", "story_id")(req, res, next);
   if (req.body.summary) {
     const story_id = req.story_id;
     const { summary } = req.body;
@@ -126,33 +125,33 @@ router.put("/:story_id", async (req, res, next) => {
   return res.sendStatus(400);
 });
 
-router.delete("/:story_id", () => deleteItem("stories", "story_id"));
+router.delete("/:story_id", deleteItem("stories", "story_id"));
 
 // evidence & trends from evidenceFunctions.js
 
-router.get("/:story_id/evidence", () =>
+router.get(
+  "/:story_id/evidence",
   getEvidenceExpressFunc("stories", "story_id")
 );
 
-router.post("/:story_id/evidence", () => addEvidenceExpressFunc("story_id"));
+router.post("/:story_id/evidence", addEvidenceExpressFunc("story_id"));
 
-router.param("evidence_id", () =>
-  trackEvidenceIdExpressFunc("stories", "story_id")
-);
+router.param("evidence_id", trackEvidenceIdExpressFunc("stories", "story_id"));
 
-router.delete("/:story_id/evidence/:evidence_id", () =>
-  deleteEvidenceExpressFunc()
-);
+router.delete("/:story_id/evidence/:evidence_id", deleteEvidenceExpressFunc());
 
-router.post("/:story_id/evidence/:evidence_id/trends", () =>
+router.post(
+  "/:story_id/evidence/:evidence_id/trends",
   addTrendExpressFunc("stories", "story_id")
 );
 
-router.put("/:story_id/evidence/:evidence_id/trends/:trend_ix", () =>
+router.put(
+  "/:story_id/evidence/:evidence_id/trends/:trend_ix",
   updateTrendExpressFunc("stories", "story_id")
 );
 
-router.delete("/:story_id/evidence/:evidence_id/trends/:trend_ix", () =>
+router.delete(
+  "/:story_id/evidence/:evidence_id/trends/:trend_ix",
   deleteTrendExpressFunc("stories", "story_id")
 );
 
