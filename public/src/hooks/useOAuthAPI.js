@@ -34,10 +34,6 @@ const useOAuthAPI = () => {
     code_challenge_method
   ) => {
     // redirect user to as.authorization_endpoint
-    console.log(
-      "*** gotoAuthorizationUrl::authorizationServer: ",
-      authorizationServer.current
-    );
     const authorizationUrl = new URL(
       authorizationServer.current.authorization_endpoint
     );
@@ -238,10 +234,6 @@ const useOAuthAPI = () => {
    * @returns {Promise<string | null | undefined>} The API call promise.
    */
   const getAccessToken = async () => {
-    console.log(
-      '*** sessionStorage.getItem("access_token"): ',
-      sessionStorage.getItem("access_token")
-    );
     if (
       sessionStorage.getItem("access_token") &&
       sessionStorage.getItem("access_token") !== "undefined"
