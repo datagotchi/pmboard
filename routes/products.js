@@ -32,7 +32,6 @@ router.get("/", async (req, res, next) => {
 //   });
 //   await Product.create(newprod);
 //   // var userid = req.cookies.userid;
-//   // console.log("*** userid: ", userid);
 //   // newprod.permissions.push({
 //   //   _id: userid,
 //   //   value: 10,
@@ -103,7 +102,7 @@ router.param("product_id", async (req, res, next, product_id) => {
 // router.get("/:product_id", function (req, res, next) {
 //   //var userid = JSON.parse(req.cookies.userid);
 //   // ...
-//   return res.json(req.product);
+//   return res.json(req.product_id);
 // });
 
 // // delete product

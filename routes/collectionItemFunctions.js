@@ -9,7 +9,7 @@ function checkUserAccess(req, req_level) {
 }
 */
 
-// FIXME: missing JSDoc + no tool complaints
+// TODO: missing JSDoc + no tool complaints
 
 export const addItem = (collectionName) => async (req, res, next) => {
   /*
@@ -77,5 +77,3 @@ export const deleteItem =
       return next(err);
     }
   };
-
-// module.exports = { addItem, updateItem, deleteItem };

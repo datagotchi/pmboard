@@ -29,10 +29,10 @@ app.use(async (req, res, next) => {
     next();
   } catch (err) {
     console.error(err);
-    console.error("*** totalCount", pool.totalCount);
-    console.error("*** idleCount", pool.idleCount);
-    console.error("*** waitingCount", pool.waitingCount);
-    console.error("*** so, restarting server...");
+    console.error("TotalCount", pool.totalCount);
+    console.error("IdleCount", pool.idleCount);
+    console.error("WaitingCount", pool.waitingCount);
+    console.error("So, restarting server...");
     process.exit();
   }
 });
@@ -56,7 +56,6 @@ app.use(function (req, res, next) {
 // will print stacktrace
 // if (app.get('env') === 'development') {
 app.use(function (err, req, res, next) {
-  // console.log("*** caught error from req: ", req);
   return res.status(err.status || 500).json({
     message: err.message,
     error: err,

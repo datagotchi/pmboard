@@ -262,7 +262,7 @@ const Widget = ({
           </table>
         </div>
         <div className="panel-footer">
-          <button onClick={showCreateDialog}>
+          <button onClick={showCreateDialog} className="btn btn-primary">
             <span className="bi bi-person-plus" aria-hidden="true"></span> Add
           </button>
         </div>

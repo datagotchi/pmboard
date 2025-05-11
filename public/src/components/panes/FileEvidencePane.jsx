@@ -77,6 +77,7 @@ const FileEvidencePane = ({
   const accessToken = useMemo(() => sessionStorage.getItem("access_token"), []);
 
   const allTags = useContext(AllTagsContext);
+  // FIXME: allTags becomes undefined or null after the empathy pane updates them
 
   // update tagsPerFile based on className changes on the summary pane (in allTags)
   useEffect(() => {
@@ -91,7 +92,7 @@ const FileEvidencePane = ({
             if (trend) {
               trend.type = tag.className;
             } else {
-              console.error("*** trend not found in evidence: ", tag.id);
+              console.error("Trend not found in evidence: ", tag.id);
             }
             thereAreChanges = true;
           }
@@ -159,8 +160,9 @@ const FileEvidencePane = ({
             type: tag.className,
           }));
           if (
+            evidenceFile &&
             getJsonSortedString(evidenceFile.trends) !==
-            getJsonSortedString(trends)
+              getJsonSortedString(trends)
           ) {
             evidenceFile.trends = trends;
             thereAreChangesToTrends = true;
@@ -227,7 +229,6 @@ const FileEvidencePane = ({
   /**
    * A function to remove a file from a widget item's evidence.
    * @param {EvidenceFile} file The file to remove.
-   * @example <DeleteButton onClick={() => removeFile(...)} />
    */
   const removeFile = async (file) => {
     const fileIndex = evidence.indexOf((f) => f.url === file.url);
@@ -324,11 +325,12 @@ const FileEvidencePane = ({
                           [file.url]: fileTags,
                         });
                       }}
+                      // FIXME: some suggestions are classNames and no id/text
                       // suggestions={allTags
                       //   .filter(
                       //     (tag) =>
-                      //       trendTagsPerFile[file.url] &&
-                      //       !trendTagsPerFile[file.url]
+                      //       tagsPerFile[file.url] &&
+                      //       !tagsPerFile[file.url]
                       //         .map((t) => t.id)
                       //         .includes(tag.id)
                       //   )
@@ -337,6 +339,7 @@ const FileEvidencePane = ({
                       //     text: allTag.id,
                       //     className: allTag.className,
                       //   }))}
+                      // TODO: below, stylize suggestions
                       // renderSuggestion={(item, query) => {}}
                       editable={true}
                       onTagUpdate={(index, newTag) => {
