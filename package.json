@@ -6,7 +6,9 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
-    "e2e": "yarn playwright test --reporter=list --workers=5"
+    "e2e": "yarn playwright test --reporter=list --workers=5",
+    "db:create": "PGPASSWORD=${POSTGRES_PASSWORD} psql -h ${POSTGRES_HOST} -p ${POSTGRES_PORT} -U ${POSTGRES_USER} -c 'CREATE DATABASE pmboard'",
+    "db:migrate": "PGPASSWORD=${POSTGRES_PASSWORD} psql -h ${POSTGRES_HOST} -p ${POSTGRES_PORT} -U ${POSTGRES_USER} -d pmboard < pmboard-dump.sql"
   },
   "jest": {
     "verbose": true,

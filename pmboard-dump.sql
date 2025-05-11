@@ -2,12 +2,13 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 13.4
--- Dumped by pg_dump version 14.12 (Homebrew)
+-- Dumped from database version 17.0 (Homebrew)
+-- Dumped by pg_dump version 17.0 (Homebrew)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -47,7 +48,7 @@ CREATE SEQUENCE public.companies_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.companies_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.companies_id_seq OWNER TO postgres;
 
 --
 -- Name: companies_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -88,7 +89,7 @@ CREATE SEQUENCE public.evidence_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.evidence_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.evidence_id_seq OWNER TO postgres;
 
 --
 -- Name: evidence_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -128,7 +129,7 @@ CREATE SEQUENCE public."journeySteps_id_seq"
     CACHE 1;
 
 
-ALTER TABLE public."journeySteps_id_seq" OWNER TO postgres;
+ALTER SEQUENCE public."journeySteps_id_seq" OWNER TO postgres;
 
 --
 -- Name: journeySteps_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -162,7 +163,7 @@ CREATE SEQUENCE public.journeys_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.journeys_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.journeys_id_seq OWNER TO postgres;
 
 --
 -- Name: journeys_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -198,7 +199,7 @@ CREATE SEQUENCE public.personas_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.personas_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.personas_id_seq OWNER TO postgres;
 
 --
 -- Name: personas_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -232,7 +233,7 @@ CREATE SEQUENCE public.products_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.products_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.products_id_seq OWNER TO postgres;
 
 --
 -- Name: products_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -268,7 +269,7 @@ CREATE SEQUENCE public.stories_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.stories_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.stories_id_seq OWNER TO postgres;
 
 --
 -- Name: stories_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -304,7 +305,7 @@ CREATE SEQUENCE public.tasks_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.tasks_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.tasks_id_seq OWNER TO postgres;
 
 --
 -- Name: tasks_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -340,7 +341,7 @@ CREATE SEQUENCE public.trends_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.trends_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.trends_id_seq OWNER TO postgres;
 
 --
 -- Name: trends_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -433,6 +434,10 @@ COPY public.companies (id, name, product_id, index) FROM stdin;
 14	All Job Boards	6	\N
 15	Fiverr	6	\N
 16	Upwork	6	\N
+17	OpenAI	5	\N
+18	Microsoft	5	\N
+19	Google	5	\N
+20	Amazon	5	\N
 \.
 
 
@@ -461,7 +466,6 @@ COPY public.evidence (id, name, url, icon, persona_id, created_date, modified_da
 29	Inspect: Self user research notes outline -- US citizen	https://docs.google.com/document/d/1WDL5N38AVfiZY5UGxkv3Et0H8cMnQ1WZJcID0DLlBto/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	8	\N	\N	\N	\N
 30	Inspect proposal for information tracking	https://docs.google.com/document/d/1UI8zBNhSGD31j6YuBpH3rFm0wrJwLeyXt7iaZR-M1yU/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	8	\N	\N	\N	\N
 31	Tracking the Reliability of Information _ Datagotchi Labs.pdf	https://drive.google.com/file/d/1KCxhnd6j8XPr5dZHJ-MaNVK3BTmUS-TF/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	8	\N	\N	\N	\N
-32	Trump bizarrely blames Harris for turned-Black remark_ _She said it. I didn't say it_ (video) - Boing Boing.pdf	https://drive.google.com/file/d/1xFDIjHTSpLPZ_D5TVff92nfJz-i-YZFQ/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	8	2024-08-11	2024-08-11	\N	\N
 33	Inspect proposal for information tracking	https://docs.google.com/document/d/1UI8zBNhSGD31j6YuBpH3rFm0wrJwLeyXt7iaZR-M1yU/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	9	\N	\N	\N	\N
 20	Counteroffer self user research notes -- Collusion	https://docs.google.com/document/d/1zPEtCLeSYJCT_3iLFYuR4U3NqAY8-ZoptGnN0RiR3XI/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	7	2024-08-06	2024-08-06	\N	\N
 18	PMBoard proposal	https://docs.google.com/document/d/1KzD6QLuWW0qv7SJreMW0G3Piw96x7zBmUgdLC-vCIoE/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	7	\N	\N	\N	\N
@@ -508,7 +512,6 @@ COPY public.evidence (id, name, url, icon, persona_id, created_date, modified_da
 21	Counteroffer self user research notes -- Exaptive	https://docs.google.com/document/d/1I-kxJBTBNjiuUEgaYEW0dYNDFy98sWc1CnqPJ3KJfbc/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	7	2024-08-06	2024-08-06	\N	\N
 89	Signal Is More Than Encrypted Messaging. Under Meredith Whittaker, It’s Out to Prove Surveillance Capitalism Wrong _ WIRED.pdf	https://drive.google.com/file/d/1GoGt7MGmAcJ00KZc5BXF35Da-LLSNHhN/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	14	2024-08-30	2024-08-30	\N	\N
 90	8 Tips To Optimize Your Resume For Applicant Tracking Systems.pdf	https://drive.google.com/file/d/1hN9MpgdPMoQ61V6K-D9LLaLoL28q3act/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	20	2024-08-30	2024-08-30	\N	\N
-91	A podcast gives an inside look at how the far-right is mainstreaming itself _ Vox.pdf	https://drive.google.com/file/d/1zG2ya3m0cgX95q67xF4paztFv5jdAV6j/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	8	2024-08-30	2024-08-28	\N	\N
 92	The End of the Creator Economy. YouTubers and TikTokers are the new… _ by Joe Procopio _ Aug, 2024 _ Entrepreneurship Handbook.pdf	https://drive.google.com/file/d/1gA817iA4-PlaG4KqUgW7E1irQ72cRFrS/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	9	2024-08-30	2024-08-27	\N	\N
 94	Stakeholder Wants vs. User Needs_ Why Following Orders Creates Bad Products _ by Michael H. Goitein _ Aug, 2024 _ Product Coalition.pdf	https://drive.google.com/file/d/19v0-abf0uZOvfVY7thO08j1aBWgo6iLo/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	7	2024-08-30	2024-08-27	\N	\N
 95	Stakeholder Wants vs. User Needs_ Why Following Orders Creates Bad Products _ by Michael H. Goitein _ Aug, 2024 _ Product Coalition.pdf	https://drive.google.com/file/d/19v0-abf0uZOvfVY7thO08j1aBWgo6iLo/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	6	2024-08-30	2024-08-27	\N	\N
@@ -554,9 +557,15 @@ COPY public.evidence (id, name, url, icon, persona_id, created_date, modified_da
 136	What’s next for SB 1047_ California Gov. Newsom has the chance to make AI history _ Vox.pdf	https://drive.google.com/file/d/12O0YpMLTvc393-L2k3onKG53WkQ2Nf4z/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	14	2024-09-02	2024-09-02	\N	\N
 137	Why A.I. Isn’t Going to Make Art _ The New Yorker.pdf	https://drive.google.com/file/d/1LkSuFYUUJu7P2-LyNW1dot0c9tHZVQHd/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	16	2024-09-02	2024-09-02	\N	\N
 141	AIDP_SeekingReliableElectionInformation-DontTrustAI_2024.pdf	https://drive.google.com/file/d/1rWTWHxtRmYsA6Y8_tAtSwvVa5Z3tO-vy/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	14	2024-09-02	2024-09-02	\N	\N
-142	AIDP_SeekingReliableElectionInformation-DontTrustAI_2024.pdf	https://drive.google.com/file/d/1rWTWHxtRmYsA6Y8_tAtSwvVa5Z3tO-vy/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	8	2024-09-02	2024-09-02	\N	\N
 143	California lawmakers approve legislation to ban deepfakes, regulate AI _ AP News.pdf	https://drive.google.com/file/d/1HpT-bG7_4j9UzHa6gwt8ESVdlCYc_o1u/view?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/pdf	12	2024-09-02	2024-09-02	\N	\N
-147	Entrepreneurs/Startups	\N	\N	7	\N	\N	11	\N
+148	Inspect MVP #1	https://docs.google.com/document/d/1LMHs4cyQ62sr_BEhS0qEFWIYSXrGDA6OYbfRRm2q4eQ/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	8	2024-11-04	2024-11-04	\N	\N
+150	Counteroffer MVP #1	https://docs.google.com/document/d/1hzJSdhRSdeBUYrpzz_i07VeGBcXa4h-Ls9cO09g3QqE/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	21	2024-11-04	2024-11-04	\N	\N
+151	Counteroffer MVP #2	https://docs.google.com/document/d/1y5QqLLl7K0sx4X5a8NvFLfQyBRA7PFS9QRoHzO_FGwQ/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	21	2024-11-04	2024-11-04	\N	\N
+152	Counteroffer MVP #3	https://docs.google.com/document/d/15-YK7mnx9b6HNCvEn7RlkW_OQsFT-UnaPtrGSLCasR8/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	19	2024-11-04	2024-11-04	\N	\N
+153	PMBoard MVP #1 (2015)	https://docs.google.com/document/d/1lsEvnj9nh9CikwJOo6QSIEFhJrjFzg8l4w990V-g418/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	7	2024-11-07	2024-11-07	\N	\N
+154	PMBoard MVP #2	https://docs.google.com/document/d/1_kF30BoD8HOTTqJDUqWLQwtC1kwf1uWGpR-nE3QjWis/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	7	2024-11-07	2024-11-07	\N	\N
+156	Inspect MVP #2	https://docs.google.com/document/d/1fOVl87SBI-LLE8kvBza56HjFU283-aYVYrbhf9uxgMU/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	9	2024-11-04	2024-11-07	\N	\N
+157	Inspect Activism hypotheses	https://docs.google.com/document/d/1hrPw3VQ29t-7MGFBLJ86y5qX2ZabQxXdJrvLip27Leg/edit?usp=drivesdk	https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document	26	2025-05-04	2025-05-04	\N	\N
 \.
 
 
@@ -588,10 +597,6 @@ COPY public.personas (id, name, product_id, index) FROM stdin;
 1	All People	1	\N
 3	Entrepreneur	1	\N
 4	Investor	1	\N
-8	All People	3	\N
-9	Social Thought Leader	3	\N
-10	Journalist	3	\N
-11	News Employee	3	\N
 12	p1	4	\N
 13	p2	4	\N
 14	All People	5	\N
@@ -608,6 +613,11 @@ COPY public.personas (id, name, product_id, index) FROM stdin;
 5	R&D Scientist	2	0
 7	Entrepreneurs/Startups	2	1
 6	Product Manager	2	2
+26	Community Leader	3	3
+8	All People	3	0
+9	Social Thought Leader	3	1
+10	Journalist	3	2
+25	Migrant	3	4
 \.
 
 
@@ -719,7 +729,6 @@ COPY public.trends (id, name, type, evidence_id) FROM stdin;
 88	Applying to/posting gigs on Fiverr/Upwork		16
 146	Often need to talk with the founders/executives to get clarity on the vision	\N	20
 180	Google News	resource	27
-178	Finds news in social media		27
 181	Facebook		27
 182	Nextdoor		27
 183	Pays for NYT		27
@@ -893,7 +902,6 @@ COPY public.trends (id, name, type, evidence_id) FROM stdin;
 192	Gets alerts from Apple News		28
 193	Overloaded by the news		28
 194	Heavy iPhone User		28
-195	Trust news based on source reliability		28
 196	Avoids sources with strong feelings		28
 197	Cross-checks stories with other sources		28
 198	Apple News		28
@@ -916,7 +924,6 @@ COPY public.trends (id, name, type, evidence_id) FROM stdin;
 216	Many articles have clickbait headlines		30
 217	Many articles have sensationalist headlines		30
 218	Much news is fake: misinformation & disinformation		30
-220	Trust news based on source reliability		30
 221	The Thorough, Multimodal Summary Reposter		30
 222	Adaptable Reliability & Context Visualizations		30
 223	As the world becomes more connected and more complex, it is increasingly difficult to know what to believe		31
@@ -931,14 +938,6 @@ COPY public.trends (id, name, type, evidence_id) FROM stdin;
 232	A solution is needed to consistently evaluate the truth of claims		31
 233	A solution is needed to use true claims to improve source trust data that will help them evaluate claims against the trustworthiness of the source		31
 234	Overloaded by the news		31
-235	Reach people on more online platforms		33
-236	Unify discussions from their posts		33
-237	Need to be able to get people to take their posts seriously, trust them, and take action from them		33
-238	Need to provide context with posts		33
-239	Need to make posts easily actionable		33
-240	Want to get the word out about important issues		33
-241	The Thorough, Multimodal Summary Reposter		33
-242	Adaptable Reliability & Context Visualizations		33
 248	Remote work is bad for you		42
 249	Remote work can kill a junior's career		42
 250	Techies won't grow if they stay at one company in one domain		42
@@ -947,7 +946,6 @@ COPY public.trends (id, name, type, evidence_id) FROM stdin;
 189	Overloaded by the news	objective	27
 152	Engineers are pressured to focus on quickly and effectively accomplish engineering tasks they were given		20
 161	Engineers are often busy in other meetings instead of doing work		21
-185	Trust news based on source reliability	goal	27
 190	Friends	resource	27
 191	Social media	resource	27
 188	Cross-checks stories with other sources	activity	27
@@ -960,6 +958,14 @@ COPY public.trends (id, name, type, evidence_id) FROM stdin;
 259	Junior candidates should work at local businesses, even if they aren't very good		42
 260	In-office work is good for you		42
 261	Working at local businesses is "real experience"		42
+237	Need to be able to get people to take their posts seriously, trust them, and take action from them	goal	33
+238	Need to provide context with posts	activity	33
+235	Reach people on more online platforms	goal	33
+236	Unify discussions from their posts	task	33
+241	The Thorough, Multimodal Summary Reposter	resource	33
+242	Adaptable Reliability & Context Visualizations	resource	33
+239	Need to make posts easily actionable	activity	33
+220	Trust news based on source reliability	goal	30
 262	In-office collaboration is better than remote, especially for junior people		42
 263	In the United States alone there are over one million “unfilled roles” in software engineering as of 2024 and the number is rising every year		43
 264	There are many roles because of Unrealistic Expectations		43
@@ -1203,6 +1209,39 @@ COPY public.trends (id, name, type, evidence_id) FROM stdin;
 186	News has become transient to people	objective	27
 219	News has become transient to people	objective	30
 199	News has become transient to people	objective	28
+240	Want to get the word out about important issues	objective	33
+611	So much happens every day	objective	148
+609	No interest in downloading the mobile app	resource	148
+610	Little interest in staying engaged with news	goal	148
+612	Might be open to weekly emails	resource	148
+613	Might be open to hearing about news on social media	resource	148
+614	Might be more open to higher-level insights than news articles every day	goal	148
+615	Top software engineers like us had leverage over recruiters/employers	\N	150
+616	Ryan was able to make up to $50 for calls	\N	150
+617	Recruiters were initially offended	\N	151
+618	I added what they would ask me in the initial call above my resume	\N	151
+619	Some eventually came to love it because it meant they didn’t need to make the initial call	\N	151
+620	I was able to more effectively choose between open job opportunities	\N	151
+621	I got poached by Clarify Health Solutions	\N	151
+622	After working for them, I found out that I wasn’t working on anything we talked about in the interviews	\N	151
+623	Leverage afforded me the ability to streamline the recruiting process	\N	151
+624	Did not help me choose the best opportunity based on the interviews	\N	151
+625	Many of us techies were laid off since 2020	\N	152
+626	More workers in other domains are unionizing more to get leverage over their employers	\N	152
+627	Tech workers have no unions	\N	152
+628	Document user research results	\N	153
+629	Link research to solutions somehow	\N	153
+630	Had some success with understanding user research better	\N	153
+631	PMBoard showed promise, but needs a lot of work to be a useful tool	\N	153
+633	Maybe eventually get clients	\N	154
+632	Analyze and synthesize research data for my Datagotchi Labs projects	\N	154
+637	Share legal rights documents	\N	157
+634	Stay aware of ICE raids		157
+635	Share ICE raids		157
+636	Know about legal rights documents	\N	157
+178	Finds news in social media	resource	27
+185	Trust news based on source reliability	goal	27
+195	Trust news based on source reliability	goal	28
 \.
 
 
@@ -1210,14 +1249,14 @@ COPY public.trends (id, name, type, evidence_id) FROM stdin;
 -- Name: companies_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.companies_id_seq', 16, true);
+SELECT pg_catalog.setval('public.companies_id_seq', 20, true);
 
 
 --
 -- Name: evidence_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.evidence_id_seq', 147, true);
+SELECT pg_catalog.setval('public.evidence_id_seq', 157, true);
 
 
 --
@@ -1238,7 +1277,7 @@ SELECT pg_catalog.setval('public.journeys_id_seq', 15, true);
 -- Name: personas_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.personas_id_seq', 24, true);
+SELECT pg_catalog.setval('public.personas_id_seq', 26, true);
 
 
 --
@@ -1266,7 +1305,7 @@ SELECT pg_catalog.setval('public.tasks_id_seq', 45, true);
 -- Name: trends_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.trends_id_seq', 608, true);
+SELECT pg_catalog.setval('public.trends_id_seq', 637, true);
 
 
 --
