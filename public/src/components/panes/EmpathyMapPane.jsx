@@ -42,20 +42,20 @@ const EmpathyMapPane = ({
           .flat()
           .some(
             (tag, index) =>
-              tag.className !== allTagsForThisPersona[index].className
+              tag.className !== allTagsForThisPersona[index].className,
           ))
     ) {
       const updatedTypedTags = {};
       [...indexToClassName].forEach((className) => {
         const tags = allTagsForThisPersona.filter(
-          (t) => t.className === className
+          (t) => t.className === className,
         );
         updatedTypedTags[className] = tags;
       });
       updatedTypedTags[""] = allTagsForThisPersona.filter((t) => !t.className);
       setTypedTags(updatedTypedTags);
     }
-  }, [allTagsForThisPersona, typedTags]);
+  }, [allTagsForThisPersona]);
 
   const [selectedTags, setSelectedTags] = useState([]);
 
@@ -64,33 +64,33 @@ const EmpathyMapPane = ({
   const changeTagType = (
     tagText,
     sourceDropzoneElement,
-    destinationDropzoneElement
+    destinationDropzoneElement,
   ) => {
     setTimeout(() => {
       const draggedTagElement = Array.from(
-        document.querySelectorAll(`.tag-wrapper.readOnly`)
+        document.querySelectorAll(`.tag-wrapper.readOnly`),
       ).find((el) => el.innerText === tagText);
       const oldClassNameFound = Array.from(
-        sourceDropzoneElement.classList
+        sourceDropzoneElement.classList,
       ).find((classString) => classString.includes(CLASSNAME_PREFIX));
       if (
         oldClassNameFound &&
         oldClassNameFound.substring(CLASSNAME_PREFIX.length)
       ) {
         const oldClassName = oldClassNameFound.substring(
-          CLASSNAME_PREFIX.length
+          CLASSNAME_PREFIX.length,
         );
         draggedTagElement.classList.remove(oldClassName);
       }
       const newClassNameFound = Array.from(
-        destinationDropzoneElement.classList
+        destinationDropzoneElement.classList,
       ).find((classString) => classString.includes(CLASSNAME_PREFIX));
       if (
         newClassNameFound &&
         newClassNameFound.substring(CLASSNAME_PREFIX.length)
       ) {
         const newClassName = newClassNameFound.substring(
-          CLASSNAME_PREFIX.length
+          CLASSNAME_PREFIX.length,
         );
         draggedTagElement.classList.add(newClassName);
         updateTrendsFunc([tagText], { className: newClassName });
@@ -135,7 +135,7 @@ const EmpathyMapPane = ({
           changeTagType(
             currentDragItem.innerText,
             event.sourceContainer.children[0],
-            currentDropzone
+            currentDropzone,
           );
           currentDropzone.classList.remove("draggable-dropzone--occupied");
         }
@@ -183,7 +183,7 @@ const EmpathyMapPane = ({
             if (newId) {
               const count = selectedTags.reduce(
                 (totalCount, tag) => totalCount + getOccurenceNumber(tag.text),
-                0
+                0,
               );
               const tagChanges = {
                 id: newId,
@@ -235,7 +235,7 @@ const EmpathyMapPane = ({
                         if (tagWrapper.className.includes("selected")) {
                           tagWrapper.classList.remove("selected");
                           setSelectedTags(
-                            selectedTags.filter((t) => t !== tag)
+                            selectedTags.filter((t) => t !== tag),
                           );
                         } else {
                           tagWrapper.classList.add("selected");

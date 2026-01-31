@@ -132,3 +132,22 @@
 /**
  * @typedef {{[key: string]: ReactTags.Tag[]}} TagsPerEvidenceRecord
  */
+
+export const Product = {};
+export const EvidenceTrend = {};
+export const EvidenceRecord = {};
+export const EvidenceFile = {};
+export const GoogleFile = {};
+export const WidgetDataItem = {};
+export const Persona = {};
+export const SummaryPaneProps = {};
+export const personaAsEvidence = {};
+export const Company = {};
+export const Story = {};
+export const Task = {};
+export const EvidencePaneProps = {};
+export const OAuthAPIFunctions = {};
+export const ProductAPIFunctions = {};
+export const EvidenceAPIProps = {};
+export const BaseCollectionAPI = {};
+export const CollectionAPI = {};

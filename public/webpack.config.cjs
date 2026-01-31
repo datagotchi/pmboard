@@ -29,6 +29,9 @@ module.exports = {
             presets: ["@babel/preset-env", "@babel/preset-react"],
           },
         },
+        resolve: {
+          fullySpecified: false, // Applies specifically to your JS/JSX files
+        },
       },
       {
         test: /\.css$/,

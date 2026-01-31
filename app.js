@@ -8,7 +8,7 @@ import products from "./routes/products.js";
 
 const pool = new Pool({
   user: "postgres",
-  password: "p4ssw0rd",
+  password: "postgres",
   database: "pmboard",
   host: "localhost",
   port: 5432,
