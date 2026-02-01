@@ -35,15 +35,7 @@ const EmpathyMapPane = ({
     if (
       allTagsForThisPersona &&
       allTagsForThisPersona.length > 0 &&
-      (!typedTags ||
-        Object.values(typedTags).flat().length !==
-          allTagsForThisPersona.length ||
-        Object.values(typedTags)
-          .flat()
-          .some(
-            (tag, index) =>
-              tag.className !== allTagsForThisPersona[index].className,
-          ))
+      (!typedTags || Object.values(typedTags).flat().length === 0)
     ) {
       const updatedTypedTags = {};
       [...indexToClassName].forEach((className) => {
