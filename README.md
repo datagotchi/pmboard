@@ -1,13 +1,38 @@
-![](./ss1.png)
-![](./ss2.png)
+# 🗺️ pmboard
 
-PMBoard is a dashboard for product managers and startup founders to link user research, product features/plans,
-and evaluation results.
+**Spatial sensemaking dashboard linking user research, product features, and evaluation feedback.**
 
-It is a Node.js application with a Javascript frontend that utilizes React.
+`pmboard` is Datagotchi Labs' visual product discovery surface area. Built as an API-first spatial interface, it connects qualitative user research (e.g., empathy mapping, interviews) directly to feature epics and metric evaluations—eliminating isolated specs and fragmented product decisions.
 
-To run, you need to have a PostgreSQL instance on the default port with a database named **pmboard**
-either containing all the relevant tables, or load the data from `pmboard-dump.sql`.
+![PMBoard UI Screenshot 1](ss1.png)
+![PMBoard UI Screenshot 2](ss2.png)
 
-Then, clone the repo, do <code>yarn install</code>, and finally run <code>yarn start</code>
-and go to <code>http://localhost:8000</code>, authenticating on the OAuth page with your Google account.
+---
+
+## 🎯 The Friction & The Solution
+
+Product teams and founders routinely struggle with **context loss** and **siloed research**:
+* **Disconnected Insights:** Qualitative user research lives in static docs, isolated from actual roadmap tickets and feature specs.
+* **Metric Myopia:** Feature evaluations happen in spreadsheets, detached from the original user problems they were built to solve.
+* **Arbitrary Box-Checking:** Product management tools encourage bloated backlogs over clear spatial sensemaking.
+
+**`pmboard` solves this by:**
+1. Providing a unified spatial surface area to map research, epics, and evaluations together.
+2. Visualizing user empathy maps (`EmpathyMapPane`) alongside feature benefits and delivery goals.
+3. Keeping data sovereign and locally controlled via explicit schemas.
+
+---
+
+## 🏗️ System Architecture
+
+```mermaid
+graph TD
+    A[Qualitative Research / Empathy Maps] --> B{pmboard Spatial Engine}
+    C[Product Epics / Feature Specs] --> B
+    D[Evaluation Results / Metrics] --> B
+    
+    B -->|Persist State| E[(PostgreSQL)]
+    B -->|Render Spatial Dashboard| F[React / Express Web UI]
+    
+    style B fill:#2b2b2b,stroke:#00ffcc,color:#fff
+    style E fill:#1f1f1f,stroke:#ff0055,color:#fff
