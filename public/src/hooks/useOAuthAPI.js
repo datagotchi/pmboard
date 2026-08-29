@@ -8,7 +8,7 @@ import { useRef } from "react";
  * @type {OAuthAPIFunctions}
  */
 const useOAuthAPI = () => {
-  const redirect_uri = "http://localhost:8000";
+  const redirect_uri = window.location.origin;
   const issuer = new URL("https://accounts.google.com");
 
   /**
@@ -31,11 +31,11 @@ const useOAuthAPI = () => {
   const gotoAuthorizationUrl = (
     client,
     code_challenge,
-    code_challenge_method
+    code_challenge_method,
   ) => {
     // redirect user to as.authorization_endpoint
     const authorizationUrl = new URL(
-      authorizationServer.current.authorization_endpoint
+      authorizationServer.current.authorization_endpoint,
     );
     authorizationUrl.searchParams.set("client_id", client.client_id);
     authorizationUrl.searchParams.set("redirect_uri", redirect_uri);
@@ -43,12 +43,13 @@ const useOAuthAPI = () => {
     authorizationUrl.searchParams.set("access_type", "offline");
     authorizationUrl.searchParams.set(
       "scope",
-      "https://www.googleapis.com/auth/drive.readonly"
+      // "https://www.googleapis.com/auth/drive.readonly",
+      "openid email profile", // FIXME: use the line above once pmboard is on HTTPS & Google Cloud console is updated with it
     );
     authorizationUrl.searchParams.set("code_challenge", code_challenge);
     authorizationUrl.searchParams.set(
       "code_challenge_method",
-      code_challenge_method
+      code_challenge_method,
     );
 
     /**
@@ -57,7 +58,7 @@ const useOAuthAPI = () => {
      */
     if (
       authorizationServer.current.code_challenge_methods_supported.includes(
-        "S256"
+        "S256",
       ) !== true
     ) {
       state = oauth.generateRandomState();
@@ -79,7 +80,7 @@ const useOAuthAPI = () => {
     authorizationServer,
     client,
     code_verifier,
-    state
+    state,
   ) => {
     // one eternity later, the user lands back on the redirect_uri
     // Authorization Code Grant Request & Response
@@ -91,10 +92,10 @@ const useOAuthAPI = () => {
     // const currentUrl = getCurrentUrl();
     const currentUrl = new URL(window.location.href);
     const params = oauth.validateAuthResponse(
-      authorizationServer.current,
+      authorizationServer,
       client,
       currentUrl,
-      state
+      state,
     );
 
     if (oauth.isOAuth2Error(params)) {
@@ -103,11 +104,11 @@ const useOAuthAPI = () => {
     }
 
     const response = await oauth.authorizationCodeGrantRequest(
-      authorizationServer.current,
+      authorizationServer,
       client,
       params,
       redirect_uri,
-      code_verifier
+      code_verifier,
     );
 
     /**
@@ -122,9 +123,9 @@ const useOAuthAPI = () => {
     }
 
     const result = await oauth.processAuthorizationCodeOAuth2Response(
-      authorizationServer.current,
+      authorizationServer,
       client,
-      response
+      response,
     );
     if (oauth.isOAuth2Error(result)) {
       console.error("Error Response", result);
@@ -160,8 +161,8 @@ const useOAuthAPI = () => {
         new URL(
           `https://www.googleapis.com/drive/v2/files${
             nextPageToken ? `?pageToken=${nextPageToken}` : ""
-          }`
-        )
+          }`,
+        ),
       )
       .then(async (response) => {
         if (response.status === 401) {
@@ -249,7 +250,7 @@ const useOAuthAPI = () => {
           authorizationServer,
           client,
           code_verifier,
-          state
+          state,
         );
         sessionStorage.setItem("access_token", access_token);
         sessionStorage.removeItem("code_verifier");

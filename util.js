@@ -1,6 +1,3 @@
-import * as types from "./public/src/types.js";
-const { EvidenceTrend } = types;
-
 /**
  * A convenience function to sort a string array with.
  * @param {string} a The first thing to compare to the second thing.
